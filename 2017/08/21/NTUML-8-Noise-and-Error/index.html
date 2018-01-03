@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="NTUML,统计学习理论," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="噪声和目标分布 在感知机模型的口袋算法中曾经简单介绍过一点关于噪声的概念。需要注意的是，噪声可能出现在各种地方，例如  噪声出现在标签\(y\)中，例如好的用户被错误地标记为坏的用户 噪声出现在标签\(y\)中的另一种形式是相同的顾客被打上了不同的标签 噪声还可能出现在数据\(\bf x\)中，例如我们收集到的顾客信息不准确  那么在有噪声的情况下，VC上界是否还有意义？要解答这个问题，需要理解V">
+<meta name="keywords" content="NTUML,统计学习理论">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NTUML 8. 噪声和错误">
+<meta property="og:url" content="txshi-mt.com/2017/08/21/NTUML-8-Noise-and-Error/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="噪声和目标分布 在感知机模型的口袋算法中曾经简单介绍过一点关于噪声的概念。需要注意的是，噪声可能出现在各种地方，例如  噪声出现在标签\(y\)中，例如好的用户被错误地标记为坏的用户 噪声出现在标签\(y\)中的另一种形式是相同的顾客被打上了不同的标签 噪声还可能出现在数据\(\bf x\)中，例如我们收集到的顾客信息不准确  那么在有噪声的情况下，VC上界是否还有意义？要解答这个问题，需要理解V">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML08_cost_matrix.png">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.096Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NTUML 8. 噪声和错误">
+<meta name="twitter:description" content="噪声和目标分布 在感知机模型的口袋算法中曾经简单介绍过一点关于噪声的概念。需要注意的是，噪声可能出现在各种地方，例如  噪声出现在标签\(y\)中，例如好的用户被错误地标记为坏的用户 噪声出现在标签\(y\)中的另一种形式是相同的顾客被打上了不同的标签 噪声还可能出现在数据\(\bf x\)中，例如我们收集到的顾客信息不准确  那么在有噪声的情况下，VC上界是否还有意义？要解答这个问题，需要理解V">
+<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML08_cost_matrix.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/08/21/NTUML-8-Noise-and-Error/"/>
+
+
+
+
+
+  <title>NTUML 8. 噪声和错误 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/08/21/NTUML-8-Noise-and-Error/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NTUML 8. 噪声和错误</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-21T20:54:37+08:00">
+                Aug 21 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/统计机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">统计机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="噪声和目标分布">噪声和目标分布</h2>
+<p>在感知机模型的口袋算法中曾经简单介绍过一点关于噪声的概念。需要注意的是，噪声可能出现在各种地方，例如</p>
+<ul>
+<li>噪声出现在标签<span class="math inline">\(y\)</span>中，例如好的用户被错误地标记为坏的用户</li>
+<li>噪声出现在标签<span class="math inline">\(y\)</span>中的另一种形式是相同的顾客被打上了不同的标签</li>
+<li>噪声还可能出现在数据<span class="math inline">\(\bf x\)</span>中，例如我们收集到的顾客信息不准确</li>
+</ul>
+<p>那么在有噪声的情况下，VC上界是否还有意义？要解答这个问题，需要理解VC上界的核心是什么。回顾之前讲解VC维时，都是拿小球举的例子。这里，每个小球都可以对应为学习时看到的<span class="math inline">\(\bf x\)</span>，每个球被选中的概率遵循分布<span class="math inline">\(P({\bf x})\)</span>。小球颜色的确定方法为，如果对这条数据，假设函数<span class="math inline">\(h\)</span>的值和目标函数<span class="math inline">\(f\)</span>的值不一样，就将小球漆为橙色。那么有了噪声怎么办？噪声的出现使得对确定的<span class="math inline">\(\bf x\)</span>其颜色可能会变化，不再由<span class="math inline">\(f\)</span>所决定。即小球是否为橙色（对应于<span class="math inline">\(y \not= h({\bf x})\)</span> ）现在由概率分布<span class="math inline">\(y\sim P(y|{\bf x})\)</span>决定，不再是一个恒定的值（课程里的说法是小球的颜色会一会儿一变）。然而即便如此，仍然可以估算出罐中（同一时刻）橙色球的比例，只需要在拿出球的一刹那将球的颜色记录下来。这意味着，无论小球的颜色是否会变，橙色球的比例都可以通过抽样的方法来确定。因此，只要<span class="math inline">\({\bf x} \mathop{\sim}^{\rm i.i.d} P({\bf x}), y \mathop{\sim}^{\rm i.i.d} P({y|\bf x})\)</span>，即$ ({}, y) ^{} P({}, y)$</p>
+<p>由于现在<span class="math inline">\(y\)</span>不再由<span class="math inline">\(f\)</span>决定而是由<span class="math inline">\(P(y|{\bf x})\)</span>决定，因此类似于<span class="math inline">\(f\)</span>“目标函数”的叫法，这个<span class="math inline">\(P(y|{\bf x})\)</span>被称为“目标分布”，即其说明了对每个<span class="math inline">\(\bf x\)</span>最理想的预测是什么，同时还说明了噪声产生的概率。例如，假设对某个<span class="math inline">\(\bf x\)</span>有<span class="math inline">\(P(\circ | {\bf x}) = 0.7, P(\times | {\bf x}) = 0.3\)</span>，则其对应的标签应该是<span class="math inline">\(\circ\)</span>，同时有30%的情况下会带来噪声。在这样的定义下，目标函数的概念也可以用目标分布来表示，即 <span class="math display">\[
+P(y|{\bf x}) = \begin{cases} 1 &amp; {\rm if\  } y = f({\bf x}) \\ 0 &amp; {\rm elsewhere} \end{cases}
+\]</span> 目标函数的概念被扩展了以后，机器学习的目标也就发生了变化，其是通过常见的输入（分布<span class="math inline">\(P({\bf x})\)</span>告知我们哪些点是重要的）来预测最理想的标签值（由分布<span class="math inline">\(P(y|{\bf x})\)</span>决定）</p>
+<h2 id="错误的衡量">错误的衡量</h2>
+<p>在用机器学习算法解决问题的过程中，最后一步是要看选择的假设<span class="math inline">\(g\)</span>是否能满足<span class="math inline">\(g \approx f\)</span>。为了判断这一点，之前使用的方法是看<span class="math inline">\(E_{\rm out}\)</span>，其中 <span class="math display">\[
+E_{\rm out}(g) = \mathcal{E}_{ {\bf x} \sim P}[\![g({\bf x}) \not= f({\bf x})]\!]
+\]</span> 更一般地说，需要给<span class="math inline">\(g\)</span>一个衡量的方法。之前使用的这种度量方法满足了三个特点</p>
+<ul>
+<li>使用的是样本外数据来衡量。<span class="math inline">\(E_{\rm out}\)</span>反映的是对所有未知<span class="math inline">\(\bf x\)</span>所犯错误的平均值</li>
+<li>可以逐点操作。尽管反映的是所有错误的平均值，但是对一条数据也可以度量其错误情况。不需要取样一批数据以后才能衡量</li>
+<li>适用于分类问题</li>
+</ul>
+<p>这里的错误度量方法度量的是分类错误，通常也叫作0/1误差</p>
+<p>记<span class="math inline">\(E_{\rm out}\)</span>中被求期望的函数为<span class="math inline">\({\rm err}(g({\bf x}), f({\bf x}))\)</span>，这里这个<span class="math inline">\(\rm err\)</span>可以对任意给定的数据点求出其错误值，因此也被称为每个点上衡量错误的方式。这样，<span class="math inline">\(E_{\rm in}\)</span>和<span class="math inline">\(E_{\rm out}\)</span>就可以表示为 <span class="math display">\[
+\begin{align*}
+E_{\rm in}(g) &amp;= \frac{1}{N}\sum_{n=1}^N{\rm err}(g({\bf x}_n), f({\bf x}_n)) \\
+E_{\rm out}(g) &amp;= \mathcal{E}_{ {\bf x} \sim P}{\rm err}(g({\bf x}), f({\bf x}))
+\end{align*}
+\]</span> 在有误差存在的情况下，<span class="math inline">\(f\)</span>会被之前讨论过的<span class="math inline">\(y\)</span>和<span class="math inline">\(P\)</span>所取代</p>
+<p>本次课程主要会使用这种逐点衡量错误的方式，因为这种方式比较简单。将<span class="math inline">\(g({\bf x})\)</span>记为<span class="math inline">\(\tilde{y}\)</span>，将<span class="math inline">\(f({\bf x})\)</span>记为<span class="math inline">\(y\)</span>，那么错误衡量方法一共可以分为两种：</p>
+<ul>
+<li>0-1误差。求出的<span class="math inline">\(\tilde{y}\)</span>只有两种可能：与<span class="math inline">\(y\)</span>一样，或者不一样。用数学方法表示为<span class="math inline">\({\rm err}(\tilde{y}, y) = [\![\tilde{y} \not= y]\!]\)</span>。这种误差方法通常用在分类问题中</li>
+<li>平方误差。用数学方法表示为<span class="math inline">\({\rm err}(\tilde{y}, y) = (\tilde{y} - y)^2\)</span>，看的是<span class="math inline">\(\tilde{y}\)</span>与<span class="math inline">\(y\)</span>有多接近</li>
+</ul>
+<p>错误衡量函数（也称为误差函数）和目标分布一起决定了最理想的目标函数的形式。例如，假设现在有<span class="math inline">\(P(y=1|{\bf x}) = 0.2, P(y=2|{\bf x}) = 0.7, P(y=3|{\bf x}) = 0.1\)</span>。如果使用0-1误差作为误差函数，则误差值与<span class="math inline">\(\tilde{y}\)</span>之间的关系如下 <span class="math display">\[
+{\rm err} = \begin{cases}0.8 &amp; {\rm if\  }\tilde{y} = 1 \\ 0.3 &amp; {\rm if\  }\tilde{y} = 2 \\ 0.9 &amp; {\rm if\  }\tilde{y} = 3 \\ 1.0 &amp; {\rm if\  }\tilde{y} = 1.9 \end{cases}
+\]</span> 这里<span class="math inline">\(\tilde{y} = 2\)</span>是最优的预测，同时<span class="math inline">\(\tilde{y} = 1.9\)</span>的效果非常不好。但是如果使用平方误差作为误差函数，结果就大有不同 <span class="math display">\[
+{\rm err} = \begin{cases}1.1 &amp; {\rm if\  }\tilde{y} = 1 \\ 0.3 &amp; {\rm if\  }\tilde{y} = 2 \\ 1.5 &amp; {\rm if\  }\tilde{y} = 3 \\ 0.29 &amp; {\rm if\  }\tilde{y} = 1.9 \end{cases}
+\]</span> 这时之前效果很差的预测值<span class="math inline">\(\tilde{y}= 1.9\)</span>反而变成了最好的预测值！事实上，可以证明，如果误差函数是0-1误差，则最好的预测值应该为<span class="math inline">\(f({\bf x}) = \mathop{ {\rm arg}\max}_{y \in \mathcal{Y}}P(y|{\bf x})\)</span>；如果误差函数是平方误差，则最好的预测值应该为<span class="math inline">\(f({\bf x}) = \sum_{y \in \mathcal{Y}}y\cdot P(y|{\bf x})\)</span></p>
+<p>因此，错误衡量函数扮演了一个非常重要的角色。一方面，它指导机器学习算法<span class="math inline">\(\mathcal{A}\)</span>选出一个最好的<span class="math inline">\(g\)</span>，另一方面，它评估了所得到的模型与目标函数之间的相似性<span class="math inline">\(g \approx f\)</span></p>
+<h2 id="算法误差的衡量">算法误差的衡量</h2>
+<p>这些错误的衡量从哪里来？想象要做一个指纹辨识的应用，如果是你本人的指纹，输出+1，否则输出-1。可以看出来这里实际上有两种类型的错误：假阳性（应该输出-1的样本输出了+1）和假阴性（应该输出+1的样本输出了-1）。0-1误差对这两种错误的惩罚程度是相同的，但是在各个情况下这样做都是最合理的方式么？考虑以下两种类型问题：</p>
+<ul>
+<li>超市的指纹识别系统，如果指纹识别出来是一个熟客，就给予一定折扣。这种情况下，如果用户身份没有被识别因此没有折扣（假阴性），顾客会非常生气，可能会造成客户流失；而如果用户的身份被错误地认定为是熟客（假阳性），超市顶多会少赚点钱，同时由于顾客留下了指纹，万一真的需要追查也容易。因此在这种情况下，假阴性造成的后果更加严重，应该多惩罚一些，例如权重放大到10倍</li>
+<li>国家安全部门的指纹识别系统，如果指纹识别出来是一个员工，就放行。这种情况下，如果发生假阴性，员工多刷几次指纹无所谓；但是如果假阳性，放进了非员工，就会造成情报泄露，非常严重。这种情况下，假阳性的惩罚权重应该增加更多，例如1000倍</li>
+</ul>
+<p>由此可知，不同的任务使用的误差衡量函数不尽相同，即便两者都属于分类问题也如此。因此设计算法<span class="math inline">\(\mathcal{A}\)</span>时最好就要把误差衡量函数包括进去。但是很多时候这种时候无法做到，比如难以将权重数值化等等。通常有两种替代方式，来找到一个算法中可用的误差函数<span class="math inline">\(\hat{\rm err}\)</span></p>
+<ul>
+<li>让误差函数“看上去更加合理”，就是使用0/1误差函数或者平方误差（更具体地讲，前者最小化了“翻转误差”，后者最小化了“高斯误差”）</li>
+<li>让算法<span class="math inline">\(\mathcal{A}\)</span>更容易优化，例如使用存在闭合形式解的目标函数或凸目标函数</li>
+</ul>
+<h2 id="加权的分类问题">加权的分类问题</h2>
+<p>对分类问题，由于假阴性和假阳性带来的后果不同，因此通常会有一个矩阵，这个矩阵通常被称作代价矩阵（也可以被称为误差矩阵、损失矩阵等等）。例如，国安部门问题的代价矩阵如下所示</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML08_cost_matrix.png" alt="国安部门问题的代价矩阵"><figcaption>国安部门问题的代价矩阵</figcaption>
+</figure>
+<p>在这种情况下，<span class="math inline">\(E_{\rm out}\)</span>和<span class="math inline">\(E_{\rm in}\)</span>的形式也有所变化，为 <span class="math display">\[
+\begin{align*}
+E_{\rm out}(h) &amp;= \mathcal{E}_{({\bf x}, y) \sim P}\left\{\begin{array}{cc}1 &amp; {\rm if\  }y=+1 \\ 1000 &amp; {\rm if\  }y=-1\end{array}\right\} \cdot [\![y \not= h({\bf x})]\!] \\
+E_{\rm in}(h) &amp;= \frac{1}{N}\sum_{n=1}^N\left\{\begin{array}{cc}1 &amp; {\rm if\  }y=+1 \\ 1000 &amp; {\rm if\  }y=-1\end{array}\right\} \cdot [\![y \not= h({\bf x}_n)]\!]
+\end{align*}
+\]</span> 这种问题称作<strong>加权的分类问题</strong>，因为对不同的<span class="math inline">\(({\bf x}, y)\)</span>权重不同</p>
+<p>这种问题如何求解？首先VC理论仍然适用，所以可以肯定问题是可以求解的。接下来的问题就是怎么让<span class="math inline">\(E_{\rm in}^w\)</span>越小越好（这里上角标<span class="math inline">\(w\)</span>表示是加权问题）。目前讲过的两种模型中，如果数据线性可分，那么PLA肯定可以收敛而且不会受权重改变的影响；如果数据线性不可分，就要使用口袋算法，不过要做一些修改，即当<span class="math inline">\({\bf w}_{t+1}\)</span>所达到的<span class="math inline">\(E_{\rm in}^{\bf w}\)</span>更小时，再用它替换<span class="math inline">\(\hat{\bf w}\)</span></p>
+<p>但是这样的修改是否合理？换句话说，修改后的算法能否达到使<span class="math inline">\(E_{\rm in}^{\bf w}\)</span>最小这个目标？由于负样本被错分的代价是原来是1000倍，那么可以构造一个新的数据集，其中原来的数据集中每个标签为-1的样本都被复制了1000份放在新的数据集中。称原来的数据集叫原始数据集，被复制了1000倍负样本的数据集为等价数据集，这使得对任何模型<span class="math inline">\(h\)</span>，如果它对某个点<span class="math inline">\(({\bf x}_i, -1)\)</span>在原始数据集上犯了错，它在等价数据集上会犯1000次同样的错误。这样，<span class="math inline">\(h\)</span>在等价数据集上的0/1错误率<span class="math inline">\(E_{\rm in}^{0/1}\)</span>实际上等于其在原始数据集上的加权错误率<span class="math inline">\(E_{\rm in}^{\bf w}\)</span>。由于口袋算法在等价数据集上可用，因此其在原始数据集上也可用</p>
+<p>当然，真正使用算法时，将负样本数据复制一千次可能是费力的且无必要的。可以采用“虚拟复制”的方法来修改得到一种加权口袋算法，主要修改两点：</p>
+<ul>
+<li>增加负样本被采样的频率，使其1000倍于正样本被采样的频率</li>
+<li>当<span class="math inline">\({\bf w}_{t+1}\)</span>所达到的<span class="math inline">\(E_{\rm in}^{\bf w}\)</span>更小时，再用它替换<span class="math inline">\(\hat{\bf w}\)</span></li>
+</ul>
+<p>本节的fun time给出了一个非常实际问题的场景。对于某些分类问题，其类别可能会非常不平衡，例如题目中给出的比率是负例只占了全体样本的0.001%。在这种情况下，即便是把负例的权重提高到1000，一个“常数分类器”（即对所有样本都无脑设置成+1）的分类错误率仍然能被控制在1%。这意味着，对于这种问题，应该精巧地设计罕见类样本的权重，避免这种“常数分类器”的出现</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/08/21/NTUML-8-Noise-and-Error/" title="NTUML 8. 噪声和错误">txshi-mt.com/2017/08/21/NTUML-8-Noise-and-Error/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/NTUML/" rel="tag"># NTUML</a>
+          
+            <a href="/tags/统计学习理论/" rel="tag"># 统计学习理论</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/08/20/NTUML-7-the-VC-Dimension/" rel="next" title="NTUML 7. VC维">
+                <i class="fa fa-chevron-left"></i> NTUML 7. VC维
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/08/28/NTUML-9-Linear-Regression/" rel="prev" title="NTUML 9. 线性回归">
+                NTUML 9. 线性回归 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#噪声和目标分布"><span class="nav-number">1.</span> <span class="nav-text">&#x566A;&#x58F0;&#x548C;&#x76EE;&#x6807;&#x5206;&#x5E03;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#错误的衡量"><span class="nav-number">2.</span> <span class="nav-text">&#x9519;&#x8BEF;&#x7684;&#x8861;&#x91CF;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#算法误差的衡量"><span class="nav-number">3.</span> <span class="nav-text">&#x7B97;&#x6CD5;&#x8BEF;&#x5DEE;&#x7684;&#x8861;&#x91CF;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#加权的分类问题"><span class="nav-number">4.</span> <span class="nav-text">&#x52A0;&#x6743;&#x7684;&#x5206;&#x7C7B;&#x95EE;&#x9898;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

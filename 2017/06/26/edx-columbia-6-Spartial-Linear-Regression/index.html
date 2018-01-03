@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="线性回归,EdX-Columbia,LASSO," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="引子：欠定线性等式 (underdetermined linear equations) 这里考虑的是\(y = Xw, X \in \mathbb{R}^{n \times d} (d &amp;gt;\!\!&amp;gt; n)\)的问题。即数据集的维数大于样本数。此时\(w\)有无穷多个解满足\(y = Xw\)。在这些解中，\(w_{\rm ln} = X^T(XX^T)^{-1}y\)占据着一个重要的">
+<meta name="keywords" content="线性回归,EdX-Columbia,LASSO">
+<meta property="og:type" content="article">
+<meta property="og:title" content="EdX Columbia ML 6. 稀疏线性回归">
+<meta property="og:url" content="txshi-mt.com/2017/06/26/edx-columbia-6-Spartial-Linear-Regression/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="引子：欠定线性等式 (underdetermined linear equations) 这里考虑的是\(y = Xw, X \in \mathbb{R}^{n \times d} (d &amp;gt;\!\!&amp;gt; n)\)的问题。即数据集的维数大于样本数。此时\(w\)有无穷多个解满足\(y = Xw\)。在这些解中，\(w_{\rm ln} = X^T(XX^T)^{-1}y\)占据着一个重要的">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.101Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="EdX Columbia ML 6. 稀疏线性回归">
+<meta name="twitter:description" content="引子：欠定线性等式 (underdetermined linear equations) 这里考虑的是\(y = Xw, X \in \mathbb{R}^{n \times d} (d &amp;gt;\!\!&amp;gt; n)\)的问题。即数据集的维数大于样本数。此时\(w\)有无穷多个解满足\(y = Xw\)。在这些解中，\(w_{\rm ln} = X^T(XX^T)^{-1}y\)占据着一个重要的">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/06/26/edx-columbia-6-Spartial-Linear-Regression/"/>
+
+
+
+
+
+  <title>EdX Columbia ML 6. 稀疏线性回归 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/06/26/edx-columbia-6-Spartial-Linear-Regression/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">EdX Columbia ML 6. 稀疏线性回归</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-26T17:00:59+08:00">
+                Jun 26 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/统计机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">统计机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="引子欠定线性等式-underdetermined-linear-equations">引子：欠定线性等式 (underdetermined linear equations)</h2>
+<p>这里考虑的是<span class="math inline">\(y = Xw, X \in \mathbb{R}^{n \times d} (d &gt;\!\!&gt; n)\)</span>的问题。即数据集的维数大于样本数。此时<span class="math inline">\(w\)</span>有无穷多个解满足<span class="math inline">\(y = Xw\)</span>。在这些解中，<span class="math inline">\(w_{\rm ln} = X^T(XX^T)^{-1}y\)</span>占据着一个重要的地位。如果把这个解加上一个<span class="math inline">\(X\)</span>的零空间<span class="math inline">\(\mathcal{N}\)</span>中的向量<span class="math inline">\(\delta \in \mathbb{R}^d\)</span>，得到的新的权重仍然是原始问题的解。 <span class="math display">\[
+\delta \in \mathcal{N}(X) \Rightarrow X\delta = 0 \land \delta \not= 0 \\
+\therefore X(w_{\rm ln} + \delta) = Xw_{\rm ln} + X\delta = y + 0
+\]</span> 而因为<span class="math inline">\(d &gt; n\)</span>，因此<span class="math inline">\(\delta\)</span>可以有无限多个。</p>
+<p>下面用两种方法证明<span class="math inline">\(w_{\rm ln}\)</span>是这些解里<span class="math inline">\(\ell_2\)</span>范数最小的解，即 <span class="math display">\[
+w_{\rm ln} = {\rm arg}\min_w |\!|w|\!|^2\  \  \  {\rm subject\  to}\  Xw = y
+\]</span></p>
+<h3 id="分析法">分析法</h3>
+<p>令<span class="math inline">\(w\)</span>是<span class="math inline">\(Xw=y\)</span>的另一个解，因此<span class="math inline">\(X(w-w_{\rm ln}) = 0\)</span>，且有 $$ <span class="math display">\[\begin{align*}
+
+(w - w_{\rm ln})^Tw_{\rm ln} &amp;= (w - w_{\rm ln})^TX^T(XX^T)^{-1}y \\
+
+&amp;= (X(w - w_{\rm ln}))^T(XX^T)^{-1}y = 0
+
+\end{align*}\]</span> $$</p>
+<p>即<span class="math inline">\(w-w_{\rm ln}\)</span>正交于<span class="math inline">\(w_{\rm ln}\)</span>，这意味着</p>
+<p><span class="math display">\[
+\begin{align*}
+|\!|w|\!|^2 &amp;= |\!|w - w_{\rm ln} + w_{\rm ln}|\!|^2 \\
+&amp;= |\!|w - w_{\rm ln}|\!|^2 + |\!|w_{\rm ln}|\!|^2 + 2(w - w_{\rm ln})^Tw_{\rm ln} \\
+&amp;= |\!|w - w_{\rm ln}|\!|^2 + |\!|w_{\rm ln}|\!|^2 \\
+&amp;&gt; |\!|w_{\rm ln}|\!|^2
+\end{align*}
+\]</span> $ $</p>
+<h5 id="lagrange乘子法">Lagrange乘子法</h5>
+<p>为了求解 <span class="math display">\[
+{\rm arg}\min_w |\!|w|\!|^2\  \  \  {\rm subject\  to}\  Xw = y
+\]</span> 可以引入Lagrange乘子，即 <span class="math display">\[
+\mathcal{L}(w, \eta) = w^Tw + \eta^T(Xw - y)
+\]</span> 分别对<span class="math inline">\(w\)</span>和<span class="math inline">\(\eta\)</span>求导，得到两个条件 <span class="math display">\[
+\nabla_w \mathcal{L} = 2w + X^T\eta = 0,\  \nabla_{\eta}\mathcal{L} = Xw - y = 0
+\]</span> 由第一个式子可知 <span class="math display">\[
+w = -X^T\eta / 2
+\]</span> 代入到第二个式子解得 <span class="math display">\[
+\eta = -2(XX^T)^{-1}y
+\]</span> 将<span class="math inline">\(\eta\)</span>代回第一个式子 <span class="math display">\[
+w_{\rm ln} = X^T(XX^T)^{-1}y
+\]</span></p>
+<h2 id="稀疏回归">稀疏回归</h2>
+<p>普通最小二乘和岭回归通常只用于理想情况。现实问题中，通常有很多特征，而其中只有一部分与<span class="math inline">\(y\)</span>相关，非常重要，而普通最小二乘和岭回归对所有特征都是同等对待，重要的特征会被不重要的特征拉低</p>
+<p>通常来讲，优化问题都可以抽象为公式 <span class="math display">\[
+{\rm total\  cost} = {\rm goodness\  of\  fit\  term} + {\rm penalty\  term}
+\]</span> 前者说明模型<span class="math inline">\(f\)</span>对数据的近似有多好，后者使得最后的解不会那么“重”。岭回归的惩罚项是<span class="math inline">\(|\!|w|\!|^2\)</span>，而这个惩罚项的特点是，如果<span class="math inline">\(w\)</span>很大，那么缩小它能够很快地缩小惩罚项；然而如果<span class="math inline">\(w\)</span>小，那么缩小它的效果就不显著。因此使用这个惩罚项的结果是所有特征的权重都小了</p>
+<p>稀疏学习的目的是选出<span class="math inline">\(d\)</span>维特征的一个子集作为模型，而筛掉其它维度的特征，也就是把不重要的特征权重设为0。常用线性惩罚项——引出了LASSO</p>
+<p>LASSO: Least Absolute Shrinkage and Selection Operator，使用<span class="math inline">\(\ell_1\)</span>正则项 <span class="math display">\[
+w_{\rm lasso} = {\rm arg}\min_w |\!|y - Xw|\!|^2_2 + \lambda |\!|w|\!|_1 \\
+|\!|w|\!|_1 = \sum_{j=1}^d |w_j|
+\]</span></p>
+<p>正则化可以推广到<span class="math inline">\(\ell_p\)</span>正则化回归，即 <span class="math display">\[
+w_{\ell_p} = {\rm arg}\min_w |\!|y - Xw|\!|^2_2 + \lambda |\!|w|\!|_p^p \\
+|\!|w|\!|_p^p = \left(\sum_{j=1}^d |w_j|^p \right)^{\frac{1}{p}}
+\]</span></p>
+<p>其中<span class="math inline">\(\ell_1\)</span>正则化是LASSO，<span class="math inline">\(\ell_2\)</span>正则化是岭回归</p>
+<p>当<span class="math inline">\(p = \infty\)</span>时，惩罚项只惩罚最大的那一项，<span class="math inline">\(|\!|w|\!|_\infty = \max_j |w_j|\)</span> 当<span class="math inline">\(1 &lt; p &lt; 2\)</span>时，可以找到最优解，但是只能通过迭代方式解出（没有解析解） 当<span class="math inline">\(0 &lt; p &lt; 1\)</span>时，只能找到近似解，不过可以保证稀疏性 当<span class="math inline">\(p \rightarrow 0\)</span>时，只记录某一项是否为0，即<span class="math inline">\(|\!|w|\!|_0 = \sum_j \mathbb{I}\{w_j \not= 0\}\)</span></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/06/26/edx-columbia-6-Spartial-Linear-Regression/" title="EdX Columbia ML 6. 稀疏线性回归">txshi-mt.com/2017/06/26/edx-columbia-6-Spartial-Linear-Regression/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/线性回归/" rel="tag"># 线性回归</a>
+          
+            <a href="/tags/EdX-Columbia/" rel="tag"># EdX-Columbia</a>
+          
+            <a href="/tags/LASSO/" rel="tag"># LASSO</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/24/edx-columbia-5-Bayes-Linear-Regression/" rel="next" title="EdX Columbia ML 5. 贝叶斯线性回归">
+                <i class="fa fa-chevron-left"></i> EdX Columbia ML 5. 贝叶斯线性回归
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/06/27/edx-columbia-7-KNN-Bayes-Classifier/" rel="prev" title="EdX Columbia ML 7. K-最近邻分类与贝叶斯分类器">
+                EdX Columbia ML 7. K-最近邻分类与贝叶斯分类器 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#引子欠定线性等式-underdetermined-linear-equations"><span class="nav-number">1.</span> <span class="nav-text">&#x5F15;&#x5B50;&#xFF1A;&#x6B20;&#x5B9A;&#x7EBF;&#x6027;&#x7B49;&#x5F0F; (underdetermined linear equations)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#分析法"><span class="nav-number">1.1.</span> <span class="nav-text">&#x5206;&#x6790;&#x6CD5;</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#lagrange乘子法"><span class="nav-number">1.1.0.1.</span> <span class="nav-text">Lagrange&#x4E58;&#x5B50;&#x6CD5;</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#稀疏回归"><span class="nav-number">2.</span> <span class="nav-text">&#x7A00;&#x758F;&#x56DE;&#x5F52;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

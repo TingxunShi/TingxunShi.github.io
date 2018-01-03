@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="NTUML,bagging,stacking," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="模型聚合的动机 如果已经得到了一些特征或假设，这些假设可以做预测，那么如何将这些有预测性的特征或假设合起来，让它们变得更好？这种模型就称为模型聚合 为什么要做模型聚合呢？举个例子，假设今天有15个朋友，每个人都会对股市的涨跌做一个预测，那么在得到这些预测以后应该怎么办？其实可以做的事情非常多，例如  根据过往的情况，选择最可靠的朋友，听ta的意见（类似于机器学习中的验证方法） 让朋友们一人一票，看">
+<meta name="keywords" content="NTUML,bagging,stacking">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NTUML 23. 模型混合与装袋（bagging）">
+<meta property="og:url" content="txshi-mt.com/2017/10/05/NTUML-23-Blending-Bagging/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="模型聚合的动机 如果已经得到了一些特征或假设，这些假设可以做预测，那么如何将这些有预测性的特征或假设合起来，让它们变得更好？这种模型就称为模型聚合 为什么要做模型聚合呢？举个例子，假设今天有15个朋友，每个人都会对股市的涨跌做一个预测，那么在得到这些预测以后应该怎么办？其实可以做的事情非常多，例如  根据过往的情况，选择最可靠的朋友，听ta的意见（类似于机器学习中的验证方法） 让朋友们一人一票，看">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML23_agg_model.png">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.093Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NTUML 23. 模型混合与装袋（bagging）">
+<meta name="twitter:description" content="模型聚合的动机 如果已经得到了一些特征或假设，这些假设可以做预测，那么如何将这些有预测性的特征或假设合起来，让它们变得更好？这种模型就称为模型聚合 为什么要做模型聚合呢？举个例子，假设今天有15个朋友，每个人都会对股市的涨跌做一个预测，那么在得到这些预测以后应该怎么办？其实可以做的事情非常多，例如  根据过往的情况，选择最可靠的朋友，听ta的意见（类似于机器学习中的验证方法） 让朋友们一人一票，看">
+<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML23_agg_model.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/10/05/NTUML-23-Blending-Bagging/"/>
+
+
+
+
+
+  <title>NTUML 23. 模型混合与装袋（bagging） | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/10/05/NTUML-23-Blending-Bagging/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NTUML 23. 模型混合与装袋（bagging）</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-05T08:52:59+08:00">
+                Oct 5 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/统计机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">统计机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="模型聚合的动机">模型聚合的动机</h2>
+<p>如果已经得到了一些特征或假设，这些假设可以做预测，那么如何将这些有预测性的特征或假设合起来，让它们变得更好？这种模型就称为模型聚合</p>
+<p>为什么要做模型聚合呢？举个例子，假设今天有15个朋友，每个人都会对股市的涨跌做一个预测，那么在得到这些预测以后应该怎么办？其实可以做的事情非常多，例如</p>
+<ul>
+<li>根据过往的情况，选择最可靠的朋友，听ta的意见（类似于机器学习中的验证方法）</li>
+<li>让朋友们一人一票，看投票结果</li>
+<li>让朋友们投票，其中比较可靠的给的票数多（非平等投票）</li>
+<li>根据每个人的特长，在不同的情况下听从不同人群的意见</li>
+</ul>
+<p>以上做法都可以对应于机器学习中的某种算法。总的来说，将这些人意见融合起来的过程，就可以类比为模型聚合的算法过程。可以使用更加形式化的方法来描述上述做法。假设有<span class="math inline">\(T\)</span>个朋友对应于<span class="math inline">\(T\)</span>个假设函数<span class="math inline">\(g_1, \ldots, g_T\)</span>，每个朋友<span class="math inline">\(t\)</span>做出的预测为<span class="math inline">\(g_t({\bf x})\)</span>，则（假设每个人只预测涨跌，涨记为<span class="math inline">\(+1\)</span>，跌记为<span class="math inline">\(-1\)</span>）</p>
+<ul>
+<li>验证法的形式化表示为<span class="math inline">\(G({\bf x}) = g_{t_\ast}({\bf x}){\rm\  with\  }t_\ast = \mathop{\rm arg\min}_{t \in \{1,2,\ldots, T\}}E_{\rm val}(g_t^-)\)</span></li>
+<li>平等投票法的形式化表示为<span class="math inline">\(G({\bf x}) = {\rm sign}\left(\sum_{t=1}^T 1\cdot g_t({\bf x})\right)\)</span>，这里每个<span class="math inline">\(g_t({\bf x})\)</span>前面乘的1就是每个人的权重</li>
+<li>非平等投票法的形式化表示为<span class="math inline">\(G({\bf x}) = {\rm sign}\left(\sum_{t=1}^T \alpha_t\cdot g_t({\bf x})\right), \alpha_t \ge 0\)</span>。注意这种方式包含了前面提到的验证法和平等投票法。当<span class="math inline">\(\alpha_t = 1\)</span>时，该方法退化为平等投票法；当<span class="math inline">\(\alpha_t = [\![E_{\rm val}(g_t^-)\  {\rm smallest}]\!]\)</span>时，该方法退化为验证法</li>
+<li>根据特长选择法的形式化表示为<span class="math inline">\(G({\bf x}) = {\rm sign}\left(\sum_{t=1}^T q_t({\bf x})\cdot g_t({\bf x})\right), q_t({\bf x}) \ge 0\)</span>。这里<span class="math inline">\(q_t({\bf x})\)</span>实际上是根据输入对<span class="math inline">\(t\)</span>做判断给ta几票的函数。当<span class="math inline">\(q_t({\bf x}) = \alpha_t\)</span>时，该方法退化为非平等投票法</li>
+</ul>
+<p>可见，聚合模型是一个很大的模型族</p>
+<p>在正式介绍聚合模型法之前，有必要先从验证法入手，分析一下验证法与（其它）聚合模型法之间的不同。回忆之前讲过的验证法的过程，不难发现验证法最后返回的<span class="math inline">\(g_t^-\)</span>是<strong>一个</strong>很强的模型，因为使用验证的目的就是让被选出的模型有足够小的<span class="math inline">\(E_{\rm out}\)</span>，对该模型的评估也是要求其有足够小的<span class="math inline">\(E_{\rm val}\)</span>。再次强调，验证法最后只返回一个模型。而聚合模型的出发点是，如果我们手里有<strong>多个</strong>假设模型，是否可以做得更好（尽管这些模型可能每个单拿出来效果都不是太好）？</p>
+<p>为什么模型聚合以后的效果会比较好？可以看下面两个例子</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML23_agg_model.png" alt="模型聚合的例子"><figcaption>模型聚合的例子</figcaption>
+</figure>
+<p>上图左描述了这样一个问题：对于图示中的数据集，只允许用水平和竖直的线做分类器，将数据集完全分开（但是可以对分类器产生的结果进行组合）。可以看到，图中选择的两条竖直线和一条水平线各自都没有将数据集完全分开的能力，但是它们组合（投票）的结果却可以完成目标。这表明若干弱分类器聚合的结果可能会突破个体的能力限制，完成某种类似于“特征变换”的功能</p>
+<p>上图右描述了另一个问题：对于图示中的数据集，PLA算法可能会产生无限多条线将样本完全分开（因为PLA算法有随机性）。这些线有的可能会偏向红方，有的可能会偏向蓝方，但是它们组合（投票）的结果最后可能得到的是图中的黑色实线，这条实线比较中庸平均，离两边都不近——而这条线很有点像使用SVM算法得到的分类器。这说明从另一方面，模型经过聚合以后可能可以达到正则化的目的</p>
+<p>在之前的课程里，以开车为例，特征变换使模型变得强大，有点像踩油门；而正则化使模型不要过分复杂，有点像踩刹车。从上面的例子中，可以看到这两个效果都可以通过模型聚合达到，因此可以初步判断说，恰当的聚合可以使模型的效果更好</p>
+<h2 id="均匀混合">均匀混合</h2>
+<p>均匀混合法，对应于之前提到的平等投票法。其原理是对于若干个已经知道了形式的假设函数<span class="math inline">\(g_t\)</span>（这里首先考虑二元分类问题，因此假设每个函数返回都是+1或者-1），给它们分配相等的权重，对分类的结果进行统计，即 <span class="math display">\[
+G({\bf x}) = {\rm sign}\left(\sum_{t=1}^T 1\cdot g_t({\bf x})\right)
+\]</span> 如果所有<span class="math inline">\(g_t\)</span>返回的结果都一样，那么跟使用其中任何一个<span class="math inline">\(g_t\)</span>也没什么差别。但是如果每个<span class="math inline">\(g_t\)</span>返回的结果很不一样，那么大多数模型的结果可以对小部分模型的异端结果做出纠正（少数服从多数）——当然，如果要解决的是多元分类问题，可以采用类似的思想。不过此时具体<span class="math inline">\(G({\bf x})\)</span>的形式稍有不同，为 <span class="math display">\[
+G({\bf x}) = \mathop{\rm arg\max}_{1\le k \le K}\sum_{t=1}^T [\![g_t({\bf x}) = k]\!]
+\]</span> 对于回归问题，均匀混合法应如何做？直观（且的确是可行）的方法就是把所有分类器预测的结果做平均，即 <span class="math display">\[
+G({\bf x}) = \frac{1}{T}\sum_{t=1}^Tg_t({\bf x})
+\]</span> 假设<span class="math inline">\(g_t\)</span>返回的结果很不一样，那么很可能出现的结果是一部分<span class="math inline">\(g_t({\bf x}) &gt; f({\bf x})\)</span>，另一部分<span class="math inline">\(g_t({\bf x}) &lt; f({\bf x})\)</span>。求均值的结果是将这些盈余和不足都抵消掉，最后的结果会比每个独立<span class="math inline">\(g_t\)</span>预测的结果都更靠近<span class="math inline">\(f\)</span></p>
+<p>综上所述，如果各个<span class="math inline">\(g_t\)</span>的结果都很不一样，即使最后聚合模型的时候采用的是非常简单的均匀混合法，得到的结果也比任意一个单个假设返回的结果要好一些</p>
+<p>对于回归问题，有一个更理论的证明，可以表明<span class="math inline">\(G({\bf x})\)</span>的结果肯定比单一模型的结果更好。从最简单的情况入手，先考虑对一个数据点<span class="math inline">\(\bf x\)</span>的情况。为了记法上的方便，可以把<span class="math inline">\(\bf x\)</span>都省略掉，即记为<span class="math inline">\(G = \frac{1}{T}\sum_{t=1}^Tg_t = {\rm avg}(g_t)\)</span>。因此 <span class="math display">\[
+\begin{align*}
+{\rm avg}\left((g_t({\bf x}) - f({\bf x}))^2\right) &amp;= {\rm avg}(g_t^2 - 2g_tf + f^2) \\
+&amp;= {\rm avg}(g_t^2) - 2Gf + f^2 \\
+&amp;= {\rm avg}(g_t^2) - G^2 + (G-f)^2 \\
+&amp;= {\rm avg}(g_t^2) - 2G^2 + G^2 + (G-f)^2 \\
+&amp;= {\rm avg}(g_t^2 - 2g_tG +G^2) + (G-f)^2 \\
+&amp;= {\rm avg}((g_t-G)^2) + (G-f)^2
+\end{align*}
+\]</span> 上面讨论的是对一个数据点的情况。将其扩展到整个数据集上，有如下关系式 <span class="math display">\[
+\begin{align*}
+{\rm avg} (E_{\rm out}(g_t)) &amp;= {\rm avg}\left(\mathcal{E}(g_t-G)^2\right) &amp;+ E_{\rm out}(G) \\
+&amp;\ge &amp;+E_{\rm out}(G)
+\end{align*}
+\]</span> <span class="math inline">\(\blacksquare\)</span></p>
+<p>那么如何运用这个模型聚合的方法呢？可以想象一个虚拟的机器学习过程：对每个<span class="math inline">\(t=1,2\ldots, T\)</span>，假设有<span class="math inline">\(N\)</span>条来自于某个分布<span class="math inline">\(P^N\)</span>的数据，组成数据集<span class="math inline">\(\mathcal{D}_t\)</span>（满足独立同分布性）。假设每个<span class="math inline">\(g_t\)</span>都是用不同的<span class="math inline">\(N\)</span>条数据根据算法<span class="math inline">\(\mathcal{A}(\mathcal{D}_t)\)</span>学习得出，那么所有这些<span class="math inline">\(g\)</span>的均值，记为<span class="math inline">\(\bar{g}\)</span>，有 <span class="math display">\[
+\bar{g} = \lim_{T\rightarrow \infty}G = \lim_{T\rightarrow \infty}\frac{1}{T}\sum_{t=1}^Tg_t = \mathcal{E_D A(D)}
+\]</span> 套用上面的结论，有 <span class="math display">\[
+{\rm avg} (E_{\rm out}(g_t)) = {\rm avg}\left(\mathcal{E}(g_t-\bar{g})^2\right) + E_{\rm out}(\bar{g})
+\]</span> 这里各项可以解释如下：</p>
+<ul>
+<li><span class="math inline">\({\rm avg} (E_{\rm out}(g_t))\)</span>：算法<span class="math inline">\(\mathcal{A}\)</span>效果的期望</li>
+<li><span class="math inline">\(E_{\rm out}(\bar{g})\)</span>：是各<span class="math inline">\(g_t\)</span>“共识”的效果，称作<strong>偏差（bias）</strong></li>
+<li><span class="math inline">\({\rm avg}\left(\mathcal{E}(g_t-\bar{g})^2\right)\)</span>：各个<span class="math inline">\(g_t\)</span>与它们“共识”之间偏离量的期望，称作<strong>方差（variance）</strong>。方差衡量了<span class="math inline">\(g_t\)</span>内部的“混乱程度”</li>
+</ul>
+<p>而均匀混合的过程实际是减少方差的过程，因此模型的表现更加稳定</p>
+<h2 id="线性混合与任意混合法">线性混合与任意混合法</h2>
+<p>线性混合法比均匀混合法更复杂一些，每个<span class="math inline">\(g_t\)</span>的权重不再相等，而是各自有一个<span class="math inline">\(\alpha_t\)</span>作为权重与之对应，形式为 <span class="math display">\[
+G({\bf x}) = {\rm sign}\left(\sum_{t=1}^T \alpha_t\cdot g_t({\bf x})\right), \alpha_t \ge 0
+\]</span> 可以看到，其实就是对<span class="math inline">\(g_t({\bf x})\)</span>做了一个线性组合，这也是线性混合法这个名称的来历。这里最核心的问题就是怎样的<span class="math inline">\(\alpha_t\)</span>最好。一个简单且直接的想法就是，最好的<span class="math inline">\(\alpha_t\)</span>肯定使<span class="math inline">\(E_{\rm in}\)</span>最小，即满足<span class="math inline">\(\min_{\alpha_t \ge 0}E_{\rm in}(\boldsymbol{\alpha})\)</span>。对应的优化问题为（以回归问题举例） <span class="math display">\[
+\min_{\alpha_t \ge 0}\frac{1}{N}\sum_{n=1}^N\left(y_n - \sum_{t=1}^T \alpha_tg_t({\bf x}_n)\right)^2
+\]</span> 这个优化问题的形式很像线性回归+多项式变换的问题，求解则像概率SVM那样，使用两阶段学习的方法求解：第一步先学习出<span class="math inline">\(g_t\)</span>，第二步再做线性回归学习出<span class="math inline">\(\alpha_t\)</span>。因此线性混合可以理解为下面的过程：总体是一个线性模型，每个<span class="math inline">\(g_t\)</span>看作是多项式变换，然后再加上条件说<span class="math inline">\(\alpha_t \ge 0\)</span>。但是有了限制条件以后怎么求解？对那些小于0的<span class="math inline">\(g_t\)</span>，只需要反过来用就行，即<span class="math inline">\(\alpha_t g_t({\bf x}) = |\alpha_t|(-g_t({\bf x}))\)</span>（尤其是在二元分类中，99%的错误率实际就是99%的正确率）。因此在真正使用时，通常不考虑限制条件</p>
+<p>在现实世界中，这些<span class="math inline">\(g_t\)</span>通常来自于不同的假设集合，即<span class="math inline">\(g_1 \in \mathcal{H}_1, g_2 \in \mathcal{H}_2, \ldots, g_T \in \mathcal{H}_T\)</span>。一个直观的做法是我们使用不同的假设集合，在每个集合上都找到<span class="math inline">\(E_{\rm in}\)</span>最小的<span class="math inline">\(g_t\)</span>，将它们混合起来。但是回忆之前的课程曾经提过，在一堆最好的假设函数里再选择一个更好的假设函数（称为best of best），模型的复杂度其实是<span class="math inline">\(d_{\rm VC}\left(\bigcup_{t=1}^T\mathcal{H}_t\right)\)</span>，需要对最后的模型做小心的验证。而线性混合法中的一个特例是验证法，这就表示用<span class="math inline">\(E_{\rm in}\)</span>来做线性混合的标准，复杂度要<span class="math inline">\(\ge d_{\rm VC}\left(\bigcup_{t=1}^T\mathcal{H}_t\right)\)</span>（因为best of best只是特例而已）。因此在实践中不建议用<span class="math inline">\(E_{\rm in}\)</span>来选择，而是选择让<span class="math inline">\(E_{\rm val}\)</span>最小的<span class="math inline">\(\boldsymbol{\alpha}\)</span>，而且各个<span class="math inline">\(g_t\)</span>要用从训练集得到的<span class="math inline">\(g_t^-\)</span></p>
+<p>所以，这里推荐的做法为</p>
+<ul>
+<li>使用训练数据<span class="math inline">\(\mathcal{D}_{\rm train}\)</span>得到<span class="math inline">\(g_1^-, g_2^- ,\ldots, g_T^-\)</span></li>
+<li>对验证集<span class="math inline">\(\mathcal{D}_{\rm val}\)</span>中的每条数据做变换得到<span class="math inline">\(({\bf z}_n = \boldsymbol{\Phi}^-({\bf x}_n), y_n)\)</span>，其中<span class="math inline">\(\boldsymbol{\Phi}^-({\bf x}) = (g_1^-({\bf x}), \ldots, g_T^-({\bf x}))\)</span></li>
+</ul>
+<p>在经过上述训练和转换后，线性混合法对<span class="math inline">\(\{({\bf z}_n, y_n)\}\)</span>做线性模型得到最优的<span class="math inline">\(\boldsymbol{\alpha}\)</span>，然后返回的<span class="math inline">\(G_{\rm LINB}({\bf x})\)</span>是<span class="math inline">\(\boldsymbol{\alpha}\)</span>与<span class="math inline">\(\boldsymbol{\Phi}({\bf x})\)</span>内积的线性模型，这里<span class="math inline">\(\boldsymbol{\Phi}({\bf x}) = (g_1({\bf x}), \ldots, g_T({\bf x}))\)</span></p>
+<p>当然，这里可以不必要拘泥于线性模型，甚至可以使用非线性模型。此时整个过程称为任意混合法，或者称为<strong>堆叠法（stacking）</strong>。即首先计算<span class="math inline">\(\tilde{g} = {\rm Any}(\{({\bf z}_n, y_n)\})\)</span>，最后返回<span class="math inline">\(G_{\rm ANYS}({\bf x}) = \tilde{g}(\boldsymbol{\Phi}({\bf x}))\)</span>。堆叠法能力更强，实际上实现了前面提到的条件混合法（根据特长混合法），但是也更容易过拟合</p>
+<p>经典案例：KDD Cup 2011冠军队的解决方案</p>
+<h2 id="bagging">Bagging</h2>
+<p>前面讲的混合模型的方法基本都是在得到<span class="math inline">\(g_t\)</span>以后的进一步处理。那么有没有可能一边学<span class="math inline">\(g_t\)</span>一边将它们聚合起来？首先，由前面均匀混合模型一节的讲解，混合模型的关键是所有<span class="math inline">\(g_t\)</span>必须非常不一样。这种多样性从何而来？可以有这么几个方面：</p>
+<ul>
+<li><span class="math inline">\(g_t\)</span>来自于不同的模型集合，即<span class="math inline">\(g_1 \in \mathcal{H}_1, g_2 \in \mathcal{H}_2, \ldots, g_T \in \mathcal{H}_T\)</span></li>
+<li><span class="math inline">\(g_t\)</span>来自于同一个模型集合的不同超参数，例如GD时设置学习率<span class="math inline">\(\eta = 0.001, 0.01, \ldots, 10\)</span></li>
+<li>算法本身有随机性，例如使用不同的随机种子来得到不同的PLA</li>
+<li>数据本身具有随机性，例如交叉验证时得到不同的<span class="math inline">\(g_v^-\)</span></li>
+</ul>
+<p>那么有没有可能进一步，我们使用同一份数据，对这份数据施加一些随机性，又不使用<span class="math inline">\(g^-\)</span>，而是制造很多不同的<span class="math inline">\(g\)</span>？回顾前面讲到的偏差-方差之间的关系，可知大家的“共识”比直接使用<span class="math inline">\(\mathcal{A(D)}\)</span>要稳定，但是代价是每次都要新鲜的数据集<span class="math inline">\(\mathcal{D}_t\)</span>。此外，<span class="math inline">\(\bar{g}\)</span>是从无限多个<span class="math inline">\(g\)</span>产生，这个无限也不可能达到。因此，需要做两个妥协：使用有限多但是足够大的<span class="math inline">\(T\)</span>，以及只使用一份<span class="math inline">\(\mathcal{D}\)</span>来模拟产生<span class="math inline">\(T\)</span>份不同的数据集。对于后者，要用到统计学上一个重要的工具——bootstrapping（直译为“拔靴法”，或者意译为“自助法”），其核心做法是通过对原始数据集<span class="math inline">\(\mathcal{D}\)</span>进行有放回抽样，每取<span class="math inline">\(N&#39;\)</span>条数据形成一个<span class="math inline">\(\mathcal{D}_t\)</span>（<span class="math inline">\(N&#39;\)</span>不一定非要等于<span class="math inline">\(N\)</span>）。由于有放回的动作，因此每个<span class="math inline">\(\mathcal{D}_t\)</span>中都会有某几条数据重复了若干次，同时又有若干条数据没有出现</p>
+<p>这样，就可以得到一个bootstrapping模型聚合的过程：对<span class="math inline">\(t=1,2, \ldots, T\)</span>，通过bootstrapping得到一个大小为<span class="math inline">\(N&#39;\)</span>的数据集<span class="math inline">\(\tilde{\mathcal{D}}_t\)</span>，在这个数据集上运行算法<span class="math inline">\(\mathcal{A}\)</span>得到<span class="math inline">\(g_t\)</span>。最后，对得到的<span class="math inline">\(T\)</span>个<span class="math inline">\(g_t\)</span>，通过均匀混合的方法得到<span class="math inline">\(G\)</span>。这种<strong>元算法</strong>（建立在基算法<span class="math inline">\(\mathcal{A}\)</span>之上的算法）称为Bootstrap AGgregration，简写为<strong>BAGging</strong>（中文译为装袋法或者引导聚集算法）</p>
+<p><strong>如果基算法对随机性比较敏感，那么bagging的结果会比较好</strong></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/10/05/NTUML-23-Blending-Bagging/" title="NTUML 23. 模型混合与装袋（bagging）">txshi-mt.com/2017/10/05/NTUML-23-Blending-Bagging/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/NTUML/" rel="tag"># NTUML</a>
+          
+            <a href="/tags/bagging/" rel="tag"># bagging</a>
+          
+            <a href="/tags/stacking/" rel="tag"># stacking</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/10/03/NTUML-22-SVR/" rel="next" title="NTUML 22. 支持向量回归（SVR）">
+                <i class="fa fa-chevron-left"></i> NTUML 22. 支持向量回归（SVR）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/10/05/NTUML-24-Adaptive-Boosting/" rel="prev" title="NTUML 24. 自适应提升算法（Adaptive Boosting）">
+                NTUML 24. 自适应提升算法（Adaptive Boosting） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#模型聚合的动机"><span class="nav-number">1.</span> <span class="nav-text">&#x6A21;&#x578B;&#x805A;&#x5408;&#x7684;&#x52A8;&#x673A;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#均匀混合"><span class="nav-number">2.</span> <span class="nav-text">&#x5747;&#x5300;&#x6DF7;&#x5408;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#线性混合与任意混合法"><span class="nav-number">3.</span> <span class="nav-text">&#x7EBF;&#x6027;&#x6DF7;&#x5408;&#x4E0E;&#x4EFB;&#x610F;&#x6DF7;&#x5408;&#x6CD5;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#bagging"><span class="nav-number">4.</span> <span class="nav-text">Bagging</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

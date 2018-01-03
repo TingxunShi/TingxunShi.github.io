@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="NTUML,决策树," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="决策树假设 模型聚合总体来讲有两种面向。一种是模型混合法，即在已经知道有哪些基分类器\(g_t\)以后做聚合，返回聚合得到的模型\(G\)；另一种是模型学习法，即事前不知道有哪些基分类器，一边求\(g_t\)一边做聚合。聚合这些模型时，总体来讲又有三种方式：将每个\(g_t\)按照等权重聚合、按照重要性分配不同权重聚合，以及按照条件做聚合。决策树就是一种传统的实现条件聚合的学习模型，模仿了人类做决">
+<meta name="keywords" content="NTUML,决策树">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NTUML 25. 决策树">
+<meta property="og:url" content="txshi-mt.com/2017/10/07/NTUML-25-Decision-Tree/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="决策树假设 模型聚合总体来讲有两种面向。一种是模型混合法，即在已经知道有哪些基分类器\(g_t\)以后做聚合，返回聚合得到的模型\(G\)；另一种是模型学习法，即事前不知道有哪些基分类器，一边求\(g_t\)一边做聚合。聚合这些模型时，总体来讲又有三种方式：将每个\(g_t\)按照等权重聚合、按照重要性分配不同权重聚合，以及按照条件做聚合。决策树就是一种传统的实现条件聚合的学习模型，模仿了人类做决">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML25_decision_tree_example.png">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.093Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NTUML 25. 决策树">
+<meta name="twitter:description" content="决策树假设 模型聚合总体来讲有两种面向。一种是模型混合法，即在已经知道有哪些基分类器\(g_t\)以后做聚合，返回聚合得到的模型\(G\)；另一种是模型学习法，即事前不知道有哪些基分类器，一边求\(g_t\)一边做聚合。聚合这些模型时，总体来讲又有三种方式：将每个\(g_t\)按照等权重聚合、按照重要性分配不同权重聚合，以及按照条件做聚合。决策树就是一种传统的实现条件聚合的学习模型，模仿了人类做决">
+<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML25_decision_tree_example.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/10/07/NTUML-25-Decision-Tree/"/>
+
+
+
+
+
+  <title>NTUML 25. 决策树 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/10/07/NTUML-25-Decision-Tree/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NTUML 25. 决策树</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-07T10:02:21+08:00">
+                Oct 7 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/统计机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">统计机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="决策树假设">决策树假设</h2>
+<p>模型聚合总体来讲有两种面向。一种是模型混合法，即在已经知道有哪些基分类器<span class="math inline">\(g_t\)</span>以后做聚合，返回聚合得到的模型<span class="math inline">\(G\)</span>；另一种是模型学习法，即事前不知道有哪些基分类器，一边求<span class="math inline">\(g_t\)</span>一边做聚合。聚合这些模型时，总体来讲又有三种方式：将每个<span class="math inline">\(g_t\)</span>按照等权重聚合、按照重要性分配不同权重聚合，以及按照条件做聚合。决策树就是一种传统的实现条件聚合的学习模型，模仿了人类做决策的过程</p>
+<p>之前讲的所有方法可以按照如上的划分方式做出下表</p>
+<table>
+<thead>
+<tr class="header">
+<th>聚合形式</th>
+<th>混合</th>
+<th>学习</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>均匀</strong></td>
+<td>投票法/求均值法</td>
+<td>Bagging</td>
+</tr>
+<tr class="even">
+<td><strong>非均匀</strong></td>
+<td>线性组合</td>
+<td>AdaBoost</td>
+</tr>
+<tr class="odd">
+<td><strong>条件</strong></td>
+<td>堆叠法</td>
+<td>决策树</td>
+</tr>
+</tbody>
+</table>
+<p>下图给出了一个使用决策树决定是否学习MOOC课程的例子</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML25_decision_tree_example.png" alt="使用决策树决定是否学习MOOC课程"><figcaption>使用决策树决定是否学习MOOC课程</figcaption>
+</figure>
+<p>从图中可知，从决策树的树根出发，其到任意一个叶子节点的路径都是一个完整的决策过程</p>
+<p>接下来，考虑如何表示决策树的假设模型。如前所述，决策树是一个条件模型，因此可以套用第23讲的内容，将其最基本的形式写出，为 <span class="math display">\[
+G({\bf x}) = \sum_{t=1}^T q_t({\bf x})\cdot g_t({\bf x})
+\]</span> 这里的基假设<span class="math inline">\(g_t\)</span>其实就是路径<span class="math inline">\(t\)</span>中最后一个节点（叶子节点）的内容，通常是一个常数。条件<span class="math inline">\(q_t({\bf x})\)</span>是上图中橘色的箭头，可以写为<span class="math inline">\([\![{\rm is\  }{\bf x}{\rm \  on\  path\  }t]\!]\)</span>，即判断输入是否在某条路径<span class="math inline">\(t\)</span>上。通常决策的过程（即路径<span class="math inline">\(t\)</span>上）会有很多简单的决定（在上图中以菱形的内部节点表示）。可以看出，做决定的瞬间并不复杂（即内部节点和叶子节点的操作不复杂），决策树的复杂性是埋藏在条件的抉择中</p>
+<p>前面对决策树做出的解释是站在了“决策路径”的角度。从这个角度观察，决策树的假设函数可以写为 <span class="math display">\[
+G({\bf x}) = \sum_{t=1}^T [\![{\bf x}{\rm\  on\  path\  }t]\!] \cdot {\rm leaf}_t({\bf x})
+\]</span> 由于树结构天然的递归性，也可以站在递归的角度对描述决策树。此时，决策树由根节点、分枝条件和子决策树构成。此时决策树的假设函数为 <span class="math display">\[
+G({\bf x}) = \sum_{c=1}^C [\![b({\bf x})= c]\!] \cdot G_c({\bf x})
+\]</span> 这里，<span class="math inline">\(C\)</span>是由该根节点分出的子树个数，也是该节点的分枝条件数。<span class="math inline">\(G({\bf x})\)</span>是整棵树对应的假设函数，<span class="math inline">\(b({\bf x})\)</span>是分枝条件，<span class="math inline">\(G_c({\bf x})\)</span>是第<span class="math inline">\(c\)</span>个分枝对应的子树</p>
+<p>决策树直观描述了一个做决策的过程，而且跟人的思维方式类似。由于模型的这种可解释性，它被广泛应用在商业和医疗领域的数据分析中。决策树本身算法的实现也不是很难。效率方面，决策树在训练和测试时都非常有效率，因此总体来看决策树是一个很重要的模型。但是决策树没有太多理论解释，其中的原理基本都是来自直觉。决策树的核心算法是一些启发式算法，可能会让初学者感到迷惑，而且没有一个非常有代表性的算法</p>
+<h2 id="决策树算法">决策树算法</h2>
+<p>从上面递归角度定义的决策树的假设函数，可以写出一个基本的决策树算法。记输入数据为<span class="math inline">\(\mathcal{D} = \{({\bf x}_n, y_n)\}_{n=1}^N\)</span>，函数<span class="math inline">\({\rm DecisionTree}(\mathcal{D})\)</span>的基本思想为：如果其发现满足终止条件，则返回基假设函数<span class="math inline">\(g_t({\bf x})\)</span>，否则递归做如下四步</p>
+<ol type="1">
+<li>学习分枝条件<span class="math inline">\(b({\bf x})\)</span></li>
+<li>将数据集<span class="math inline">\(\mathcal{D}\)</span>分为<span class="math inline">\(C\)</span>个部分，<span class="math inline">\(\mathcal{D}_c = \{({\bf x}_n, y_n):b({\bf x}_n)=c\}\)</span></li>
+<li>对每个分枝条件构建子树<span class="math inline">\(G_c \leftarrow {\rm DecisionTree}(\mathcal{D}_c)\)</span></li>
+<li>返回<span class="math inline">\(G({\bf x}) = \sum_{c=1}^C [\![b({\bf x})= c]\!] \cdot G_c({\bf x})\)</span></li>
+</ol>
+<p>有上述伪代码可知，具体涉及决策树算法时，需要注意考虑的有四个关键点，包括</p>
+<ul>
+<li>每一步的分枝数</li>
+<li>分枝条件</li>
+<li>终止条件</li>
+<li>基假设函数</li>
+</ul>
+<p>这里要讲的决策树算法是C&amp;RT算法（Classification &amp; Regression Tree，从后文看，其更广为人知的名字应该写作CART算法）。在该算法中，有两点的实现非常简单</p>
+<ul>
+<li>决策树在每一步都分裂成两棵子树，即<span class="math inline">\(C=2\)</span>（决策树是一棵二叉树）</li>
+<li>基假设函数<span class="math inline">\(g_t({\bf x})\)</span>是一个使<span class="math inline">\(E_{\rm in}\)</span>最优的常数
+<ul>
+<li>对分类问题（使用0/1误差函数），返回<span class="math inline">\(\{y_n\}\)</span>的多数值</li>
+<li>对回归问题（使用平方误差函数），返回<span class="math inline">\(\{y_n\}\)</span>的平均值</li>
+</ul></li>
+</ul>
+<p>C&amp;RT在分裂内部节点时使用的是决策树桩算法：选择一个特征，在该特征上选择一个最优分割点切下去，一半判定为正例，另一半判定为负例。那么如何决定怎么切最好呢？算法使用了一种叫做“纯度”的指标来判别。由于C&amp;RT最后每个叶子节点（也就是每个<span class="math inline">\(g_t\)</span>）返回的都是一个常数，显然当这个节点包含的所有数据其<span class="math inline">\(y_n\)</span>基本相同时（也就是纯度越高时），常数假设函数的效果最好。因此分枝条件的形式为 <span class="math display">\[
+b({\bf x}) = \mathop{\arg \min}_{ {\rm decision\  stumps\  }h({\bf x})} \sum_{c=1}^2 |\mathcal{D}_c{\rm\  with\  }h|\cdot {\rm impurity}(\mathcal{D}_c{\rm\  with\  }h)
+\]</span> 上式的意义可以解释为，对所有的决策树桩（每个决策树桩实际对应了一个特征），判断使用该决策树桩将数据集分成两块以后，各个子数据集不纯度的加权总和。不纯度最低的（也就是纯度最高的）决策树桩用来真正做分裂。这里函数<span class="math inline">\(\rm impurity\)</span>函数用来判定某个数据集的不纯度，后面会定义。不纯度的权重为该数据集的大小</p>
+<p>接下来来看算法核心的部分，即数据集的纯度如何定义。由于纯度的作用是为了返回最后最优的那个常数，因此最后返回的常数好还是不好从某种角度就决定了纯度高还是不高。同样的道理，不纯度的也可以由这个常数的<span class="math inline">\(E_{\rm in}\)</span>来衡量。对于回归问题，不纯度的定义类似于平方误差 <span class="math display">\[
+{\rm inpurity}(\mathcal{D}) = \frac{1}{N}\sum_{n=1}^N (y_n - \bar{y})^2
+\]</span> 其中<span class="math inline">\(\bar{y}\)</span>是<span class="math inline">\(\{y_n\}\)</span>的平均值</p>
+<p>对于分类问题，做法类似，也可以定义为 <span class="math display">\[
+{\rm inpurity}(\mathcal{D}) = \frac{1}{N}\sum_{n=1}^N[\![y_n \not= y^\ast]\!]
+\]</span> 其中<span class="math inline">\(y^\ast\)</span>是<span class="math inline">\(\{y_n\}\)</span>的多数值。不过对于分类问题，可以进一步分析：如果使用分类误差，要做的其实是在所有<span class="math inline">\([\![y_n = k]\!]\)</span>的选择里面，找到最多人资瓷的那个<span class="math inline">\(K\)</span>。也就是说，分类误差可以写为 <span class="math display">\[
+1 - \max_{1\le k \le K} \frac{\sum_{n=1}^N[\![y_n=k]\!]}{N}
+\]</span> 这个值只有在<span class="math inline">\(k=y^\ast\)</span>时才能取得最优。进一步地，如果考虑进所有<span class="math inline">\(k\)</span>，可以得到一个新的衡量不纯度的函数，为 <span class="math display">\[
+1-\sum_{k=1}^K \left(\frac{\sum_{n=1}^N [\![y_n = k]\!]}{N}\right)^2
+\]</span> 该值又称为<strong>Gini指数</strong>。实际上，在做决策树算法时，如果要解决分类问题，通常用Gini判定不纯度；如果要解决回归问题，通常用回归误差来判定不纯度</p>
+<p>最后，考察算法何时终止。事实上，算法在以下两种条件下都会停止</p>
+<ul>
+<li>所有<span class="math inline">\(y_n\)</span>都一样，则这个子数据集已经达到了至纯的境地，<span class="math inline">\(g_t({\bf x}) = y_n\)</span></li>
+<li>所有<span class="math inline">\({\bf x}_n\)</span>都一样，则不会学出决策树桩</li>
+</ul>
+<p>使用这种终止条件得到的C&amp;RT决策树，称为一棵<em>完全长成</em>的C&amp;RT决策树</p>
+<h2 id="crt启发式算法">C&amp;RT启发式算法</h2>
+<p>将上述对四个关键点的设计代回到决策树的基础算法框架中，就能得到一个可用的完整算法。但是这个算法还有一个问题：如果所有<span class="math inline">\({\bf x}_n\)</span>两两不同，这个算法的<span class="math inline">\(E_{\rm in}\)</span>必然是0。这意味着这个算法的VC维非常大，很容易有过拟合的危险。尤其是随着分枝的深入，越接近叶子节点时，决策树子树处理的数据实际上越少，这就更增大了过拟合发生的可能性，因此需要向这个算法加入一些正则项</p>
+<p>决策树算法中一个很自然的正则项是对树的叶子节点数做一个限制，即<span class="math inline">\(\Omega(G) = {\rm NumberOfLeaves}(G)\)</span>。这样，带有正则项的决策树要优化的目标函数变为 <span class="math display">\[
+\mathop{\arg \min}_{ {\rm all\  possible\  }G}E_{\rm in}(G) + \lambda \Omega(G)
+\]</span> 这样得到的树称作<em>修剪过的</em>决策树</p>
+<p>但是注意目标函数里是考虑<em>所有可能的</em><span class="math inline">\(G\)</span>，这个搜索空间在实际实现时有一些困难，因此需要做一些修改，即实际的搜索空间是</p>
+<ul>
+<li>完全生长的树<span class="math inline">\(G^{(0)}\)</span></li>
+<li><span class="math inline">\(G^{(i)} = \mathop{\arg \min}_G E_{\rm in}(G)\)</span>，其中<span class="math inline">\(G\)</span>是从<span class="math inline">\(G^{(i-1)}\)</span>中拿走一片叶子得到的树（实际上，是将其与其兄弟节点合并得到的树）</li>
+</ul>
+<p>此时实际的搜索空间大小就是<span class="math inline">\(G^{(0)}\)</span>中叶子节点的数目。正则项系数<span class="math inline">\(\lambda\)</span>仍然是由验证得到</p>
+<p>决策树还有一些其他特点。之前考虑的特征基本都是数值特征，分枝时候使用的是决策树桩 <span class="math display">\[
+b({\bf x}) = [\![x_i \le \theta]\!] + 1,\  \  \theta\in \mathbb{R}
+\]</span> 但是真正在工作中，可能会遇到大量离散的类别特征，例如性别={男, 女}。对于这种特征，线性模型通常不能直接处理，而决策树不会受到影响，只需要修改一下分枝时用到的模型即可。一般来讲，对类别特征使用的切割方式是使用<strong>决策子集</strong> <span class="math display">\[
+b({\bf x}) = [\![x_i \in S]\!] + 1,\  \  S \subset\{1,2,\ldots, K\}
+\]</span> （补充一点课堂里没有提到的。对于类别特征，在使用线性模型做处理时，通常的方法是对特征进行<strong>独热编码</strong>，即：第一步将该项类别特征用数字代替，每一位数字对应一个类别特征的具体值，例如上面性别这一项，将男对应为1，将女对应为0。第二步，假设该项类别特征有<span class="math inline">\(K\)</span>种不一样的取值，那么就设置一个长度为<span class="math inline">\(K\)</span>的向量<span class="math inline">\(\bf k\)</span>。对每个具体的值，假设其在第一步被编码为<span class="math inline">\(i, i \in \{0, 1, \ldots, K-1\}\)</span>，将这个<span class="math inline">\(\bf k\)</span>的其它项设为0，但是把第<span class="math inline">\(i\)</span>项设为1。这样，如果样本中”性别“这一列的值是”男“，送进模型之前性别这部分的向量应该是[0, 1]；如果是”女“，则应该是[1, 0]）</p>
+<p>C&amp;RT算法在具体实现时还会对缺失值进行处理。假设有一个分枝条件是<span class="math inline">\(b({\bf x}) = [\![{\rm weight \le 50kg}]\!]\)</span>，但是某些样本没有获取到体重的具体值，应该怎么办？在训练时，C&amp;RT算法会使用一种叫做“替代分枝”（surrogate branch）的方法，即它会寻找一些类似的条件来做近似的分枝判断，例如它可能会使用高度是否小于等于155cm来代替判断体重是否小于等于50kg，而替代特征的选择也会在训练时学习到。其原理是，替代分枝<span class="math inline">\(b_1({\bf x}), b_2({\bf x})\)</span>等等的分枝效果应该跟最优的分枝效果近似</p>
+<h2 id="决策树实战">决策树实战</h2>
+<p>概括了C&amp;RT算法的好处：解释性强，能比较容易地处理多类别问题、离散特征、缺失特征，而且可以非常有效地训练出一个非线性模型。机器学习里几乎没有其它的模型可以同时具有以上优点</p>
+<p>除了C&amp;RT算法，其它决策树算法还包括C4.5和ID3算法，它们使用了一些不同的启发式算法</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/10/07/NTUML-25-Decision-Tree/" title="NTUML 25. 决策树">txshi-mt.com/2017/10/07/NTUML-25-Decision-Tree/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/NTUML/" rel="tag"># NTUML</a>
+          
+            <a href="/tags/决策树/" rel="tag"># 决策树</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/10/05/NTUML-24-Adaptive-Boosting/" rel="next" title="NTUML 24. 自适应提升算法（Adaptive Boosting）">
+                <i class="fa fa-chevron-left"></i> NTUML 24. 自适应提升算法（Adaptive Boosting）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/10/07/NTUML-26-Random-Forest/" rel="prev" title="NTUML 26. 随机森林">
+                NTUML 26. 随机森林 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#决策树假设"><span class="nav-number">1.</span> <span class="nav-text">&#x51B3;&#x7B56;&#x6811;&#x5047;&#x8BBE;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#决策树算法"><span class="nav-number">2.</span> <span class="nav-text">&#x51B3;&#x7B56;&#x6811;&#x7B97;&#x6CD5;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#crt启发式算法"><span class="nav-number">3.</span> <span class="nav-text">C&amp;RT&#x542F;&#x53D1;&#x5F0F;&#x7B97;&#x6CD5;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#决策树实战"><span class="nav-number">4.</span> <span class="nav-text">&#x51B3;&#x7B56;&#x6811;&#x5B9E;&#x6218;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

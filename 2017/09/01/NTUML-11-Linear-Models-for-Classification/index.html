@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="NTUML,Logistic回归," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="用于二元分类的线性模型 之前提到的三种线性模型都使用了\(s = {\bf w}^\mathsf{T}{\bf x}\)这个函数来计算得分  线性分类直接对这个分值取正负号，使用0/1误差来做误差函数。\(E_{\rm in}(\bf w)\)是离散的，优化是NP-hard问题 线性回归对这个分值不作处理直接输出，因此值域是\(\mathbb{R}\)，误差函数是平方误差。这个\(E_{\rm i">
+<meta name="keywords" content="NTUML,Logistic回归">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NTUML 11. 用于分类问题的线性模型">
+<meta property="og:url" content="txshi-mt.com/2017/09/01/NTUML-11-Linear-Models-for-Classification/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="用于二元分类的线性模型 之前提到的三种线性模型都使用了\(s = {\bf w}^\mathsf{T}{\bf x}\)这个函数来计算得分  线性分类直接对这个分值取正负号，使用0/1误差来做误差函数。\(E_{\rm in}(\bf w)\)是离散的，优化是NP-hard问题 线性回归对这个分值不作处理直接输出，因此值域是\(\mathbb{R}\)，误差函数是平方误差。这个\(E_{\rm i">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML11_visualizing_error_functions.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML11_visualizing_error_functions_scaled.png">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.090Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NTUML 11. 用于分类问题的线性模型">
+<meta name="twitter:description" content="用于二元分类的线性模型 之前提到的三种线性模型都使用了\(s = {\bf w}^\mathsf{T}{\bf x}\)这个函数来计算得分  线性分类直接对这个分值取正负号，使用0/1误差来做误差函数。\(E_{\rm in}(\bf w)\)是离散的，优化是NP-hard问题 线性回归对这个分值不作处理直接输出，因此值域是\(\mathbb{R}\)，误差函数是平方误差。这个\(E_{\rm i">
+<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML11_visualizing_error_functions.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/09/01/NTUML-11-Linear-Models-for-Classification/"/>
+
+
+
+
+
+  <title>NTUML 11. 用于分类问题的线性模型 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/09/01/NTUML-11-Linear-Models-for-Classification/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NTUML 11. 用于分类问题的线性模型</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-01T14:39:18+08:00">
+                Sep 1 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/统计机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">统计机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="用于二元分类的线性模型">用于二元分类的线性模型</h2>
+<p>之前提到的三种线性模型都使用了<span class="math inline">\(s = {\bf w}^\mathsf{T}{\bf x}\)</span>这个函数来计算得分</p>
+<ul>
+<li>线性分类直接对这个分值取正负号，使用0/1误差来做误差函数。<span class="math inline">\(E_{\rm in}(\bf w)\)</span>是离散的，优化是NP-hard问题</li>
+<li>线性回归对这个分值不作处理直接输出，因此值域是<span class="math inline">\(\mathbb{R}\)</span>，误差函数是平方误差。这个<span class="math inline">\(E_{\rm in}({\bf w})\)</span>优化起来比较友好，能直接得到一个闭合解</li>
+<li>Logistic回归对分值做一个logistic变换<span class="math inline">\(\theta(s)\)</span>，值域是<span class="math inline">\([0, 1]\)</span>，使用交叉熵函数做误差函数。这个<span class="math inline">\(E_{\rm in}(\bf w)\)</span>可以用梯度下降方法求解</li>
+</ul>
+<p>接下来首先探讨一个问题：线性回归或Logistic回归可以用来求解线性分类问题吗？首先要整合一下这些误差函数，将关于<span class="math inline">\(h, {\bf x}, y\)</span>的函数转化为关于<span class="math inline">\(s, y\)</span>的函数。其中<span class="math inline">\(s = {\bf w}^\mathsf{T}{\bf x}, y\in \{-1, +1\}\)</span></p>
+<p>对线性分类问题，有 <span class="math display">\[
+\begin{align*}
+&amp;&amp;h({\bf x}) &amp;= {\rm sign}(s) \\
+&amp;&amp;{\rm err}(h, {\bf x}, y) &amp;= [\![h({\bf x}) \not = y]\!] \\
+&amp;\Rightarrow &amp;{\rm err_{0/1}}(s, y) &amp;= [\![{\rm sign}(s) \not= y]\!] \\
+&amp;&amp; &amp;=[\![{\rm sign}(ys) \not= 1]\!]
+\end{align*}
+\]</span> 对线性回归问题，有 <span class="math display">\[
+\begin{align*}
+&amp;&amp;h({\bf x}) &amp;= s \\
+&amp;&amp;{\rm err}(h, {\bf x}, y) &amp;= (h({\bf x}) - y)^2 \\
+&amp;\Rightarrow&amp;{\rm err_{\rm SQR}}(s, y) &amp;= (s-y)^2 \\
+&amp;&amp;&amp;= (ys-1)^2
+\end{align*}
+\]</span> 对Logistic回归问题，有 <span class="math display">\[
+\begin{align*}
+&amp;&amp;h({\bf x}) &amp;= \theta(s) \\
+&amp;&amp;{\rm err}(h, {\bf x}, y) &amp;= -\ln h(y{\bf x}) \\
+&amp;\Rightarrow &amp;{\rm err_{CE}}(s, y) &amp;= \ln(1+\exp(-ys))
+\end{align*}
+\]</span></p>
+<p>可以看到，这三个误差函数里都包括了<span class="math inline">\(ys\)</span>这一项。那么该项的物理意义是什么？这里<span class="math inline">\(y\)</span>是正确度，<span class="math inline">\(s\)</span>是得分，因此两者相乘可以看作是“分类的正确度得分”：两者相乘得到的结果越大，说明越正确；否则说明越不正确。这个做法实际很符合逻辑：假设<span class="math inline">\({\bf w}^\mathsf{T}{\bf x}\)</span>是一个比较大的正数，那么由Logistic回归的物理意义这说明<span class="math inline">\(y=1\)</span>的概率会非常大。假设实际上<span class="math inline">\(y=-1\)</span>，那么两者相乘就是一个比较小的负数，说明是有问题的</p>
+<p>将上面得到的三个函数图像作到一个坐标系里，可以得到如下的图</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML11_visualizing_error_functions.png" alt="三种误差函数的图象"><figcaption>三种误差函数的图象</figcaption>
+</figure>
+<p>可以看到一些现象：</p>
+<ul>
+<li><p>对于0/1误差函数，如果<span class="math inline">\(ys \le 0\)</span>，说明<span class="math inline">\(y\)</span>与<span class="math inline">\(s\)</span>异号，发生了分类错误，因此<span class="math inline">\({\rm err}_{0/1}\)</span>为1。如果<span class="math inline">\(ys &gt; 0\)</span>，说明<span class="math inline">\(y\)</span>与<span class="math inline">\(s\)</span>同号，分类是正确的，<span class="math inline">\({\rm err}_{0/1}\)</span>为0</p></li>
+<li><p>对于平方误差函数，可以看到如果<span class="math inline">\(ys &lt;\!\!&lt; 1\)</span>则误差函数会得到一个很大的值，即对严重的错分现象施加了比较大的惩罚。但是，由于二次函数抛物线的性质，可以看到如果<span class="math inline">\(ys &gt;\!\!&gt; 1\)</span>，即分类非常正确时，误差函数也会加以很大的惩罚，所以误差函数的表现并不总是尽人意。不过无论如何，如果平方误差小，一定会说明0/1误差小</p></li>
+<li><p>对于交叉熵误差函数，可以看到它是关于<span class="math inline">\(ys\)</span>单调递减的。交叉熵误差越小，说明0/1误差越小，反之亦然。</p></li>
+</ul>
+<p>为了推导的方便，可以对交叉熵误差函数做一个缩放（实际上就是换了一个底）。缩放后的交叉熵误差函数修正如下： <span class="math display">\[
+{\rm err}_{\rm SCE}(s, y) = \log_2(1+\exp(-ys))
+\]</span></p>
+<p>修改后的交叉熵误差函数能保证当<span class="math inline">\(ys=0\)</span>时交叉熵误差函数和0/1误差函数相切，即图像变为下图</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML11_visualizing_error_functions_scaled.png" alt="对交叉熵误差函数换底以后，三个误差函数图像的比较"><figcaption>对交叉熵误差函数换底以后，三个误差函数图像的比较</figcaption>
+</figure>
+<p>可以看到，换底以后，交叉熵误差函数成为了0/1误差函数严格的上界。也就是说，对任意<span class="math inline">\(ys\)</span>（其中<span class="math inline">\(s = {\bf w}^\mathsf{T}{\bf x}\)</span>），有 <span class="math display">\[
+\begin{align*}
+&amp;{\rm err}_{0/1}(s, y) \le {\rm err_{SCE}}(s, y) = \frac{1}{\ln 2}{\rm err_{CE}}(s, y) \\
+\Longrightarrow &amp; \  \  E_{\rm in}^{0/1}({\bf w}) \le E_{\rm in}^{\rm SCE}({\bf w})  = \frac{1}{\ln 2}E_{\rm in}^{\rm CE}({\bf w}) \\
+&amp;\  \  E_{\rm out}^{0/1}({\bf w}) \le E_{\rm out}^{\rm SCE}({\bf w})  = \frac{1}{\ln 2}E_{\rm out}^{\rm CE}({\bf w})
+\end{align*}
+\]</span> 套用之前的VC维理论，有 <span class="math display">\[
+\begin{align*}
+E_{\rm out}^{0/1}({\bf w}) &amp;\le E_{\rm in}^{0/1}({\bf w}) + \Omega^{0/1} \\
+&amp;\le \frac{1}{\ln 2}E_{\rm in}^{\rm CE}({\bf w}) + \Omega^{0/1}
+\end{align*}
+\]</span> 或者从另一个方向，有 <span class="math display">\[
+\begin{align*}
+E_{\rm out}^{0/1}({\bf w}) &amp;\le \frac{1}{\ln 2}E_{\rm out}^{\rm CE}({\bf w}) \\
+&amp;\le \frac{1}{\ln 2}E_{\rm in}^{\rm CE}({\bf w}) + \frac{1}{\ln 2} \Omega^{CE}
+\end{align*}
+\]</span> 无论从哪个方向，都可以得出结论 <span class="math display">\[
+{\rm small\  }E_{\rm in}^{\rm CE}({\bf w}) \Rightarrow {\rm small\  }E_{\rm out}^{0/1}({\bf w})
+\]</span> 平方误差同理。因此，这证明，Logistic回归和线性回归都可以用在线性分类问题上，算法为</p>
+<blockquote>
+<ol type="1">
+<li>在<span class="math inline">\(y_n \in \{-1, +1\}\)</span>的<span class="math inline">\(\mathcal{D}\)</span>上运行Logistic回归或线性回归算法得到<span class="math inline">\({\bf w}_{\rm REG}\)</span></li>
+<li>返回<span class="math inline">\(g({\bf x}) = {\rm sign}({\bf w}_{\rm REG}^\mathsf{T}{\bf x})\)</span></li>
+</ol>
+</blockquote>
+<p>使用线性回归的好处是优化变得容易，但是对<span class="math inline">\(|ys|\)</span>比较大的情况，其得到的误差比0/1误差宽松太多。使用Logistic回归的好处是优化也比较容易，但是类似于线性回归，它对<span class="math inline">\(ys &lt;\!\!&lt; 0\)</span>的情况得到了太宽松的上界。另一方面，在数据集线性可分时，PLA非常有效而且效果很强，但是对线性不可分的情况只能使用启发式的口袋算法</p>
+<p>在实践中，通常把线性回归得到的权重用来初始化PLA/口袋算法/Logistic回归的<span class="math inline">\({\bf w}_0\)</span>。另外，大部分人会使用Logistic回归，而少用口袋算法</p>
+<h2 id="随机梯度下降">随机梯度下降</h2>
+<p>PLA、口袋算法和Logistic回归算法都使用了迭代优化的方法，权重<span class="math inline">\(\bf w\)</span>会一步步地越变越好。在PLA算法中，每一个错误点的发现都会导致权重的更改，每次迭代的时间复杂度仅为<span class="math inline">\(O(1)\)</span>。然而，Logistic回归的每次迭代会看输入数据集<span class="math inline">\(\mathcal{D}\)</span>上的每个点，将所有数据点的梯度算出来，求和以后算出总梯度，再去产生<span class="math inline">\({\bf w}_{t+1}\)</span>。因此，Logistic回归每次迭代的时间复杂度为<span class="math inline">\(O(N)\)</span></p>
+<p>有没有可能提高效率，让Logistic回归每次迭代的时间复杂度也变为<span class="math inline">\(O(1)\)</span>？回顾Logistic回归的迭代方法 <span class="math display">\[
+{\bf w}_{t+1} \leftarrow {\bf w}_t + \eta \underbrace{\frac{1}{N}\sum_{n=1}^N \theta(-y_n{\bf w}_t^\mathsf{T}{\bf x}_n)(y_n{\bf x}_n)}_{-\nabla E_{\rm in}({\bf w}_t)}
+\]</span> 要让每次迭代更新的时间复杂度为<span class="math inline">\(O(1)\)</span>，需要同时满足两个要求：首先，方向<span class="math inline">\(\bf v\)</span>不应该变化太多，还应该有<span class="math inline">\({\bf v} \approx -\nabla E_{\rm in}({\bf w}_t)\)</span>。这是因为由前面的推导，这个方向梯度的减小是最快的。其次，希望计算<span class="math inline">\({\bf v}\)</span>时只用到一个点<span class="math inline">\(({\bf x}_n, y_n)\)</span>，因为只有这样才能保证时间复杂度。所以，原式中的求和项一定要想办法去掉</p>
+<p>如何去掉这个求和项？注意到式子中有一个<span class="math inline">\(\frac{1}{N}\sum_{n=1}^N\)</span>。可以很自然地将其与期望<span class="math inline">\(\mathcal{E}\)</span>的概念联系起来：如果随机且均匀地选取了<span class="math inline">\(n\)</span>个点求它们梯度的期望，就应该是这样计算。假如每次只随机取一个点，将这个点的梯度看作是梯度的期望，就可以避免求和的过程。这种做法叫做<strong>随机梯度下降</strong>（SGD），将整体的梯度看作是选出的若干点（“若干”可以为1）梯度的期望，即 <span class="math display">\[
+\nabla_{\bf w} E_{\rm in}({\bf w}) = \mathcal{E}_{ {\rm random\  }n}\nabla_{\bf w}{\rm err}({\bf w}, {\bf x}_n, y_n)
+\]</span> SGD的Logistic回归迭代为： <span class="math display">\[
+{\bf w}_{t+1} \leftarrow {\bf w}_t + \eta \underbrace{\theta(-y_n{\bf w}_t^\mathsf{T}{\bf x}_n)(y_n{\bf x}_n)}_{-\nabla {\rm err}({\bf w}_t, {\bf x}_n, y_n)}
+\]</span> 可以将随机梯度看作是真实梯度加上了一些期望为0的噪声：虽然总体上还是沿真实梯度方向前进，但是每一步都会向随机的某个方向偏一点。SGD的做法就是把原来算法中真实的梯度换成随机的梯度。由于噪声的期望为0，因此经过足够多的迭代以后，真实梯度的平均也约等于随机梯度的平均。这样的好处是，计算量减小了很多，尤其适合于大数据环境或在线学习的状况。但是，SGD会比较不稳定（尤其是<span class="math inline">\(\eta\)</span>很大的情况下）</p>
+<p>回顾PLA的迭代操作 <span class="math display">\[
+{\bf w}_{t+1} \leftarrow {\bf w}_t + 1\cdot [\![y_n \not= {\rm sign}({\bf w}_t^\mathsf{T} {\bf x}_n)]\!](y_n{\bf x}_n)
+\]</span> 跟前面SGD Logistic回归相比，可以把SGD Logistic回归看作是“软化的”PLA：不再非黑即白地根据其对错来更新，而是根据错误程度更新：错得多，更新得多；错得少，更新得也少。反过来看，当<span class="math inline">\({\bf w}_t^\mathsf{T}{\bf x}_n\)</span>很大时，PLA可以看作是<span class="math inline">\(\eta = 1\)</span>的SGD Logistic回归</p>
+<p>真正使用SGD Logistic回归时，有两条实践经验：</p>
+<ul>
+<li>停止条件一般是设定迭代次数<span class="math inline">\(t\)</span>足够大即可</li>
+<li><span class="math inline">\(\eta\)</span>一般设置为0.1</li>
+</ul>
+<h2 id="使用logistic回归做多元分类">使用Logistic回归做多元分类</h2>
+<p>已有的这些分类算法不仅可以做“判断题”（二元分类），也可以做“选择题”（多元分类）。假设要分的类不再是<span class="math inline">\(\circ\)</span>和<span class="math inline">\(\times\)</span>两类，而是<span class="math inline">\(\square\)</span>、<span class="math inline">\(\diamond\)</span>、<span class="math inline">\(\triangle\)</span>和<span class="math inline">\(\star\)</span>四类，应该怎么做？可以使用线性分类器逐个看样本是否属于这四类，例如，判断样本是否为<span class="math inline">\(\square\)</span>时，可以划归到所有<span class="math inline">\(\square\)</span>是<span class="math inline">\(\circ\)</span>，剩下三类都是<span class="math inline">\(\times\)</span>的情况，以此类推</p>
+<p>在大部分情况下，这种方法都能做出不错的选择。但是有两种情况可能需要费一些周章：其一，对某些样本，可能有两个（或以上）分类器都认为它应该属于自己的类别；另一种情况是，对某些样本，可能有两个（或以上）分类器都认为它不应该属于自己的类别</p>
+<p>因此，可以使用Logistic回归来“软化”，不再计算每个样本是否属于某个类别，而是计算每个样本属于每个类别的概率。仍然以判断样本是否为<span class="math inline">\(\square\)</span>时的状况为例，此时还是所有<span class="math inline">\(\square\)</span>都是<span class="math inline">\(\circ\)</span>，剩下三类样本都是<span class="math inline">\(\times\)</span>，但是这时计算的是<span class="math inline">\(P({\square}|{\bf x})\)</span>，最好的假设函数为 <span class="math display">\[
+g({\bf x}) = \mathop{ {\rm arg}\max}_{k \in \mathcal{Y}} \theta\left({\bf w}_{[k]}^\mathsf{T}{\bf x}\right)
+\]</span> 因此多元分类的一种算法如下（笔记注：讲义上写的算法名称叫做OVA（One-Versus-All），但是sklearn包偏爱的称法为OVR（One-Versus-Rest））</p>
+<blockquote>
+<p>对每个<span class="math inline">\(k \in \mathcal{Y}\)</span></p>
+<p>　　将数据集转化为如下形式，然后运行Logistic回归算法以获取<span class="math inline">\({\bf w}_{[k]}\)</span> <span class="math display">\[
+\mathcal{D}_{[k]} = \{({\bf x}_n, y_n&#39;=2[\![y_n=k]\!] - 1)\}_{n=1}^N
+\]</span> 返回<span class="math inline">\(g({\bf x}) = \mathop{ {\rm arg}\max}_{k \in \mathcal{Y}} \theta\left({\bf w}_{[k]}^\mathsf{T}{\bf x}\right)\)</span></p>
+</blockquote>
+<p>这个方法的好处是很有效（只需要运行<span class="math inline">\(k\)</span>次），而且可以适用于任何类似于Logistic回归的算法（只要这个算法可以输出概率）。但是如果类别数很多，会导致<strong>不平衡类别</strong>问题的出现，即正负样本的比例会差得比较多。在这种情况下，所有Logistic回归分类器都倾向于猜<span class="math inline">\(\times\)</span>（笔记注：实际是给出一个特别小的概率）。尽管也可以在这些小概率中选择最大的概率作为样本所属类别，但是在这种情况下Logistic回归的表现一般不会太好。统计学中还有一种对Logistic回归的扩展，称为multinomial logistic regression，不过这里没有做太多介绍</p>
+<p>尽管存在着问题，OVA算法仍然是一种简单但是特别有效的，可适用于多类别分类的基础算法</p>
+<h2 id="使用二元分类做多元分类">使用二元分类做多元分类</h2>
+<p>前面说到，OVA面临的最大问题是，当类别数很多时，问题会变成不平衡样本分类问题。其原因是将每个类别视作正例时，都是所有样本参与分类过程。如果有<span class="math inline">\(K\)</span>个类，属于每个类的数据量都近似，那么每次分类时正负样本数量比都是<span class="math inline">\(1 : K-1\)</span>。为了解决这个问题，可以考虑如何在分类时仍然让正负样本数接近1比1。因此，可以使用一对一（OVO, One-Versus-One）的分类法：每次取出<span class="math inline">\(K\)</span>个类别中属于某两类的样本进行比较，其它样本都不参与分类。这样，总共有<span class="math inline">\(K \choose 2\)</span>个分类步骤，得到<span class="math inline">\(K \choose 2\)</span>个分类器。对于任何一条数据，看这<span class="math inline">\(K \choose 2\)</span>个分类器各自认为它属于哪个类别，最后哪个类别收到的票数多，哪个类别获胜。可以形象地认为，<span class="math inline">\(K\)</span>个类别就这个数据两两作赛，谁赢的次数多谁就是冠军。因此OVO分类法返回的假设函数为 <span class="math display">\[
+g({\bf x}) = {\rm tournament\  champion}\  \{ {\bf w}_{[k, \ell]}^\mathsf{T}{\bf x}\}
+\]</span> 多元分类的OVO算法总体过程如下</p>
+<blockquote>
+<p>对每个类别对<span class="math inline">\((k, \ell) \in \mathcal{Y} \times \mathcal{Y}\)</span></p>
+<p>　　在如下数据集上运行线性二元分类器算法，获得<span class="math inline">\({\bf w}_{[k, \ell]}\)</span> <span class="math display">\[
+\mathcal{D}_{[k, \ell]} = \{({\bf x}_n, y_n&#39; = 2[\![y_n = k]\!] - 1): y_n =k{\rm\  or\  }y_n=\ell\}
+\]</span> 返回<span class="math inline">\(g({\bf x}) = {\rm tournament\  champion}\  \{ {\bf w}_{[k, \ell]}^\mathsf{T}{\bf x}\}\)</span></p>
+</blockquote>
+<p>这个算法是每次分类过程效率比较高（因为只使用了少量样本）、稳定，而且也可以适用于任何二元分类算法。但是，算法需要更多空间（存储更多的<span class="math inline">\({\bf w}\)</span>），预测更慢（因为要跑<span class="math inline">\(K \choose 2\)</span>个分类过程，训练更多</p>
+<p>同样，OVO算法仍然是一种简单但是特别有效的，可适用于多类别分类的基础算法</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/09/01/NTUML-11-Linear-Models-for-Classification/" title="NTUML 11. 用于分类问题的线性模型">txshi-mt.com/2017/09/01/NTUML-11-Linear-Models-for-Classification/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/NTUML/" rel="tag"># NTUML</a>
+          
+            <a href="/tags/Logistic回归/" rel="tag"># Logistic回归</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/08/30/NTUML-10-Logistic-Regression/" rel="next" title="NTUML 10. Logistic回归">
+                <i class="fa fa-chevron-left"></i> NTUML 10. Logistic回归
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/09/04/NTUML-12-Nonlinear-Transformation/" rel="prev" title="NTUML 12. 非线性变换">
+                NTUML 12. 非线性变换 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#用于二元分类的线性模型"><span class="nav-number">1.</span> <span class="nav-text">&#x7528;&#x4E8E;&#x4E8C;&#x5143;&#x5206;&#x7C7B;&#x7684;&#x7EBF;&#x6027;&#x6A21;&#x578B;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#随机梯度下降"><span class="nav-number">2.</span> <span class="nav-text">&#x968F;&#x673A;&#x68AF;&#x5EA6;&#x4E0B;&#x964D;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用logistic回归做多元分类"><span class="nav-number">3.</span> <span class="nav-text">&#x4F7F;&#x7528;Logistic&#x56DE;&#x5F52;&#x505A;&#x591A;&#x5143;&#x5206;&#x7C7B;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用二元分类做多元分类"><span class="nav-number">4.</span> <span class="nav-text">&#x4F7F;&#x7528;&#x4E8C;&#x5143;&#x5206;&#x7C7B;&#x505A;&#x591A;&#x5143;&#x5206;&#x7C7B;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

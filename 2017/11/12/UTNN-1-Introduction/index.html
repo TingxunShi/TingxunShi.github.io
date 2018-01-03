@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="UTNN," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="为什么需要机器学习？ 对于一些问题，例如在复杂环境里，如何在新的光源条件下识别三维物体，编写程序去解决这些问题本来就是非常困难的：我们也不知道我们的大脑到底是如何运作来识别它的，即便我们知道，写出来的程序可能也十分复杂。对于另外一些问题，例如判断某笔信用卡交易有多大概率是欺诈性的，可能无法给出简单有效的规则。要解决这样的问题，需要将很多种比较弱的规则组合起来。而且，所谓“道高一尺魔高一丈”，犯罪分">
+<meta name="keywords" content="UTNN">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hinton神经网络与机器学习 1. 绪论">
+<meta property="og:url" content="txshi-mt.com/2017/11/12/UTNN-1-Introduction/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="为什么需要机器学习？ 对于一些问题，例如在复杂环境里，如何在新的光源条件下识别三维物体，编写程序去解决这些问题本来就是非常困难的：我们也不知道我们的大脑到底是如何运作来识别它的，即便我们知道，写出来的程序可能也十分复杂。对于另外一些问题，例如判断某笔信用卡交易有多大概率是欺诈性的，可能无法给出简单有效的规则。要解决这样的问题，需要将很多种比较弱的规则组合起来。而且，所谓“道高一尺魔高一丈”，犯罪分">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_01_mnist_example.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_01_cortical_neuron.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_01_handwriting_initial_weight.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_01_handwriting_final_weight.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_01_difficult_examples.png">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.097Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hinton神经网络与机器学习 1. 绪论">
+<meta name="twitter:description" content="为什么需要机器学习？ 对于一些问题，例如在复杂环境里，如何在新的光源条件下识别三维物体，编写程序去解决这些问题本来就是非常困难的：我们也不知道我们的大脑到底是如何运作来识别它的，即便我们知道，写出来的程序可能也十分复杂。对于另外一些问题，例如判断某笔信用卡交易有多大概率是欺诈性的，可能无法给出简单有效的规则。要解决这样的问题，需要将很多种比较弱的规则组合起来。而且，所谓“道高一尺魔高一丈”，犯罪分">
+<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_01_mnist_example.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/11/12/UTNN-1-Introduction/"/>
+
+
+
+
+
+  <title>Hinton神经网络与机器学习 1. 绪论 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/11/12/UTNN-1-Introduction/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Hinton神经网络与机器学习 1. 绪论</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-12T10:28:56+08:00">
+                Nov 12 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/深度学习/" itemprop="url" rel="index">
+                    <span itemprop="name">深度学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="为什么需要机器学习">为什么需要机器学习？</h2>
+<p>对于一些问题，例如在复杂环境里，如何在新的光源条件下识别三维物体，编写程序去解决这些问题本来就是非常困难的：我们也不知道我们的大脑到底是如何运作来识别它的，即便我们知道，写出来的程序可能也十分复杂。对于另外一些问题，例如判断某笔信用卡交易有多大概率是欺诈性的，可能无法给出简单有效的规则。要解决这样的问题，需要将很多种比较弱的规则组合起来。而且，所谓“道高一尺魔高一丈”，犯罪分子也会根据系统的判别手段，调整欺诈的方式，这就使得判别系统/程序也得随之变化</p>
+<p>这些问题可以使用机器学习这一技术来解决：开发人员不再需要为每个特殊的任务编写程序，而是收集很多样本，这些样本针对给定的输入，会相应标记一个正确的输出。机器学习算法会接受这些样本，产生一个程序来完成指定的任务——这个产生的程序与传统的人工手写的程序不同，可能只包含一些数字。如果收集的数据是正确的，那么对于新来的，未在输入数据里出现的例子，程序也能正确处理；如果数据产生了变化（就像信用卡欺诈的例子里那样），开发人员也只需要使用新的数据进行训练，来对程序进行变化。在现阶段，使用机器做大量计算所花的钱比雇人为某个任务写代码的花费是要少一些的</p>
+<p>典型的可以使用机器学习来解决的问题包括：</p>
+<ul>
+<li>模式识别，例如识别物体、识别脸孔或识别所说的单词</li>
+<li>异常识别，例如识别信用卡交易中的异常交易序列、在核电站识别传感器的异常读数。注意解决这样的问题有时甚至不需要明确地说明哪些值是正常的，哪些是异常的，而是完全由算法去发掘</li>
+<li>预测，例如预测将来某一天股票的价格或者外汇汇率，以及用户对某部电影的评分</li>
+</ul>
+<p>在这诸多问题中，本课将挑选一个作为一个典型样例贯穿始终。类比于遗传学中的工作，由于人们对果蝇的习性了解很多，而且果蝇繁殖速度很快，因此遗传学经常使用果蝇作为研究对象。本课所选的“果蝇”是MNIST数据库，这里面包含了很多人手写的数字。MNIST是公开的，可以被随意下载，而且使用MNIST作为训练数据可以很快训练一个中等大小的神经网络，此外，我们也了解其它很多机器学习算法在MNIST上的效果，因此MNIST是一个很好的例子</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_01_mnist_example.png" alt="MNIST数据集的一个例子"><figcaption>MNIST数据集的一个例子</figcaption>
+</figure>
+<p>上图给出了MNIST数据集的一个片段，所有的手写数字已经按照进行了归类排序。也就是说，图中的所有数字先是所有0，再是所有1，以此类推，一直到9。以图中用绿框框起来的手写的2为例，如果被告知“这就是手写数字”，那么人们大概是能看出来这些数字是2的，但是并不能用一两句话说清楚这些图像为什么就是2。图中给出的这些数字相互之间形状差异很大，即便是做一些简单的变化（例如旋转）也很难让任意两个数字重叠在一起，因此使用模板来做判定是基本不可能的——这也就是为什么这个任务是一个很好的机器学习任务的原因</p>
+<p>在MNIST之上，还有一个更大的数据集ImageNet。该数据集提供了130万张高分辨率的图片，算法的目标是将每张图片分到1000个分类中正确的那一个。2010年时，最好的系统的top 5 choices错误率为25%。2012年时，使用深度学习训练处的模型做到了20%。到了2015年，最好的算法在这项指标上已经可以达到3.8%，而多个深度神经网络的组合模型甚至可以达到3.08%（http://ischlag.github.io/2016/04/05/important-ILSVRC-achievements/）</p>
+<p>此外，语音识别也是深度学习非常适用的一个场合。通常来讲，语音识别系统可以细分为三个阶段：</p>
+<ul>
+<li>预处理阶段。在这个阶段，声波会被转化为一些声学系数组成的向量。通常情况下，每十毫秒的声波会被转化为一组向量</li>
+<li>声学建模阶段。在这个阶段，会使用相邻的若干向量进行推测，猜测这些向量对应了什么音素</li>
+<li>解码阶段。在这个阶段，将上一阶段做出的预测进行组合，拟合出的模型将输出说话人所说的内容文本</li>
+</ul>
+<p>深度学习模型在这样的任务上取得的成绩是斐然的。对于TIMIT数据集，2012年之前最好的模型错误率是24.4%，而且需要对多个模型进行组合。2012年George Dahl和Abdel-rahman Mohamed的8层神经网络将错误率降低到了20.7%。这样的成绩也引起了微软研究院邓力的关注。对于其它语音识别任务，深度学习模型也能够取得比传统GMM模型更好的效果，而且训练时间更短</p>
+<h2 id="神经网络是什么">神经网络是什么？</h2>
+<p>前面提到的各种大放异彩的深度学习模型，被称之为“深度”的原因是其本质是叠加了很多层的神经网络。神经网络模型，其初始思想就是对生物的神经系统如何工作做一个模拟，所以这一节主要来对生物的神经系统做一个概述。了解生物神经元是如何计算的，有以下几点原因</p>
+<ul>
+<li>可以了解大脑真正是如何工作的。大脑的工作原理非常复杂，而且当它被取出来时也就不工作了，因此需要使用计算机进行模拟</li>
+<li>可以了解由神经元和它们之间自适应连接所启发的并行计算方式。这种计算方式与常见的串行计算很不相同。对于大脑很擅长的工作（例如视觉），使用这种计算方式可能能达到非常好的效果；但是对大脑不擅长的工作（例如计算23x71）就不适用了</li>
+<li>大脑的工作原理可以启发研究人员发明一些新颖的机器学习算法来解决实际问题。尽管这些算法的原理可能并不同于大脑真正的工作原理，但是仍然会是有用的</li>
+</ul>
+<p>神经系统的基本组成元素是皮层神经元（cortical neuron）。神经元由一个细胞体（cell body）和一根轴突（axon）组成，其中轴突末端会分叉。细胞体还会分出若干树突（dendritic），来从其它神经元获得输入。轴突与树突通常在突触（synapse）处交互，轴突中产生的冲动（spike）会导致电离子注入到突触后神经元，当足够的电离子流入以后，轴丘（axio hillock）会在突触产生流出的冲动，来对细胞膜（cell membrane）去极化（depolarize）。下图给出了神经元的一个示意图</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_01_cortical_neuron.png" alt="神经元示意图"><figcaption>神经元示意图</figcaption>
+</figure>
+<p>冲动随着轴突流动到达突触时，会导致突触小泡（vesicle）释放高浓度的化学传递物质。传递物质会沿着突触间隙（synaptic cleft）扩散至突触后神经元的细胞膜，吸附到膜中的受体（receptor），造成细胞膜形状的改变，产生若干小孔，使得特殊的离子可以进出。突触的功效性还可以随着突触小泡的数量和受体的数量变化。总体来看，突触是比较慢的，但是与RAM相比仍然有其优势：它们体积很小，功耗很低，而且可以根据局部的信号适应环境。但是它们具体是遵从何种规则来做出变化的呢？</p>
+<p>每个神经元会从其它神经元那里获取到输入，它们之间通过冲动来进行交互。神经元的输入功效由突触的权重来控制，这些权重可以是正的，也可以是负的，而且这些权重是自适应的，因此整个网络可以适应不同的环境，完成不同的计算任务，例如辨识物体、理解语言、制定计划、控制身体等等。人身上大概有一千亿个神经元，每个神经元有一万个权重。这大量的权重可以在非常短时间内影响计算。</p>
+<p>此外，神经元是模块化的，大脑皮层的不同部分有不同的功能，对大脑皮层不同区域的损伤会造成不同的后果，而正常人完成不同的任务时血液也会流向不同的区域。但是，皮层看上去又是相似的，如果在婴儿时期大脑受到了破坏，那么其它部分可能会承担被破坏部分的功能。例如如果在婴儿时期负责视觉的皮层遭到了破坏，大脑可能会把视觉任务重新分配给听觉皮层，在这样的刺激下，听觉皮层中会产生出视觉神经元，因此实际上有可能存在一个通用的学习方法。也就是说，皮层在形成的时候其用途是广泛的，但是随着经验的积累，不同区域的皮层会变得只处理某个特别的任务。如果使用类似的原理来计算，则可以兼顾速度、并发度和灵活性。传统的计算机通过存储顺序指令来获得这样的灵活性，但是这需要一个非常快的中央处理器来执行很长的计算序列</p>
+<h2 id="一些简单的神经元模型">一些简单的神经元模型</h2>
+<p>本节介绍一些基本的神经元模型。尽管这些模型与真正的神经元工作原理相比简单得似乎不值一提，但是它们的能力已经足可以搭建起来一个神经网络模型，来解决一些有趣的机器学习问题</p>
+<p>为了了解复杂的现象，一般总是要对目标做理想化才能建模。理想化的过程可以去掉繁复的枝叶：这些盘根错节的东西对理解主要原理是不必要的。理清主干以后，就可以使用数学手段，将目标系统与其它已经了解过的系统做类比，来理解主要原理。主要原理理解了以后，就可以方便地一点一点增加模型的复杂度，来让模型与现实更加贴近。当然，有时候去理解一些已经知道是错误的模型也是值得的，只要不要忘记这是一个错误的模型就行。例如，神经网络模型中神经元传递的通常是实数值而不是冲动，但是实践证明这种做法是有效的</p>
+<p>神经网络中最简单的神经元是<strong>线性神经元</strong>。这种模型非常简单，但是计算能力有限。这种神经元的输出<span class="math inline">\(y\)</span>由输入<span class="math inline">\(x_i\)</span>的加权和再加上偏置<span class="math inline">\(b\)</span>得到，即 <span class="math display">\[
+y = b+\sum_ix_iw_i
+\]</span> 其中<span class="math inline">\(w_i\)</span>是第<span class="math inline">\(i\)</span>个输入<span class="math inline">\(x_i\)</span>的权重</p>
+<p>在此基础上，McCullock-Pitts在1943年提出了<strong>二元阈值神经元</strong>，其第一步还是要算出输入的加权和，然后，要将加权和与某个阈值作比较，如果超出该阈值，则发射一个冲动信号。原作者认为，冲动信号就像是某个谓词的真值，因此这里每个神经元就是将输入的真值做组合，输出自己所代表谓词的真值。二元阈值神经元有两种表示形式。一种是纯加权和的形式，并设定阈值为<span class="math inline">\(\theta\)</span>。即 <span class="math display">\[
+\begin{align*}
+z &amp;= \sum_ix_iw_i,\  \    y = \begin{cases}1 &amp; {\rm if\  }z \ge \theta \\ 0 &amp; {\rm otherwise}\end{cases}
+\end{align*}
+\]</span> 如果将阈值看作是负的偏置，即<span class="math inline">\(\theta = -b\)</span>，就可以写出与线性神经元类似的偏置+权重的形式，即 <span class="math display">\[
+z = b + \sum_i x_iw_i,\  \  y = \begin{cases}1 &amp; {\rm if\  }z \ge 0 \\ 0 &amp; {\rm otherwise}\end{cases}
+\]</span> Hinton将上述两种神经元进行了组合，得到了<strong>ReLU神经元</strong>（有时也称为线性阈值神经元）。这种方法仍然会计算输入的线性加权和，但是输出是所有输入的一个非线性函数。具体形式为 <span class="math display">\[
+z = b + \sum_i x_iw_i,\  \  y = \begin{cases}z &amp; {\rm if\  }z \ge 0 \\ 0 &amp; {\rm otherwise}\end{cases}
+\]</span> 本课中最常用的神经元是<strong>sigmoid神经元</strong>，<del>该神经元也是实践中最常用的神经元</del>，它给出的是输出是实数的，且图像平滑有界。这种神经元通常使用logistic函数，即 <span class="math display">\[
+z = b + \sum_i x_iw_i, \  \  y = \frac{1}{1+e^{-z}}
+\]</span> <del>Logistic函数的好处是其导数的形式很漂亮，使学习过程变得容易</del>。具体道理在第三讲会讲解</p>
+<p>最后一种神经元是随机二元神经元。它使用的表达式与sigmoid神经元相同，不过把logistic函数的输出看作是短时间内产生冲动的概率。即，它的输出还是0或者1，但是是以概率<span class="math inline">\(P = 1/(1+e^{-z})\)</span>输出1。类似的技巧可以用在ReLU上，此时神经元产生冲动的概率服从泊松分布</p>
+<p><strong>笔者注</strong></p>
+<p>（以下注来自知乎用户<a href="https://www.zhihu.com/question/48931796" target="_blank" rel="noopener">杜客的回答</a>和<a href="https://www.zhihu.com/question/52020211" target="_blank" rel="noopener">罗浩.ZJU的回答</a>）</p>
+<p>上面使用删除线删除的内容是Hinton在视频中提到，但是现在不适用的内容。近几年，在深度学习中，ReLU神经元的使用要比sigmoid的使用多很多。记Sigmoid函数为<span class="math inline">\(\sigma(x)\)</span>，即 <span class="math display">\[
+\sigma(x) = \frac{1}{1+e^{-x}}
+\]</span> 其导数（梯度）满足性质 <span class="math display">\[
+\sigma&#39;(x) = \sigma(x)(1-\sigma(x))
+\]</span> 可知当<span class="math inline">\(x=0\)</span>时，sigmoid函数的梯度达到最大值，仅为0.25。而当<span class="math inline">\(x\)</span>很大或者很小时，该函数会接近1或者-1，此时称发生了<strong>饱和</strong>（saturation）现象（事实上，有<span class="math inline">\(\sigma(5) \approx 0.9933\)</span>）。在这种情况下，函数的梯度值接近0。当使用深度网络或者RNN时，由反向传播的理论，会出现多个梯度的连乘。而多个接近于0的数连成会快速逼近0，造成<strong>梯度消失</strong>，使得几乎就有没有信号通过神经元传到权重再到数据了。而且，如果初始化的矩阵随机得不好，权重过大，那么饱和会快速出现，模型基本学不到什么东西</p>
+<p>对于ReLU而言，当<span class="math inline">\(x&gt;0\)</span>时，其激活函数<span class="math inline">\(x\)</span>的导数为1，连乘不会逼近0，避免了梯度消失。此外，对于输入值为负的神经元，其梯度为0，不会参与训练，保证了神经网络的稀疏性，可以避免过拟合。最后，ReLU梯度的计算更加简单，只需要写一个if-else语句，而sigmoid函数的导数涉及到了浮点数计算，实际上还是麻烦的</p>
+<p>在近年的实际应用中，另一种<strong>tanh神经元</strong>也受到了一定程度的重视。形式为 <span class="math display">\[
+z = b + \sum_i x_iw_i, \  \  y = \tanh(z)
+\]</span> 事实上，<span class="math inline">\(\tanh\)</span>函数可以由sigmoid函数经过一个简单变换得到。其与原始sigmoid函数相比最大的好处是其是<em>零中心</em>的（函数图像在0点中心对称），不过并没有解决在输入太大或太小时造成的梯度消失问题</p>
+<h2 id="关于学习的一个简单样例">关于学习的一个简单样例</h2>
+<p>本节将给出一个关于机器学习的例子，尽管使用的网络结构比较简单，但是它已经可以做一些手写数字识别的工作。这个网络只有两层：</p>
+<ul>
+<li>输入层神经元表示原始图像的像素密度</li>
+<li>输出层指出图像表示的是哪个数字</li>
+</ul>
+<p>图像的每一个像素点，如果被染色，就相当于有了投票的权利。每个被染色的像素点可以给几种不同的数字投票，得票最多的数字获胜——因此，这个过程就好像是输出的若干个类别互相比赛</p>
+<p>前面提到，神经网络中的参数其实就是各个输入所对应的权重，因此为了展示训练过程，一个重要的问题是如何把权重表示出来。直观的做法是写明每个像素点为每个类别贡献了多少权重，但是这样需要写成千上万行数字，因此退而求其次，可以使用颜色来代表权重的大小和正负。对于某个给定的类别（这里是数字），如果一个像素点的颜色越浅，则代表该点贡献了一个越大的正权重；如果颜色越深，则代表该点贡献了一个越小的负权重</p>
+<p>学习的方法设定为，首先，将所有像素点对所有类别贡献的权重随机初始化一个小值，然后对每个给定的手写数字图像中被染色的像素点：</p>
+<ul>
+<li>增大其对正确分类的权重</li>
+<li>减小其对网络所猜测的类别的权重</li>
+</ul>
+<p>这种做法可以达到一个微妙的平衡：如果神经网络给出了正确的预测，那么该像素点对正确类别的权重贡献先增后减，相互抵消；但是如果给出了错误的预测，那么该像素点对正确类别的权重增大，对错误类别的权重减小。下图给出了刚刚初始化时和使用若干图片训练后的权重示意</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_01_handwriting_initial_weight.png" alt="网络对每个数字的初始权重"><figcaption>网络对每个数字的初始权重</figcaption>
+</figure>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_01_handwriting_final_weight.png" alt="网络训练后的最终权重"><figcaption>网络训练后的最终权重</figcaption>
+</figure>
+<p>尽管网络已经展现出了学习能力，而且效果还不错，但是它仍然有不足。本质上，它学到的其实是每个数字的一个手写模板。当来到一个新的输入时，对这个输入，用学到的10个模板挨个匹配，哪个匹配得最吻合，就认为写的是哪个数字。但是这个模板并不能完美匹配所有手写的数字图像。例如，对于下面的例子，无法找到一个模板，使得其可以辨识出所有2，同时又不会误把3当成2。因此，还是需要更复杂的网络模型</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_01_difficult_examples.png" alt="简单网络难以区分的例子。绿框里的2和红框里的3使用上述算法无法区分"><figcaption>简单网络难以区分的例子。绿框里的2和红框里的3使用上述算法无法区分</figcaption>
+</figure>
+<h2 id="学习的三种类型">学习的三种类型</h2>
+<p>机器学习任务总体来讲可以分为三种类型</p>
+<p><strong>有监督学习</strong></p>
+<p>有监督学习的形式是，给定一个输入向量<span class="math inline">\(\bf x\)</span>，学习预测一个输出<span class="math inline">\(t\)</span>。根据输出的形式，有监督学习又可以细分为两个子类别</p>
+<ul>
+<li>回归：目标输出是一个实数，或者实数向量。例如预测之后6个月的股票价格、明天中午的气温等</li>
+<li>分类：目标输出是一个类别标签，例如手写数字识别</li>
+</ul>
+<p>进行有监督学习的典型过程通常是，首先选择一类模型<span class="math inline">\(y = f({\bf x}; {\bf W})\)</span>，它接受输入向量<span class="math inline">\(\bf x\)</span>，使用相关参数<span class="math inline">\(\bf W\)</span>，得到最后的输出<span class="math inline">\(y\)</span>。模型这里也可以看作是一种映射，是输入到输出经由<span class="math inline">\(\bf W\)</span>作用的映射。因此，学习的核心就是调整这些参数<span class="math inline">\(\bf W\)</span>，使得模型输出<span class="math inline">\(y\)</span>与期望输出<span class="math inline">\(t\)</span>之间的差距尽可能小。对于回归问题，这个差距的衡量方法通常是<span class="math inline">\(\frac{1}{2}(y-t)^2\)</span> 。而对分类问题，存在更合理也更有效的衡量方式，之后会讲到</p>
+<p><strong>强化学习</strong></p>
+<p>强化学习的输出是一个动作，或者一串动作序列。这里也存在监督性的信号，不过只是不定时出现的一些奖励（或惩罚）。因此，强化学习的目标是选择最合适的动作来最大化将来可能获得的奖励的期望和——通常情况下，对每个奖励会设置一个跟时间相关的衰减因子，这样越后面的奖励加权后的重要性越小，使得模型不用考虑太远的将来</p>
+<p>强化学习是一件比较难的事情，因为奖励通常都不会马上得到，所以模型并不知道是否走在了正确的道路上，而且奖励只是一个标量，本身提供的信息也有限</p>
+<p>强化学习难以学到成百万的参数，通常是几十到几千个。但是其它两种学习形式不会有这样的限制</p>
+<p><strong>无监督学习</strong></p>
+<p>无监督学习的目的是要发现输入数据一个良好的内部表现形式。在将近40年的时间里，无监督学习在机器学习这个圈子里基本是处于被忽视的状态，一些广泛使用的关于“机器学习”的定义甚至实际上把这种问题排除掉了，而很多研究者认为只有聚类才是无监督学习唯一的表现形式</p>
+<p>造成这种现象的原因之一是，很难一句两句话说清楚无监督学习的目标究竟是什么。大致来看，可以列举出如下几类目标</p>
+<ul>
+<li>为输入数据创造一种内部表示形式，用于之后的有监督学习或强化学习</li>
+<li>为输入数据提供一种紧凑、低维的表示方法，例如PCA</li>
+<li>以学到的特征这一形式，为输入提供一种经济的高维表示方法</li>
+<li>找到输入中一些合理的类簇</li>
+</ul>
+<p>本次课程的前一半主要讲授有监督学习问题，后一半主要讲授无监督学习问题，而强化学习不在本次课大纲之内（笔者注：不过近几年深度强化学习也受到了越来越多的重视）</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/11/12/UTNN-1-Introduction/" title="Hinton神经网络与机器学习 1. 绪论">txshi-mt.com/2017/11/12/UTNN-1-Introduction/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/UTNN/" rel="tag"># UTNN</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/10/28/NTUML-32-Finale/" rel="next" title="NTUML 32. 结束曲">
+                <i class="fa fa-chevron-left"></i> NTUML 32. 结束曲
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/11/18/UTNN-2-the-Perceptron-Learning-Procedure/" rel="prev" title="Hinton神经网络与机器学习 2. 感知机">
+                Hinton神经网络与机器学习 2. 感知机 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么需要机器学习"><span class="nav-number">1.</span> <span class="nav-text">&#x4E3A;&#x4EC0;&#x4E48;&#x9700;&#x8981;&#x673A;&#x5668;&#x5B66;&#x4E60;&#xFF1F;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#神经网络是什么"><span class="nav-number">2.</span> <span class="nav-text">&#x795E;&#x7ECF;&#x7F51;&#x7EDC;&#x662F;&#x4EC0;&#x4E48;&#xFF1F;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一些简单的神经元模型"><span class="nav-number">3.</span> <span class="nav-text">&#x4E00;&#x4E9B;&#x7B80;&#x5355;&#x7684;&#x795E;&#x7ECF;&#x5143;&#x6A21;&#x578B;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关于学习的一个简单样例"><span class="nav-number">4.</span> <span class="nav-text">&#x5173;&#x4E8E;&#x5B66;&#x4E60;&#x7684;&#x4E00;&#x4E2A;&#x7B80;&#x5355;&#x6837;&#x4F8B;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#学习的三种类型"><span class="nav-number">5.</span> <span class="nav-text">&#x5B66;&#x4E60;&#x7684;&#x4E09;&#x79CD;&#x7C7B;&#x578B;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

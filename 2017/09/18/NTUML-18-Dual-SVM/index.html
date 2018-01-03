@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="NTUML,SVM," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="提出对偶SVM的动机 上一讲提到的线性SVM可以很容易地被延展到非线性的情况，只需要引入非线性特征变换\(\boldsymbol{\Phi}\)就可以。引入以后的问题描述为 \[ \begin{align*} \min_{ {\bf w}, b} \hspace{3ex}&amp;amp;\frac{1}{2}{\bf w^\mathsf{T}w}\\ {\rm subject\  to}\hspace{">
+<meta name="keywords" content="NTUML,SVM">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NTUML 18. 对偶支持向量机">
+<meta property="og:url" content="txshi-mt.com/2017/09/18/NTUML-18-Dual-SVM/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="提出对偶SVM的动机 上一讲提到的线性SVM可以很容易地被延展到非线性的情况，只需要引入非线性特征变换\(\boldsymbol{\Phi}\)就可以。引入以后的问题描述为 \[ \begin{align*} \min_{ {\bf w}, b} \hspace{3ex}&amp;amp;\frac{1}{2}{\bf w^\mathsf{T}w}\\ {\rm subject\  to}\hspace{">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.092Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NTUML 18. 对偶支持向量机">
+<meta name="twitter:description" content="提出对偶SVM的动机 上一讲提到的线性SVM可以很容易地被延展到非线性的情况，只需要引入非线性特征变换\(\boldsymbol{\Phi}\)就可以。引入以后的问题描述为 \[ \begin{align*} \min_{ {\bf w}, b} \hspace{3ex}&amp;amp;\frac{1}{2}{\bf w^\mathsf{T}w}\\ {\rm subject\  to}\hspace{">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/09/18/NTUML-18-Dual-SVM/"/>
+
+
+
+
+
+  <title>NTUML 18. 对偶支持向量机 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/09/18/NTUML-18-Dual-SVM/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NTUML 18. 对偶支持向量机</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-18T23:47:13+08:00">
+                Sep 18 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/统计机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">统计机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="提出对偶svm的动机">提出对偶SVM的动机</h2>
+<p>上一讲提到的线性SVM可以很容易地被延展到非线性的情况，只需要引入非线性特征变换<span class="math inline">\(\boldsymbol{\Phi}\)</span>就可以。引入以后的问题描述为 <span class="math display">\[
+\begin{align*}
+\min_{ {\bf w}, b} \hspace{3ex}&amp;\frac{1}{2}{\bf w^\mathsf{T}w}\\
+{\rm subject\  to}\hspace{3ex} &amp;y_n({\bf w^\mathsf{T}}\underbrace{ {\bf z}_n}_{\boldsymbol{\Phi}({\bf x}_n)} + b) \ge 1{\rm\  for\  }n = 1,2,\ldots, N
+\end{align*}
+\]</span> 非线性硬间隔SVM的算法就可以被修改为</p>
+<blockquote>
+<ol type="1">
+<li>设置<span class="math inline">\({\rm Q} = \left[\begin{matrix} 0 &amp; {\bf 0}_\tilde{d}^\mathsf{T} \\ {\bf 0}_\tilde{d} &amp; {\rm I}_\tilde{d}\end{matrix}\right];{\bf p} = {\bf 0}_{\tilde{d}+1};{\bf a}_n^\mathsf{T} = y_n\left[\begin{array}{c}1 &amp; {\bf z}_n^\mathsf{T}\end{array}\right] ;c_n = 1\)</span></li>
+<li><span class="math inline">\(\left[\begin{array}{c} b \\ {\bf w}\end{array}\right] \leftarrow {\rm QP}({\rm Q}, {\bf p}, {\rm A}, {\bf c})\)</span></li>
+<li>将<span class="math inline">\(b \in \mathbb{R}\)</span>和<span class="math inline">\({\bf w} \in \mathbb{R}^\tilde{d}\)</span>返回为<span class="math inline">\(g_{\rm SVM}({\bf x}) = {\rm sign}({\bf w}^\mathsf{T}\boldsymbol{\Phi}({\bf x}) + b)\)</span></li>
+</ol>
+</blockquote>
+<p>非线性硬间隔SVM的思路是将SVM的优点（间隔大，有效VC维低，鲁棒性强）和特征变换的优点（能够形成非线性的边界）结合起来。但是这里有个问题：<span class="math inline">\(\bf x\)</span>经过非线性特征转换以后，映射到新空间里得到的<span class="math inline">\(\bf z\)</span>通常维度比较高。记映射后向量的维度为<span class="math inline">\(\tilde{d}\)</span>，则求解QP时需要面对<span class="math inline">\(\tilde{d}+1\)</span>个变量和<span class="math inline">\(N\)</span>个限制条件。因此，需要探索一种方法使得SVM不去依赖<span class="math inline">\(\tilde{d}\)</span></p>
+<p>这种方法的核心思路为，将原来的二次规划问题（有<span class="math inline">\(\tilde{d}+1\)</span>个变量和<span class="math inline">\(N\)</span>个限制条件）转换为一个等价的二次规划问题（有<span class="math inline">\(N\)</span>个变量和<span class="math inline">\(N+1\)</span>个限制条件）。这种新的问题被称为<strong>原始SVM的对偶问题</strong></p>
+<p>回顾第14讲介绍正则化时，要求解的原始问题也是带了一个限制条件。当时的做法是进行了一些变换，转而求解一个没有条件，称为“放大误差”的最优化问题。即这两个问题也存在一个等价关系： <span class="math display">\[
+\min_{\bf w} E_{\rm in}({\bf w})\  {\rm s.t.\  }{\bf w^\mathsf{T}w} \le C \Leftrightarrow \min_{\bf w} E_{\rm aug}({\bf w}) = E_{\rm in}({\bf w}) + \frac{\lambda}{N}{\bf w^\mathsf{T}w}
+\]</span> 这里用到的工具称为<strong>拉格朗日乘子</strong>，也就是<span class="math inline">\(\lambda\)</span>。做法是把限制条件乘上一个<span class="math inline">\(\lambda\)</span>，再加到要求解的式子里。这时，<span class="math inline">\(\lambda\)</span>可以看做是限制条件中参数<span class="math inline">\(C\)</span>的一个对应。同样的思想也可以用来求解前述的非线性硬间隔SVM，不过具体做法会稍微有点不同：此时这些拉格朗日乘子都会被看做是一个变量，去解跟这个变量有关的对偶问题。而每个限制条件都会对应一个拉格朗日乘子，因此最后会有<span class="math inline">\(N\)</span>个未知的<span class="math inline">\(\lambda\)</span></p>
+<p>所以，第一步要做的就是移除原有问题中的条件限制。这一步可以通过引入拉格朗日乘子（这里不再记为<span class="math inline">\(\lambda\)</span>，而是记为<span class="math inline">\(\alpha\)</span>）和定义拉格朗日函数做到。这里的拉格朗日函数为 <span class="math display">\[
+\mathcal{L}(b, {\bf w}, \boldsymbol{\alpha}) = \underbrace{\frac{1}{2}{\bf w^\mathsf{T}w}}_{\rm objective} + \sum_{n=1}^N \alpha_n \underbrace{(1-y_n({\bf w^\mathsf{T}z}_n+b))}_{\rm constraint}
+\]</span> 为什么拉格朗日函数定义是合理的？下面试着进行说明：原有的问题其实等价于 <span class="math display">\[
+{\rm SVM} \equiv \min_{b, {\bf w}} \left(\max_{ {\rm all\  }\alpha_n \ge 0}\mathcal{L}(b, {\bf w}, \boldsymbol{\alpha})\right)
+\]</span> 这个式子的意思是</p>
+<ul>
+<li>先考察所有<span class="math inline">\(b\)</span>和<span class="math inline">\(\bf w\)</span>。对于给定的<span class="math inline">\(b\)</span>和<span class="math inline">\(\bf w\)</span>，寻找所有可能的<span class="math inline">\(N\)</span>个非负的<span class="math inline">\(\alpha_n\)</span>，满足<span class="math inline">\(\mathcal{L}\)</span>最大的<span class="math inline">\(\boldsymbol{\alpha}\)</span>是要找的<span class="math inline">\(\boldsymbol{\alpha}\)</span></li>
+<li>这样，对所有<span class="math inline">\(b\)</span>和<span class="math inline">\(\bf w\)</span>，都能找到它们能做到的<span class="math inline">\(\mathcal{L}\)</span>的最大值。在这些最大值中，求一个最小值。满足这个最小值的<span class="math inline">\(b\)</span>和<span class="math inline">\(\bf w\)</span>就是要找的<span class="math inline">\(b\)</span>和<span class="math inline">\(\bf w\)</span></li>
+</ul>
+<p>那么问题来了，为什么这个等价关系存在？事实上，对所有的<span class="math inline">\(b\)</span>和<span class="math inline">\(\bf w\)</span>，可以分为两组：</p>
+<ul>
+<li>“坏的”，也就是违反了（某一个）限制条件的<span class="math inline">\(b\)</span>和<span class="math inline">\(\bf w\)</span>（violate）。限制条件要求<span class="math inline">\(y_n({\bf w^\mathsf{T}z}_n + b) \ge 1\)</span>，对应的就是<span class="math inline">\(1 - y_n({\bf w^\mathsf{T}x}_n + b) \le 0\)</span>。如果这组<span class="math inline">\(b\)</span>和<span class="math inline">\(\bf w\)</span>违反了限制条件，那么就会有<span class="math inline">\(1 - y_n({\bf w^\mathsf{T}x}_n + b) &gt; 0\)</span>。将其带入到拉格朗日函数里，求和项中有至少一项的限制条件就会是个正数。前面说，要找到所有可能的<span class="math inline">\(N\)</span>个非负的<span class="math inline">\(\alpha_n\)</span>，满足<span class="math inline">\(\mathcal{L}\)</span>最大。由于目标函数是非负的，限制项中又有至少一个正数，因此只要让限制条件为正数的项的系数随意大就可以无限制地最大化<span class="math inline">\(\mathcal{L}\)</span>。即在此情况下，<span class="math inline">\(\max_{ {\rm all\  }\alpha_n \ge 0}\mathcal{L}(b, {\bf w}, \boldsymbol{\alpha}) \rightarrow +\infty\)</span></li>
+<li>“好的”，也就是遵守全部限制条件的<span class="math inline">\(b\)</span>和<span class="math inline">\(\bf w\)</span>（feasible）。在这种情况下，拉格朗日函数中所有限制项都是非正数。为了让<span class="math inline">\(\mathcal{L}\)</span>尽可能大，最方便的方法就是让所有<span class="math inline">\(\alpha_n=0\)</span>，这个时候<span class="math inline">\(\max_{ {\rm all\  }\alpha_n \ge 0}\mathcal{L}(b, {\bf w}, \boldsymbol{\alpha}) = \frac{1}{2}{\bf w^\mathsf{T}w}\)</span>。再对这些<span class="math inline">\(b\)</span>和<span class="math inline">\(\bf w\)</span>找到最小的<span class="math inline">\(\mathcal{L}\)</span>，其实就是去找到最小的<span class="math inline">\(\frac{1}{2}{\bf w^\mathsf{T}w}\)</span>，跟原来要求解的最优化问题一样</li>
+</ul>
+<p>也就是说，原来的限制条件隐藏在了内层的最大化函数里。即 <span class="math display">\[
+{\rm SVM} \equiv \min_{b, {\bf w}} \left(\max_{ {\rm all\  }\alpha_n \ge 0}\mathcal{L}(b, {\bf w}, \boldsymbol{\alpha})\right) = \min_{b, {\bf w}}\left(\infty {\rm\  if\  violate;\  }\frac{1}{2}{\bf w^\mathsf{T}w}{\rm \  if\  feasible}\right)
+\]</span></p>
+<h2 id="拉格朗日对偶svm">拉格朗日对偶SVM</h2>
+<p>现在的问题是，如何继续对问题做转换。由于内层是一个最大化函数，因此对任意给定的<span class="math inline">\(\boldsymbol{\alpha}&#39; \  (\forall \alpha_n&#39; \ge 0)\)</span>，肯定有 <span class="math display">\[
+\min_{b, {\bf w}} \left(\max_{ {\rm all\  }\alpha_n \ge 0}\mathcal{L}(b, {\bf w}, \boldsymbol{\alpha})\right) \ge \min_{b, {\bf w}}\mathcal{L}(b, {\bf w}, \boldsymbol{\alpha}&#39;)
+\]</span> 因为任何函数的最大值肯定比其任意给定参数对应的值要大。进一步地，使得上面不等式右侧式子取得最大值的<span class="math inline">\(\boldsymbol{\alpha}&#39;\)</span>，肯定还有（由于<span class="math inline">\(\boldsymbol{\alpha}&#39;\)</span>的任意性，可以把<span class="math inline">\(\boldsymbol{\alpha}&#39;\)</span>再用<span class="math inline">\(\boldsymbol{\alpha}\)</span>代替） <span class="math display">\[
+\min_{b, {\bf w}} \left(\max_{ {\rm all\  }\alpha_n \ge 0}\mathcal{L}(b, {\bf w}, \boldsymbol{\alpha})\right) \ge \max_{ {\rm all\  }\alpha_n \ge 0}\left(\min_{b, {\bf w}}\mathcal{L}(b, {\bf w}, \boldsymbol{\alpha})\right)
+\]</span> （课程中讲的意思大概是说，因为右边不等式是对任意可能的值求极值，肯定不如上来直接求到的极值大。不过这实际上是max-min不等式。化用wiki里的证明方式，可以做简单的证明 <span class="math display">\[
+\begin{align*}
+{\rm Define\  }&amp;g(x) = \min_y f(x, y) \\
+\Rightarrow &amp;g(x) \le f(x,y), \forall x, y \\
+\Rightarrow &amp;\max_x g(x) \le \max_x f(x, y), \forall y \\
+\Rightarrow &amp;\max_x\min_y f(x,y) \le \max_x f(x, y), \forall y\\
+\Rightarrow &amp;\max_x\min_y f(x, y) \le \min_y\max_xf(x,y)\hspace{2ex}\blacksquare
+\end{align*}
+\]</span> 也就对应了民间谚语“瘦死的骆驼比马大”）</p>
+<p>这样做实际上交换了min和max的顺序，得到的问题称为是<strong>拉格朗日对偶问题</strong> ，而对偶问题的解是原问题的解的下限。事实上，“<span class="math inline">\(\ge\)</span>”是一个弱对偶关系，只有当两边的式子相等时，这两个问题才构成强对偶关系。对于二次规划问题，如果满足以下三个条件（统称为<strong>约束规范</strong> ），则等号成立：</p>
+<ul>
+<li>原问题是凸的</li>
+<li>原问题是可解的</li>
+<li>原问题的约束条件是线性的</li>
+</ul>
+<p>原始SVM问题正好满足上述约束规范，因此等号成立（如果经过多项式变换<span class="math inline">\(\boldsymbol{\Phi}\)</span>数据集在新的空间线性可分，那么原问题就是可解的）。在强对偶关系下，解左边的问题和解右边的问题一样，或者换句话说，使右式最优的<span class="math inline">\((b, {\bf w}, {\boldsymbol{\alpha}})\)</span>也可以使左式最优，反之亦然</p>
+<p>这样，就可以写出对偶问题的完整形式 <span class="math display">\[
+\max_{ {\rm all\  }\alpha_n \ge 0} \left(\min_{b, {\bf w}} \frac{1}{2}{\bf w^\mathsf{T}w} + \sum_{n=1}^N \alpha_n(1-y_n({\bf w^\mathsf{T}z}_n + b))\right)
+\]</span> 现在，最小化的这个函数（也就是拉格朗日函数）没有任何限制条件，可以看看能不能化简。由于其没有限制条件，因此最优的<span class="math inline">\(b\)</span>肯定使函数对其的偏导数为0，即 <span class="math display">\[
+\frac{\partial \mathcal{L}(b, {\bf w}, \boldsymbol{\alpha})}{\partial b} = 0 \Rightarrow -\sum_{n=1}^N\alpha_ny_n = 0
+\]</span> 由于最优解必定导致如上的结论，因此把这个结论作为条件加上，并不会改变最优解。而且由于拉格朗日函数展开以后关于<span class="math inline">\(b\)</span>的项是<span class="math inline">\(-\sum_{n=1}^N \alpha_ny_n \cdot b = -b\sum_{n=1}^N \alpha_ny_n\)</span>。由于<span class="math inline">\(\sum_{n=1}^N \alpha_n y_n = 0\)</span>，因此加上这个条件以后，可以直接把关于<span class="math inline">\(b\)</span>的项去掉，即对偶问题可以化简为 <span class="math display">\[
+\max_{ {\rm all\  }\alpha_n \ge 0, \sum y_n\alpha_n=0} \left(\min_{ {\bf w}} \frac{1}{2}{\bf w^\mathsf{T}w} + \sum_{n=1}^N \alpha_n(1-y_n({\bf w^\mathsf{T}z}_n))\right)
+\]</span> 同样的道理，现在对<span class="math inline">\(\bf w\)</span>求偏导数，有 <span class="math display">\[
+\frac{\partial \mathcal{L}(b, {\bf w}, \boldsymbol{\alpha})}{\partial {\bf w}} = 0 \Rightarrow {\bf w} = \sum_{n=1}^N\alpha_ny_n{\bf z}_n
+\]</span> 将上面的式子作为约束条件，并将<span class="math inline">\({\bf w} = \sum_{n=1}^N\alpha_ny_n{\bf z}_n\)</span>代入式子，且考虑到<span class="math inline">\({\bf w^\mathsf{T}w} = |\!|{\bf w}|\!|^2\)</span> ，可以得到 <span class="math display">\[
+\begin{align*}
+&amp;\max_{ {\rm all\  }\alpha_n \ge 0, \sum y_n\alpha_n=0} \left(\min_{ {\bf w}} \frac{1}{2}{\bf w^\mathsf{T}w} + \sum_{n=1}^N \alpha_n(1-y_n({\bf w^\mathsf{T}z}_n))\right) \\
+\Leftrightarrow &amp; \max_{ {\rm all\  }\alpha_n \ge 0, \sum y_n\alpha_n=0, {\bf w}=\sum \alpha_ny_n{\bf z}_n} \left(\min_{\bf w} \frac{1}{2} {\bf w^\mathsf{T}w} + \sum_{n=1}^N \alpha_n - {\bf w^\mathsf{T}w}\right) \\
+\Leftrightarrow &amp; \max_{ {\rm all\  }\alpha_n \ge 0, \sum y_n\alpha_n=0, {\bf w}=\sum \alpha_ny_n{\bf z}_n} \left(-\frac{1}{2}\left|\!\left| \sum_{n=1}^N\alpha_ny_n{\bf z}_n\right|\!\right|^2 + \sum_{n=1}^N\alpha_n\right)
+\end{align*}
+\]</span> 这就转化成了一个几乎只有<span class="math inline">\(\boldsymbol{\alpha}\)</span>的最优化问题，实际上是简化版的拉格朗日对偶问题。也就是说，最优的<span class="math inline">\(\boldsymbol{\alpha}\)</span>和最优的<span class="math inline">\(b\)</span>和<span class="math inline">\(\bf w\)</span>需要满足一些关系，它们才能同时是原问题和对偶问题的最优解。这些关系统称为KKT条件（Karush-Kuhn-Tucker conditions），包括</p>
+<ul>
+<li><span class="math inline">\(y_n({\bf w}^\mathsf{T}{\bf z}_n + b) \ge 1\)</span></li>
+<li><span class="math inline">\(\alpha_n \ge 0\)</span></li>
+<li><span class="math inline">\(\sum y_n\alpha_n = 0; {\bf w}=\sum \alpha_n y_n {\bf z}_n\)</span></li>
+<li><span class="math inline">\(\alpha_n (1-y_n({\bf w^\mathsf{T}z}_n + b)) = 0\)</span></li>
+</ul>
+<p>之后，就要用KKT条件求解最优的<span class="math inline">\(\boldsymbol{\alpha}\)</span>，进而求解最优的<span class="math inline">\((b, {\bf w})\)</span></p>
+<h2 id="求解对偶svm">求解对偶SVM</h2>
+<p>将之前的对偶问题稍作如下变换</p>
+<ul>
+<li>将求最大值问题转为求最小值问题（取相反数即可）</li>
+<li>展开向量的内积</li>
+</ul>
+<p>可以得到硬间隔SVM对偶问题的标准形式： <span class="math display">\[
+\begin{align*}
+\min_{\boldsymbol{\alpha}} \hspace{2ex}&amp;\frac{1}{2}\sum_{n=1}^N\sum_{m=1}^N \alpha_n\alpha_m y_ny_m{\bf z}_n^\mathsf{T}{\bf z}_m - \sum_{n=1}^N\alpha_n \\
+{\rm subject\  to} \hspace{2ex}&amp;\sum_{n=1}^Ny_n\alpha_n = 0; \\
+&amp; \alpha_n \ge 0, {\rm for\  }n=1,2,\ldots,N
+\end{align*}
+\]</span> 这是一个有<span class="math inline">\(N\)</span>个变量和<span class="math inline">\(N+1\)</span>个约束条件的凸二次规划问题，可以将其转换成二次规划的标准形式 <span class="math display">\[
+\begin{align*}
+{\rm optimal\  }\boldsymbol{\alpha} &amp;\leftarrow {\rm QP(Q}, {\bf p}, {\rm A}, {\bf c}) \\
+q_{n, m} &amp;= y_ny_m{\bf z}_n^\mathsf{T}{\bf z}_m \\
+{\bf p } &amp;= -{\bf 1}_N \\
+{\bf a}_\ge  &amp;= {\bf y}, {\bf a}_\le = -{\bf y}; {\bf a}_n^\mathsf{T} = n{\rm th. unit\  direction} \\
+c_\ge &amp;=0, c_\le = 0; c_n = 0
+\end{align*}
+\]</span> 记对偶问题的<span class="math inline">\(\rm Q\)</span>为<span class="math inline">\(\rm Q_D\)</span>，由上面的定义可知<span class="math inline">\(\rm Q\)</span>是稠密矩阵。如果<span class="math inline">\(N=30000\)</span>，那<span class="math inline">\(\rm Q\)</span>可以占3G内存！所以要解对偶问题，需要一个特殊的求解器，它不存储整个<span class="math inline">\(\rm Q_D\)</span>或者使用某些特殊的限制，以应付<span class="math inline">\(N\)</span>很大的情况</p>
+<p>求出最优的<span class="math inline">\(\boldsymbol{\alpha}\)</span>以后，可以根据KKT条件算出最优的<span class="math inline">\(b\)</span>和<span class="math inline">\(\bf w\)</span>。最优的<span class="math inline">\(\bf w\)</span>很容易求，<span class="math inline">\({\bf w} = \sum \alpha_ny_n{\bf z}_n\)</span>。而由<span class="math inline">\(\alpha_n (1-y_n({\bf w^\mathsf{T}z}_n + b)) = 0\)</span>，可知如果有任意<span class="math inline">\(\alpha_n &gt; 0\)</span>，就可以算出<span class="math inline">\(b = y_n - {\bf w^\mathsf{T}z}_n\)</span>（不同的<span class="math inline">\(\alpha_n &gt; 0\)</span>应该算出同样的<span class="math inline">\(b\)</span>）。注意此时有<span class="math inline">\(y_n({\bf w^\mathsf{T}z}_n + b) = 1\)</span>，即对任一点<span class="math inline">\(n\)</span>如果有<span class="math inline">\(\alpha_n &gt; 0\)</span>，则说明这个点在“胖”的边界上</p>
+<p>（这里其实说明了将原始问题转化成对偶问题的两个好处：</p>
+<ol type="1">
+<li>只需要优化<span class="math inline">\(\boldsymbol{\alpha}\)</span>而不是<span class="math inline">\(b\)</span>和<span class="math inline">\(\bf w\)</span>，减小了计算量，降低了算法的时间复杂度</li>
+<li>通过判断<span class="math inline">\(\alpha_n\)</span>是否为0可以找出支持向量）</li>
+</ol>
+<h2 id="对偶svm传递的信息">对偶SVM传递的信息</h2>
+<p>在前一讲中曾经得到一个结论，即支持向量机只关注那些在“胖”边界上的点，而其它点则不需要。上一节又证明，如果某个点有<span class="math inline">\(\alpha_n &gt; 0\)</span>，则这个点一定在“胖”边界上。称所有<span class="math inline">\(\alpha_n &gt; 0\)</span>的样本<span class="math inline">\(({\bf z}_n , y_n)\)</span>为<strong>支持向量</strong>。也就是说有<span class="math inline">\({\rm SV(positive\  }\alpha_n) \subseteq {\rm SV\  candidates\  (on\  boundary)}\)</span>。这意味着只需要用支持向量计算<span class="math inline">\(\bf w\)</span>和<span class="math inline">\(b\)</span>（对于那些不是支持向量的点，算出来的<span class="math inline">\(\bf w\)</span>和<span class="math inline">\(b\)</span>也都是0），而SVM也是通过对偶问题的最优解找出支持向量（即有用的向量），进而学到最大间隔超平面的算法</p>
+<p>因此，SVM的权重可以写为<span class="math inline">\({\bf w}_{\rm SVM} = \sum_{n=1}^N \alpha_n(y_n{\bf z}_n)\)</span>，其中<span class="math inline">\(\alpha_n\)</span>来自于对偶问题的解。这个形式其实跟之前PLA算法得到的权重类似：PLA的权重可以写为<span class="math inline">\({\bf w}_{\rm PLA} = \sum_{n=1}^N \beta_n(y_n{\bf z}_n)\)</span>，其中<span class="math inline">\(\beta_n\)</span>是对错分样本进行纠正的次数。即SVM和PLA得到的解都是原始数据的线性组合。更广泛地讲，对基于梯度下降的算法，如果设初始的<span class="math inline">\({\bf w}_0 = 0\)</span>，那么最后求出的解还是原始数据的线性组合。称这种现象为<strong>最优的权重<span class="math inline">\(\bf w\)</span>可以被数据表示</strong>。其中SVM更特殊一些，最优的权重只用支持向量就能表示（PLA是用错分点表示）</p>
+<p>这样，到目前为止，一共介绍了两种SVM：</p>
+<ul>
+<li>原始的硬间隔SVM，一共有<span class="math inline">\(\tilde{d}+1\)</span>个变量和<span class="math inline">\(N\)</span>个限制条件。如果数据维度比较小，则适用。其物理意义是对<span class="math inline">\((b, {\bf w})\)</span>进行缩放，得到一个合适的值</li>
+<li>对偶的硬间隔SVM，一共有<span class="math inline">\(N\)</span>个变量和<span class="math inline">\(N+1\)</span>个简单的限制条件。如果数据量比较小，则适用。其物理意义是找出起作用的支持向量和它们的<span class="math inline">\(\alpha_n\)</span></li>
+</ul>
+<p>无论使用哪种做法，都可以得到最优的<span class="math inline">\((b, {\bf w})\)</span>，进而得到最优的假设函数为 <span class="math display">\[
+g_{\rm SVM}({\bf x}) = {\rm sign}({\bf w}^\mathsf{T}{\boldsymbol{\Phi}}({\bf x}) + b)
+\]</span> 但是问题还没有结束。回想提SVM对偶问题的动机，是为了避免对数据维度<span class="math inline">\(\tilde{d}\)</span>的依赖。尽管看上去最后求解时只依赖了数据量<span class="math inline">\(N\)</span>（求解<span class="math inline">\(N\)</span>个变量和<span class="math inline">\(N+1\)</span>个限制条件），但是构造矩阵<span class="math inline">\(\rm Q_D\)</span>时还是在<span class="math inline">\(\mathbb{R}^{\tilde{d}}\)</span>空间做内积。如果直接计算的话，运算的时间复杂度还是<span class="math inline">\(O(\tilde{d})\)</span>。因此，之后要解决的问题就是如何避免直接计算内积</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/09/18/NTUML-18-Dual-SVM/" title="NTUML 18. 对偶支持向量机">txshi-mt.com/2017/09/18/NTUML-18-Dual-SVM/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/NTUML/" rel="tag"># NTUML</a>
+          
+            <a href="/tags/SVM/" rel="tag"># SVM</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/18/NTUML-17-Linear-SVM/" rel="next" title="NTUML 17. 线性支持向量机">
+                <i class="fa fa-chevron-left"></i> NTUML 17. 线性支持向量机
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/09/23/NTUML-19-Kernel-SVM/" rel="prev" title="NTUML 19. 核支持向量机">
+                NTUML 19. 核支持向量机 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#提出对偶svm的动机"><span class="nav-number">1.</span> <span class="nav-text">&#x63D0;&#x51FA;&#x5BF9;&#x5076;SVM&#x7684;&#x52A8;&#x673A;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#拉格朗日对偶svm"><span class="nav-number">2.</span> <span class="nav-text">&#x62C9;&#x683C;&#x6717;&#x65E5;&#x5BF9;&#x5076;SVM</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#求解对偶svm"><span class="nav-number">3.</span> <span class="nav-text">&#x6C42;&#x89E3;&#x5BF9;&#x5076;SVM</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对偶svm传递的信息"><span class="nav-number">4.</span> <span class="nav-text">&#x5BF9;&#x5076;SVM&#x4F20;&#x9012;&#x7684;&#x4FE1;&#x606F;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

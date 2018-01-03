@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="NTUML,验证," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="模型选择问题 即便是对二元分类问题，前面也介绍了很多种机器学习算法。这些算法（和算法所需要设置的参数）包括了  算法\(\mathcal{A}\)本身，例如PLA、口袋算法、线性回归、Logistic回归 算法迭代的步数\(T\)。是100，1000还是10000 算法的学习率\(\eta\)。是1，0.1还是0.01 特征转换\(\boldsymbol{\Phi}\)。是原始的特征，线性的特征，">
+<meta name="keywords" content="NTUML,验证">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NTUML 15. 验证">
+<meta property="og:url" content="txshi-mt.com/2017/09/12/NTUML-15-Validation/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="模型选择问题 即便是对二元分类问题，前面也介绍了很多种机器学习算法。这些算法（和算法所需要设置的参数）包括了  算法\(\mathcal{A}\)本身，例如PLA、口袋算法、线性回归、Logistic回归 算法迭代的步数\(T\)。是100，1000还是10000 算法的学习率\(\eta\)。是1，0.1还是0.01 特征转换\(\boldsymbol{\Phi}\)。是原始的特征，线性的特征，">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML15_validation_in_practice.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML15_loocv.png">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.091Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NTUML 15. 验证">
+<meta name="twitter:description" content="模型选择问题 即便是对二元分类问题，前面也介绍了很多种机器学习算法。这些算法（和算法所需要设置的参数）包括了  算法\(\mathcal{A}\)本身，例如PLA、口袋算法、线性回归、Logistic回归 算法迭代的步数\(T\)。是100，1000还是10000 算法的学习率\(\eta\)。是1，0.1还是0.01 特征转换\(\boldsymbol{\Phi}\)。是原始的特征，线性的特征，">
+<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML15_validation_in_practice.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/09/12/NTUML-15-Validation/"/>
+
+
+
+
+
+  <title>NTUML 15. 验证 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/09/12/NTUML-15-Validation/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NTUML 15. 验证</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-12T20:26:32+08:00">
+                Sep 12 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/统计机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">统计机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="模型选择问题">模型选择问题</h2>
+<p>即便是对二元分类问题，前面也介绍了很多种机器学习算法。这些算法（和算法所需要设置的参数）包括了</p>
+<ul>
+<li>算法<span class="math inline">\(\mathcal{A}\)</span>本身，例如PLA、口袋算法、线性回归、Logistic回归</li>
+<li>算法迭代的步数<span class="math inline">\(T\)</span>。是100，1000还是10000</li>
+<li>算法的学习率<span class="math inline">\(\eta\)</span>。是1，0.1还是0.01</li>
+<li>特征转换<span class="math inline">\(\boldsymbol{\Phi}\)</span>。是原始的特征，线性的特征，10次特征还是勒让德多项式10次特征</li>
+<li>正则项<span class="math inline">\(\Omega({\bf w})\)</span>。是L2正则项，L1正则项还是其它正则项</li>
+<li>正则项系数<span class="math inline">\(\lambda\)</span>。是0，0.01还是1</li>
+</ul>
+<p>既然面对了这么多选择，应该如何做决策就成了一个问题，这种问题称为模型选择问题。其可以进一步描述为，给定<span class="math inline">\(M\)</span>个模型<span class="math inline">\(\mathcal{H}_1, \mathcal{H}_2, \ldots, \mathcal{H}_M\)</span>，每个模型对应的算法为<span class="math inline">\(\mathcal{A}_1, \mathcal{A}_2, \ldots, \mathcal{A}_M\)</span>，选出一个模型<span class="math inline">\(\mathcal{H}_{m ^ \ast}\)</span>使得<span class="math inline">\(g_{m^\ast} = \mathcal{A}_{m^\ast}(\mathcal{D})\)</span>有比较低的<span class="math inline">\(E_{\rm out}(g_{m^\ast})\)</span>。这个问题的难点在于，由于无法知道<span class="math inline">\(P({\bf x})\)</span>和<span class="math inline">\(P(y|{\bf x})\)</span>，因此<span class="math inline">\(E_{\rm out}\)</span>是未知的；而选择又是不可避免的，因此这个问题是非常有实际意义的</p>
+<p>通过视觉方法做选择已经在第12讲被否定了。那么是否可以根据各模型的<span class="math inline">\(E_{\rm in}\)</span>来判断？即 <span class="math display">\[
+m^\ast = \mathop{ {\rm arg} \min}_{1\le m \le M}(E_m = E_{\rm in}(\mathcal{A}_m(\mathcal{D})))
+\]</span> 并不可以。回顾之前的各种实验数据，如果采用了这样的设定，<span class="math inline">\(\boldsymbol{\Phi}_{1126}\)</span>一定好于<span class="math inline">\(\boldsymbol{\Phi}_1\)</span>，<span class="math inline">\(\lambda=0\)</span>肯定比<span class="math inline">\(\lambda = 0.1\)</span>好，因此会非常容易过拟合。此外，假设<span class="math inline">\(\mathcal{A}_1\)</span>是在<span class="math inline">\(\mathcal{H}_1\)</span>上最小化了<span class="math inline">\(E_{\rm in}\)</span>，<span class="math inline">\(\mathcal{A}_2\)</span>是在<span class="math inline">\(\mathcal{H}_2\)</span>上最小化了<span class="math inline">\(E_{\rm in}\)</span>，那么最优的<span class="math inline">\(g_{m^\ast}\)</span>就会在<span class="math inline">\(\mathcal{H}_1 \cup \mathcal{H}_2\)</span>上最小化<span class="math inline">\(E_{\rm in}\)</span>，模型选择和学习的过程VC维就是<span class="math inline">\(d_{\rm VC}(\mathcal{H}_1 \cup \mathcal{H}_2)\)</span>。VC维变大，就会导致一般化问题</p>
+<p><strong>综上所述，使用<span class="math inline">\(E_{\rm in}\)</span>选择模型是非常危险的</strong></p>
+<p>或者可以根据各模型在测试集上的表现<span class="math inline">\(E_{\rm test}\)</span>来判断？即 <span class="math display">\[
+m^\ast = \mathop{ {\rm arg} \min}_{1\le m \le M}(E_m = E_{\rm test}(\mathcal{A}_m(\mathcal{D})))
+\]</span> 这样做可以避免一般化问题，因为根据有限的Hoeffding不等式，有 <span class="math display">\[
+E_{\rm out}(g_{m^\ast}) \le E_{\rm test}(g_{m^\ast}) + O\left(\sqrt{\frac{\log M}{N_{\rm test}}}\right)
+\]</span> 但这么做的问题是，测试数据应该是找不到的，或者它应该在你老大那里！所以，这种方法是不可行的，至少是自欺欺人的</p>
+<p>既然两种方法都不可行，有没有可能找到一份数据，它能同时满足以下三个要求：</p>
+<ul>
+<li>与样本<span class="math inline">\(\mathcal{D}\)</span>中数据独立同分布</li>
+<li>方便获得</li>
+<li>干净，没有被<span class="math inline">\(\mathcal{A}_m\)</span>用来选择<span class="math inline">\(g_m\)</span>（没有被候选算法偷看过）</li>
+</ul>
+<p>答案是肯定的。具体做法是从原始数据中划出一部分数据作为<strong>验证数据</strong>（或者称为<strong>验证集</strong>），记为<span class="math inline">\(\mathcal{D}_{\rm val}\)</span>。然后，将算法用在<span class="math inline">\(\mathcal{D}_{\rm val}\)</span>上，根据它们在这些数据上的错误<span class="math inline">\(E_{\rm val}\)</span>来选择模型（有点像是合法地作弊）</p>
+<h2 id="验证">验证</h2>
+<p>前面说到，可以从原始数据<span class="math inline">\(\mathcal{D}\)</span>中取一部分数据作为验证数据<span class="math inline">\(\mathcal{D}_{\rm val}\)</span>，即有<span class="math inline">\(\mathcal{D}_{\rm val} \subset \mathcal{D}\)</span>，用它来模拟测试集。假设验证集大小为<span class="math inline">\(K\)</span>，为了让验证误差<span class="math inline">\(E_{\rm val}\)</span>能够逼近<span class="math inline">\(E_{\rm out}\)</span>，这<span class="math inline">\(K\)</span>个数据需要随机从<span class="math inline">\(\mathcal{D}\)</span>中抽取。这样，原始大小为<span class="math inline">\(N\)</span>的数据集被分解成了互不相交的两个集合：大小为<span class="math inline">\(N-K\)</span>，专门用来做训练的数据集<span class="math inline">\(\mathcal{D}_{\rm train}\)</span>和大小为<span class="math inline">\(K\)</span> ，专门用来做验证的验证集<span class="math inline">\(\mathcal{D}_{\rm val}\)</span>。为了保证<span class="math inline">\(\mathcal{D}_{\rm val}\)</span>的纯洁性，只能把<span class="math inline">\(\mathcal{D}_{\rm train}\)</span>送进算法<span class="math inline">\(\mathcal{A}_m\)</span>去训练模型和做模型选择。记通过这种方法得到的最优假设为<span class="math inline">\(g^-_m\)</span>，类比前面给出的不等式，有 <span class="math display">\[
+E_{\rm out}(g_{m}^-) \le E_{\rm val}(g_{m}^-) + O\left(\sqrt{\frac{\log M}{K}}\right)
+\]</span> 因此，模型选择的方法是 <span class="math display">\[
+m^\ast = \mathop{ {\rm arg} \min}_{1\le m \le M}(E_m = E_{\rm val}(\mathcal{A}_m(\mathcal{D}_{\rm train})))
+\]</span> 但是这里有一点需要注意：验证集的分出意味着与原来相比训练集变小。由之前的学习曲线可知，使用更少数据训练出来的模型，其<span class="math inline">\(E_{\rm out}\)</span>会大。因此，合理做法是记录<span class="math inline">\(m^\ast\)</span>对应模型的超参数（就是前面提到的<span class="math inline">\(\lambda, \boldsymbol{\Phi}\)</span>等等），然后用<strong>整个</strong><span class="math inline">\(\mathcal{D}\)</span>再把该模型训练一遍</p>
+<p>可以使用验证的方法来在五次多项式特征变换假设集<span class="math inline">\(\mathcal{H}_{\boldsymbol{\Phi}_5}\)</span>和十次多项式特征变换假设集<span class="math inline">\(\mathcal{H}_{\boldsymbol{\Phi}_{10}}\)</span>之间做选择。得到的图像如下图所示</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML15_validation_in_practice.png" alt="验证集大小与期望Eout之间的关系"><figcaption>验证集大小与期望Eout之间的关系</figcaption>
+</figure>
+<p>这里四条线分别为：</p>
+<ul>
+<li>黑实线，表示使用<span class="math inline">\(E_{\rm in}\)</span>来做选择，得到的最优模型的<span class="math inline">\(E_{\rm out}\)</span>。记该模型为<span class="math inline">\(g_{\hat{m}}\)</span></li>
+<li>黑虚线（很靠下可能容易被忽略掉），表示使用<span class="math inline">\(E_{\rm test}\)</span>来做选择，得到的最优模型的<span class="math inline">\(E_{\rm out}\)</span>（实际上是作弊了）</li>
+<li>红实线，表示使用<span class="math inline">\(\mathcal{D}_{\rm train}\)</span>训练，<span class="math inline">\(\mathcal{D}_{\rm val}\)</span>做模型选择得到的最优模型的<span class="math inline">\(E_{\rm out}\)</span>。记该模型为<span class="math inline">\(g_{m^\ast}^-\)</span></li>
+<li>蓝实线，表示使用<span class="math inline">\(\mathcal{D}_{\rm train}\)</span>训练，<span class="math inline">\(D_{\rm val}\)</span>做模型选择，然后再把最优模型用<span class="math inline">\(\mathcal{D}\)</span>训练一遍得到的模型的<span class="math inline">\(E_{\rm out}\)</span>。记该模型为<span class="math inline">\(g_m^\ast\)</span></li>
+</ul>
+<p>可见蓝实线总是最低的，因此验证法真的在实际工程中可用</p>
+<p>注意红线不如黑线的状况是因为<span class="math inline">\(K\)</span>比较大，因此用来训练模型的数据量变小，所以模型效果就不好了。这也说明在选择验证集大小的时候其实有个两难境地：如果要使<span class="math inline">\(E_{\rm out}(g) \approx E_{\rm out}(g^-)\)</span>，就需要<span class="math inline">\(K\)</span>比较小才好，因为有足够多的数据训练模型；而要想<span class="math inline">\(E_{\rm out}(g^-) \approx E_{\rm val}(g^-)\)</span>，就需要<span class="math inline">\(K\)</span>比较大才好，因为这样才能足够模拟未知情况。实际中，常常设<span class="math inline">\(K = N/5\)</span></p>
+<h2 id="留一交叉验证">留一交叉验证</h2>
+<p>对于上面的验证过程，考虑一个极端情况：<span class="math inline">\(K=1\)</span>。这样，<span class="math inline">\(g^-\)</span>和<span class="math inline">\(g\)</span>会非常接近，但是<span class="math inline">\(E_{\rm out}(g^-) \approx E_{\rm val}(g^-)\)</span>就不能满足了，只有一条数据能够用来验证模型。假设这条数据是第<span class="math inline">\(n\)</span>条数据，则 <span class="math display">\[
+\begin{align*}
+\mathcal{D}_{\rm val}^{(n)} &amp;= \{({\bf x}_n, y_n)\} \\
+E_{\rm val}^{(n)}(g_n^-) &amp;={\rm err}(g_n^-({\bf x}_n), y_n) = e_n
+\end{align*}
+\]</span> 这一条<span class="math inline">\(e_n\)</span>显然不能管中窥豹，很好地近似<span class="math inline">\(E_{\rm out}(g)\)</span>（事实上，如果要解决的是一个二元分类问题，使用一条数据得到的误差值只可能是0或者1，不可能是一个浮点数）。但是，如果验证的过程重复<span class="math inline">\(n\)</span>遍，依次取出一条数据作为验证集，将它们的<span class="math inline">\(e_n\)</span>记录下来最后做平均，得到的平均误差可能就是对<span class="math inline">\(E_{\rm out}\)</span>一个很好的近似。记这个过程为留一交叉验证，则该过程对<span class="math inline">\(E_{\rm out}\)</span>的近似为 <span class="math display">\[
+E_{\rm loocv}(\mathcal{H, A}) = \frac{1}{N}\sum_{n=1}^Ne_n = \frac{1}{N} \sum_{n=1}^N {\rm err}(g_n^-({\bf x}_n), y_n)
+\]</span> 接下来就是要证明，确实有<span class="math inline">\(E_{\rm loocv}(\mathcal{H, A}) \approx E_{\rm out}(g)\)</span>。设假设集<span class="math inline">\(\mathcal{H}\)</span>和算法<span class="math inline">\(\mathcal{A}\)</span>在任意数据集上都用过，所有这些数据集的期望留一交叉验证误差为<span class="math inline">\(\mathcal{E}_{\mathcal{D}}E_{\rm loocv}(\mathcal{H, A})\)</span>，则 <span class="math display">\[
+\begin{align*}
+\mathcal{E}_{\mathcal{D}}E_{\rm loocv}(\mathcal{H, A}) =\mathcal{E_D}\frac{1}{N}\sum_{n=1}^Ne_n &amp;= \frac{1}{N}\sum_{n=1}^N\mathcal{E_D}e_n \\
+&amp;= \frac{1}{N}\sum_{n=1}^N\mathcal{E}_{\mathcal{D}_n}\mathcal{E}_{({\bf x}_n, y_n)} {\rm err}(g_n^-({\bf x}_n), y_n) \\
+&amp;= \frac{1}{N}\sum_{n=1}^N\mathcal{E}_{\mathcal{D}_n}E_{\rm out}(g_n^-) \\
+&amp;= \frac{1}{N}\sum_{n=1}^N\overline{E_{\rm out}}(N-1) = \overline{E_{\rm out}}(N-1)
+\end{align*}
+\]</span> 即留一交叉验证误差的期望值与<span class="math inline">\(E_{\rm out}(g^-)\)</span>的期望值的确是近似的，可以看作是<span class="math inline">\(E_{\rm out}(g)\)</span>几乎无偏差的估计</p>
+<p>下图给出了留一交叉验证的一个示例</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML15_loocv.png" alt="留一交叉验证的示例。横轴为特征数目，纵轴为误差值"><figcaption>留一交叉验证的示例。横轴为特征数目，纵轴为误差值</figcaption>
+</figure>
+<p>可以看出，交叉验证的误差曲线和<span class="math inline">\(E_{\rm out}\)</span>非常接近，即在实践中它的确是对<span class="math inline">\(E_{\rm out}\)</span>一个很好的估计。这张图再次证明，过多的特征会导致过拟合，特征数适量最好</p>
+<h2 id="v折交叉验证"><span class="math inline">\(V\)</span>折交叉验证</h2>
+<p>留一交叉验证虽然可以很好地估计<span class="math inline">\(E_{\rm out}​\)</span>，但是耗费的时间太多：每次使用<span class="math inline">\(N-1​\)</span>条数据训练，重复<span class="math inline">\(N​\)</span>次。因此除非有个别情况（例如有解析解的情况），否则留一交叉验证不太可行。此外，这种方法还有稳定性的问题。可以看到前一节的图中<span class="math inline">\(E_{\rm cv}​\)</span>曲线有波动，而我们都希望选择的模型是比较可靠的，并不是因为某个实验的波动才导致其<span class="math inline">\(E_{\rm cv}​\)</span>变小</p>
+<p>思考留一交叉验证的过程可以发现，计算量变大的主要原因是该方法把数据集切得太碎，验证集太小造成了计算量的增加。因此一个改进的方法就是，只把原始数据集“斩成几大块”。这种方法叫做<span class="math inline">\(V\)</span>折交叉验证：原始数据集<span class="math inline">\(\mathcal{D}\)</span>被随机分成<span class="math inline">\(V\)</span>份，仍然是每次使用<span class="math inline">\(V-1\)</span>份数据训练模型，1份数据用来验证。这里交叉验证的误差为 <span class="math display">\[
+E_{\rm cv}(\mathcal{H, A}) = \frac{1}{V}\sum_{v=1}^V E_{\rm val}^{(v)}(g_v^-)
+\]</span> 选择时，仍然是 <span class="math display">\[
+m^\ast = \mathop{ {\rm arg}\min}_{1 \le m \le M} (E_m = E_{\rm cv}(\mathcal{H}_m , \mathcal{A}_m))
+\]</span> 实践中，<span class="math inline">\(V\)</span>通常设为10</p>
+<h2 id="总结">总结</h2>
+<p>实践中，如果计算允许的话，一般还是使用<span class="math inline">\(V\)</span>折交叉验证，而不使用普通的单次验证。而且5折交叉验证或者10折交叉验证效果就不错了，没必要做留一交叉验证</p>
+<p>训练模型的过程是在整个假设集上做选择，有点像初赛；而验证的过程是对初赛中选出来的模型再做一次选择，有点像复赛。需要注意的是，只要有选择就会有误差，因此验证的结果还是会比测试结果更乐观。<strong>测试结果才是最重要的，不要用验证结果自欺欺人</strong></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/09/12/NTUML-15-Validation/" title="NTUML 15. 验证">txshi-mt.com/2017/09/12/NTUML-15-Validation/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/NTUML/" rel="tag"># NTUML</a>
+          
+            <a href="/tags/验证/" rel="tag"># 验证</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/10/NTUML-14-Regularization/" rel="next" title="NTUML 14. 正则化">
+                <i class="fa fa-chevron-left"></i> NTUML 14. 正则化
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/09/14/NTUML-16-Three-Learning-Principles/" rel="prev" title="NTUML 16. 三条锦囊妙计">
+                NTUML 16. 三条锦囊妙计 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#模型选择问题"><span class="nav-number">1.</span> <span class="nav-text">&#x6A21;&#x578B;&#x9009;&#x62E9;&#x95EE;&#x9898;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#验证"><span class="nav-number">2.</span> <span class="nav-text">&#x9A8C;&#x8BC1;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#留一交叉验证"><span class="nav-number">3.</span> <span class="nav-text">&#x7559;&#x4E00;&#x4EA4;&#x53C9;&#x9A8C;&#x8BC1;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#v折交叉验证"><span class="nav-number">4.</span> <span class="nav-text"><span class="math inline">\(V\)</span>&#x6298;&#x4EA4;&#x53C9;&#x9A8C;&#x8BC1;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">&#x603B;&#x7ED3;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

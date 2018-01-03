@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="NTUML,随机森林," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="随机森林算法 之前的课程里曾经讲述过两种算法：bagging算法和决策树算法。这两种算法的特点都很明显：  bagging算法需要基分类器\(g_t\)的方差尽可能大，然后它会通过投票或求均值的操作来减少最后算法\(G\)的方差 决策树会根据数据情况选择最佳切割点。数据有一点变化，切割点可能就会不同。因此决策树对数据很敏感，方差比较大（当决策树是完全生长的时候，尤其如此）  既然两个算法一个是能降">
+<meta name="keywords" content="NTUML,随机森林">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NTUML 26. 随机森林">
+<meta property="og:url" content="txshi-mt.com/2017/10/07/NTUML-26-Random-Forest/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="随机森林算法 之前的课程里曾经讲述过两种算法：bagging算法和决策树算法。这两种算法的特点都很明显：  bagging算法需要基分类器\(g_t\)的方差尽可能大，然后它会通过投票或求均值的操作来减少最后算法\(G\)的方差 决策树会根据数据情况选择最佳切割点。数据有一点变化，切割点可能就会不同。因此决策树对数据很敏感，方差比较大（当决策树是完全生长的时候，尤其如此）  既然两个算法一个是能降">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.093Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NTUML 26. 随机森林">
+<meta name="twitter:description" content="随机森林算法 之前的课程里曾经讲述过两种算法：bagging算法和决策树算法。这两种算法的特点都很明显：  bagging算法需要基分类器\(g_t\)的方差尽可能大，然后它会通过投票或求均值的操作来减少最后算法\(G\)的方差 决策树会根据数据情况选择最佳切割点。数据有一点变化，切割点可能就会不同。因此决策树对数据很敏感，方差比较大（当决策树是完全生长的时候，尤其如此）  既然两个算法一个是能降">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/10/07/NTUML-26-Random-Forest/"/>
+
+
+
+
+
+  <title>NTUML 26. 随机森林 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/10/07/NTUML-26-Random-Forest/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NTUML 26. 随机森林</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-07T23:44:51+08:00">
+                Oct 7 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/统计机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">统计机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="随机森林算法">随机森林算法</h2>
+<p>之前的课程里曾经讲述过两种算法：bagging算法和决策树算法。这两种算法的特点都很明显：</p>
+<ul>
+<li>bagging算法需要基分类器<span class="math inline">\(g_t\)</span>的方差尽可能大，然后它会通过投票或求均值的操作来减少最后算法<span class="math inline">\(G\)</span>的方差</li>
+<li>决策树会根据数据情况选择最佳切割点。数据有一点变化，切割点可能就会不同。因此决策树对数据很敏感，方差比较大（当决策树是完全生长的时候，尤其如此）</li>
+</ul>
+<p>既然两个算法一个是能降低方差，另一个方差特别大，那么能不能把这两种算法结合在一起，取长补短？答案是可以的。这种将聚合算法做聚合的算法，称为随机森林，即随机森林是把完全生长的C&amp;RT决策树做bagging，其中“随机”点出了bagging算法所依赖的随机性，“森林”点出了基算法是决策树的内涵。其具体过程为</p>
+<blockquote>
+<p>对<span class="math inline">\(t=1,2,\ldots, T\)</span></p>
+<ol type="1">
+<li>通过对原始数据集<span class="math inline">\(\mathcal{D}\)</span>做bootstrapping，得到大小为<span class="math inline">\(N&#39;\)</span>的数据集<span class="math inline">\(\tilde{\mathcal{D}}_t\)</span></li>
+<li>在<span class="math inline">\(\tilde{\mathcal{D}}_t\)</span>上运行决策树算法<span class="math inline">\(\rm Dtree\)</span>，得到基分类器<span class="math inline">\(g_t\)</span></li>
+</ol>
+<p>对得到的所有<span class="math inline">\(g_t\)</span>做均匀混合，返回<span class="math inline">\(G={\rm Uniform}(\{g_t\})\)</span></p>
+</blockquote>
+<p>随机森林的优点在于，其底层bagging过程可以拆开到不同机器上，而各个基分类器<span class="math inline">\(g_t\)</span>也是独立学出来的，互相没有什么依赖关系，因此整个算法可以并行运行。加上决策树的训练效率很高，因此随机森林非常高效。该算法在继承了决策树算法优点的同时，还因为使用bagging而降低了方差，弥补了完全生长的决策树的缺点。综上，随机森林是一个非常有用的模型</p>
+<p>除去bootstrapping中对数据做采样的随机性，随机森林还采用了另一种技术来保证底层基分类器尽量不同（回忆之前所讲的课程，基分类器越千差万别，bagging算法的效果越好）：它还会数据集的特征做随机采样。假设原始数据集<span class="math inline">\(\mathcal{D}\)</span>有<span class="math inline">\(N\)</span>条数据，<span class="math inline">\(d\)</span>个特征，那么随机森林用来训练基分类器的数据集<span class="math inline">\(\tilde{\mathcal{D}}_t\)</span>大小为<span class="math inline">\(N&#39;\)</span>，特征数为<span class="math inline">\(d&#39;\)</span>。这个对特征做采样的过程可以看作是对原始样本空间<span class="math inline">\(\mathcal{X} \in \mathbb{R}^d\)</span>做一个特征投影，投影到一个随机子空间<span class="math inline">\(\mathcal{Z} \in \mathbb{R}^{d&#39;}\)</span>的过程。由于通常情况下有<span class="math inline">\(d&#39; &lt;\!&lt; d\)</span>，因此随机森林算法的效率可以得到进一步的提升（这种做法也可以用在使用其它模型做基模型的bagging算法里）。随机森林的提出者建议，对<span class="math inline">\(g_t\)</span>的每次节点分裂<span class="math inline">\(b({\bf x})\)</span>时都重采样一遍，使用不同的特征子空间，效果会更好</p>
+<p>在此基础上，随机森林还可以再做进一步扩展！上面随机采样出<span class="math inline">\(d&#39;\)</span>个特征的过程，其实就是对原始数据<span class="math inline">\(\bf x\)</span>乘以一个投影矩阵<span class="math inline">\(\rm P\)</span>，做特征变换<span class="math inline">\(\boldsymbol{\Phi}\)</span>的过程，即<span class="math inline">\(\boldsymbol{\Phi}({\bf x}) = {\rm P}\cdot {\bf x}\)</span>，而<span class="math inline">\(\rm P\)</span>是通过对标准正交基（natural basis）做随机采样得到的。新的扩展就在于，投影矩阵<span class="math inline">\(\rm P\)</span>不再限定于是由标准正交基得到的矩阵，而是原始数据投影到不同的方向上，即新的特征是某些原始特征的线性组合。随机森林里考虑的投影通常是低维投影，即只选取<span class="math inline">\(d&#39;&#39;\)</span>个非零项做组合。注意当<span class="math inline">\(d&#39;&#39;= 1\)</span>，<span class="math inline">\(\rm P\)</span>的每一行<span class="math inline">\({\bf p}_i\)</span>都是标准正交基时，这种方法退化到了原来随机子空间的情况。随机森林的提出者建议，对<span class="math inline">\(g_t\)</span>的每次节点分裂<span class="math inline">\(b({\bf x})\)</span>时都做一次随机低维投影，效果会更好</p>
+<h2 id="袋外估计">袋外估计</h2>
+<p>本节对之前所讲授的bagging过程做一个更深入的探索：有前面bagging算法可知，在训练每个基分类器<span class="math inline">\(g_t\)</span>时，都会使用一个bootstrapping得到的数据集<span class="math inline">\(\tilde{\mathcal{D}}_t\)</span>。由于bootstrapping是有放回抽样的随机均匀采样过程，因此每个<span class="math inline">\(\tilde{\mathcal{D}}_t\)</span>有<span class="math inline">\(1-N!/N^N\)</span>的概率不会包含所有数据。所以，可以画一个表，来看对每个基分类器<span class="math inline">\(g_t\)</span>，在训练它时用到了哪些数据，没有用哪些数据。下表就给出了这么一个例子</p>
+<table>
+<colgroup>
+<col style="width: 15%">
+<col style="width: 19%">
+<col style="width: 19%">
+<col style="width: 19%">
+<col style="width: 6%">
+<col style="width: 19%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">数据</th>
+<th style="text-align: center;"><span class="math inline">\(g_1\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(g_2\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(g_3\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(\cdots\)</span></th>
+<th style="text-align: center;"><span class="math inline">\(g_T\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(({\bf x}_1, y_1)\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\tilde{\mathcal{D}}_1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\star\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\tilde{\mathcal{D}}_3\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"><span class="math inline">\(\tilde{\mathcal{D}}_T\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(({\bf x}_2, y_2)\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\star\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\star\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\tilde{\mathcal{D}}_3\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"><span class="math inline">\(\tilde{\mathcal{D}}_T\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(({\bf x}_3, y_3)\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\star\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\tilde{\mathcal{D}}_2\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\star\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"><span class="math inline">\(\tilde{\mathcal{D}}_T\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(\cdots\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(({\bf x}_N, y_N)\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\tilde{\mathcal{D}}_1\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\tilde{\mathcal{D}}_2\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(\star\)</span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"><span class="math inline">\(\star\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>上表中，第<span class="math inline">\(t\)</span>列第<span class="math inline">\(n\)</span>行的星号<span class="math inline">\(\star\)</span>代表训练基分类器<span class="math inline">\(g_t\)</span>时没有用到数据<span class="math inline">\(({\bf x}_n, y_n)\)</span>，这条数据就称为<span class="math inline">\(g_t\)</span>的<strong>袋外样本</strong>（OOB样本）。首先看抽样<span class="math inline">\(N\)</span>次以后有多少样本是OOB的：每次抽取时，任意一条数据被抽中的概率为<span class="math inline">\(1/N\)</span>，所以其不被抽中的概率为<span class="math inline">\(1-1/N\)</span>。因此，任意一条样本连续<span class="math inline">\(N\)</span>次都没被抽中的概率为<span class="math inline">\((1-1/N)^N\)</span>。当<span class="math inline">\(N\)</span>很大时，有 <span class="math display">\[
+\lim_{N\rightarrow +\infty}\left(1-\frac{1}{N}\right)^N = \lim_{N\rightarrow +\infty} \frac{1}{\left(\frac{N}{N-1}\right)^N} =  \lim_{N\rightarrow +\infty} \frac{1}{\left(1+\frac{1}{N-1}\right)^N} = \frac{1}{e}
+\]</span> 因此对大小为<span class="math inline">\(N\)</span>的数据集做bootstrapping以后，如果得到的新数据集大小还是<span class="math inline">\(N\)</span>，则OOB样本的数量应该约为<span class="math inline">\(N/e\)</span>（三分之一强）</p>
+<p>再看前面给出来的表，可以发现OOB数据有点像以前将验证时候提到的验证集：这些数据也是随机从原始数据中抽取，没有在训练中被使用，而且样本数量足够多。所以要用这些数据来验证<span class="math inline">\(g_t\)</span>吗？理论上可以，但是实际中不需要。因为bagging的方法是模型聚合的方法，它的目的是要让最后聚合到的模型<span class="math inline">\(G\)</span>好，因此需要找到一种方法，能够使用OOB数据来验证<span class="math inline">\(G\)</span>的效果。由前面的知识可知，如果要用OOB数据验证<span class="math inline">\(G\)</span>，就要保证这部分数据没有受到污染。以上表为例，<span class="math inline">\(({\bf x}_N, y_N)\)</span>是<span class="math inline">\(g_3\)</span>和<span class="math inline">\(g_T\)</span>的OOB数据，那么它可以用来验证<span class="math inline">\(G_N^-({\bf x}) = {\rm average}(g_3, g_T)\)</span>。以此类推，对每一条数据<span class="math inline">\(({\bf x}_n, y_n)\)</span>，都可以构造出来这么一个子模型<span class="math inline">\(G_n^-\)</span>，因此整个模型<span class="math inline">\(G\)</span>的oob误差就可以通过下式计算 <span class="math display">\[
+E_{\rm oob}(G) = \frac{1}{N} \sum_{n=1}^N {\rm err}(y_n, G_n^-({\bf x}_n))
+\]</span> 即bagging算法的特性是，得到<span class="math inline">\(G\)</span>后就能马上知道它的效果如何，因为它可以通过<span class="math inline">\(E_{\rm oob}\)</span>来做一个自我验证，对超参数进行调整。与之前的验证方法相比，有了OOB数据和<span class="math inline">\(E_{\rm oob}\)</span>以后，既不用将数据集分为两份（验证集和训练集），也不用再在确定好超参数以后重新训练模型了</p>
+<h2 id="特征选择">特征选择</h2>
+<p>OOB数据除了可以对<span class="math inline">\(G\)</span>做验证，还有别的用途。对于一份原始的<span class="math inline">\(d\)</span>维数据<span class="math inline">\({\bf x} = (x_1, x_2, \ldots, x_d)\)</span>，这里可能会有两种特征：</p>
+<ul>
+<li>冗余特征，例如数据里可能同时有“年龄”和“生日”两项</li>
+<li>不相关特征，例如做癌症推断的数据里可能有“医保类型”一项，而这一项对判断是否为癌症起不到作用</li>
+</ul>
+<p>为了降低模型的复杂度，提高训练效率，需要将这些特征移除掉。尽管这些事情理论上可以手工完成，但是我们仍然希望能够通过学习的方法达到目的，即希望能学到一个特征子集的转换<span class="math inline">\(\boldsymbol{\Phi}({\bf x}) = (x_{i_1}, x_{i_2}, \ldots, x_{i_d&#39;}), d&#39; &lt; d\)</span>，然后用转换后的特征来学习<span class="math inline">\(g_t\)</span></p>
+<p>特征选择的好处，首先它的效率得到了提升，而且排除掉了<span class="math inline">\(d-d&#39;\)</span>项噪声，降低了过拟合的可能性。最后，对<span class="math inline">\(d&#39;\)</span>项特征作分析可以集中在有用的特征上，提高模型的可解释性。但是从另一个角度看，特征选择也会带来风险。首先它是一个组合问题，选择最优组合的过程可能会占用额外时间；其次，如果特征选择没有做好，可能反而就会导致过拟合，得到错误的解释（或者分析时只能看到相关性不能看到因果性）。因此，这里责任最重的地方就是如何在<span class="math inline">\(d\)</span>项特征中找到<span class="math inline">\(d&#39;\)</span>维特征子集。幸运的是，决策树本身自带一些特征选择的方法（因为它在训练时要决定在哪个特征上做分割是最有效的）</p>
+<p>前面提过，特征选择本质是一个特征组合问题。有组合，就会有组合爆炸的可能性。那么如何降低这种可能性的发生，降低计算量？一种比较自然的启发式算法是，可以尝试计算每个特征的重要程度<span class="math inline">\({\rm important}(i){\rm \  for\  }i=1,2,\ldots, d\)</span>。如果这个重要程度能够计算出来，那么只需要选<span class="math inline">\(d&#39;\)</span>个重要程度最大的特征<span class="math inline">\(i_1, i_2, \ldots, i_{d&#39;}\)</span>就可以。这种简单的方式在线性模型中很容易实现，因为重要程度可以根据模型权重向量<span class="math inline">\(\bf w\)</span>的分量<span class="math inline">\(|w_i|\)</span>来判断。<span class="math inline">\(|w_i|\)</span>越大，特征的重要程度就越大。而<span class="math inline">\(\bf w\)</span>的学习很直接，也很容易。然而，非线性模型中由于增添了特征之间的交互，特征重要性的判断通常会难很多。但是随机森林本身的一些机制，使得其成为了一种很容易做特征选择的非线性模型</p>
+<p>使用随机森林做特征选择的基本原理是，如果特征<span class="math inline">\(i\)</span>比较重要，那么往这个特征上塞入一些噪声，模型的表现肯定会变差。那么问题是，如何给某个特征加入一些随机值？不能给入服从均匀分布或者高斯分布的噪声，因为原始数据可能不服从这样的分布，武断地加入某个确认分布的噪声会改变数据在第<span class="math inline">\(i\)</span>个维度上的分布<span class="math inline">\(P(x_i)\)</span>。这里利用了类似bootstrapping的方法：为了验证某个特征<span class="math inline">\(i\)</span>的重要性，对<span class="math inline">\(\{x_{n,i}\}_{n=1}^N\)</span>重新生成一个排列（permutation），这样，数据在该特征上的分布<span class="math inline">\(P(x_i)\)</span>就不会有什么变化了。记重排列特征<span class="math inline">\(i\)</span>上的值以后得到的数据集为<span class="math inline">\(\mathcal{D}^{(p)}\)</span>，特征<span class="math inline">\(i\)</span>的重要性可以根据如下方式（称为排列测试 permutation test）做一粗略估计： <span class="math display">\[
+{\rm importance}(i) = {\rm performance}(\mathcal{D}) - {\rm performance}(\mathcal{D}^{(p)})
+\]</span> 这里，求<span class="math inline">\({\rm performance}(\mathcal{D}^{(p)})\)</span>时需要用重排列后的数据集重新训练和验证模型。不过对于随机森林，可以免去验证的步骤，使用OOB就可以。甚至，可以不重新训练<span class="math inline">\(G\)</span>，而是把OOB中的第<span class="math inline">\(i\)</span>个特征做一个重排列。即 <span class="math display">\[
+{\rm importance}(i) = E_{\rm oob}(G) - E_{\rm oob}^{(p)}(G)
+\]</span> 其中，在计算<span class="math inline">\(E_{\rm oob}(G)\)</span>时，如果基分类器<span class="math inline">\(g(t)\)</span>用到了第<span class="math inline">\(i\)</span>维特征<span class="math inline">\(x_{(n, i)}\)</span>，随机选择<span class="math inline">\(g_t\)</span>的一个OOB数据点的第<span class="math inline">\(i\)</span>维特征替代（这样该数据没有参与训练），就可以得到<span class="math inline">\(E_{\rm oob}^{(p)}(G)\)</span></p>
+<h2 id="随机森林实战">随机森林实战</h2>
+<p>本节通过一些实验进一步展示了随机森林的特点：在树的数量足够多的情况下，随机森林可以学习出光滑，而且类似最大间隔的效果。而且，随机森林要求训练时用的树越多越好。理论上，用无限多棵树可以学到一个稳定的模型<span class="math inline">\(G\)</span>，有限多的树只是能不断逼近这个结果</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/10/07/NTUML-26-Random-Forest/" title="NTUML 26. 随机森林">txshi-mt.com/2017/10/07/NTUML-26-Random-Forest/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/NTUML/" rel="tag"># NTUML</a>
+          
+            <a href="/tags/随机森林/" rel="tag"># 随机森林</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/10/07/NTUML-25-Decision-Tree/" rel="next" title="NTUML 25. 决策树">
+                <i class="fa fa-chevron-left"></i> NTUML 25. 决策树
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/10/14/NTUML-27-GBDT/" rel="prev" title="NTUML 27. 梯度提升决策树（GBDT）">
+                NTUML 27. 梯度提升决策树（GBDT） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#随机森林算法"><span class="nav-number">1.</span> <span class="nav-text">&#x968F;&#x673A;&#x68EE;&#x6797;&#x7B97;&#x6CD5;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#袋外估计"><span class="nav-number">2.</span> <span class="nav-text">&#x888B;&#x5916;&#x4F30;&#x8BA1;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#特征选择"><span class="nav-number">3.</span> <span class="nav-text">&#x7279;&#x5F81;&#x9009;&#x62E9;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#随机森林实战"><span class="nav-number">4.</span> <span class="nav-text">&#x968F;&#x673A;&#x68EE;&#x6797;&#x5B9E;&#x6218;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

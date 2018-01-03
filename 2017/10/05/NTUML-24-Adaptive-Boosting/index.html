@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="NTUML,Boosting," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="本文中“提升算法”一词皆使用英文原文boosting代替 Boosting算法的动机 假设幼儿园老师要教小孩子辨认是什么苹果，那么每次他会给出若干张“是苹果”的照片，另若干张”不是苹果“的照片，让学生给出如何分辨哪些是苹果。有的学生可能会说”圆形的是苹果“，那么老师会高亮犯错的照片，让别的学生继续提出分辨方法，再高亮新分辨方法犯错误的样本，以此类推 Boosting算法的思想和动机就类似上述过程：">
+<meta name="keywords" content="NTUML,Boosting">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NTUML 24. 自适应提升算法（Adaptive Boosting）">
+<meta property="og:url" content="txshi-mt.com/2017/10/05/NTUML-24-Adaptive-Boosting/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="本文中“提升算法”一词皆使用英文原文boosting代替 Boosting算法的动机 假设幼儿园老师要教小孩子辨认是什么苹果，那么每次他会给出若干张“是苹果”的照片，另若干张”不是苹果“的照片，让学生给出如何分辨哪些是苹果。有的学生可能会说”圆形的是苹果“，那么老师会高亮犯错的照片，让别的学生继续提出分辨方法，再高亮新分辨方法犯错误的样本，以此类推 Boosting算法的思想和动机就类似上述过程：">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.093Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NTUML 24. 自适应提升算法（Adaptive Boosting）">
+<meta name="twitter:description" content="本文中“提升算法”一词皆使用英文原文boosting代替 Boosting算法的动机 假设幼儿园老师要教小孩子辨认是什么苹果，那么每次他会给出若干张“是苹果”的照片，另若干张”不是苹果“的照片，让学生给出如何分辨哪些是苹果。有的学生可能会说”圆形的是苹果“，那么老师会高亮犯错的照片，让别的学生继续提出分辨方法，再高亮新分辨方法犯错误的样本，以此类推 Boosting算法的思想和动机就类似上述过程：">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/10/05/NTUML-24-Adaptive-Boosting/"/>
+
+
+
+
+
+  <title>NTUML 24. 自适应提升算法（Adaptive Boosting） | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/10/05/NTUML-24-Adaptive-Boosting/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NTUML 24. 自适应提升算法（Adaptive Boosting）</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-05T15:58:11+08:00">
+                Oct 5 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/统计机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">统计机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文中“提升算法”一词皆使用英文原文boosting代替</p>
+<h2 id="boosting算法的动机">Boosting算法的动机</h2>
+<p>假设幼儿园老师要教小孩子辨认是什么苹果，那么每次他会给出若干张“是苹果”的照片，另若干张”不是苹果“的照片，让学生给出如何分辨哪些是苹果。有的学生可能会说”圆形的是苹果“，那么老师会高亮犯错的照片，让别的学生继续提出分辨方法，再高亮新分辨方法犯错误的样本，以此类推</p>
+<p>Boosting算法的思想和动机就类似上述过程：用一些很弱的模型<span class="math inline">\(g_t\)</span>（称作基分类器）聚合起来，形成一个复杂的<span class="math inline">\(G\)</span>。这个聚合的算法主要让基分类器专注在重要的（犯过错的）数据上</p>
+<h2 id="权重重设造成的多样性">权重重设造成的多样性</h2>
+<p>首先回顾之前讲过的bootstrapping方法。假设原始数据集一共有4条数据，<span class="math inline">\(\mathcal{D} = \{({\bf x}_1, y_1), ({\bf x}_2, y_2), ({\bf x}_3, y_3), ({\bf x}_4, y_4)\}\)</span>，在第<span class="math inline">\(t\)</span>步使用bootstrapping方法得出来的数据集为<span class="math inline">\(\tilde{\mathcal{D}}_t = \{({\bf x}_1, y_1), ({\bf x}_1, y_1), ({\bf x}_2, y_2), ({\bf x}_4, y_4)\}\)</span>，则在计算<span class="math inline">\(\tilde{\mathcal{D}}_t\)</span>上的<span class="math inline">\(E_{\rm in}^{0/1}=\frac{1}{4}\sum_{({\bf x}, y) \in \tilde{\mathcal{D}}_t}[\![y \not= h({\bf x})]\!]\)</span>时，<span class="math inline">\(({\bf x}_1, y_1)\)</span>会被计算两次，<span class="math inline">\(({\bf x}_3, y_3)\)</span>不会被计算。从另一个角度看待这个问题，可以说此时自助法实际对原始数据中每个数据点<span class="math inline">\(({\bf x}_n, y_n)\)</span>隐含地给出了一个权重<span class="math inline">\(u_n^{(t)}\)</span>。对于本例，有<span class="math inline">\(u_1= 2, u_2= 1, u_3=0, u_4=1\)</span>。此时<span class="math inline">\(E_{\rm in}\)</span>的计算方法等价于计算<span class="math inline">\(E_{\rm in}^{\bf u}(h) = \frac{1}{4}\sum_{n=1}^4 u_n^{(t)}\cdot [\![y_n \not= h({\bf x}_n)]\!]\)</span>。也就是说，bagging算法也可以理解为每轮产生一个各个样本的权重分配，该轮的<span class="math inline">\(g_t\)</span>通过最小化加权（该轮权重）的bootstrapping误差来产生不同的分类结果</p>
+<p>推而广之，可以通过对各个基算法赋予权重，得到一个基算法的加权 <span class="math display">\[
+E_{\rm in}^{\bf u}(h) = \frac{1}{N}\sum_{n=1}^N u_n\cdot {\rm err}(y_n, h({\bf x}_n))
+\]</span> 当基算法是SVM时，由对偶二次规划问题可知<span class="math inline">\(E_{\rm in}^{\bf u} \propto C\sum_{n=1}^N u_n \widehat{\rm err}_{\rm SVM}\)</span>，因此最后<span class="math inline">\(\alpha_n\)</span>的上限被调整为<span class="math inline">\(Cu_n\)</span>。当基算法是Logistic回归时，<span class="math inline">\(E_{\rm in}^{\bf u} \propto \sum_{n=1}^N u_n {\rm err}_{\rm CE}\)</span>，而算法一般是使用随机梯度下降SGD，为了体现权重的影响，某个点权重越高，其在SGD时被抽中的机会就应该越大。权重高了几倍，SGD时该点被抽中的机会就应该高几倍。这种调整方法可以看作是本系列课程第八讲中”类别权重“的扩展</p>
+<p>既然<span class="math inline">\(u\)</span>的不同可以导致基算法回传的<span class="math inline">\(g\)</span>不同，接下来的问题自然就是如何合理地设置<span class="math inline">\(u\)</span>使得<span class="math inline">\(g\)</span>越不一样越好。根据刚才的分析，有 <span class="math display">\[
+\begin{align*}
+g_t &amp;\leftarrow \mathop{\rm arg\min}_{h\in \mathcal{H}}\left(\sum_{n=1}^N u_n^{(t)}[\![y_n \not= h({\bf x}_n)]\!]\right) \\
+g_{t+1} &amp;\leftarrow \mathop{\rm arg\min}_{h\in \mathcal{H}}\left(\sum_{n=1}^N u_n^{(t+1)}[\![y_n \not= h({\bf x}_n)]\!]\right)
+\end{align*}
+\]</span> 如果<span class="math inline">\(g_t\)</span>在使用<span class="math inline">\({\bf u}^{(t+1)}\)</span>时非常不好，在<span class="math inline">\(g_{t+1}\)</span>的最小化过程中，就不应该选到<span class="math inline">\(g_t\)</span>，也不应该选到和<span class="math inline">\(g_t\)</span>很像的假设函数，此时<span class="math inline">\(g_{t+1}\)</span>和<span class="math inline">\(g_t\)</span>就非常不像了。为了做到这一点，可以考虑构造一个最优的<span class="math inline">\({\bf u}^{(t+1)}\)</span>，使得此时<span class="math inline">\(g_t\)</span>的表现就像在随机瞎猜，即 <span class="math display">\[
+\frac{\sum_{n=1}^N u_n^{(t+1)}[\![y_n \not= g_t({\bf x}_n)]\!]}{\sum_{n=1}^N u_n^{(t+1)}} = \frac{1}{2}
+\]</span> 将分母展开，有 <span class="math display">\[
+\frac{\sum_{n=1}^N u_n^{(t+1)}[\![y_n \not= g_t({\bf x}_n)]\!]}{\sum_{n=1}^N u_n^{(t+1)}[\![y_n \not= g_t({\bf x}_n)]\!] + \sum_{n=1}^N u_n^{(t+1)}[\![y_n = g_t({\bf x}_n)]\!]} = \frac{1}{2}
+\]</span> 也就是说，让<span class="math inline">\(g_t\)</span>犯过错误的样本的总权重，等于其正确分类的样本的总权重就可以了。假设前者的总权重是<span class="math inline">\(a\)</span>，后者的总权重是<span class="math inline">\(b\)</span>，那么让前者乘以<span class="math inline">\(b\)</span>，后者乘以<span class="math inline">\(a\)</span>就可以达到想要的效果。或者说，假设<span class="math inline">\(g_t\)</span>在<span class="math inline">\(t\)</span>时犯错的比例为<span class="math inline">\(\epsilon_t\)</span>，则令每个犯错的点权重都<span class="math inline">\(\propto (1-\epsilon_t)\)</span>，每个正确的点权重都<span class="math inline">\(\propto \epsilon_t\)</span>即可得到一个最优的权重调整方法</p>
+<h2 id="自适应boosting算法">自适应Boosting算法</h2>
+<p>根据上一节最后推出来的结论，可以定义一个缩放因子<span class="math inline">\(\blacklozenge_t\)</span>： <span class="math display">\[
+\blacklozenge_t = \sqrt{\frac{1-\epsilon_t}{\epsilon_t}}
+\]</span> 其中 <span class="math display">\[
+\epsilon_t = \frac{\sum_{n=1}^N u_n^{(t)}[\![y_n \not= g_t({\bf x}_n)]\!]}{\sum_{n=1}^N u_n^{(t)}}
+\]</span> 每个错分的数据点的权重乘以<span class="math inline">\(\blacklozenge_t\)</span>，正确分类点的权重除以<span class="math inline">\(\blacklozenge_t\)</span>即可。这种调整方法跟刚才提到的最优权重调整法是一样的，而且透露了更多的物理意义：当且仅当<span class="math inline">\(\epsilon_t \le \frac{1}{2}\)</span>时，才有<span class="math inline">\(\blacklozenge_t \ge 1\)</span>。这意味着错分样本会被放大，正确样本会被缩小。这也是自适应提升算法（Adaboost）得到各种不一样的<span class="math inline">\(g_t\)</span>的方法</p>
+<p>这样可以得到一个初始的算法的核心部分：每一轮<span class="math inline">\(t\)</span>通过让算法<span class="math inline">\(\mathcal{A}\)</span>最小化<span class="math inline">\({\bf u}^{(t)}\)</span>加权的0-1误差，可以得到该轮情况下最优的<span class="math inline">\(g_t\)</span>。然后，使用上述缩放动作，将<span class="math inline">\({\bf u}^{(t)}\)</span>更新为<span class="math inline">\({\bf u}^{(t+1)}\)</span>，为下一轮训练做准备。这里还有两个问题没有解决：</p>
+<ul>
+<li>初始的<span class="math inline">\({\bf u}^{(1)}\)</span>怎么获得</li>
+<li>最后如何聚合这些<span class="math inline">\(g_t\)</span>得到<span class="math inline">\(G({\bf x})\)</span></li>
+</ul>
+<p>第一个问题比较直接，要是最开始的<span class="math inline">\(E_{\rm in}\)</span>最差，只需要让每个样本的权重都一样就可以，即<span class="math inline">\(u_n^{(1)} = 1/N\)</span>。第二个问题稍微要绕一下：直观的方法是跟每个<span class="math inline">\(g_t\)</span>相同的票数，但是仔细想一想，<span class="math inline">\(g_1\)</span>的<span class="math inline">\(E_{\rm in}\)</span>可能会比较好，<span class="math inline">\(g_2\)</span>的<span class="math inline">\(E_{\rm in}\)</span>可能会比较差，让这两个效果不同的分类器票数相同，不太公平。因此最适合的方法是使用线性或者非线性的方法将这些<span class="math inline">\(g_t\)</span>混合起来。</p>
+<p>下面讲的方法就是一种在训练出<span class="math inline">\(g_t\)</span>时就能顺便求出<span class="math inline">\(\alpha_t\)</span>的算法。确定各个<span class="math inline">\(g_t\)</span>时核心思想是对好的<span class="math inline">\(g_t\)</span>权重<span class="math inline">\(\alpha_t\)</span>更大，给坏的<span class="math inline">\(g_t\)</span>权重<span class="math inline">\(\alpha_t\)</span>更小。什么样的<span class="math inline">\(g_t\)</span>是好的<span class="math inline">\(g_t\)</span>呢？很自然，<span class="math inline">\(E_{\rm in}\)</span>越小的<span class="math inline">\(g_t\)</span>应该越好，因此<span class="math inline">\(\epsilon_t\)</span>应该越小越好，即<span class="math inline">\(\blacklozenge_t\)</span>应该越大越好。这也就意味着，<span class="math inline">\(\alpha_t\)</span>应该是<span class="math inline">\(\blacklozenge_t\)</span>的单调（增）函数。这里使用了<span class="math inline">\(\alpha_t = \ln(\blacklozenge_t)\)</span>来确定，而且通过两个特例可以看出选择这个函数的合理性：</p>
+<ul>
+<li>如果<span class="math inline">\(\epsilon_t = \frac{1}{2}\)</span>，说明此时这个<span class="math inline">\(g_t\)</span>其实就是在瞎猜。其对应的<span class="math inline">\(\blacklozenge_t = 1, \alpha_t = 0\)</span>，因此这个分类器没有话语权</li>
+<li>如果<span class="math inline">\(\epsilon=0\)</span>，说明一个<span class="math inline">\(g_t\)</span>就能搞定这个数据集，其对应的<span class="math inline">\(\blacklozenge_t = \infty, \alpha_t = \infty\)</span>，它的意见压倒一切</li>
+</ul>
+<p>因此，最后得到的这个算法，称为自适应boosting（AdaBoost）算法，其实包含了三个重要的组成成分</p>
+<ul>
+<li>很弱的基分类算法<span class="math inline">\(\mathcal{A}\)</span></li>
+<li>最优的重赋权因子<span class="math inline">\(\blacklozenge_t\)</span></li>
+<li>神奇的线性组合系数<span class="math inline">\(\alpha_t\)</span></li>
+</ul>
+<p>AdaBoost算法的流程可整理如下</p>
+<blockquote>
+<p>初始化<span class="math inline">\({\bf u}^{(1)} = [\frac{1}{N}, \frac{1}{N}, \ldots, \frac{1}{N}]\)</span></p>
+<p>对<span class="math inline">\(t = 1, 2, \ldots, T\)</span></p>
+<ol type="1">
+<li><p>通过<span class="math inline">\(\mathcal{A}(\mathcal{D}, {\bf u}^{(t)})\)</span>得到<span class="math inline">\(g_t\)</span>。其中<span class="math inline">\(\mathcal{A}\)</span>是要减小<span class="math inline">\({\bf u}^{(t)}\)</span>加权的0/1误差</p></li>
+<li><p>使用如下方法将<span class="math inline">\({\bf u}^{(t)}\)</span>更新为<span class="math inline">\({\bf u}^{(t+1)}\)</span> <span class="math display">\[
+\begin{align*}
+[\![y_n \not= g_t({\bf x}_n)]\!]: u_n^{(t+1)} &amp;\leftarrow u_n^{(t)} \cdot \blacklozenge_t \hspace{2ex}(\rm incorrect\  examples)\\
+[\![y_n = g_t({\bf x}_n)]\!]: u_n^{(t+1)} &amp;\leftarrow u_n^{(t)} /\  \blacklozenge_t \hspace{2ex}(\rm correct\  examples) \\
+\blacklozenge_t &amp;= \sqrt{\frac{1-\epsilon_t}{\epsilon_t}} \\
+\epsilon_t &amp;= \frac{\sum_{n=1}^N u_n^{(t)}[\![y_n \not= g_t({\bf x}_n)]\!]}{\sum_{n=1}^N u_n^{(t)}}
+\end{align*}
+\]</span></p></li>
+<li><p>计算<span class="math inline">\(\alpha_t = \ln(\blacklozenge_t)\)</span></p></li>
+</ol>
+<p>返回<span class="math inline">\(G({\bf x}) = {\rm sign}\left(\sum_{t=1}^T\alpha_tg_t({\bf x})\right)\)</span></p>
+</blockquote>
+<p>AdaBoost比较引人关注的地方是，它存在一个理论保证，即对最后返回的聚合模型<span class="math inline">\(G\)</span>，有 <span class="math display">\[
+E_{\rm out}(G) \le E_{\rm in}(G) + O\left(\sqrt{O(d_{\rm VC}(\mathcal{H})\cdot T\log T)\cdot \frac{\log N}{N}}\right)
+\]</span> 原文证明，如果能保证总有<span class="math inline">\(\epsilon_t \le \epsilon &lt; \frac{1}{2}\)</span>，则经过<span class="math inline">\(T=O(\log N)\)</span>就能有<span class="math inline">\(E_{\rm in}(G) = 0\)</span>，也就是说上式中上界的第一项可以非常小。在上界的第二项中，<span class="math inline">\(O(d_{\rm VC}(\mathcal{H})\cdot T\log T)\)</span>实际是所有可能<span class="math inline">\(G\)</span>的VC维，随着<span class="math inline">\(T\)</span>的增长其增长比较慢，因此第二项也会很小。这意味着，即便是对很弱的<span class="math inline">\(\mathcal{A}\)</span>，只要其效果比瞎猜的好，哪怕只是好一点，在AdaBoost的作用下最后的<span class="math inline">\(G\)</span>就可以特别强（<span class="math inline">\(E_{\rm in} = 0\)</span>且<span class="math inline">\(E_{\rm out}\)</span>很小）</p>
+<h2 id="自适应boosting实战">自适应Boosting实战</h2>
+<p>（本节只是算法演示，唯一的一点就是重新提了作业2中的决策树桩decision stump。这个模型的核心思想就是在空间里做水平/竖直切面，而且其很容易优化：如果数据集的大小为<span class="math inline">\(N\)</span>，维度为<span class="math inline">\(d\)</span>，则优化这个模型的时间复杂度仅为<span class="math inline">\(O(d\cdot N\log N)\)</span>。最后，AdaBoost还有特征选择的功能，例如人脸识别的那个例子）</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/10/05/NTUML-24-Adaptive-Boosting/" title="NTUML 24. 自适应提升算法（Adaptive Boosting）">txshi-mt.com/2017/10/05/NTUML-24-Adaptive-Boosting/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/NTUML/" rel="tag"># NTUML</a>
+          
+            <a href="/tags/Boosting/" rel="tag"># Boosting</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/10/05/NTUML-23-Blending-Bagging/" rel="next" title="NTUML 23. 模型混合与装袋（bagging）">
+                <i class="fa fa-chevron-left"></i> NTUML 23. 模型混合与装袋（bagging）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/10/07/NTUML-25-Decision-Tree/" rel="prev" title="NTUML 25. 决策树">
+                NTUML 25. 决策树 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#boosting算法的动机"><span class="nav-number">1.</span> <span class="nav-text">Boosting&#x7B97;&#x6CD5;&#x7684;&#x52A8;&#x673A;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#权重重设造成的多样性"><span class="nav-number">2.</span> <span class="nav-text">&#x6743;&#x91CD;&#x91CD;&#x8BBE;&#x9020;&#x6210;&#x7684;&#x591A;&#x6837;&#x6027;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自适应boosting算法"><span class="nav-number">3.</span> <span class="nav-text">&#x81EA;&#x9002;&#x5E94;Boosting&#x7B97;&#x6CD5;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自适应boosting实战"><span class="nav-number">4.</span> <span class="nav-text">&#x81EA;&#x9002;&#x5E94;Boosting&#x5B9E;&#x6218;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="NTUML," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="特征变换技术 关于特征变换，最开始讲的是核技巧。核技巧将可能非常多的特征变换都埋藏在了一个核操作中，包含了多项式核、高斯核和决策树桩核等。核需要满足Mercer条件，所有满足该条件的函数都可以做核函数，值得一提的是，两个核的和/积都还是核。核的应用非常广泛，无论是常见的方法诸如SVM、SVR还是概率SVM，或者是少见的模型例如核岭回归和核Logistic回归，其核心都是核方法的应用。它们都延伸了原">
+<meta name="keywords" content="NTUML">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NTUML 32. 结束曲">
+<meta property="og:url" content="txshi-mt.com/2017/10/28/NTUML-32-Finale/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="特征变换技术 关于特征变换，最开始讲的是核技巧。核技巧将可能非常多的特征变换都埋藏在了一个核操作中，包含了多项式核、高斯核和决策树桩核等。核需要满足Mercer条件，所有满足该条件的函数都可以做核函数，值得一提的是，两个核的和/积都还是核。核的应用非常广泛，无论是常见的方法诸如SVM、SVR还是概率SVM，或者是少见的模型例如核岭回归和核Logistic回归，其核心都是核方法的应用。它们都延伸了原">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.095Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NTUML 32. 结束曲">
+<meta name="twitter:description" content="特征变换技术 关于特征变换，最开始讲的是核技巧。核技巧将可能非常多的特征变换都埋藏在了一个核操作中，包含了多项式核、高斯核和决策树桩核等。核需要满足Mercer条件，所有满足该条件的函数都可以做核函数，值得一提的是，两个核的和/积都还是核。核的应用非常广泛，无论是常见的方法诸如SVM、SVR还是概率SVM，或者是少见的模型例如核岭回归和核Logistic回归，其核心都是核方法的应用。它们都延伸了原">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/10/28/NTUML-32-Finale/"/>
+
+
+
+
+
+  <title>NTUML 32. 结束曲 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/10/28/NTUML-32-Finale/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NTUML 32. 结束曲</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-28T17:28:59+08:00">
+                Oct 28 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/统计机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">统计机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="特征变换技术">特征变换技术</h2>
+<p>关于特征变换，最开始讲的是<strong>核技巧</strong>。核技巧将可能非常多的特征变换都埋藏在了一个核操作中，包含了多项式核、高斯核和决策树桩核等。核需要满足Mercer条件，所有满足该条件的函数都可以做核函数，值得一提的是，两个核的和/积都还是核。核的应用非常广泛，无论是常见的方法诸如SVM、SVR还是概率SVM，或者是少见的模型例如核岭回归和核Logistic回归，其核心都是核方法的应用。它们都延伸了原有的线性模型，通过核得到复杂的特征</p>
+<p>运用特征变换的第二种方法是<strong>模型聚合</strong>，这种方法的基本思想是将一些比较基础的预测模型<span class="math inline">\(g\)</span>都看作是一种特征变换，将预测得到的结果聚合起来，使用一些聚合技术，得到一个更大的模型<span class="math inline">\(G\)</span>。常见的<span class="math inline">\(g\)</span>包括决策树桩、决策树、（高斯）RBF等等。如果已经有了若干个<span class="math inline">\(g\)</span>，就可以做模型混合，比如公平投票法（均匀混合）、带权重的投票法（非均匀混合）和有条件的混合等等。如果没有<span class="math inline">\(g\)</span>，可以使用诸如bagging的方法得到不一样的<span class="math inline">\(g\)</span>让它们投票，例如随机森林；也可以一步步找到非常不一样的<span class="math inline">\(g\)</span>，这样就是使用AdaBoost或者梯度Boost；而决策树和KNN有点类似于有条件混合的策略。从另一个角度，概率SVM也有一点模型混合的味道，只不过是先学到SVM，然后将其与一个常数模型做线性聚合</p>
+<p>第三种方法是<strong>找出潜藏特征</strong>，把特征看作是一些隐藏的变量，然后使用传统的权重法将其组合起来。优化时，寻找特征和最后组合特征的过程是一起优化的，而特征的寻找有时还要借助一些无监督学习的方法。这部分常见的方法包括神经网络（神经元的权重）、RBF网络（找到中心点）和矩阵分解（例如找到用户/电影的隐藏特征）。其中RBF网络会使用k均值聚类方法，神经网络会使用自动编码器或PCA等方法</p>
+<p>这些模型里还有一个共同的特点，但是容易被人所忽略，即它们都做了一些“特征降维”的方法，例如将特征从高维度到低维度的投影。例如决策树桩是把特征投影到<span class="math inline">\(\mathbb{R}\)</span>上，PCA或者自动编码器是在最大程度保留信息的基础上做特征压缩，矩阵分解是把特征从抽象特征（用户ID）变换到具体特征上。而随机森林不仅做了一些随机的低维投影，还通过一些特征选择的方法选出最有用的若干特征</p>
+<h2 id="误差优化技术">误差优化技术</h2>
+<p>接着，从最优化的角度来对前面学过的知识做一总结。最基本的最优化方法是<strong>梯度下降</strong>，即如果能够（大致）知道某个梯度的方向，就能把这个方向作为误差函数的一次逼近：往负梯度方向走一小步就可以。梯度下降及其变种随机梯度下降在很多模型中都有应用，例如Logistic回归、神经网络等。梯度下降的延伸方法，函数梯度下降+最陡下降（steepest descent）则是在AdaBoost和梯度Boost中使用</p>
+<p>一些更困难的最优化问题需要经过一些数学推导，变型成已知的最优化问题。例如在对偶SVM中，是通过对偶方法推出对偶问题，并说明其等价于凸二次规划问题。而在核Logistic回归和核岭回归中，使用的是表示定理。PCA则是使用了特征值与特征向量方面的知识</p>
+<p>另外一些比较困难的方法则是将其分解为一些子问题，分别求解。例如模型混合法，通常是先求解<span class="math inline">\(g\)</span>，再求解<span class="math inline">\(G\)</span>。自动编码器则是一层一层地推进。K均值聚类和矩阵分解使用的是交替求解法，而决策树则是使用了“分而治之”的思想</p>
+<h2 id="过拟合的避免">过拟合的避免</h2>
+<p>最后，再来看一个很重要的问题，就是如何消除或减小过拟合的影响。当模型很复杂时，这个步骤就更加重要。避免过拟合的一种方法是使用正则化，这种方法在很多算法中都有使用。例如SVM和AdaBoost是使用大边界的分类器（AdaBoost是隐含了这方面的思想），SVR、核模型等使用的是L2正则项，模型混合法加入了模型投票的机制，自动编码器使用的是降噪机制（类似于人类接种疫苗），决策树的剪枝，神经网络的dropout或提早停止（其中后者可以应用到任何基于梯度下降的算法），以及对模型做一些预设的限制，例如限制RBF网络的中心点数量</p>
+<p>避免过拟合的另一种方法是验证法。例如随机森林使用OOB来做类似的检查，SVM和SVR可以检查支持向量的数量</p>
+<h2 id="机器学习实战">机器学习实战</h2>
+<p>首先来看一下台大队在过去几次KDD Cup中使用的方法</p>
+<ul>
+<li>2010年KDD Cup，使用了模型混合的方法。混合的基模型一部分是Logistic回归，其输入为大量经过编码的原始特征；另一部分是随机森林，其输入为人类运用领域知识设计出来的特征</li>
+<li>2011年KDD Cup Track 1，基模型为矩阵分解模型（包括概率PCA）、受限玻尔兹曼机（自动编码器的一种扩展）、KNN、概率LSA、线性回归、神经网络、GBDT。对这些基模型，先使用非线性模型混合（例如神经网络和决策树），最后使用一次线性混合</li>
+<li>2012年KDD Cup Track 2，基模型为线性回归及其变种（例如SVR）、Logistic回归及其变种、矩阵分解及其变种。对这些基模型，先使用非线性模型混合（例如神经网络和GBDT），最后使用一次线性混合</li>
+<li>2013年KDD Cup Track 1，基模型为随机森林（使用了很多树）、GBDT变种，使用线性混合。对这次比赛，还投入了大量的精力来设计特征</li>
+</ul>
+<p><strong>总之，台大队经常获胜的秘诀就是精心设计领域知识+使用模型混合防止过拟合</strong></p>
+<p>ICDM在2006年给出过十大数据挖掘算法</p>
+<ul>
+<li>C4.5（决策树的另一种方法）</li>
+<li>K均值聚类</li>
+<li>SVM</li>
+<li>Apriori（一种典型数据挖掘的算法，找出频繁出现项）</li>
+<li>EM算法（可以看作是交替优化法的一种特例）</li>
+<li>PageRank（Google最原始分析网站重要性的方法，类似与矩阵分解）</li>
+<li>AdaBoost</li>
+<li>KNN</li>
+<li>朴素贝叶斯（一种简单的线性模型，权重通过数据的统计特性决定）</li>
+<li>C&amp;RT</li>
+</ul>
+<p>（当然现在最火的就是深度学习了:-P）</p>
+<hr>
+<p>到此为止，台大林轩田老师的机器学习课笔记全部连载完毕，感谢您的阅读。当然，更感谢林轩田老师的精彩授课。在我看来，这是一门不可多得的中文机器学习课程，无论是深度和广度都是恰到好处。另外，这门课的作业设计也非常出色，如果能把这些作业做完，无疑能进一步地加深对这些知识点的理解，不管是从理论的角度，还是实现的角度，都是如此。本系列课程的永久网址可见 <a href="https://www.csie.ntu.edu.tw/~htlin/course/ml15fall/" class="uri" target="_blank" rel="noopener">https://www.csie.ntu.edu.tw/~htlin/course/ml15fall/</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/10/28/NTUML-32-Finale/" title="NTUML 32. 结束曲">txshi-mt.com/2017/10/28/NTUML-32-Finale/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/NTUML/" rel="tag"># NTUML</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/10/25/NTUML-31-Matrix-Factorization/" rel="next" title="NTUML 31. 矩阵分解">
+                <i class="fa fa-chevron-left"></i> NTUML 31. 矩阵分解
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/11/12/UTNN-1-Introduction/" rel="prev" title="Hinton神经网络与机器学习 1. 绪论">
+                Hinton神经网络与机器学习 1. 绪论 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#特征变换技术"><span class="nav-number">1.</span> <span class="nav-text">&#x7279;&#x5F81;&#x53D8;&#x6362;&#x6280;&#x672F;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#误差优化技术"><span class="nav-number">2.</span> <span class="nav-text">&#x8BEF;&#x5DEE;&#x4F18;&#x5316;&#x6280;&#x672F;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#过拟合的避免"><span class="nav-number">3.</span> <span class="nav-text">&#x8FC7;&#x62DF;&#x5408;&#x7684;&#x907F;&#x514D;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#机器学习实战"><span class="nav-number">4.</span> <span class="nav-text">&#x673A;&#x5668;&#x5B66;&#x4E60;&#x5B9E;&#x6218;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

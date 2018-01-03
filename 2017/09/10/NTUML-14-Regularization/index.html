@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="NTUML,正则化," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="正则化的假设集  过拟合的正则化  如上图所示，右边给出的就是在上讲中经常提到的过拟合现象，可以看到拟合的曲线（红线）与目标函数图像（蓝线）差别特别大。正则化的目的是对复杂的模型进行调整，使其也可以逼近比较简单的模型。上图左边给出的就是正则化的效果示意，可以发现经过正则化以后，函数光滑了许多，也与目标函数接近了许多。其思想是，从高次多项式假设集合逐步“走回”低次多项式假设集合。“正则化”这个概念来">
+<meta name="keywords" content="NTUML,正则化">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NTUML 14. 正则化">
+<meta property="og:url" content="txshi-mt.com/2017/09/10/NTUML-14-Regularization/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="正则化的假设集  过拟合的正则化  如上图所示，右边给出的就是在上讲中经常提到的过拟合现象，可以看到拟合的曲线（红线）与目标函数图像（蓝线）差别特别大。正则化的目的是对复杂的模型进行调整，使其也可以逼近比较简单的模型。上图左边给出的就是正则化的效果示意，可以发现经过正则化以后，函数光滑了许多，也与目标函数接近了许多。其思想是，从高次多项式假设集合逐步“走回”低次多项式假设集合。“正则化”这个概念来">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML14_regularization.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML14_lagrange_multiplier.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML14_lambda_values.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML14_l1_regularizer.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML14_lambda_noise.png">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.091Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NTUML 14. 正则化">
+<meta name="twitter:description" content="正则化的假设集  过拟合的正则化  如上图所示，右边给出的就是在上讲中经常提到的过拟合现象，可以看到拟合的曲线（红线）与目标函数图像（蓝线）差别特别大。正则化的目的是对复杂的模型进行调整，使其也可以逼近比较简单的模型。上图左边给出的就是正则化的效果示意，可以发现经过正则化以后，函数光滑了许多，也与目标函数接近了许多。其思想是，从高次多项式假设集合逐步“走回”低次多项式假设集合。“正则化”这个概念来">
+<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML14_regularization.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/09/10/NTUML-14-Regularization/"/>
+
+
+
+
+
+  <title>NTUML 14. 正则化 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/09/10/NTUML-14-Regularization/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NTUML 14. 正则化</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-10T19:01:29+08:00">
+                Sep 10 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/统计机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">统计机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="正则化的假设集">正则化的假设集</h2>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML14_regularization.png" alt="过拟合的正则化"><figcaption>过拟合的正则化</figcaption>
+</figure>
+<p>如上图所示，右边给出的就是在上讲中经常提到的过拟合现象，可以看到拟合的曲线（红线）与目标函数图像（蓝线）差别特别大。<strong>正则化</strong>的目的是对复杂的模型进行调整，使其也可以逼近比较简单的模型。上图左边给出的就是正则化的效果示意，可以发现经过正则化以后，函数光滑了许多，也与目标函数接近了许多。其思想是，从高次多项式假设集合逐步“走回”低次多项式假设集合。“正则化”这个概念来自于早期函数逼近这个领域，以解决其中ill-posed问题</p>
+<p>那么如何完成这个“走回”的操作？回想之前给出的对<span class="math inline">\(x \in \mathbb{R}\)</span>做<span class="math inline">\(Q\)</span>次多项式变换的方法<span class="math inline">\(\boldsymbol{\Phi}_Q(x) = (1, x, x^2, \ldots, x^Q)\)</span>，为了方便起见，这里不再将在转换后空间<span class="math inline">\(\mathcal{Z}\)</span>中训练得到的权重记为<span class="math inline">\(\tilde{\bf w}\)</span>，而是直接记为<span class="math inline">\(\bf w\)</span>。由前面的介绍，<span class="math inline">\(\mathcal{H}_{10}\)</span>中的<span class="math inline">\(\bf w\)</span>的形式和<span class="math inline">\(\mathcal{H}_2\)</span>中的<span class="math inline">\(\bf w\)</span>的形式可以各自表示为： <span class="math display">\[
+\begin{align*}
+\mathcal{H}_{10} &amp;: w_0 + w_1x + w_2x^2 + w_3x^3 + \ldots + w_{10}x^{10} \\
+\mathcal{H}_2 &amp;: w_0 + w_1x+w_2x^2
+\end{align*}
+\]</span> 从这个角度看，<span class="math inline">\(\mathcal{H}_2\)</span>可以看作是<span class="math inline">\(\mathcal{H}_{10}\)</span>加上了一些限制<span class="math inline">\(w_3 = \ldots = w_{10}=0\)</span>而成。因此，前面的这个“走回”操作，其实就是加入一些限制。从最优化问题的角度来看，使用<span class="math inline">\(\mathcal{H}_{10}\)</span>求解回归问题，其对应的最优化表达法为 <span class="math display">\[
+\min_{ {\bf w} \in \mathbb{R}^{10 + 1}}E_{\rm in}({\bf w})
+\]</span> 而使用<span class="math inline">\(\mathcal{H}_2\)</span>求解回归问题，从某种意义上讲，就是 <span class="math display">\[
+\begin{align*}
+\min_{ {\bf w} \in \mathbb{R}^{10 + 1}} &amp;\hspace{2ex}E_{\rm in}({\bf w}) \\
+{\rm s.t.} &amp;\hspace{2ex} w_3 = w_4 = \ldots w_{10} = 0
+\end{align*}
+\]</span> 注意到<span class="math inline">\(\mathcal{H}_2\)</span>是让<span class="math inline">\(\mathcal{H}_{10}\)</span>的8个高次项系数为0。可以不这么教条，对这个限制条件做一点放松，使得其不是所有高次项全为0，而是有任意至少8个项系数为0（即最多有三个项系数不为0）。这样得到的新假设集合记做<span class="math inline">\(\mathcal{H}_2&#39;\)</span>，则其对应的最优化问题为 <span class="math display">\[
+\begin{align*}
+\min_{ {\bf w} \in \mathbb{R}^{10 + 1}} &amp;\hspace{2ex}E_{\rm in}({\bf w}) \\
+{\rm s.t.} &amp;\hspace{2ex} \sum_{q=0}^{10}[\![w_q \not= 0]\!] \le 3
+\end{align*}
+\]</span> 这三个假设集之间的关系是<span class="math inline">\(\mathcal{H}_2 \subset \mathcal{H}_2&#39; \subset \mathcal{H}_{10}\)</span>，因此新得到的这个假设集合表示能力强于<span class="math inline">\(\mathcal{H}_2\)</span>，而且风险程度又弱于<span class="math inline">\(\mathcal{H}_{10}\)</span>，看上去很不错。但是这里最关键的问题是，这个问题是一个NP难问题！</p>
+<p>但是退而求其次，可以提出一个类似的最优化问题，即不再限制（至多）有多少个项不为0，而是限制这些系数的平方和小于某个常数。这种提法是有意义的，因为在原始问题里，如果某一项系数为0（或者很接近0），它对系数总体平方和的贡献也有限。因此，上面这个问题可以近似于（非等价于！）如下最优化问题 <span class="math display">\[
+\begin{align*}
+\min_{ {\bf w} \in \mathbb{R}^{10 + 1}} &amp;\hspace{2ex}E_{\rm in}({\bf w}) \\
+{\rm s.t.} &amp;\hspace{2ex} \sum_{q=0}^{10}w_q^2 \le C
+\end{align*}
+\]</span> 记该问题对应的假设集合为<span class="math inline">\(\mathcal{H}(C)\)</span>，注意<span class="math inline">\(\mathcal{H}(C)\)</span>和<span class="math inline">\(\mathcal{H}_2&#39;\)</span>有交叉，但是不完全相等。而且对不同的<span class="math inline">\(C \ge 0\)</span>，<span class="math inline">\(\mathcal{H}(C)\)</span>也有重叠结构： <span class="math display">\[
+\mathcal{H}(0) \subset \mathcal{H}(1.126) \subset \ldots \subset \mathcal{H}(1126) \subset \ldots \subset \mathcal{H}(\infty) = \mathcal{H}_{10}
+\]</span> 称<span class="math inline">\(\mathcal{H}(C)\)</span>这样的假设集合为正则化的假设集合，其最优解为正则化的假设，记为<span class="math inline">\({\bf w}_{\rm REG}\)</span></p>
+<h2 id="权重衰减的正则化方法">权重衰减的正则化方法</h2>
+<p>如何解这个加了限制的最优化问题？首先可以把问题转化为向量和矩阵形式。向量形式为 <span class="math display">\[
+\begin{align*}
+\min_{ {\bf w} \in \mathbb{R}^{Q+1}} &amp;\hspace{2ex}E_{\rm in}({\bf w}) = \frac{1}{N}\sum_{n=1}^N({\bf w}^\mathsf{T}{\bf z}_n - y_n)^2 \\
+{\rm s.t.} &amp;\hspace{2ex}\sum_{q=0}^Q w_q^2 \le C
+\end{align*}
+\]</span> 对应的矩阵形式为 <span class="math display">\[
+\begin{align*}
+\min_{ {\bf w} \in \mathbb{R}^{Q+1}} &amp;\hspace{2ex}E_{\rm in}({\bf w}) = \frac{1}{N}({\rm Z}{\bf w} - {\bf y})^\mathsf{T}({\rm Z}{\bf w} - {\bf y}) \\
+{\rm s.t.} &amp;\hspace{2ex} {\bf w}^\mathsf{T}{\bf w} \le C
+\end{align*}
+\]</span> 从几何意义上讲，这个限制条件是把<span class="math inline">\(\bf w\)</span>限制在了一个球心为原点，半径为<span class="math inline">\(\sqrt{C}\)</span>的超球体里</p>
+<p>如何求解这个问题？如果没有条件限制，直接让<span class="math inline">\(\bf w\)</span>沿着<span class="math inline">\(-\nabla E_{\rm in}({\bf w})\)</span>的方向滚下去，滚到谷底就得到了<span class="math inline">\({\bf w}_{\rm LIN}\)</span></p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML14_lagrange_multiplier.png" alt="施加正则化以后权重w的优化"><figcaption>施加正则化以后权重w的优化</figcaption>
+</figure>
+<p>如上图，如果没有正则化项，蓝线就是（某一时刻）<span class="math inline">\(E_{\rm in}\)</span>的等高线，蓝色的箭头是<span class="math inline">\(\bf w\)</span>变化的方向。加入正则化条件以后，<span class="math inline">\(\bf w\)</span>只能在红圈里（或边上），因此大部分情况下<span class="math inline">\(\bf w\)</span>应该都在红圈上。假设此时<span class="math inline">\(\bf w\)</span>已经在红圈上，判断其是否达到最优解的方法就是看它是否还能沿着<span class="math inline">\(-\nabla E_{\rm in}\)</span>的方向往下滚。但是限制条件又规定<span class="math inline">\(\bf w\)</span>不能滚出球（即沿着红色箭头的方向移动），只能沿着垂直于球法向量的方向移动（即绿色箭头的方向）。这样一来，如果<span class="math inline">\(-\nabla E_{\rm in}\)</span>这个方向可以沿着绿色箭头的方向分出一个分量，<span class="math inline">\(\bf w\)</span>沿着该分量方向移动的话，就可以同时满足 i) 受条件<span class="math inline">\({\bf w}^\mathsf{T}{\bf w} = C\)</span>这个条件限制 ii) 减小<span class="math inline">\(E_{\rm in}\)</span> 这两个要求。因此，最优的<span class="math inline">\({\bf w}_{\rm REG}\)</span>肯定与<span class="math inline">\(-\nabla E_{\rm in}({\bf w}_{\rm REG})\)</span>方向平行（否则还可以继续往下滚），即 <span class="math display">\[
+-\nabla E_{\rm in}({\bf w}_{\rm REG}) \propto {\bf w}_{\rm REG}
+\]</span> 将这个比值设为<span class="math inline">\(\frac{2\lambda}{N}\)</span>，则加入了正则化项以后，最优化问题实际上就是要求解<span class="math inline">\({\bf w}_{\rm REG}\)</span>满足 <span class="math display">\[
+\nabla E_{\rm in}({\bf w}_{\rm REG}) - \frac{2\lambda}{N} {\bf w}_{\rm REG} = 0
+\]</span> 这里<span class="math inline">\(\lambda &gt; 0\)</span>实际上是拉格朗日乘子，上面实际上给出了拉格朗日乘子的几何意义。假设<span class="math inline">\(\lambda\)</span>已知，上面这个式子其实就是关于<span class="math inline">\({\bf w}_{\rm REG}\)</span>的一个线性方程。代入梯度的定义，有 <span class="math display">\[
+\frac{2}{N} ({\rm Z}^\mathsf{T}{\rm Z}{\bf w}_{\rm REG} - {\rm Z}^\mathsf{T}{\bf y}) + \frac{2\lambda}{N}{\bf w}_{\rm REG} = 0
+\]</span> 求解可得 <span class="math display">\[
+{\bf w}_{\rm REG} = ({\rm Z^\mathsf{T}Z + \lambda I})^{-1}{\rm Z}^\mathsf{T}{\bf y}
+\]</span> 给定<span class="math inline">\(\lambda &gt; 0\)</span>，由于<span class="math inline">\(\rm{Z^\mathsf{T}Z}\)</span>是半正定矩阵，<span class="math inline">\(\lambda I\)</span>是正定矩阵，两者相加也是正定矩阵，因此<span class="math inline">\({\rm Z^\mathsf{T}Z + \lambda I}\)</span>永远存在逆矩阵，上式总可求解</p>
+<p>这个回归在统计上被称为是<strong>岭回归</strong></p>
+<p>岭回归还可以从另一个角度推导：求解<span class="math inline">\(\nabla E_{\rm in} = 0\)</span>对应的是要最小化<span class="math inline">\(E_{\rm in}({\bf w})\)</span>，如果加上限制条件，那么对限制条件求积分，其实就是为了最小化<span class="math inline">\(E_{\rm in}({\bf w}) + \frac{\lambda}{N} {\bf w}^\mathsf{T}{\bf w}\)</span>。其中加上的这一项称为<strong>正则化项</strong>，加上正则化项以后的误差称为<strong>增强误差</strong>，记为<span class="math inline">\(E_{\rm aug}({\bf w})\)</span>。增强误差项包含了限制条件，又没有显式给出限制条件，比较容易求解。因此，正则化的过程也可以看作是最小化增强误差的过程，即对给定的<span class="math inline">\(\lambda \ge 0\)</span>求解 <span class="math display">\[
+{\bf w}_{\rm REG} \leftarrow \mathop{ {\rm arg}\min }_{\bf w} E_{\rm aug}({\bf w})
+\]</span> （笔记注：这块感觉讲得有点太细致了，如果知道拉格朗日乘子的意义，这种转化是显然的）</p>
+<p>下图中给出了正则化项系数<span class="math inline">\(\lambda\)</span>对模型效果的影响。可以看出，<span class="math inline">\(\lambda\)</span>越大，正则得越狠，模型越容易欠拟合。实际使用时，一点点正则化项就可以起到很大的作用</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML14_lambda_values.png" alt="正则化项系数lambda对模型效果的影响"><figcaption>正则化项系数lambda对模型效果的影响</figcaption>
+</figure>
+<p>进一步地，称<span class="math inline">\(+\frac{\lambda}{N}{\bf w}^\mathsf{T}{\bf w}\)</span>为权重衰减的正则化方法。因为正则化项系数<span class="math inline">\(\lambda\)</span>越大，<span class="math inline">\(\bf w\)</span>就会更小，其范数<span class="math inline">\(C\)</span>也会越小</p>
+<p>这种方法可以和任意特征变换方式和线性模型搭配使用，例如跟Logistic回归搭配使用</p>
+<p>第12页幻灯片给出了一个多项式特征变换的细节：如果按照普通的<span class="math inline">\(1, x, x^2 , \ldots\)</span>这样变换，当<span class="math inline">\(x \in [-1, 1]\)</span>时，其高次项的值会特别小，因此对应的权重系数会比较大。为了避免这种现象出现，讲义中使用了<span class="math inline">\(1, L_1(x), L_2(x), \ldots\)</span>的变换方式，其中<span class="math inline">\(L_i(x)\)</span>对应为勒让德多项式中的第<span class="math inline">\(i\)</span>个表达式。勒让德多项式的各个组成元素也是多项式空间的一组正交基</p>
+<h2 id="正则化与vc维">正则化与VC维</h2>
+<p>一个很自然的问题就是，正则化方法和之前介绍的VC维有什么关系。我们的出发点是要解一个受限制的<span class="math inline">\(E_{\rm in}\)</span>的问题，而由于<span class="math inline">\(\lambda\)</span>与<span class="math inline">\(C\)</span>有对应关系，因此解带有限制的最优化问题其实就等价于解一个无限制，但是相对<span class="math inline">\(E_{\rm in}\)</span>更大的<span class="math inline">\(E_{\rm aug}\)</span>。而原始问题对应的VC保证是，<span class="math inline">\(E_{\rm out}({\bf w})\)</span>会比<span class="math inline">\(E_{\rm in}({\bf w})\)</span>加上一个对复杂性的惩罚项<span class="math inline">\(\Omega(\mathcal{H}(C))\)</span>，即<span class="math inline">\(E_{\rm out}({\bf w}) \le E_{\rm in}({\bf w}) + \Omega(\mathcal{H}(C))\)</span>。最小化<span class="math inline">\(E_{\rm aug}({\bf w})\)</span>的过程也是在间接地满足这个VC保证（因为每个<span class="math inline">\(\lambda\)</span>都有对应的<span class="math inline">\(C\)</span>），而且由于去掉了限制条件，还考察了所有可能的<span class="math inline">\(\bf w\)</span></p>
+<p>因此，被放大的误差与VC上界存在一定的相似性：被放大的误差是向<span class="math inline">\(E_{\rm in}\)</span>加上了一项，VC上界也是向<span class="math inline">\(E_{\rm in}\)</span>加上了一项。被放大的误差所加的一项<span class="math inline">\(\frac{\lambda}{N}{\bf w}^\mathsf{T}{\bf w}\)</span>说明了某个假设有多复杂（这个假设越复杂，正则项就会越大，从直觉来看，曲线就越弯曲），而VC上界加的项<span class="math inline">\(\Omega(\mathcal{H})\)</span>说的是整个假设集合有多复杂。如果将<span class="math inline">\({\bf w}^\mathsf{T}{\bf w}\)</span>记为<span class="math inline">\(\Omega({\bf w})\)</span>，将其看作是某个模型的复杂度，同时考虑一个前提：假设某个假设很复杂，那么它肯定处在一个复杂的假设集合中。这样一来，<span class="math inline">\(\frac{\lambda}{N}\Omega({\bf w})\)</span>就是<span class="math inline">\(\Omega({\mathcal{H})}\)</span>的一个缩影，而<span class="math inline">\(E_{\rm aug}\)</span>比起<span class="math inline">\(E_{\rm in}\)</span>也是<span class="math inline">\(E_{\rm out}\)</span>更好的代理。所以，最小化<span class="math inline">\(E_{\rm aug}\)</span>是最小化<span class="math inline">\(E_{\rm out}\)</span>的一个更好的启发式方法，这种做法给予我们更自由在<span class="math inline">\(\mathcal{H}\)</span>上选择<span class="math inline">\(\bf w\)</span>的能力</p>
+<p>再从另一个角度去思考所得到模型的复杂性。对优化问题 <span class="math display">\[
+\min_{ {\bf{w}} \in \mathbb{R}^{\tilde{d}+1}} E_{\rm aug}({\bf w}) = E_{\rm in}({\bf w}) + \frac{\lambda}{N}\Omega({\bf w})
+\]</span> 名义上模型的复杂度<span class="math inline">\(d_{\rm VC}(\mathcal{H}) = \tilde{d} + 1\)</span>，因为考虑了所有<span class="math inline">\(\bf w\)</span> 。但是实际上由于<span class="math inline">\(\lambda\)</span>和<span class="math inline">\(C\)</span>隐含的对应性，只有一少部分属于<span class="math inline">\(\mathcal{H}(C)\)</span>的<span class="math inline">\(\bf w\)</span>才会被考虑，因此模型的实际复杂度只有<span class="math inline">\(d_{\rm VC}(\mathcal{H}(C))\)</span>。这样，可以引入模型的“有效VC维”这个概念，记为<span class="math inline">\(d_{\rm EFF}(\mathcal{H, A})\)</span>。其中<span class="math inline">\(\mathcal{H}\)</span>说明候选的假设集仍然是完整的假设集，而<span class="math inline">\(\mathcal{A}\)</span>则代表了算法选择模型的方法。所以即便<span class="math inline">\(d_{\rm VC}(\mathcal{H})\)</span>很大，如果用了正则化的算法<span class="math inline">\(\mathcal{A}\)</span>，实际的<span class="math inline">\(d_{\rm EFF}(\mathcal{H, A})\)</span>也会很小</p>
+<h2 id="常见的正则项">常见的正则项</h2>
+<p>前面介绍的方法里，正则项用的都是<span class="math inline">\({\bf w}^\mathsf{T}{\bf w}\)</span>。那么正则项有没有可能有别的选择？<span class="math inline">\(\bf w\)</span>有没有别的形式的条件？由于目标函数的不可预知性，我们无法提前给出最好的假设会是什么样。不过退而求其次，可以给出目标函数应该处于什么方向上。总体来讲，设计正则项有如下指导性原则</p>
+<ul>
+<li>正则项的设计应该与目标相关。例如假设要让正则项对称，可以设为<span class="math inline">\(\sum [\![q{\rm\  is\  odd}]\!] w_q^2\)</span></li>
+<li>正则项的设计应该看上去合理。由于无论是随机误差还是决定性误差都不平滑，因此正则项应该使最后的<span class="math inline">\(\bf w\)</span>更平滑或更简单</li>
+<li>正则项的设计应该比较友好，易于优化</li>
+</ul>
+<p>当然，即便正则项设计得不好，也可以用<span class="math inline">\(\lambda\)</span>来控制，至少可以保证模型不受正则项影响</p>
+<p>可以看到，正则项设计的三项原则和误差函数设计的三项原则异曲同工，都包括了目标相关性、合理性和友好性这三个点。它们也是设计机器学习算法时需要注意的关键</p>
+<p>之前介绍过L2正则化项，其形式为<span class="math inline">\(\Omega({\bf w}) = \sum_{q=0}^Q w_q^2 = |\!|{\bf w}|\!|_2^2\)</span>。这是一个凸函数，而且处处可微，因此易于优化。另一种常见的正则化项称为L1正则化项：前面L2正则化项用的是<span class="math inline">\(\bf w\)</span>的L2范数，同理L1正则化项用的是<span class="math inline">\(\bf w\)</span>的L1范数，即<span class="math inline">\(\Omega({\bf w}) = \sum_{q=0}^Q |w_q| = |\!|{\bf w}|\!|_1\)</span>。注意这个函数仍然是凸函数，但是在<span class="math inline">\(w_i = 0\)</span>时是不可微的，因此优化起来要稍微麻烦一点。那为什么它还广受青睐？参考下图</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML14_l1_regularizer.png" alt="L1正则化示意图"><figcaption>L1正则化示意图</figcaption>
+</figure>
+<p>类似之前提到的L2正则化的原理，只有当<span class="math inline">\(\bf w\)</span>的移动方向<span class="math inline">\(-\nabla E_{\rm in}\)</span>（这里是蓝色箭头）与法向量（这里是红色箭头）平行时，<span class="math inline">\(\bf w\)</span>才达到最优解。当<span class="math inline">\(\bf w\)</span>在正方形的边上时，这种状态一般不会发生，因此总会有<span class="math inline">\(\bf w\)</span>的一个分量拉着<span class="math inline">\(\bf w\)</span>前进，直到到达正方形的顶点处。而在顶点时，说明有一些<span class="math inline">\(w_i\)</span>其值为0，这意味着使用L1正则项会得到比较稀疏的解，计算效率更高</p>
+<p>最后，下图给出了当噪声不同的时候，最优正则项系数的取值</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML14_lambda_noise.png" alt="噪声不同时，lambda与Eout期望值的关系。左为随机噪声，右为决定性噪声。最优lambda使用大实心点标出"><figcaption>噪声不同时，lambda与Eout期望值的关系。左为随机噪声，右为决定性噪声。最优lambda使用大实心点标出</figcaption>
+</figure>
+<p>可以看到，无论是随机噪声还是决定性噪声，噪声越大，<span class="math inline">\(\lambda\)</span>就应该越大。但是我们并不知道噪声有多大，那么<span class="math inline">\(\lambda\)</span>应该如何选择？这个问题留待下讲作答</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/09/10/NTUML-14-Regularization/" title="NTUML 14. 正则化">txshi-mt.com/2017/09/10/NTUML-14-Regularization/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/NTUML/" rel="tag"># NTUML</a>
+          
+            <a href="/tags/正则化/" rel="tag"># 正则化</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/09/NTUML-13-Hazard-of-Overfitting/" rel="next" title="NTUML 13. 过拟合的危害">
+                <i class="fa fa-chevron-left"></i> NTUML 13. 过拟合的危害
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/09/12/NTUML-15-Validation/" rel="prev" title="NTUML 15. 验证">
+                NTUML 15. 验证 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#正则化的假设集"><span class="nav-number">1.</span> <span class="nav-text">&#x6B63;&#x5219;&#x5316;&#x7684;&#x5047;&#x8BBE;&#x96C6;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#权重衰减的正则化方法"><span class="nav-number">2.</span> <span class="nav-text">&#x6743;&#x91CD;&#x8870;&#x51CF;&#x7684;&#x6B63;&#x5219;&#x5316;&#x65B9;&#x6CD5;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#正则化与vc维"><span class="nav-number">3.</span> <span class="nav-text">&#x6B63;&#x5219;&#x5316;&#x4E0E;VC&#x7EF4;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常见的正则项"><span class="nav-number">4.</span> <span class="nav-text">&#x5E38;&#x89C1;&#x7684;&#x6B63;&#x5219;&#x9879;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

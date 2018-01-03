@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="NTUML,Logistic回归,SVM,核方法," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="软间隔SVM与正则化模型 前面讲到，软间隔SVM对每个数据点记录了其“间隔破坏量”，记为\(\xi_n\)，并对该量施加一些惩罚，得到软间隔SVM的优化问题 \[ \begin{align*} \min_{b, {\bf w}}\hspace{2ex}&amp;amp;\frac{1}{2}{\bf w^\mathsf{T}w} + C\cdot \sum_{n=1}^N \xi_n\\ {\rm s.t">
+<meta name="keywords" content="NTUML,Logistic回归,SVM,核方法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NTUML 21. 核Logistic回归">
+<meta property="og:url" content="txshi-mt.com/2017/10/02/NTUML-21-Kernel-Logistic-Regression/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="软间隔SVM与正则化模型 前面讲到，软间隔SVM对每个数据点记录了其“间隔破坏量”，记为\(\xi_n\)，并对该量施加一些惩罚，得到软间隔SVM的优化问题 \[ \begin{align*} \min_{b, {\bf w}}\hspace{2ex}&amp;amp;\frac{1}{2}{\bf w^\mathsf{T}w} + C\cdot \sum_{n=1}^N \xi_n\\ {\rm s.t">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML18_hinge_loss_function.png">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.092Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NTUML 21. 核Logistic回归">
+<meta name="twitter:description" content="软间隔SVM与正则化模型 前面讲到，软间隔SVM对每个数据点记录了其“间隔破坏量”，记为\(\xi_n\)，并对该量施加一些惩罚，得到软间隔SVM的优化问题 \[ \begin{align*} \min_{b, {\bf w}}\hspace{2ex}&amp;amp;\frac{1}{2}{\bf w^\mathsf{T}w} + C\cdot \sum_{n=1}^N \xi_n\\ {\rm s.t">
+<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML18_hinge_loss_function.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/10/02/NTUML-21-Kernel-Logistic-Regression/"/>
+
+
+
+
+
+  <title>NTUML 21. 核Logistic回归 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/10/02/NTUML-21-Kernel-Logistic-Regression/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NTUML 21. 核Logistic回归</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-02T10:19:24+08:00">
+                Oct 2 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/统计机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">统计机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="软间隔svm与正则化模型">软间隔SVM与正则化模型</h2>
+<p>前面讲到，软间隔SVM对每个数据点记录了其“间隔破坏量”，记为<span class="math inline">\(\xi_n\)</span>，并对该量施加一些惩罚，得到软间隔SVM的优化问题 <span class="math display">\[
+\begin{align*}
+\min_{b, {\bf w}}\hspace{2ex}&amp;\frac{1}{2}{\bf w^\mathsf{T}w} + C\cdot \sum_{n=1}^N \xi_n\\
+{\rm s.t.} \hspace{2ex} &amp;y_n({\bf w^\mathsf{T}z}_n + b) \ge 1 -\xi_n,\  \xi_n \ge 0 \forall n
+\end{align*}
+\]</span> 这个问题可以使用另一种形式来表示，看看它到底要解决什么事情：给定<span class="math inline">\(b\)</span>和<span class="math inline">\(\bf w\)</span>，则<span class="math inline">\(\xi_n\)</span>是怎么算出来的呢？<span class="math inline">\(\xi_n\)</span>的本质是看这个点对间隔边界的破坏程度，因此对任意一个点，<span class="math inline">\(\xi_n\)</span>有两种情况</p>
+<ul>
+<li>这个点的确破坏了间隔边界，因此<span class="math inline">\(\xi_n\)</span>记录它离想要的数字1有多远，此时<span class="math inline">\(\xi_n = 1 - y_n({\bf w}^\mathsf{T}{\bf z}_n + b)\)</span>。由于这个点已经破坏了边界，因此<span class="math inline">\(\xi_n \ge 0\)</span></li>
+<li>这个点没有破坏间隔边界，此时<span class="math inline">\(\xi_n = 0\)</span></li>
+</ul>
+<p>综上所述，<span class="math inline">\(\xi_n\)</span>可以用一个式子来表示，即<span class="math inline">\(\xi_n = \max(1 - y_n({\bf w}^\mathsf{T}{\bf z}_n + b), 0)\)</span>。这也意味着软间隔SVM问题可以写成一个没有限制条件的优化问题，为 <span class="math display">\[
+\min_{b, {\bf w}}\hspace{2ex}\frac{1}{2}{\bf w^\mathsf{T}w} + C\cdot \sum_{n=1}^N \max(1 - y_n({\bf w}^\mathsf{T}{\bf z}_n + b), 0)
+\]</span> 此时<span class="math inline">\(\xi_n\)</span>不再是一个变量，而是一个由<span class="math inline">\(b\)</span>和<span class="math inline">\(\bf w\)</span>算出来的结果</p>
+<p>这种表示形式和之前讲过的正则化方法非常像：优化问题本身可以分解为两个部分，第一项是<span class="math inline">\(\bf w\)</span>的长度，代表了模型的复杂度；而第二项可以看做是样本中所有误差的和，这不过这里似乎使用了一种新的误差函数，可以记为<span class="math inline">\(\widehat{\rm err}\)</span>。但是为什么不能直接解这个问题呢？首先，它不再是一个二次规划问题，因此对偶和核技巧可能不太好用上；其次，<span class="math inline">\(\max(\cdot, 0)\)</span>并不是处处可微，因此这个优化问题更难解</p>
+<p>下表给出了硬/软间隔SVM和正则化模型之间的一些比较</p>
+<table>
+<thead>
+<tr class="header">
+<th>模型</th>
+<th>最小化的目标函数</th>
+<th>限制条件</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>带限制条件的正则化</td>
+<td><span class="math inline">\(E_{\rm in}\)</span></td>
+<td><span class="math inline">\({\bf w^\mathsf{T}w} \le C\)</span></td>
+</tr>
+<tr class="even">
+<td>硬间隔SVM</td>
+<td><span class="math inline">\(\bf w^\mathsf{T}w\)</span></td>
+<td><span class="math inline">\(E_{\rm in} = 0\)</span>（及其他）</td>
+</tr>
+<tr class="odd">
+<td>L2正则化</td>
+<td><span class="math inline">\(\frac{\lambda}{N}{\bf w^\mathsf{T}w} + E_{\rm in}\)</span></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>软间隔SVM</td>
+<td><span class="math inline">\(\frac{1}{2}{\bf w^\mathsf{T}w} + CN\widehat{E_{\rm in}}\)</span></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>即软间隔SVM和L2正则化这两个问题其实非常相似。从上表可知，大间隔其实就是正则化的一种实现，代表可选择的超平面要更少，实际上就是对<span class="math inline">\(\bf w\)</span>的一种L2正则化；而软间隔则意味着要计算一种特殊的误差函数<span class="math inline">\(\widehat{\rm err}\)</span>。对于<span class="math inline">\(C\)</span>来讲，无论是带限制条件的正则化问题还是软间隔SVM问题，<span class="math inline">\(C\)</span>越大，对应着越小的<span class="math inline">\(\lambda\)</span>，即越小的正则化</p>
+<p>把SVM看作是一种正则化模型的好处是，可以将其理论延伸到其他模型，并与这些模型建立联系</p>
+<h2 id="svm-vs.logistic回归">SVM vs. Logistic回归</h2>
+<p>类似于第11讲中的做法，也可以把上面推出的SVM的损失函数<span class="math inline">\(\widehat{\rm err}_{\rm SVM}\)</span>做出图像，与原始0/1误差函数<span class="math inline">\({\rm err_{0/1}}(s, y) = [\![ys \not= 1]\!]\)</span>作比较。下图给出了这两个函数的图像</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML18_hinge_loss_function.png" alt="SVM的损失函数与0/1损失函数比较"><figcaption>SVM的损失函数与0/1损失函数比较</figcaption>
+</figure>
+<p>由上图可知，<span class="math inline">\(\widehat{\rm err}_{\rm SVM}\)</span>是<span class="math inline">\({\rm err}_{0/1}\)</span>的上界，因此可以用这个上界推导出一些算法，这些算法间接地降低0/1误差，来把0/1分类问题做好。在文献中，SVM使用的这个误差函数通常被称作hinge loss（一些人翻译成“铰链损失函数”）。注意hinge loss不仅是0/1误差函数的上界，还是一个凸的上界，因此在优化时有些好的性质可以利用</p>
+<p>接下来再把hinge loss和Logistic回归用的损失函数（经过缩放以后，记为SCE）<span class="math inline">\(\log_2(1+\exp(-ys))\)</span>做一个比较。当<span class="math inline">\(ys\)</span>趋近于<span class="math inline">\(+\infty\)</span>时，<span class="math inline">\(\widehat{\rm err}_{\rm SVM}(s, y) = 0\)</span>；当<span class="math inline">\(ys\)</span>趋近于<span class="math inline">\(-\infty\)</span>时，<span class="math inline">\(\widehat{\rm err}_{\rm SVM} = 1-ys \approx ys\)</span>。而SCE也有类似的结果（只不过是<span class="math inline">\(ys \rightarrow +\infty\)</span>时，<span class="math inline">\(\rm SCE \approx 0\)</span>。因此可以说，SVM可以看做是带有L2正则化的Logistic回归</p>
+<p>下表对目前讲解过的三种用于0/1分类的模型做了比较</p>
+<table>
+<colgroup>
+<col style="width: 15%">
+<col style="width: 35%">
+<col style="width: 16%">
+<col style="width: 32%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>模型名称</th>
+<th>基本思想</th>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>PLA</td>
+<td>直接最小化<span class="math inline">\(\rm err_{0/1}\)</span></td>
+<td>数据集线性可分时算法效率很高</td>
+<td>只能用于数据集线性可分的情况，否则就要用口袋算法</td>
+</tr>
+<tr class="even">
+<td>带有正则化的Logistic回归</td>
+<td>使用GD/SGD最小化正则化的<span class="math inline">\(\rm err_{SCE}\)</span></td>
+<td>易于优化，正则化使得模型不易过拟合</td>
+<td><span class="math inline">\(ys\)</span>很小时（是很大的负数时）误差函数是0/1误差函数太松的上界</td>
+</tr>
+<tr class="odd">
+<td>软间隔SVM</td>
+<td>使用QP最小化正则化的<span class="math inline">\(\rm \widehat{err}_{SVM}\)</span></td>
+<td>易于优化，有理论保证</td>
+<td><span class="math inline">\(ys\)</span>很小时（是很大的负数时）误差函数是0/1误差函数太松的上界</td>
+</tr>
+</tbody>
+</table>
+<p>从这个角度来看，带有正则项的Logistic回归其实几乎就是在做SVM。那么当解SVM时，可否将这个解用在Logistic回归中（即估计每个点是正例的概率）？</p>
+<h2 id="用作软二元分类的svm">用作软二元分类的SVM</h2>
+<p>那么怎么将SVM用在软二元分类问题中呢？一种比较直观的方法是，先使用软间隔SVM算法得到<span class="math inline">\((b_{\rm SVM}, {\bf w}_{\rm SVM})\)</span>，然后使用Logistic函数计算<span class="math inline">\(\theta({\bf w}_{\rm SVM}^\mathsf{T}{\bf x} + b_{\rm SVM})\)</span>，将该结果作为<span class="math inline">\(g({\bf x})\)</span>的结果返回。这种做法在实际应用中效果还不错，但是失去了之前推导Logistic回归时候用到的最大似然等等思想。另一种方法是，先用SVM算法得到<span class="math inline">\((b_{\rm SVM}, {\bf w}_{\rm SVM})\)</span>，将这个结果作为Logistic回归的初始权重，然后使用Logistic回归算法得到最后的<span class="math inline">\(g({\bf x})\)</span>。这种方法最后得到的结果跟直接用Logistic回归算法跑出的模型应该差不多，丢失了SVM自己的一些特性，例如核方法等等。因此，这两种简单的做法都不尽如人意，需要想一种办法融合这两个算法的优势</p>
+<p>SVM得到的结果如果用<span class="math inline">\({\bf w}_{\rm SVM}^\mathsf{T}{\boldsymbol{\Phi}({\bf x})} + b_{\rm SVM}\)</span>表示，其本质实际上就是一个分数。接着，对这个分数做缩放和平移，即返回<span class="math inline">\(g({\bf x}) = \theta(A \cdot ({\bf w}_{\rm SVM}^\mathsf{T}{\boldsymbol{\Phi}({\bf x})} + b_{\rm SVM}) + B)\)</span>，通过用Logistic回归训练<span class="math inline">\(A\)</span>和<span class="math inline">\(B\)</span>这两个参数来达到使用MLE的目的和效果。由于这个算法的核心还是SVM，因此对偶和核技巧都可以使用。从几何的角度来看，SVM的用处是找到法向量，Logistic回归是使用MLE进行微调。如果<span class="math inline">\({\bf w}_{\rm SVM}\)</span>比较好，那么<span class="math inline">\(A &gt; 0, B \approx 0\)</span></p>
+<p>因此，新的Logistic回归问题为 <span class="math display">\[
+\min_{A,B}\hspace{2ex}\frac{1}{N}\sum_{n=1}^N \log\left(1+\exp\left(-y_n(A\cdot (\underbrace{ {\bf w}_{\rm SVM}^\mathsf{T}{\boldsymbol{\Phi}({\bf x}_n)} + b_{\rm SVM}}_{\boldsymbol{\Phi}_{\rm SVM}({\bf x}_n)}) + B)\right)\right)
+\]</span> 该问题可以看做是一个两阶段学习问题：先把数据用SVM做一个变换，再用Logistic回归学习两个参数。这个方法称为<strong>Platt模型</strong>。这种模型，这里称为软二元分类器，的边界和第一步得到的SVM分类器的边界是不太一样的，因为<span class="math inline">\(B\)</span>的存在会使边界稍微有所移动</p>
+<p>这里的做法是先把数据用核方法变换到空间<span class="math inline">\(\mathcal{Z}\)</span>里，然后用Logistic回归得到一个模型。这种方法并没有直接在<span class="math inline">\(\mathcal{Z}\)</span>空间里求解Logistic回归，因此并不是该空间里最好的Logistic回归的解。有没有办法真的在这个空间里找到Logistic回归的最优解呢？</p>
+<h2 id="核logistic回归">核Logistic回归</h2>
+<p>要使用核方法做Logistic回归，其根本问题是Logistic回归根本就不是一个二次规划问题！但是之前的核方法为什么能管用呢？其基本思想就是把<span class="math inline">\(\mathcal{Z}\)</span>空间做的内积转化为在<span class="math inline">\(\mathcal{X}\)</span>空间可以轻易计算的函数。之前提到过，在求解核SVM问题时，不仅在求解<span class="math inline">\(\bf w_\ast\)</span>时要用到<span class="math inline">\(\mathcal{Z}\)</span>空间的内积，而在得到最优的<span class="math inline">\(g\)</span>以后真正预测时，也需要用到<span class="math inline">\(\mathcal{Z}\)</span>空间的内积。如果最优的<span class="math inline">\(\bf w_\ast\)</span>可以表达为一堆已经看过的<span class="math inline">\(\bf z\)</span>的线性组合，那么才能把最后计算<span class="math inline">\(\bf w_\ast^\mathsf{T}z\)</span>的过程表达为核函数计算的形式。而核SVM能做到这一点，因此核SVM最后有<span class="math inline">\({\bf w}_\ast^\mathsf{T}{\bf z} = \sum_{n=1}^N\beta_n{\bf z}^\mathsf{T}_n{\bf z} = \sum_{n=1}^N\beta_n K({\bf x}_n, {\bf x})\)</span>。因此，<strong>最优解<span class="math inline">\({\bf w}_\ast\)</span>是一些<span class="math inline">\({\bf z}_n\)</span>的线性组合，是能用核方法的关键条件</strong></p>
+<p>之前讲过的SVM，其最优权重<span class="math inline">\({\bf w}_{\rm SVM}\)</span>可以写为<span class="math inline">\({\bf w}_\ast = \sum_{n=1}^N(\alpha_n y_n){\bf z}_n\)</span>这种形式，此时<span class="math inline">\(\alpha_n\)</span>来自于对偶问题的解。PLA的最优权重实际上也可以写为这种形式，此时<span class="math inline">\(\alpha_n\)</span>来自于对错分样本的修正。Logistic回归的最优权重也有这样的性质，此时系数由做SGD过程中总共的移动步数决定。换句话说，这三种算法中<span class="math inline">\(\bf w_\ast\)</span>都可以被<span class="math inline">\({\bf z}_n\)</span><strong>表示</strong></p>
+<p>推而广之，可以先讨论一个更高级的问题：什么时候<span class="math inline">\(\bf w_\ast\)</span>可以被<span class="math inline">\({\bf z}_n\)</span>表示？这里可以证明：</p>
+<blockquote>
+<p>对任何带有L2正则化的线性模型</p>
+<p><span class="math display">\[
+\min_{\bf w}\hspace{2ex}\frac{\lambda}{N}{\bf w^\mathsf{T}w} + \frac{1}{N}\sum_{n=1}^N {\rm err}(y_n, {\bf w^\mathsf{T}z}_n)
+\]</span></p>
+<p>其最优的<span class="math inline">\(\bf w_\ast\)</span>都可以被表示为<span class="math inline">\({\bf z}_n\)</span>的线性组合，即<span class="math inline">\({\bf w}_\ast = \sum_{n=1}^N \beta_n{\bf z}_n\)</span>。</p>
+</blockquote>
+<p>这个定理称为<strong>表示定理</strong>。证明如下</p>
+<p>将最优的<span class="math inline">\({\bf w}_\ast\)</span>分解为两个向量<span class="math inline">\({\bf w}_{||}\)</span>和<span class="math inline">\({\bf w}_{\perp}\)</span>，记由<span class="math inline">\({\bf z}_n\)</span>张成的空间为<span class="math inline">\({\rm span}({\bf z}_n)\)</span>，<span class="math inline">\({\bf w}_{||} \in {\rm span}({\bf z}_n), {\bf w}_{\perp} \perp {\rm span}({\bf z}_n)\)</span>，即<span class="math inline">\({\bf w}_\ast = {\bf w}_{||} + {\bf w}_\perp\)</span>。则问题转化为证明在这种分解下有<span class="math inline">\({\bf w}_{\perp} = {\bf 0}\)</span>。假设<span class="math inline">\({\bf w}_\perp \not= {\bf 0}\)</span>，则由于正交向量的内积为0，有<span class="math inline">\({\rm err}(y_n, {\bf w_\ast^\mathsf{T}z}_n) = {\rm err}(y_n, ({\bf w_\|} + {\bf w}_\perp)^\mathsf{T}{\bf z}_n) = {\rm err}(y_n, {\bf w_\|^\mathsf{T}z}_n)\)</span>，因此<span class="math inline">\(\bf w_\ast\)</span>和<span class="math inline">\(\bf w_\|\)</span>有相同的<span class="math inline">\(\rm err\)</span>。又<span class="math inline">\({\bf w}_\ast^\mathsf{T}{\bf w}_\ast = {\bf w_\|^\mathsf{T}w_\|} + 2{\bf w_\|^\mathsf{T}w_\perp} + {\bf w_\perp^\mathsf{T}w_\perp} = {\bf w_\|^\mathsf{T}w_\|} + {\bf w_\perp^\mathsf{T}w_\perp} &gt; {\bf w_\|^\mathsf{T}w_\|}\)</span>。这意味着<span class="math inline">\(\bf w_\|\)</span>比最优解<span class="math inline">\(\bf w_\ast\)</span>还要使目标函数更小，矛盾！因此肯定有<span class="math inline">\({\bf w}_\perp = {\bf 0}\)</span>，最优解可以用<span class="math inline">\({\bf z}_n\)</span>的线性组合表示，得证 <span class="math inline">\(\blacksquare\)</span></p>
+<p>表示定理表明，任何L2正则化的线性模型都可以核化。那么接下来的问题是怎么核化带有L2正则项的Logistic回归。考虑原先问题的定义 <span class="math display">\[
+\min_{\bf w}\hspace{2ex}\frac{\lambda}{N}{\bf w}^\mathsf{T}{\bf w} + \frac{1}{N}\sum_{n=1}^N \log(1+\exp(-y_n{\bf w}^\mathsf{T}{\bf z}_n))
+\]</span> 由表示定理，最优的<span class="math inline">\({\bf w}_\ast = \sum_{n=1}^N\beta_n{\bf z}_n\)</span>。将该式代入原始问题，可以将原来关于<span class="math inline">\(\bf w\)</span>的问题转化成关于<span class="math inline">\(\boldsymbol{\beta}\)</span>的问题，即 <span class="math display">\[
+\min_{\boldsymbol{\beta}} \frac{\lambda}{N} \sum_{n=1}^N\sum_{m=1}^N\beta_n\beta_m K({\bf x}_n, {\bf x}_m) + \frac{1}{N}\sum_{n=1}^N\log\left(1+\exp\left(-y_n\sum_{m=1}^N\beta_m K({\bf x}_m, {\bf x}_n)\right)\right)
+\]</span> 这是一个没有条件的最优化问题，因此GD或者SGD方法仍然可以使用</p>
+<p>记上面这个问题为KLR问题（Kernel Logistic Regression），可以从另一个角度理解：由前面的讲解，可知核函数从某种意义上也是相似度的一种体现，那么最后一项<span class="math inline">\(\sum_{m=1}^N\beta_m K({\bf x}_m, {\bf x}_n)\)</span>可以看做是先把所有数据点<span class="math inline">\({\bf x}_1,\ldots, {\bf x}_N\)</span>与<span class="math inline">\({\bf x}_n\)</span>的相似度求出来，将这个变换后的数据<span class="math inline">\(K({\bf x}_1, {\bf x}_n), K({\bf x}_2, {\bf x}_n), \ldots, K({\bf x}_N, {\bf x}_n)\)</span>组成向量与变量<span class="math inline">\(\boldsymbol{\beta}\)</span>求内积，这其实也是一个小的线性模型。而前面的项<span class="math inline">\(\sum_{n=1}^N\sum_{m=1}^N \beta_n \beta_m K({\bf x}_n, {\bf x}_m)\)</span>如果写成矩阵形式就是<span class="math inline">\(\boldsymbol{\beta}^\mathsf{T}{\rm K}\boldsymbol{\beta}\)</span>，其本质实际上是一个正则化。即KLR可以看做是一个关于<span class="math inline">\(\boldsymbol{\beta}\)</span>的线性模型，其对应的<span class="math inline">\(\bf x\)</span>是用核变换后得到的结果，而正则化也是使用核来做</p>
+<p>需要注意的是，KLR与SVM最大的不同为，对KLR，其系数<span class="math inline">\(\beta_n\)</span>通常都不为0</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/10/02/NTUML-21-Kernel-Logistic-Regression/" title="NTUML 21. 核Logistic回归">txshi-mt.com/2017/10/02/NTUML-21-Kernel-Logistic-Regression/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/NTUML/" rel="tag"># NTUML</a>
+          
+            <a href="/tags/Logistic回归/" rel="tag"># Logistic回归</a>
+          
+            <a href="/tags/SVM/" rel="tag"># SVM</a>
+          
+            <a href="/tags/核方法/" rel="tag"># 核方法</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/23/NTUML-20-Soft-Margin-SVM/" rel="next" title="NTUML 20. 软间隔支持向量机">
+                <i class="fa fa-chevron-left"></i> NTUML 20. 软间隔支持向量机
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/10/03/NTUML-22-SVR/" rel="prev" title="NTUML 22. 支持向量回归（SVR）">
+                NTUML 22. 支持向量回归（SVR） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#软间隔svm与正则化模型"><span class="nav-number">1.</span> <span class="nav-text">&#x8F6F;&#x95F4;&#x9694;SVM&#x4E0E;&#x6B63;&#x5219;&#x5316;&#x6A21;&#x578B;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#svm-vs.logistic回归"><span class="nav-number">2.</span> <span class="nav-text">SVM vs.&#xA0;Logistic&#x56DE;&#x5F52;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#用作软二元分类的svm"><span class="nav-number">3.</span> <span class="nav-text">&#x7528;&#x4F5C;&#x8F6F;&#x4E8C;&#x5143;&#x5206;&#x7C7B;&#x7684;SVM</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#核logistic回归"><span class="nav-number">4.</span> <span class="nav-text">&#x6838;Logistic&#x56DE;&#x5F52;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

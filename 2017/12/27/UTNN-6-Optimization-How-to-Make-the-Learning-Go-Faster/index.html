@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="优化,梯度下降,动量法," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Mini-batch梯度下降概论 本章主要介绍一些关于神经网络优化的方法。但是在介绍优化方法之前先回顾一下关于误差函数/代价函数的内容。如第三章所示，给定某个线性神经元，可以画出其误差表面：其纵轴是误差，横轴是权重值。如果使用的是平方误差，则误差表面的横切面应该是一个椭圆，纵切面是一个双曲线。对多层非线性网络来说，其误差表面更加复杂，但是权重不大时，仍然是光滑的，局部也可以用二次曲线逼近。如果使用">
+<meta name="keywords" content="优化,梯度下降,动量法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hinton神经网络与机器学习 6. 神经网络的优化">
+<meta property="og:url" content="txshi-mt.com/2017/12/27/UTNN-6-Optimization-How-to-Make-the-Learning-Go-Faster/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="Mini-batch梯度下降概论 本章主要介绍一些关于神经网络优化的方法。但是在介绍优化方法之前先回顾一下关于误差函数/代价函数的内容。如第三章所示，给定某个线性神经元，可以画出其误差表面：其纵轴是误差，横轴是权重值。如果使用的是平方误差，则误差表面的横切面应该是一个椭圆，纵切面是一个双曲线。对多层非线性网络来说，其误差表面更加复杂，但是权重不大时，仍然是光滑的，局部也可以用二次曲线逼近。如果使用">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_06_input_shifting.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_06_reduce_learning_rate_too_early.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_06_momentum.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_06_nesterov_method.png">
+<meta property="og:updated_time" content="2018-01-03T15:12:30.616Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hinton神经网络与机器学习 6. 神经网络的优化">
+<meta name="twitter:description" content="Mini-batch梯度下降概论 本章主要介绍一些关于神经网络优化的方法。但是在介绍优化方法之前先回顾一下关于误差函数/代价函数的内容。如第三章所示，给定某个线性神经元，可以画出其误差表面：其纵轴是误差，横轴是权重值。如果使用的是平方误差，则误差表面的横切面应该是一个椭圆，纵切面是一个双曲线。对多层非线性网络来说，其误差表面更加复杂，但是权重不大时，仍然是光滑的，局部也可以用二次曲线逼近。如果使用">
+<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_06_input_shifting.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/12/27/UTNN-6-Optimization-How-to-Make-the-Learning-Go-Faster/"/>
+
+
+
+
+
+  <title>Hinton神经网络与机器学习 6. 神经网络的优化 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/12/27/UTNN-6-Optimization-How-to-Make-the-Learning-Go-Faster/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Hinton神经网络与机器学习 6. 神经网络的优化</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-27T23:51:28+08:00">
+                Dec 27 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/深度学习/" itemprop="url" rel="index">
+                    <span itemprop="name">深度学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="mini-batch梯度下降概论">Mini-batch梯度下降概论</h2>
+<p>本章主要介绍一些关于神经网络优化的方法。但是在介绍优化方法之前先回顾一下关于误差函数/代价函数的内容。如<a href="http://txshi-mt.com/2017/11/21/UTNN-3-the-Backpropagation-Learning-Procedure/">第三章</a>所示，给定某个线性神经元，可以画出其误差表面：其纵轴是误差，横轴是权重值。如果使用的是平方误差，则误差表面的横切面应该是一个椭圆，纵切面是一个双曲线。对多层非线性网络来说，其误差表面更加复杂，但是权重不大时，仍然是光滑的，局部也可以用二次曲线逼近。如果使用full-batch梯度下降（即梯度下降时使用所有样本），单步来看，应该沿着向下滑的方向才能最大地缩减误差。但是问题是，这个下滑方向并不指向我们想要让代价函数减小的方向。当椭圆特别长时，实际上，梯度下降的方向几乎正交于理想方向。这个时候就比较尴尬了：算法在我们不想走的方向上迈出了一大步，却在想要的方向上迈出了很微小的一步。尽管上面的这个例子是在线性系统中所展示的，但是在非线性的多层网络里，情况不会有什么变化。所以，当使用的学习率很大时，学习就会出现问题，误差会沿着很弯曲的表面来回碰撞。当学习率太大的时候，实际上算法就不收敛了。因此，我们的目标是，沿着梯度小而稳定的方向快速下降，沿着梯度大而不稳定的方向慢速下降</p>
+<p>在讲述如何达到这一目标之前，再看一点关于随机梯度下降（Stochastic Gradient Descent, SGD）的原理和动机。如果你有一个高度冗余的数据集，那么在该数据集前一半计算出来的梯度与用该数据集后一半计算出来的梯度应该是相同的，所以用整个数据集计算梯度就是一种对时间的浪费，不如用前一半数据计算出来梯度，更新权重，然后用另一半数据计算新的梯度。最极端的情况，可以对每条训练数据计算一次梯度并更新权重，这种做法称为<strong>在线学习</strong>。当然，通常也不使用如此极端的方法，而是每次使用比较小量的一批数据，通常是10个、100个甚至100个样本。这样做有两个好处</p>
+<ul>
+<li>更新权重时，计算量更少</li>
+<li>可以并行计算多条数据的梯度。如果使用GPU计算，效率会更高（GPU善于计算类似矩阵乘法这样的操作）</li>
+</ul>
+<p>做mini-batch SGD时，有一点需要注意，就是尽量不要让一个mini-batch中的数据只属于一个类别。推而广之，假设要解决的是一个多分类问题，要尽量让一个mini-batch中的数据类别分布均匀</p>
+<p>因此，学习问题基本上可以分为两类</p>
+<ul>
+<li>全梯度下降（full-batch GD），使用所有训练数据计算梯度。这种做法在优化问题里研究得比较透彻，因此也有一些加速学习的方法，例如共轭梯度法（conjugate gradient）对非线性问题就很有效。不过，多层神经网络与传统优化问题研究的对象有所区别，因此使用传统方法时一般要做比较大的修改</li>
+<li>mini-batch学习，适用于训练集冗余且比较大的情况</li>
+</ul>
+<p>最后，来看一个基本的mini-batch梯度下降求解线性问题的做法。首先，猜测一个初始的学习率。如果误差变大或者剧烈摇摆，就降低它；如果误差降低太慢，但是仍然在持续下降，就提高它。通常可以写一段代码来使学习率自适应学习过程，但是有一个实际经验，就是学习即将结束的时候降低学习率总是没错的，因为使用mini-batch SGD会造成梯度的波动，进而使得权重发生波动。而训练要结束的时候总是希望结果能平稳一些，因此降低学习率有助于得到一个平稳的权重。降低学习率的另一个好的时机是当误差不再平稳下降时，而对误差进行观测的一个有效方法是观察学习过程在训练集上的效果</p>
+<h2 id="关于mini-batch梯度下降的一些技巧">关于mini-batch梯度下降的一些技巧</h2>
+<h3 id="权重的初始化">权重的初始化</h3>
+<p>如果两个神经元的权重相同，偏置相同，那么给定相同的输入，这两个神经元不会有不同的。因此一般是用小的随机值来初始化权重，打破这种“对称性”。所以如果神经网络的隐藏层单元扇入数（fan in，可以理解为它可以从多少个上游单元接收输入）特别大，用大的权重会导致饱和，这时就应该使用更小的权重——更好的原则是，让初始权重的大小正比于扇入数的平方根</p>
+<h3 id="输入平移">输入平移</h3>
+<p>将输入做平移（shift）会对神经网络的学习速率造成令人意想不到的重要影响。所谓输入平移，就是在输入值的每个维度上加上一个常数。最好的平移方法是在所有训练数据上平移一个均值，这样使得输入的均值为0。来看一个例子：假设有如下两组数据，输入输出分别为 <span class="math display">\[
+\begin{align*}
+&amp;\boldsymbol{x}_1 = [101, 101]&amp; y_1 = 2 \\
+&amp;\boldsymbol{x}_2 = [101, 99]&amp;y_2 = 0 \\
+\end{align*}
+\]</span> 假设第一个例子的代表色为绿色，第二个例子的代表色为红色，下图左给出了这种情况下的误差表面。可以大致理解为，当只有第一个例子时，权重<span class="math inline">\(\boldsymbol{w}\)</span>需要满足<span class="math inline">\(\boldsymbol{w}^\mathsf{T}\boldsymbol{x}_1 = 2\)</span>，因此<span class="math inline">\(\boldsymbol{w}\)</span>的两个分量之间呈线性关系，线的斜率是<span class="math inline">\(-101/101 = -1\)</span>。而只有第二个例子时，权重<span class="math inline">\(\boldsymbol{w}\)</span>需要满足<span class="math inline">\(\boldsymbol{w}^\mathsf{T}\boldsymbol{x}_1 = 0\)</span>，因此<span class="math inline">\(\boldsymbol{w}\)</span>的两个分量之间呈线性关系，线的斜率是<span class="math inline">\(-101/99\)</span>。这两条线基本上是平行的，因此当将两者组合起来时，会得到一个被拉长的椭圆</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_06_input_shifting.png" alt="移动输入以后对误差表面的影响。左图是移动前的误差表面，非常长的椭圆梯度下降会非常缓慢；而右图是移动后的结果，正圆的误差表面上，梯度下降的方向总是指向圆心"><figcaption>移动输入以后对误差表面的影响。左图是移动前的误差表面，非常长的椭圆梯度下降会非常缓慢；而右图是移动后的结果，正圆的误差表面上，梯度下降的方向总是指向圆心</figcaption>
+</figure>
+<p>如果对<span class="math inline">\(\boldsymbol{x}_i\)</span>的每个维度都减去100，那么就会得到一个截然不同的误差表面，如上图右所示，它是一个正圆形。这个时候，做梯度下降就容易多了</p>
+<p>如果考虑的不是输入，而是隐藏层的计算，那么类似地，让隐藏单元使用双曲正切函数<span class="math inline">\(\tanh\)</span>会是一个比较明智的做法，因为这样可以保证激活值是一个在-1和1之间的数，且均值大致为0，这会使下一层的学习变快一点。计算上，<span class="math inline">\(\tanh\)</span>也不慢，而且其与之前熟知的sigmoid函数<span class="math inline">\(\sigma\)</span>存在如下的一个关系 <span class="math display">\[
+\tanh(x) = 2\sigma(x) - 1
+\]</span> 因此，总体来看，<span class="math inline">\(\tanh\)</span>比sigmoid函数会更好用一点</p>
+<p>（后面Hinton还提到了sigmoid函数的一点优势，但是我没看得十分明白。其大概意思是说，如果输入是比较小的负值，那么sigmoid的结果会是0。如果输入更小，则sigmoid的输出还是0，这样可以过滤掉一些比较极端的输入）</p>
+<h3 id="输入缩放">输入缩放</h3>
+<p>另一种比较有效果的做法是对输入进行缩放（scale）。前面提到过，输入平移的最好效果是让输入样本的均值为0，那么缩放的最好效果是让输入样本的方差为1。假设输入样本的第一个维度范围非常小（假设取值范围是<span class="math inline">\([-0.1, 0.1]\)</span>），第二个维度范围非常大（例如<span class="math inline">\([-10, 10]\)</span>），那么误差表面沿第一个维度的曲率就会特别大，因为一点细小的改变就会让输出变化很大；而误差表面沿第二个维度的曲率会特别小，因为同样微小的改变几乎不会影响输出。重新缩放以后，就不会有这样的问题</p>
+<h3 id="去相关性">去相关性</h3>
+<p>无论是对输入数据做平移还是缩放，这种做法都是简单易于实现的。接下来来看一种更复杂的方法，但是这种方法效果更好，因为它能保证给出一个圆形的误差表面（至少对线性神经元而言）。这种做法是对输入向量的各个维度<strong>去相关性</strong>（decorrelate）。去相关性的具体实现有很多种，比较常见的一种是先对输入数据做主成分分析（PCA），把特征值最小的几个维度去掉（这样做也可以达到维度缩减的目的），然后对剩下的维度除以各自对应特征值的平方根。这样，得到的误差表面肯定是正圆形，梯度的方向指向最小值</p>
+<h3 id="其它常见问题">其它常见问题</h3>
+<ul>
+<li>关于学习率：如果给的初始学习率特别特别大，那么会导致隐藏层状态要么是恒为开的（一直被激活），要么是恒为关的（一直不被激活）。因为这会导致与该隐藏单元关联的权重或是特别大的正数，或是特别小的负数，因此其状态不再依赖于输入，也不会受到输出的误差带来的影响——单元一直处于导数基本为0的“高原”状态，学习自然会停止 在之前，人们对神经网络的担忧总是认为，神经网络最后会陷在一个局部最小值上。因此，他们会把神经网络停止学习而误差很高的情况归结于神经网络会在一个很差的局部最小值上收敛。这是不对的，实际上，这更可能意味着学习陷入到了一个高原区，走不出去</li>
+<li>使用神经网络解决分类问题时，一般都是用平方误差或者交叉熵误差，因此最好的预测策略通常是让输出单元的输出正比于某个“出现次数”。按照社区助教回复举的例子，如果现在要使用神经网络去学习一些训练语料，然后在给定某些字母的前提下，让它预测下一个字母最有可能是什么。由于神经网络的权重是随机初始化的，因此最开始得到的隐藏层特征对输出完全没有帮助，此时最好的输出策略是让每个字母的输出概率正比于这个字母在训练语料中出现的概率，也就是完全没用上输入信息。神经网络会很快找到这个策略，因此前面的误差会下降得非常快。要改进这个策略，网络需要通过隐藏层从输入层得到足够有用的、可感知到的信息，而如果初始化的权重比较小，这个过程可能是比较长的。所以在实践中可能观察到的现象是，学习进展很快，一会儿误差就不再下降了，看上去达到了某个局部最优点。但是实际上，到达的是另一个平原而已 所以，要辩证地看待课程前面提到的“学习临近结束时要降低学习率”这条经验，也要小心不要过早降低学习率。降低学习率会减少由不同mini-batch的不同梯度带来的误差的随机波动，所以看上去学习过程可以很快收敛，但是实际上会减慢之后的学习过程。下图给出了一个示例情况，其中红线是提前降低学习率的学习曲线，可以看到其最后效果要差于正常调整学习率的情况（绿线） <img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_06_reduce_learning_rate_too_early.png" alt="提前降低学习率不一定导致好的学习结果"></li>
+</ul>
+<h3 id="加快学习的四种方法">加快学习的四种方法</h3>
+<p>本节前面所讲的是如何让学习的效果更好，这里提供四种方法，它们都是为了让模型学习更快而设计的</p>
+<ol type="1">
+<li>动量法，它不使用梯度来修改权重“位置”，也就是说，如果把权重想象为在误差表面上的一个球，标准梯度下降是修改球的位置，修改量是梯度与学习率的乘积。动量法使用梯度来加速球的前进，也就是说，其使用梯度修改球的速度，由速度去修改球的位置。尽管看上去效果相同，但是其原理是有本质不同的，因为球可以有“动量”（momentum），即它可以记住上一个梯度</li>
+<li>为每个参数设置一个单独的，自适应学习率，然后根据经验测量来慢慢调整学习率。如果梯度的符号一直在变，就减小学习率；否则就增大</li>
+<li>rmsprop，将学习率除以最近梯度的滑动范数平均值。可以看作是上面方法的mini-batch版本</li>
+<li>借鉴full-batch学习中的方法，利用曲率信息，并修改算法使其适用于神经网络和mini-batch学习（本课不讲授）</li>
+</ol>
+<h2 id="动量法">动量法</h2>
+<p>在使用梯度下降训练神经网络时，可以使用动量法（momentum）来有效提升学习速度。这一方法适用于full-batch学习，也适用于mini-batch的学习。实际上，将mini-batch梯度下降与动量法结合可能是大规模神经网络最常见的学习方法</p>
+<p>假设在误差表面上放置一个球，球在水平面的位置表示当前的权重向量。由于其最开始是静止的，因此它会先沿着最陡的方向（梯度方向）向下滑，但是当速度起来以后，动量会驱使它沿着之前的方向前进。显然，我们想让球最后停留在误差表面的一个最低点上，所以希望能减少球的能量，因此能引入一些粘性是最好不过的——也就是说，要在每次迭代中都缓慢降低求得速度</p>
+<p>动量法的作用就是在高曲率的地方阻止小球的振动，可以看一下下图的例子</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_06_momentum.png" alt="动量法示意图"><figcaption>动量法示意图</figcaption>
+</figure>
+<p>小球从红点出发，经过两步以后会达到绿点位置。此时，两点处的梯度范数基本相同，但是方向相反。因此纵向于“峡谷”的梯度已经被抵消掉了，但是沿着峡谷方向的梯度还在，因此使用梯度法，可以保留该方向的速度，继续前进，最后达到最小值点</p>
+<p>动量法的数学公式比较简单 <span class="math display">\[
+\boldsymbol{v} = \alpha\boldsymbol{v}(t-1) - \epsilon \frac{\partial E}{\partial \boldsymbol{w}}(t)
+\]</span> 前一项是对上一个mini-batch的速度向量做些微衰减得到的结果，这里<span class="math inline">\(\alpha\)</span>一般是一个小于1的数，例如0.9，起到了加入粘性的作用。后一项是当前梯度造成的影响，使得我们可以一定程度地沿梯度下降。接着，<span class="math inline">\(t\)</span>时刻权重的改变量就是前面求出来的速度向量，也可以表示为一个有关于<span class="math inline">\(t-1\)</span>时刻权重改变量的式子，即 <span class="math display">\[
+\begin{align*}
+\Delta \boldsymbol{w}(t) &amp;= \boldsymbol{v}(t) \\
+&amp;= \alpha \boldsymbol{v}(t-1) - \epsilon \frac{\partial E}{\partial \boldsymbol{w}}(t) \\
+&amp;= \alpha \Delta\boldsymbol{w}(t-1) - \epsilon \frac{\partial E}{\partial \boldsymbol{w}}(t) 
+\end{align*}
+\]</span> 动量法的行为很直观。在一个误差表面上，球会不断从梯度获得前进的速度，这个速度值与动量项（实际上是粘性）所减小的速度值相平衡。由于速度不断累积，因此最后小球会达到一个最终速度。如果动量项接近于1，小球的前进速度会远快于普通梯度下降法所给的速度，其最终速度的计算公式为 <span class="math display">\[
+\boldsymbol{v}(\infty) = \frac{1}{1-\alpha}\left(-\epsilon\frac{\partial E}{\partial \boldsymbol{w}}\right)
+\]</span> 因此，如果<span class="math inline">\(\alpha=0.99\)</span>，动量法的下降速度比普通梯度下降法要快100倍</p>
+<p>在学习的开始阶段，如果初始的随机权重太大，那么梯度就会很大，这时不宜使用大的动量，设成0.5比较好。当大的梯度消失时，说明学习进入到了一个正常的阶段，可能正在某个长峡谷里摸索，此时可以平滑地提高动量值。相比于直接使用大学习率的方法，使用小学习率+大动量可以达到一个实际上更大的学习速率，因为前者会导致权重纵向于峡谷方向剧烈振动</p>
+<p>标准的动量法是先计算当前位置的梯度，然后算出当前梯度与之前梯度的组合，把这个组合当做前进方向迈出很大一步，即前进方向总是累加的梯度方向。最近（2012年），Ilya Sutskever发现了一种更好的动量法，这种方法借鉴了Nesterov在优化凸函数时的方法，即先沿着之前累加梯度的方向跳出一大步，然后测量落脚点的梯度，进行修正。两种方法比较相似，其不同点在于，标准方法是先加上当前的梯度，然后跳出去赌一把；在Nesterov方法里，是先跳出去，然后再校正。下图给出了这两种方法的图示</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_06_nesterov_method.png" alt="Nesterov法与标准动量法的比较"><figcaption>Nesterov法与标准动量法的比较</figcaption>
+</figure>
+<p>图中</p>
+<ul>
+<li>蓝色的向量为标准动量法的前进方向</li>
+<li>棕色的向量是Nesterov法跳跃（前进一大步）的方向</li>
+<li>红色的向量是校正方向</li>
+<li>绿色的向量是累加梯度的方向</li>
+</ul>
+<p>上图中这些向量有一些几何意义需要点明一下。首先，所有绿色向量都是棕色向量与红色向量的加和。其次，第二个棕色向量的方向与第一个绿色向量的方向一致，长度是绿色向量的长度乘以动量项（粘滞系数<span class="math inline">\(\alpha\)</span>）。最后，长的蓝色向量与第一个棕色向量平行</p>
+<h2 id="为每个连接设置自适应学习率">为每个连接设置自适应学习率</h2>
+<p>本节介绍的方法是20世纪80年代晚期Robbie Jacobs提出来的，后来经过了很多其他研究人员的改进。其核心思想是，神经网络中的每个连接都应该有其自己的自适应学习率。在更新每个连接的权重时，需要观察更新的结果，然后根据这些结果经验性地设置对应的学习率。所以如果某个权重梯度的符号总是变来变去，就降低学习率，反而就增加</p>
+<p>为什么这种做法是一种不错的做法呢？先看一下问题。由于神经网络比较深，连接数比较多，因此不同神经元之间连接对应的权重变化会很大，尤其是不同层之间的权重差别会更大。假设初始化的时候使用了小的权重，那么在前面几层的梯度会比后面几层的要小。另一个重要的因素是隐藏单元的扇入数有差别。当同时改变多个不同的输入权重来修正某个相同的错误时，扇入数决定了“超调”（overshoot）量：可能某个单元之前没有得到足够的输入，但是权重一次更新以后，反而它接受了太多输入——显然，如果扇入数大，这种状况的影响就更大</p>
+<p>因此，可以先手动设置一个全局的学习率，然后对每个权重，乘以一个局部的收益（gain）。具体做法是，首先，对每个权重<span class="math inline">\(w_{ij}\)</span>，初始化的收益<span class="math inline">\(g_{ij}\)</span>都为1，因此最开始每个权重的改变量为 <span class="math display">\[
+\Delta w_{ij} = -\epsilon g_{ij}\frac{\partial E}{\partial w_{ij}} 
+\]</span> 接下来就是如何自适应地调整<span class="math inline">\(g_{ij}\)</span>。如果权重所使用的梯度没有改变符号，就使用“加性增、乘性减”的原则增加<span class="math inline">\(g_{ij}\)</span>，否则减小<span class="math inline">\(g_{ij}\)</span>。具体的更新方式为 <span class="math display">\[
+\begin{align*}
+&amp; {\rm if} &amp; &amp;\left(\frac{\partial E}{\partial w_{ij}} (t) \cdot \frac{\partial E}{\partial w_{ij}} (t-1)\right) &gt; 0 \\
+&amp;{\rm then} &amp; &amp; g_{ij} = g_{ij}(t-1) + 0.05 \\
+&amp;{\rm else} &amp; &amp; g_{ij} = g_{ij}(t-1) \cdot 0.95
+\end{align*}
+\]</span> 这样，如果梯度发生了波动，大的收益值就会快速下降</p>
+<p>一个有趣的问题是，如果梯度都是随机的会怎么样。这会导致<span class="math inline">\(g_{ij}\)</span>增减的概率相等，因为前一时刻梯度与当前时刻梯度有一半的概率是同号的，一半概率是异号的。由于<span class="math inline">\(g_{ij}\)</span>的初始值为1，增加0.05和缩减为原来的95%概率相等，因此最后它会在1附近震荡</p>
+<p>有许多种让自适应学习率表现更好的方法</p>
+<ul>
+<li>可以把收益值限定在某个范围内，例如[0.1, 10]或者[0.01, 100]等。收益值不应该太大，因为这样权重会进入一个不稳定状态，收益值也不会很快降下来，所有权重就都被搞崩了</li>
+<li>使用full-batch学习，或者做mini-batch学习时一次使用更多的样本。因为自适应学习率本质上是为full-batch学习设计的，这样可以保证梯度符号的改变并不是因为mini batch的采样出现问题，而是真的因为梯度跑到了峡谷的另一端</li>
+<li>将自适应学习率与动量法相结合。更进阶的方法是，看当前权重梯度的符号与当前权重速度的符号是否相同。需要注意的是，只有误差表面近似为正圆时，自适应学习率才能取得比较显著的效果，但是动量法没有这个问题。即便是误差表面是狭长的椭圆形状，动量法也能推动梯度快速向最优点移动</li>
+</ul>
+<h2 id="rmsprop">Rmsprop</h2>
+<p>本节主要介绍rmsprop这种优化方法。不过在此之前，先看一下这个算法的基础——rprop算法。Rprop算法的理论基础是不同权重的梯度大小会非常不同，而且它们会在学习的过程中变化，因此很难选择一个唯一的，全局的学习率。如果做的是full batch学习，那么仅仅使用梯度的符号就可以处理这种梯度的多样性，这样，所有权重的增量是一致的。这种做法有助于让小梯度逃离平原，因为即便梯度很微小，通过这种方法前进的步子也可以很大。需要注意的是，调大学习率不能达到同样的效果，因为这样会使梯度大的权重变得太大</p>
+<p>Rprop将使用梯度符号的思想和为每个权重单独确定步长的思想结合了起来，也就是，当决定要对权重做多大改变时，不再看梯度的大小，而只看梯度的符号。但是，步长是随着时间的变化而自适应调整的。一般来讲，如果过去两次梯度的符号相同，则步长变为原来的1.2倍；否则，步长以一个更大的系数衰减（例如变成原来的一半）。此外，通常还要对步长的大小做出限制，Mike Shuster的建议是把它限定在<span class="math inline">\([10^{-6}, 50]\)</span>之间，不过还是应该具体问题具体分析。例如，如果输入太小，那可能需要比较大的权重才能起效果。不过如果处理的不是这个问题，用50作为上限可能有点大，应该降得更多一些</p>
+<p>那么rprop为什么不适用于mini-batch的学习呢？因为它的思想背离了SGD的核心思想。SGD的核心思想是，当学习率比较小的时候，梯度是过去连续几个mini-batch的梯度的均值。假设某个权重在9个mini batch中的梯度是0.01， 第十个mini batch的梯度是-0.09，那么权重最好不动。但是rprop不能保证这样的性质，因为它只关注连续两次梯度的符号是否相同，因此会连增8次，然后再狠狠下降一次，最后导致权重变得特别大。所以问题来了，有没有可能把rprop的鲁棒性、从多个batch获取信息的高效性，和SGD正确组合mini batch梯度的洞见性组合起来呢？</p>
+<p>这种方法就是rmsprop法，可以看作是rprop的mini-batch版本，它会把梯度再除以梯度的大小。因为mini batch rprop的问题是总是为每个mini batch的梯度除以一个不同的值，所以为了解决这个问题，可以让临近几个mini batch梯度的除数大致相等。要达到这个目的，可以为每个权重维护一个梯度平方的滑动均值，即 <span class="math display">\[
+{\rm MeanSquare}(w, t) = \alpha \cdot {\rm MeanSquare}(w, t-1) + \beta\cdot\left(\frac{\partial E}{\partial w}(t)\right)^2
+\]</span> （在讲义中，设置<span class="math inline">\(\alpha = 0.9, \beta = 0.1\)</span>。不过Hinton说明这只是示意值。但是两者加和是否必须为1课程中并没有提）。得到这个值以后，可以把梯度除以<span class="math inline">\(\sqrt{ {\rm MeanSquare}(w, t)}\)</span>，这也是“rms”的来源（rooted mean square）。注意这里没有为每个连接都各自单独设定一个自适应的学习速率，而是对每个连接都采用相同的策略</p>
+<p>在rmsprop的基础上，可以做一些进一步的扩展，例如：</p>
+<ul>
+<li>将其与标准的动量法相结合。不过Hinton组当年做的实验发现引入动量法带来的改进比较有限，需要进一步观察</li>
+<li>将其与Nesterov动量法相结合。Ilya Sutskever的实验发现这样做效果不错，尤其是用最近几次梯度的rms去除校正项（而不是跳跃项）时</li>
+<li>将其与分连接自适应学习率法相结合，这样的算法更像rprop，不过需要进一步的研究</li>
+<li>其它方法，可以参看Yann LeCun组<em>No More Pesky Learning Rates</em> (ICML 2013, pp. 343 - 351)</li>
+</ul>
+<h2 id="神经网络学习方法小结">神经网络学习方法小结</h2>
+<p>所以，总体来看，如果数据集比较小，例如只有不到10000条数据，或者是不太冗余的更大一些的数据集，可以考虑使用full batch的方法。对于这类问题，一些从优化理论领域扩展来的方法，例如非线性共轭梯度法、LBFGS法都比较适用，而且这些方法都有比较成熟的实现。或者也可以使用自适应学习率法或rprop，它们算是专为神经网络所设计</p>
+<p>如果数据集有很多冗余，那么一定要使用mini batch法，否则会造成极大浪费。在这种情况下，首先试用带有动量的SGD，但是不要为每个权重自适应学习率。接下来可以尝试rmsprop，或者其改进版本。最后，可以尝试Yann LeCun的最新方法，他是优化狂魔，所以他们组的工作是比较值得跟进的</p>
+<p>需要注意的是，神经网络没有一种普适通用的学习方法，原因有两点。其一，<strong>神经网络的结构千差万别</strong>。那些特别深的网络，尤其是体系结构中存在狭窄瓶颈的网络，非常难以优化，它们对小的梯度非常敏感。循环神经网络（RNN）又是另一种情况，它们需要注意过去一段时间之前发生的事情，同时基于此来修改权重，所以不需要特别准确的优化，因为需要在过拟合之前停止优化过程。其次，<strong>神经网络处理的任务千差万别</strong>。一些任务需要非常精确的权重，但是有些就不需要。另外，有些任务可能需要处理罕见情况（例如处理罕见词），但是对于其他任务就没有这个需求。因此，如何训练神经网络并不存在定数，优化方法有很多，不可能符合每个人的口味，但是总有一种是比较合适的</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/12/27/UTNN-6-Optimization-How-to-Make-the-Learning-Go-Faster/" title="Hinton神经网络与机器学习 6. 神经网络的优化">txshi-mt.com/2017/12/27/UTNN-6-Optimization-How-to-Make-the-Learning-Go-Faster/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/优化/" rel="tag"># 优化</a>
+          
+            <a href="/tags/梯度下降/" rel="tag"># 梯度下降</a>
+          
+            <a href="/tags/动量法/" rel="tag"># 动量法</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/23/UTNN-5-Object-Recognition-with-Neural-Nets/" rel="next" title="Hinton神经网络与机器学习 5. 卷积神经网络">
+                <i class="fa fa-chevron-left"></i> Hinton神经网络与机器学习 5. 卷积神经网络
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#mini-batch梯度下降概论"><span class="nav-number">1.</span> <span class="nav-text">Mini-batch&#x68AF;&#x5EA6;&#x4E0B;&#x964D;&#x6982;&#x8BBA;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关于mini-batch梯度下降的一些技巧"><span class="nav-number">2.</span> <span class="nav-text">&#x5173;&#x4E8E;mini-batch&#x68AF;&#x5EA6;&#x4E0B;&#x964D;&#x7684;&#x4E00;&#x4E9B;&#x6280;&#x5DE7;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#权重的初始化"><span class="nav-number">2.1.</span> <span class="nav-text">&#x6743;&#x91CD;&#x7684;&#x521D;&#x59CB;&#x5316;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#输入平移"><span class="nav-number">2.2.</span> <span class="nav-text">&#x8F93;&#x5165;&#x5E73;&#x79FB;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#输入缩放"><span class="nav-number">2.3.</span> <span class="nav-text">&#x8F93;&#x5165;&#x7F29;&#x653E;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#去相关性"><span class="nav-number">2.4.</span> <span class="nav-text">&#x53BB;&#x76F8;&#x5173;&#x6027;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其它常见问题"><span class="nav-number">2.5.</span> <span class="nav-text">&#x5176;&#x5B83;&#x5E38;&#x89C1;&#x95EE;&#x9898;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#加快学习的四种方法"><span class="nav-number">2.6.</span> <span class="nav-text">&#x52A0;&#x5FEB;&#x5B66;&#x4E60;&#x7684;&#x56DB;&#x79CD;&#x65B9;&#x6CD5;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#动量法"><span class="nav-number">3.</span> <span class="nav-text">&#x52A8;&#x91CF;&#x6CD5;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为每个连接设置自适应学习率"><span class="nav-number">4.</span> <span class="nav-text">&#x4E3A;&#x6BCF;&#x4E2A;&#x8FDE;&#x63A5;&#x8BBE;&#x7F6E;&#x81EA;&#x9002;&#x5E94;&#x5B66;&#x4E60;&#x7387;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#rmsprop"><span class="nav-number">5.</span> <span class="nav-text">Rmsprop</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#神经网络学习方法小结"><span class="nav-number">6.</span> <span class="nav-text">&#x795E;&#x7ECF;&#x7F51;&#x7EDC;&#x5B66;&#x4E60;&#x65B9;&#x6CD5;&#x5C0F;&#x7ED3;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

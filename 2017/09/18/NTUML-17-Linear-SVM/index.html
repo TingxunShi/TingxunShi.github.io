@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="NTUML,SVM," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="最大间隔分离超平面 前面在介绍感知机时，曾经提到线性分类器的表现形式为 \[ h({\bf x}) = {\rm sign}({\bf w}^\mathsf{T}{\bf x}) \] 它在二维空间表现为一条直线，在三维空间表现为一个平面，在\(n​\)维空间其维度总为\(n-1​\)，称作超平面 感知机算法对一个线性可分的数据集，总能找到一个超平面将其分开。然而，绝大多数情况下，这个超平面都有很">
+<meta name="keywords" content="NTUML,SVM">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NTUML 17. 线性支持向量机">
+<meta property="og:url" content="txshi-mt.com/2017/09/18/NTUML-17-Linear-SVM/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="最大间隔分离超平面 前面在介绍感知机时，曾经提到线性分类器的表现形式为 \[ h({\bf x}) = {\rm sign}({\bf w}^\mathsf{T}{\bf x}) \] 它在二维空间表现为一条直线，在三维空间表现为一个平面，在\(n​\)维空间其维度总为\(n-1​\)，称作超平面 感知机算法对一个线性可分的数据集，总能找到一个超平面将其分开。然而，绝大多数情况下，这个超平面都有很">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML17_multiple_hyperplanes.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML17_hyperplane_errors.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML17_hyperplanes_fatness.png">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.091Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NTUML 17. 线性支持向量机">
+<meta name="twitter:description" content="最大间隔分离超平面 前面在介绍感知机时，曾经提到线性分类器的表现形式为 \[ h({\bf x}) = {\rm sign}({\bf w}^\mathsf{T}{\bf x}) \] 它在二维空间表现为一条直线，在三维空间表现为一个平面，在\(n​\)维空间其维度总为\(n-1​\)，称作超平面 感知机算法对一个线性可分的数据集，总能找到一个超平面将其分开。然而，绝大多数情况下，这个超平面都有很">
+<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML17_multiple_hyperplanes.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/09/18/NTUML-17-Linear-SVM/"/>
+
+
+
+
+
+  <title>NTUML 17. 线性支持向量机 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/09/18/NTUML-17-Linear-SVM/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NTUML 17. 线性支持向量机</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-18T23:44:08+08:00">
+                Sep 18 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/统计机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">统计机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="最大间隔分离超平面">最大间隔分离超平面</h2>
+<p>前面在介绍感知机时，曾经提到线性分类器的表现形式为 <span class="math display">\[
+h({\bf x}) = {\rm sign}({\bf w}^\mathsf{T}{\bf x})
+\]</span> 它在二维空间表现为一条直线，在三维空间表现为一个平面，在<span class="math inline">\(n​\)</span>维空间其维度总为<span class="math inline">\(n-1​\)</span>，称作<strong>超平面</strong></p>
+<p>感知机算法对一个线性可分的数据集，总能找到一个超平面将其分开。然而，绝大多数情况下，这个超平面都有很多种可能性。例如下图所示</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML17_multiple_hyperplanes.png" alt="对同样的数据集，通常可以学习出多个超平面将其分开"><figcaption>对同样的数据集，通常可以学习出多个超平面将其分开</figcaption>
+</figure>
+<p>对图中的四个点，至少有三条直线可以将它们分开。PLA算法的选择是随机的，所以它们都有可能被选到。而且就VC维来看，这三条线也没什么差别。因为有 <span class="math display">\[
+E_{\rm out}({\bf w}) \le E_{\rm in}({\bf w}) + \Omega(\mathcal{H})
+\]</span> 对这三条直线，都有<span class="math inline">\(E_{\rm in}({\bf w}) = 0\)</span>。而感知机的假设集合前面已经证明过其VC维为<span class="math inline">\(d_{\rm vc}=d+1\)</span>。所以它们的<span class="math inline">\(E_{\rm out}\)</span>上限是相等的</p>
+<p>不过，对大部分人来说，可能都会选择第三幅小图中的那一个分类器。从直觉来说，假设原始数据为<span class="math inline">\({\bf x}_n\)</span>，测试数据为<span class="math inline">\({\bf x}\)</span>，由于误差的存在，有<span class="math inline">\({\bf x} \approx {\bf x}_n\)</span>。学习的目标当然是希望对于学习出来的分类器能将这两条数据归为一类。对于图中所给出的第三个分类器，因为它离所有四个数据点都很远，因此即便这个误差比较大，它也能做出正确的分类。对每条数据，以其为圆心，用灰色标记出分类器可允许的最大误差范围（即测试点落在灰圈之内就可以得到正确的标记），三条直线各自的允许误差如下图所示</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML17_hyperplane_errors.png" alt="分类器所允许的最大误差范围，以灰圈表示"><figcaption>分类器所允许的最大误差范围，以灰圈表示</figcaption>
+</figure>
+<p>也就是说，左边分类器与最右边分类器的最大区别，就是对误差的容忍度有不同。数据<span class="math inline">\({\bf x}_n\)</span>离分类器越远，模型对误差的容忍度越高。而由前面的讲述，测量误差是噪声的一种，因此模型对误差的容忍度越高，意味着模型对噪声的容忍度越高。又因为噪声的存在是导致过拟合现象的一大诱因，所以模型对噪声的容忍度越高，其本身鲁棒性越强，越不容易过拟合。上面的推理过程反过来也成立，所以最右分类器最优的原因是它最鲁棒，因为它离与它最近的数据最远</p>
+<p>前面的讲述是从“点到直线距离”这个角度出发。可以换个角度，再看看从“直线到点距离”这个角度出发有什么结论。如果直线到点的距离越大，那么将直线像两边样本方向移动（直到碰到最接近的正/负例样本），其可移动的距离就越大，可以说这条直线越“胖”。三条直线各自的“胖度”如下图所示</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML17_hyperplanes_fatness.png" alt="前述三个分类器的“胖度”"><figcaption>前述三个分类器的“胖度”</figcaption>
+</figure>
+<p>因此，分类器“越胖”，它与离它最近的数据点<span class="math inline">\({\bf x}_n\)</span>距离越大，鲁棒性越好。我们的目标也就变成了要寻找最胖的分离超平面。假设数据集是线性可分的，那么要解决的最优化问题可以使用如下不严格的语言描述 <span class="math display">\[
+\begin{align*}
+\max_{\bf w} \hspace{3ex}&amp;{\rm fatness}({\bf w}) \\
+{\rm subject\  to}\hspace{3ex} &amp;{\bf w}{\rm\  classifies\  every\  }({\bf x}_n, y_n){\rm\  correctly} \\
+&amp;{\rm fatness}({\bf w}) = \min_{n=1,\ldots,N}{\rm distance}({\bf x}_n, {\bf w})
+\end{align*}
+\]</span> 文献中，这个“胖度”（fatness）通常称为<strong>间隔</strong>（margin）（有点像排版中“留白”的意味）。另外，“分类正确”意味着<span class="math inline">\({\bf w^\mathsf{T}x}_n\)</span>与<span class="math inline">\(y_n\)</span>同号，也就是对每个样本<span class="math inline">\(n\)</span>有<span class="math inline">\(y_n{\bf w^\mathsf{T}x}_n &gt; 0\)</span>。因此上面的最优化问题可以写成 <span class="math display">\[
+\begin{align*}
+\max_{\bf w} \hspace{3ex}&amp;{\rm margin}({\bf w}) \\
+{\rm subject\  to}\hspace{3ex} &amp;{\rm every\  }y_n{\bf w^\mathsf{T}x}_n &gt; 0 \\
+&amp;{\rm margin}({\bf w}) = \min_{n=1,\ldots,N}{\rm distance}({\bf x}_n, {\bf w})
+\end{align*}
+\]</span> 问题的目标就变成了：<strong>要找到最大间隔分离超平面</strong></p>
+<h2 id="标准的最大间隔问题">标准的最大间隔问题</h2>
+<p>由上一节最优化问题的定义，可以看到里面有一项是要计算点<span class="math inline">\({\bf x}_n\)</span>与<span class="math inline">\(\bf{w}\)</span>之间的距离。所以首先要解决的问题是，这个距离应该如何计算。注意这里算距离时截距项的系数<span class="math inline">\(w_0\)</span>与其它特征项的系数<span class="math inline">\(w_1, \ldots, w_d\)</span>是分开计算的，即 <span class="math display">\[
+\begin{align*}
+b &amp;= w_0 \\
+\left[\begin{array}{c}
+| \\ {\bf w}\\ |
+\end{array}\right] &amp;= \left[\begin{array}{c}w_1 \\ \vdots \\ w_d\end{array}\right] ; \left[\begin{array}{c}
+| \\ {\bf x} \\ |
+\end{array}\right] = \left[\begin{array}{c}x_1 \\ \vdots \\ x_d\end{array}\right]
+\end{align*}
+\]</span> 本讲中的假设函数形式也变为了 <span class="math display">\[
+h({\bf x}) = {\rm sign}({\bf w^\mathsf{T}x} + b)
+\]</span> 因此要求解的问题可以定义为</p>
+<blockquote>
+<p>给定超平面<span class="math inline">\({\bf w^\mathsf{T}x&#39;} + b=0\)</span>，求距离<span class="math inline">\({\rm distance}({\bf x}, b, {\bf w})\)</span></p>
+</blockquote>
+<p>假设<span class="math inline">\(\bf x&#39;, x&#39;&#39;\)</span>是超平面上的两个点，由上面的式子，显然有<span class="math inline">\({\bf w^\mathsf{T}x&#39;} = -b, {\bf w^\mathsf{T}x&#39;&#39;} = -b\)</span>。两者相减，有<span class="math inline">\({\bf w^\mathsf{T}(x&#39;&#39;-x&#39;)} = 0\)</span>。而<span class="math inline">\(\bf x&#39;&#39;-x&#39;\)</span>是超平面上的一个向量，<span class="math inline">\(\bf w\)</span>与这个向量内积为0，说明<span class="math inline">\(\bf w\)</span>与这个超平面正交。因此空间内任意一点<span class="math inline">\(\bf x\)</span>到该超平面的距离就是<span class="math inline">\({\bf x - x&#39;}\)</span>往<span class="math inline">\(\bf w\)</span>方向的投影，即 <span class="math display">\[
+{\rm distance}({\bf x}, b,{\bf w}) = \left|\frac{ {\bf w}^\mathsf{T}}{|\!|{\bf w}|\!|}({\bf x - x&#39;})\right| = \frac{1}{|\!|{\bf w}|\!|}|{\bf w^\mathsf{T}x} +b|
+\]</span> 又因为现在研究的超平面是分离超平面，前面提到过，在数据集线性可分的情况下，分离超平面对数据集中每个点<span class="math inline">\(n\)</span>都有<span class="math inline">\(y_n({\bf w^\mathsf{T}x}_n + b) &gt; 0\)</span>且<span class="math inline">\(y_n = \pm1\)</span>。利用这个性质，距离的计算公式又可以写为 <span class="math display">\[
+{\rm distance}({\bf x_n}, b,{\bf w}) =  \frac{1}{|\!|{\bf w}|\!|}y_n({\bf w^\mathsf{T}x}_n +b)
+\]</span> 又考虑到平面上同一条线有不同的表示方式，<span class="math inline">\({\bf w^\mathsf{T}x}+b = 0\)</span>和<span class="math inline">\(3{\bf w^\mathsf{T}x} + 3b=0\)</span>，因此系数可以放缩。如果将其放缩到满足<span class="math inline">\(\min_{n=1,\ldots,N}y_n({\bf w^\mathsf{T}x}_n + b) = 1\)</span>，代入到最开始要求解的最优化问题中的限制条件，就有<span class="math inline">\({\rm margin}(b, {\bf w}) = \frac{1}{|\!|{\bf w}|\!|}\)</span>。因此该最优化问题就可以写为 <span class="math display">\[
+\begin{align*}
+\max_{ {\bf w}, b} \hspace{3ex}&amp;\frac{1}{|\!|{\bf w}|\!|}\\
+{\rm subject\  to}\hspace{3ex} &amp;{\rm every\  }y_n{\bf w^\mathsf{T}x}_n &gt; 0 \\
+&amp;\min_{n=1,\ldots,N}y_n({\bf w^\mathsf{T}x}_n + b) = 1
+\end{align*}
+\]</span> 而且再仔细分析，两个限制条件中第二个条件比第一个严格，所以可以继续化简 <span class="math display">\[
+\begin{align*}
+\max_{ {\bf w}, b} \hspace{3ex}&amp;\frac{1}{|\!|{\bf w}|\!|}\\
+{\rm subject\  to}\hspace{3ex} &amp;\min_{n=1,\ldots,N}y_n({\bf w^\mathsf{T}x}_n + b) = 1
+\end{align*}
+\]</span> 这个问题是求最大值，而限制条件里又有最小值，还是不太好解。但是限制条件可以进一步放宽，只需要满足<span class="math inline">\(y_n({\bf w^\mathsf{T}x}_n + b) \ge 1\)</span>就可以。这里不用担心出现所有点都<span class="math inline">\(y_n({\bf w^\mathsf{T}x}_n + b) &gt; 1\)</span>的情况，因为如果这种情况发生，假设有<span class="math inline">\(y_n({\bf w^\mathsf{T}x}_n + b) \ge C, C &gt; 1\)</span>，那么对<span class="math inline">\((b, {\bf w})\)</span>缩放，得到<span class="math inline">\((b/C, {\bf w}/C)\)</span>，则还可以满足<span class="math inline">\(y_n({\bf w^\mathsf{T}x}_n + b) \ge 1\)</span>，但是因为<span class="math inline">\(\bf w\)</span>被除了一个大于1的正常数，因此<span class="math inline">\(\frac{1}{|\!|w|\!|}\)</span>会变大，新的解比<span class="math inline">\((b, {\bf w})\)</span>取得的最优解更好，造成矛盾。最后，再做一点简单的变换，可以得到最终要优化的问题为 <span class="math display">\[
+\begin{align*}
+\min_{ {\bf w}, b} \hspace{3ex}&amp;\frac{1}{2}{\bf w^\mathsf{T}w}\\
+{\rm subject\  to}\hspace{3ex} &amp;y_n({\bf w^\mathsf{T}x}_n + b) \ge 1{\rm\  for\  all\  }n
+\end{align*}
+\]</span></p>
+<h2 id="支持向量机svm">支持向量机（SVM）</h2>
+<p>上面得到的这个问题通常称为<strong>标准问题</strong>，解这个问题返回的<span class="math inline">\(g\)</span>通常称为<strong>支持向量机</strong>（Support Vector Machine, SVM）。SVM的来源是这样的：通过分析第一节中的例子，可以发现最大间隔分离超平面完全由离该超平面最近的点定义，其它点如果从数据集中删除掉，对最优超平面的选择没有任何影响。这些决定了最大间隔分离超平面的点通常被称为<strong>支持向量</strong>，因此SVM的意思就是使用支持向量学习出最优的超平面</p>
+<p>SVM并不是一个很容易手工解出的问题。由于限制条件的存在，使用梯度下降也不太方便。不过这个问题要最小化的是一个<span class="math inline">\(\bf w\)</span>的二次函数，限制条件又都是<span class="math inline">\({\bf w}\)</span>和<span class="math inline">\(b\)</span>的一次式，因此这个问题其实是凸优化问题里的二次规划问题（简称QP问题）。接下来的问题就是，如何把这个最优化问题改写成二次规划问题的标准形式。假设变量为<span class="math inline">\(\bf u\)</span>，其二次项系数为<span class="math inline">\(\rm Q\)</span>，一次项系数为<span class="math inline">\(\bf p^\mathsf{T}\)</span>，限制条件的每一项系数为<span class="math inline">\({\bf a}_m^\mathsf{T}\)</span>，常数为<span class="math inline">\(c_m\)</span>，则二次规划问题的标准形式就可以写为 <span class="math display">\[
+{\rm optimal\  }{\bf u} \leftarrow {\rm QP}({\rm Q}, {\bf p}, {\rm A}, {\bf c}) \\
+\begin{align*}
+\min_{\bf u} &amp; \hspace{3ex}\frac{1}{2}{\bf u}^\mathsf{T}{\rm Q}{\bf u} + {\bf p^\mathsf{T}u} \\
+{\rm subject\  to} &amp; \hspace{3ex}{\bf a}_m^\mathsf{T}{\bf u} \ge c_m, {\rm for\  }m =1,2,\ldots, M
+\end{align*}
+\]</span> 记<span class="math inline">\(\bf w\)</span>的维数为<span class="math inline">\(d\)</span>，则对应关系如下 <span class="math display">\[
+\begin{align*}
+{\bf u} &amp;= \left[\begin{array}{c}b \\ {\bf w}\end{array}\right] \\
+{\rm Q} &amp;= \left[\begin{matrix} 0 &amp; {\bf 0}_d^\mathsf{T} \\ {\bf 0}_d &amp; {\rm I}_d\end{matrix}\right] \\
+{\bf p} &amp;= {\bf 0}_{d+1} \\
+{\bf a}_n^\mathsf{T} &amp;= y_n\left[\begin{array}{c}1 &amp; {\bf x}_n^\mathsf{T}\end{array}\right] \\
+c_n &amp;= 1 \\
+M &amp;= N
+\end{align*}
+\]</span> 因此可以得到线性硬间隔支持向量机算法为</p>
+<blockquote>
+<ol type="1">
+<li>设置<span class="math inline">\({\rm Q} = \left[\begin{matrix} 0 &amp; {\bf 0}_d^\mathsf{T} \\ {\bf 0}_d &amp; {\rm I}_d\end{matrix}\right];{\bf p} = {\bf 0}_{d+1};{\bf a}_n^\mathsf{T} = y_n\left[\begin{array}{c}1 &amp; {\bf x}_n^\mathsf{T}\end{array}\right] ;c_n = 1\)</span></li>
+<li><span class="math inline">\(\left[\begin{array}{c} b \\ {\bf w}\end{array}\right] \leftarrow {\rm QP}({\rm Q}, {\bf p}, {\rm A}, {\bf c})\)</span></li>
+<li>将<span class="math inline">\(b\)</span>和<span class="math inline">\(\bf w\)</span>返回为<span class="math inline">\(g_{\rm SVM}\)</span></li>
+</ol>
+</blockquote>
+<p>这里“硬间隔”意味着没有点会在“胖的边界”里或者甚至越过分离超平面，而“线性”意味着用的是原始的<span class="math inline">\(\bf x\)</span>。如果要做非线性的SVM，只需要做非线性转换<span class="math inline">\({\bf z}_n = \boldsymbol{\Phi}({\bf x}_n)\)</span>就可以</p>
+<h2 id="最大间隔分离超平面背后的原理">最大间隔分离超平面背后的原理</h2>
+<p>最后，来看一下SVM模型可以做得好的理论解释：SVM可以跟正则化做连接：正则化最小化的是<span class="math inline">\(E_{\rm in}\)</span>，但是限制了<span class="math inline">\({\bf w^\mathsf{T}w} \le C\)</span>，而SVM最小化的是<span class="math inline">\({\bf w^\mathsf{T}w}\)</span>，限制条件是<span class="math inline">\(E_{\rm in} = 0\)</span>（当然还有其它条件，但是这里没有包括进去）。尽管两者的最小化目标和限制条件有所交换，但是可以认为两者做的事情是相同的，实际上就是想把两件事都考虑进去，即可以把SVM看作是一种正则化</p>
+<p>另一种解释是从VC的角度看。假设现在使用一种“大间隔算法”<span class="math inline">\(\mathcal{A}_\rho\)</span>，如果存在某个<span class="math inline">\(g\)</span>有<span class="math inline">\({\rm margin}(g) \ge \rho\)</span>，则这个算法返回<span class="math inline">\(g\)</span>，否则返回空。<span class="math inline">\(\mathcal{A}_0\)</span>（实际上就是PLA）可以打散三个元素，但是如果<span class="math inline">\(\rho\)</span>比较大，能被<span class="math inline">\(\mathcal{A}_0\)</span>打散的数据就不一定能被<span class="math inline">\(\mathcal{A}_\rho\)</span>打散。即SVM的VC维更小，一般化能力更强</p>
+<p>可以从概念上推导<span class="math inline">\(\mathcal{A}_\rho\)</span>的VC维，注意此时VC维依赖于数据。这里假设<span class="math inline">\(\mathcal{X}\)</span>是<span class="math inline">\(\mathbb{R}^2\)</span>上的单位圆，如果<span class="math inline">\(\rho=0\)</span>，那算法退化成感知机，<span class="math inline">\(d_{\rm VC} = 3\)</span>。但是当<span class="math inline">\(\rho &gt; \frac{\sqrt{3}}{2}\)</span>时，算法不能打散任何3个输入，<span class="math inline">\(d_{\rm VC} &lt; 3\)</span>。通常来讲，假设<span class="math inline">\(\mathcal{X}\)</span>在一个半径为<span class="math inline">\(R\)</span>的超球体里，有 <span class="math display">\[
+d_{\rm VC}(\mathcal{A}_\rho) \le \min \left(\frac{R^2}{\rho^2}, d\right) + 1 \le d+1
+\]</span> 之前课程讲述过超平面和特征变换这两种工具。超平面的假设集不大，但是边界比较简单；而带了特征变换的超平面的假设集变得非常大，不过边界也更加复杂。这两者颇有点鱼和熊掌的意味：假设集不大是件好事，因为<span class="math inline">\(d_{\rm VC}\)</span>不会太大，有利于一般化；边界复杂也是好事，因为这会使<span class="math inline">\(E_{\rm in}\)</span>变小。在之前，这两种优点不可兼得，但是SVM的引入使得这两个好处有可能被一个模型同时获得（因为SVM的假设集更小）。这种模型称为非线性SVM，其使用的还是SVM的思想，但是会对数据做一些特征变换<span class="math inline">\(\boldsymbol{\Phi}\)</span></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/09/18/NTUML-17-Linear-SVM/" title="NTUML 17. 线性支持向量机">txshi-mt.com/2017/09/18/NTUML-17-Linear-SVM/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/NTUML/" rel="tag"># NTUML</a>
+          
+            <a href="/tags/SVM/" rel="tag"># SVM</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/14/NTUML-16-Three-Learning-Principles/" rel="next" title="NTUML 16. 三条锦囊妙计">
+                <i class="fa fa-chevron-left"></i> NTUML 16. 三条锦囊妙计
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/09/18/NTUML-18-Dual-SVM/" rel="prev" title="NTUML 18. 对偶支持向量机">
+                NTUML 18. 对偶支持向量机 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#最大间隔分离超平面"><span class="nav-number">1.</span> <span class="nav-text">&#x6700;&#x5927;&#x95F4;&#x9694;&#x5206;&#x79BB;&#x8D85;&#x5E73;&#x9762;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#标准的最大间隔问题"><span class="nav-number">2.</span> <span class="nav-text">&#x6807;&#x51C6;&#x7684;&#x6700;&#x5927;&#x95F4;&#x9694;&#x95EE;&#x9898;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#支持向量机svm"><span class="nav-number">3.</span> <span class="nav-text">&#x652F;&#x6301;&#x5411;&#x91CF;&#x673A;&#xFF08;SVM&#xFF09;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#最大间隔分离超平面背后的原理"><span class="nav-number">4.</span> <span class="nav-text">&#x6700;&#x5927;&#x95F4;&#x9694;&#x5206;&#x79BB;&#x8D85;&#x5E73;&#x9762;&#x80CC;&#x540E;&#x7684;&#x539F;&#x7406;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

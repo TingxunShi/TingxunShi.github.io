@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="NTUML,SVM," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="核岭回归 由上一讲提到的表示定理可知，任何带有L2正则项的线性模型都能被核化。那么如何把回归模型核化呢？而且回想之前讲岭回归（带有L2正则项的线性回归）时，曾经说过该模型可以得到一个闭合的解析解，那么使用了核方法以后的模型是否能同样有解析解？ 首先，将原始岭回归的问题写出 \[ \min_{\bf w}\hspace{2ex}\frac{\lambda}{N}{\bf w^\mathsf{T}w}">
+<meta name="keywords" content="NTUML,SVM">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NTUML 22. 支持向量回归（SVR）">
+<meta property="og:url" content="txshi-mt.com/2017/10/03/NTUML-22-SVR/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="核岭回归 由上一讲提到的表示定理可知，任何带有L2正则项的线性模型都能被核化。那么如何把回归模型核化呢？而且回想之前讲岭回归（带有L2正则项的线性回归）时，曾经说过该模型可以得到一个闭合的解析解，那么使用了核方法以后的模型是否能同样有解析解？ 首先，将原始岭回归的问题写出 \[ \min_{\bf w}\hspace{2ex}\frac{\lambda}{N}{\bf w^\mathsf{T}w}">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML22_LSSVM.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML22_tube_regression.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML22_all_kernel_models.png">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.093Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NTUML 22. 支持向量回归（SVR）">
+<meta name="twitter:description" content="核岭回归 由上一讲提到的表示定理可知，任何带有L2正则项的线性模型都能被核化。那么如何把回归模型核化呢？而且回想之前讲岭回归（带有L2正则项的线性回归）时，曾经说过该模型可以得到一个闭合的解析解，那么使用了核方法以后的模型是否能同样有解析解？ 首先，将原始岭回归的问题写出 \[ \min_{\bf w}\hspace{2ex}\frac{\lambda}{N}{\bf w^\mathsf{T}w}">
+<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML22_LSSVM.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/10/03/NTUML-22-SVR/"/>
+
+
+
+
+
+  <title>NTUML 22. 支持向量回归（SVR） | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/10/03/NTUML-22-SVR/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NTUML 22. 支持向量回归（SVR）</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-03T10:09:48+08:00">
+                Oct 3 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/统计机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">统计机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="核岭回归">核岭回归</h2>
+<p>由上一讲提到的表示定理可知，任何带有L2正则项的线性模型都能被核化。那么如何把回归模型核化呢？而且回想之前讲岭回归（带有L2正则项的线性回归）时，曾经说过该模型可以得到一个闭合的解析解，那么使用了核方法以后的模型是否能同样有解析解？</p>
+<p>首先，将原始岭回归的问题写出 <span class="math display">\[
+\min_{\bf w}\hspace{2ex}\frac{\lambda}{N}{\bf w^\mathsf{T}w} + \frac{1}{N}\sum_{n=1}^N(y_n - {\bf w^\mathsf{T}z}_n)^2
+\]</span> 要使该问题的最优解<span class="math inline">\({\bf w}_\ast\)</span>可以写作若干个<span class="math inline">\({\bf z}_n\)</span>的线性组合，即<span class="math inline">\({\bf w}_\ast = \sum_{n=1}^N \beta_n{\bf z}_n\)</span>。类似于之前KLR的推导，可以把<span class="math inline">\({\bf w}_\ast\)</span>的表达式代回到原始问题，进而求解最优的<span class="math inline">\(\boldsymbol{\beta}\)</span>。因此原问题可以化为 <span class="math display">\[
+\min_{\boldsymbol{\beta}}\hspace{2ex}\frac{\lambda}{N}\sum_{n=1}^N\sum_{m=1}^N\beta_n\beta_mK({\bf x}_n, {\bf x}_m) + \frac{1}{N}\sum_{n=1}^N\left(y_n - \sum_{m=1}^N\beta_mK({\bf x}_n, {\bf x}_m)\right)^2
+\]</span> 同样的，第一项可以看做是使用核矩阵<span class="math inline">\(\rm K\)</span>对<span class="math inline">\(\boldsymbol{\beta}\)</span>做正则化，第二项是对<span class="math inline">\(N\)</span>维经核变化过的样本做线性回归，权重为<span class="math inline">\(\boldsymbol{\beta}\)</span>。经过矩阵/向量化，该问题可以进一步化简为 <span class="math display">\[
+\min_\boldsymbol{\beta}\hspace{2ex}\frac{\lambda}{N}\boldsymbol{\beta}^\mathsf{T}{\rm K}\boldsymbol{\beta} + \frac{1}{N}(\boldsymbol{\beta}^\mathsf{T}{\rm K^\mathsf{T}K}\boldsymbol{\beta} - 2\boldsymbol{\beta}^\mathsf{T}{\rm K}^\mathsf{T}{\bf y} + {\bf y^\mathsf{T}y})
+\]</span> 将上式对<span class="math inline">\(\boldsymbol{\beta}\)</span>取梯度，同时注意<span class="math inline">\(\rm K\)</span>是对称矩阵（Mercer定理），可知<span class="math inline">\({\rm K = K^\mathsf{T} = K^\mathsf{T}I}\)</span>。因此 <span class="math display">\[
+\nabla E_{\rm aug}(\boldsymbol{\beta}) = \frac{2}{N}(\lambda {\rm K^\mathsf{T}I}\boldsymbol{\beta} + {\rm K^\mathsf{T}K}{\boldsymbol{\beta}} - {\rm K^\mathsf{T}}{\bf y}) = \frac{2}{N}{\rm K^\mathsf{T}((\lambda{\rm I+K})\boldsymbol{\beta} - {\bf y})}
+\]</span> 可知最后也可以得到<span class="math inline">\(\boldsymbol{\beta}\)</span>的解析解为<span class="math inline">\(\boldsymbol{\beta} = (\lambda {\rm I +K})^{-1}{\bf y}\)</span>，返回的<span class="math inline">\(g({\bf x}) = \sum_{n=1}^N \beta_nK({\bf x}_n, \bf x)\)</span>。由于<span class="math inline">\(\rm K\)</span>是半正定矩阵且<span class="math inline">\(\lambda &gt;0\)</span>，因此<span class="math inline">\(\lambda {\rm I + K}\)</span>总是可逆的。求解该问题的时间复杂度为<span class="math inline">\(O(N^3)\)</span>。相比而言，线性岭回归得到的结果<span class="math inline">\({\bf w}={\rm (\lambda I + X^\mathsf{T}X)^{-1}X^\mathsf{T}}{\bf y}\)</span>更受限（如果不做多项式变换，只能得到线性模型），但是训练时间复杂度<span class="math inline">\(O(d^3 +d^2N)\)</span>，预测时间复杂度<span class="math inline">\(O(d)\)</span>，在<span class="math inline">\(N &gt;\!&gt; d\)</span>时效率更高。核岭回归尽管得到的模型更灵活，但是训练时间复杂度<span class="math inline">\(O(N^3)\)</span>，预测时间复杂度<span class="math inline">\(O(N)\)</span>，不适合处理大的数据集。这再次说明我们通常要在模型的灵活性和计算效率之间进行权衡</p>
+<h2 id="支持向量回归的原始问题">支持向量回归的原始问题</h2>
+<p>前面说到，线性回归（及其带正则化的变种）也可以用来解决分类问题。使用了核方法的核岭回归也可以解决同样的问题，此时这个模型被称为最小二乘支持向量机（Least-Squares SVM, LSSVM）。高斯LSSVM和软间隔高斯核SVM的对比可见下图</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML22_LSSVM.png" alt="软间隔高斯核SVM和高斯LSSVM的对比"><figcaption>软间隔高斯核SVM和高斯LSSVM的对比</figcaption>
+</figure>
+<p>可见两者的边界差别不是很大，但是对LSSVM，几乎所有点都是支持向量，而对软间隔SVM，只有少数点是支持向量。支持向量越多，预测的时间就越长，效率就越低。那么有没有办法得到这样一种模型：它既可以解决回归问题，又可以像标准SVM那样有稀疏的<span class="math inline">\(\boldsymbol{\beta}\)</span>呢？</p>
+<p>首先考虑一个“管道回归”问题（tube regression）：之前讲线性回归的时候，对模型误差的判定非常严苛：对某个点<span class="math inline">\(({\bf x}_n, y_n)\)</span>，只有当它完全落在学习出的超平面上时，它的误差才是0。只要出现一点偏差，就要负责任。但是在管道回归问题里，错误评判的标准宽松了一些：在标线的基础上，拓展出来一部分“中立区”。即便是某些点没有落在超平面上，只要落在中立区里，误差就不计算了。对于落在中立区外的点，其误差计算也不是看它到超平面的距离，而是看它离中立区的距离。下图给出了一个示例</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML22_tube_regression.png" alt="管道回归（tube regression）"><figcaption>管道回归（tube regression）</figcaption>
+</figure>
+<p>上图中，蓝色线是学习出的超平面，蓝色带是划分出的“中立区”，红线表明了各点误差的大小。假设中立区的（单侧）高度为<span class="math inline">\(\epsilon\)</span>，管道回归的误差函数为 <span class="math display">\[
+{\rm err}(y, s) = \max(0, |s-y|-\epsilon)
+\]</span> 可以看出，这个误差函数（通常称为<span class="math inline">\(\epsilon\)</span>-不敏感误差）与前面讲到的SVM的hinge loss形式很像。而如果将此误差函数的图像做出来，可以发现当<span class="math inline">\(|y-s|\)</span>比较小时，管道回归的误差与平方误差大致相等。<span class="math inline">\(|y-s|\)</span>比较大时，管道回归的误差又远小于平方误差，这说明前者受离群点的影响更小</p>
+<p>接下来要做的就是求解这个带有L2正则项的管道回归问题来得到一个稀疏的<span class="math inline">\(\boldsymbol{\beta}\)</span>。首先将问题描述出来 <span class="math display">\[
+\min_{\bf w}\hspace{2ex}\frac{\lambda}{N}{\bf w^\mathsf{T}w} + \frac{1}{N}\sum_{n=1}^N\max\left(0, |{\bf w^\mathsf{T}z}_n-y|-\epsilon\right)
+\]</span> 尽管这是一个无限制条件的优化问题，但是<span class="math inline">\(\max\)</span>函数不是处处可微的，因此使用微分的方法会遇到问题。标准SVM也有类似的问题，但是重写为一个QP问题以后就好解了。此外，为了使用核方法，该问题可以用表示定理来转换为一个可核化的问题，但是可能不会有稀疏性的保证；而标准SVM由于有对偶问题和KKT条件，有稀疏性的保证。因此在求解此问题时，也会试着像QP、对偶和KKT条件靠拢。所以接下来仿照标准SVM问题对原问题进行重写 <span class="math display">\[
+\min_{b, {\bf w}}\hspace{2ex}\frac{1}{2}{\bf w^\mathsf{T}w} + C\sum_{n=1}^N\max(0, |{\bf w^\mathsf{T}z}_n+b-y_n|-\epsilon)
+\]</span> 原始软间隔SVM问题对<span class="math inline">\(\max\)</span>函数的处理是引入了边界破坏量<span class="math inline">\(\xi_n\)</span>。这里使用了类似的思想，但是由于绝对值符号的存在，只引入一个<span class="math inline">\(\xi_n\)</span>是不够的，约束条件还不是一个线性问题。应该将绝对值符号展开，并引入两个量：向下惩罚项<span class="math inline">\(\xi_n^\lor\)</span>和向上惩罚项<span class="math inline">\(\xi_n^\land\)</span>。这样一来，就得到了标准支持向量回归（SVR）的原始问题，形式为 <span class="math display">\[
+\begin{align*}
+\min_{b, {\bf w}, \boldsymbol{\xi}^\lor, \boldsymbol{\xi}^\land}\hspace{2ex}&amp;\frac{1}{2}{\bf w^\mathsf{T}w} + C\sum_{n=1}^N(\xi_n^\lor + \xi_n^\land) \\
+{\rm s.t.}\hspace{2ex}&amp; -\epsilon - \xi_n^\lor \le y_n - {\bf w^\mathsf{T}z}_n - b \le \epsilon + \xi_n^\land \\
+&amp;\xi_n^\lor \ge 0, \xi_n^\land \ge 0
+\end{align*}
+\]</span> 这里各参数的意义为</p>
+<ul>
+<li><span class="math inline">\(C\)</span>在正则的程度和对管道的破坏程度中做均衡</li>
+<li><span class="math inline">\(\epsilon\)</span>控制管道在竖直方向上的宽度（比原来SVM多出来一个超参数）</li>
+</ul>
+<p>这个QP问题有<span class="math inline">\(\tilde{d}+1+2N\)</span>个变量，<span class="math inline">\(2N+2N\)</span>个限制条件</p>
+<h2 id="支持向量回归的对偶问题">支持向量回归的对偶问题</h2>
+<p>要写出上述原始问题的对偶问题，第一步是引入拉格朗日乘子。记约束条件<span class="math inline">\(y_n - {\bf w^\mathsf{T}z}_n - b \le \epsilon + \xi_n^\land\)</span>对应的拉格朗日乘子为<span class="math inline">\(\alpha_n^\land\)</span>，约束条件<span class="math inline">\(-\epsilon - \xi_n^\lor \le y_n - {\bf w^\mathsf{T}z}_n - b\)</span>对应的拉格朗日乘子为<span class="math inline">\(\alpha_n^\lor\)</span>。经过类似第18讲和20讲的一些计算，可以得到以下一些KKT条件 <span class="math display">\[
+\begin{align*}
+\frac{\partial \mathcal{L}}{\partial w_i} = 0&amp;\Rightarrow {\bf w} = \sum_{n=1}^N(\alpha_n^\land - \alpha_n^\lor){\bf z}_n \\
+\frac{\partial \mathcal{L}}{\partial b} = 0 &amp; \Rightarrow \sum_{n=1}^N(\alpha_n^\land - \alpha_n^\lor) = 0
+\end{align*}
+\]</span> 以及其中的互补松弛条件为 <span class="math display">\[
+\begin{cases}
+\alpha_n^\land(\epsilon + \xi_n^\land - y_n + {\bf w^\mathsf{T}z}_n + b) = 0 \\
+\alpha_n^\lor(\epsilon + \xi_n^\lor + y_n - {\bf w^\mathsf{T}z}_n - b) = 0
+\end{cases}
+\]</span> 最终可以得到对偶问题为 <span class="math display">\[
+\begin{align*}
+\min \hspace{2ex} &amp;\frac{1}{2}\sum_{n=1}^N\sum_{m=1}^N(\alpha_n^\land - \alpha_n^\lor)(\alpha_m^\land - \alpha_m^\lor)K({\bf z}_n, {\bf z}_m) + \sum_{n=1}^N((\epsilon-y_n)\cdot \alpha_n^\land + (\epsilon + y_n)\cdot \alpha_n^\lor) \\
+{\rm s.t.} \hspace{2ex} &amp;\sum_{n=1}^N(\alpha_n^\land - \alpha_n^\lor) = 0 \\
+&amp;0 \le \alpha_n^\land \le C, 0\le \alpha_n^\lor \le C
+\end{align*}
+\]</span> 这个问题也可以用二次规划求解器求解</p>
+<p>最后，由前面的KKT条件可知<span class="math inline">\({\bf w} = \sum_{n=1}^N (\alpha_n^\land - \alpha_n^\lor){\bf z}_n\)</span>。记<span class="math inline">\(\alpha_n^\land - \alpha_n^\lor\)</span>为<span class="math inline">\(\beta_n\)</span>，要证明的就是<span class="math inline">\(\beta_n\)</span>组成的系数向量<span class="math inline">\(\boldsymbol{\beta}\)</span>是稀疏的。由前面的互补松弛条件，对那些在管道中的点，其对应的<span class="math inline">\(\xi_n^\land\)</span>和<span class="math inline">\(\xi_n^\lor\)</span>都为0。由于此时有<span class="math inline">\(|{\bf w}^\mathsf{T}{\bf z}+b-y_n|&lt;\epsilon\)</span>，因此互补松弛条件中<span class="math inline">\(\epsilon + \xi_n^\land - y_n + {\bf w^\mathsf{T}z}_n + b\)</span>和<span class="math inline">\(\epsilon + \xi_n^\lor + y_n - {\bf w^\mathsf{T}z}_n - b\)</span>都不为0，也就是它们对应的<span class="math inline">\(\alpha_n^\land\)</span>和<span class="math inline">\(\alpha_n^\lor\)</span>都为0，<span class="math inline">\(\beta_n\)</span>也就为0。所以可以得出结论：落在管道边界上或管道外的数据点才对<span class="math inline">\(\bf w\)</span>有贡献，它们才是支持向量，<span class="math inline">\(\boldsymbol{\beta}\)</span>是稀疏的</p>
+<h2 id="核模型总结">核模型总结</h2>
+<p>最后对前面讲过的所有线性模型和使用了核技巧的模型（简称核模型）做一总结，参见下图</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML22_all_kernel_models.png" alt="线性模型与核模型总结"><figcaption>线性模型与核模型总结</figcaption>
+</figure>
+<p>上图中，</p>
+<ul>
+<li>前两行均为线性模型，其中
+<ul>
+<li>第一行较少使用，因为性能/效果比较差</li>
+<li>第二行是经典机器学习包<a href="http://www.csie.ntu.edu.tw/~cjlin/liblinear/" target="_blank" rel="noopener">liblinear</a>的主力</li>
+</ul></li>
+<li>后两行均为核模型，其中
+<ul>
+<li>第三行较少使用，因为支持向量是稠密的</li>
+<li>第四行是经典机器学习包<a href="http://www.csie.ntu.edu.tw/~cjlin/libsvm/" target="_blank" rel="noopener">libsvm</a>的主力</li>
+</ul></li>
+</ul>
+<p>核模型中可用的核包括多项式核、高斯核，或者是任何满足Mercer条件的自定义核。它们是线性模型的有力扩展。但是“能力越大责任越大”，使用这些强力模型时，要更小心地调参以及做验证，避免过拟合现象的出现</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/10/03/NTUML-22-SVR/" title="NTUML 22. 支持向量回归（SVR）">txshi-mt.com/2017/10/03/NTUML-22-SVR/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/NTUML/" rel="tag"># NTUML</a>
+          
+            <a href="/tags/SVM/" rel="tag"># SVM</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/10/02/NTUML-21-Kernel-Logistic-Regression/" rel="next" title="NTUML 21. 核Logistic回归">
+                <i class="fa fa-chevron-left"></i> NTUML 21. 核Logistic回归
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/10/05/NTUML-23-Blending-Bagging/" rel="prev" title="NTUML 23. 模型混合与装袋（bagging）">
+                NTUML 23. 模型混合与装袋（bagging） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#核岭回归"><span class="nav-number">1.</span> <span class="nav-text">&#x6838;&#x5CAD;&#x56DE;&#x5F52;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#支持向量回归的原始问题"><span class="nav-number">2.</span> <span class="nav-text">&#x652F;&#x6301;&#x5411;&#x91CF;&#x56DE;&#x5F52;&#x7684;&#x539F;&#x59CB;&#x95EE;&#x9898;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#支持向量回归的对偶问题"><span class="nav-number">3.</span> <span class="nav-text">&#x652F;&#x6301;&#x5411;&#x91CF;&#x56DE;&#x5F52;&#x7684;&#x5BF9;&#x5076;&#x95EE;&#x9898;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#核模型总结"><span class="nav-number">4.</span> <span class="nav-text">&#x6838;&#x6A21;&#x578B;&#x603B;&#x7ED3;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

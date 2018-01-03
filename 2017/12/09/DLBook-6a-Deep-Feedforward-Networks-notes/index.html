@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="神经网络,DLBook,交叉熵,softmax," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="本次笔记主要是对《深度学习》一书第六章的一些知识点做一定程度的补充说明。这些知识点大部分都来自6.2节 最大似然与交叉熵的关系 本节是参照一些概念定义对教材5.5节的扩展 电子版154页提到：  大多数现代的神经网络使用最大似然来训练。这意味着代价函数就是负的对数似然，它与训练数据和模型分布间的交叉熵等价  这个推导实际上出现在书的第5.5节“最大似然估计”。在书的第3.13节“信息论”中，曾经给">
+<meta name="keywords" content="神经网络,DLBook,交叉熵,softmax">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《深度学习》ch6. 深度前馈网络 注（上）">
+<meta property="og:url" content="txshi-mt.com/2017/12/09/DLBook-6a-Deep-Feedforward-Networks-notes/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="本次笔记主要是对《深度学习》一书第六章的一些知识点做一定程度的补充说明。这些知识点大部分都来自6.2节 最大似然与交叉熵的关系 本节是参照一些概念定义对教材5.5节的扩展 电子版154页提到：  大多数现代的神经网络使用最大似然来训练。这意味着代价函数就是负的对数似然，它与训练数据和模型分布间的交叉熵等价  这个推导实际上出现在书的第5.5节“最大似然估计”。在书的第3.13节“信息论”中，曾经给">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.089Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="《深度学习》ch6. 深度前馈网络 注（上）">
+<meta name="twitter:description" content="本次笔记主要是对《深度学习》一书第六章的一些知识点做一定程度的补充说明。这些知识点大部分都来自6.2节 最大似然与交叉熵的关系 本节是参照一些概念定义对教材5.5节的扩展 电子版154页提到：  大多数现代的神经网络使用最大似然来训练。这意味着代价函数就是负的对数似然，它与训练数据和模型分布间的交叉熵等价  这个推导实际上出现在书的第5.5节“最大似然估计”。在书的第3.13节“信息论”中，曾经给">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/12/09/DLBook-6a-Deep-Feedforward-Networks-notes/"/>
+
+
+
+
+
+  <title>《深度学习》ch6. 深度前馈网络 注（上） | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/12/09/DLBook-6a-Deep-Feedforward-Networks-notes/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">《深度学习》ch6. 深度前馈网络 注（上）</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-09T22:40:42+08:00">
+                Dec 9 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/深度学习/" itemprop="url" rel="index">
+                    <span itemprop="name">深度学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本次笔记主要是对《深度学习》一书第六章的一些知识点做一定程度的补充说明。这些知识点大部分都来自6.2节</p>
+<h2 id="最大似然与交叉熵的关系">最大似然与交叉熵的关系</h2>
+<p><strong>本节是参照一些概念定义对教材5.5节的扩展</strong></p>
+<p>电子版154页提到：</p>
+<blockquote>
+<p>大多数现代的神经网络使用最大似然来训练。这意味着代价函数就是负的对数似然，它与训练数据和模型分布间的交叉熵等价</p>
+</blockquote>
+<p>这个推导实际上出现在书的第5.5节“最大似然估计”。在书的第3.13节“信息论”中，曾经给出了交叉熵的一个定义：假设对同一个随机变量<span class="math inline">\(\rm x\)</span>有两个单独的概率分布<span class="math inline">\(P({\bf x})\)</span>和<span class="math inline">\(Q({\rm x})\)</span>，则交叉熵的定义为 <span class="math display">\[
+H(P, Q) = -\mathbb{E}_{ {\rm x} \sim P}\log Q(x)
+\]</span> 具体应用到最大似然上，首先，假设有一个真实的数据分布<span class="math inline">\(p_{\rm data}({\bf x})\)</span>，根据这个分布，可以生成一些可以观测到的样本<span class="math inline">\(\boldsymbol{x}^{(i)}\)</span>。这些被观测到的样本组成了数据集<span class="math inline">\(\mathbb{X}\)</span>，但是并不知道真实的数据分布是什么样的。因此，对每个样本<span class="math inline">\(\boldsymbol{x}\)</span>，也就不知道其真实的概率<span class="math inline">\(p_{\rm data}(\boldsymbol{x})\)</span>。但是，可以对这个值进行估计，做法就是在相同的空间上定义一个由参数<span class="math inline">\(\boldsymbol{\theta}\)</span>指定的分布族。当分布族确定，分布族的参数<span class="math inline">\(\boldsymbol{\theta}\)</span>确定以后，就可以说这时候确定了一个<strong>模型</strong>（注意这个模型是一个概率模型，不能与其它机器学习模型，例如决策树等等，相混淆）。有了模型，就可以对每个样本<span class="math inline">\(\boldsymbol{x}\)</span>计算其在这个模型中出现的概率<span class="math inline">\(p_{\rm model}(\boldsymbol{x};\boldsymbol{\theta})\)</span>，进而用这个模型概率去估计真实概率</p>
+<p>在有了分布族和已知样本以后，反过来如何求解合适的参数<span class="math inline">\(\boldsymbol{\theta}\)</span>就成了最关键的问题。这里，需要引入<strong>似然函数</strong>的概念。所谓似然函数，就是一种关于统计模型中的参数的函数，通常定义为 <span class="math display">\[
+{\rm lik}(\boldsymbol{\theta}) = f_D(\boldsymbol{x}_1, \ldots, \boldsymbol{x}_m|\boldsymbol{\theta}) = p_{\rm model}(\mathbb{X}; \boldsymbol{\theta})
+\]</span> 求似然函数对参数<span class="math inline">\(\boldsymbol{\theta}\)</span>的一阶导数，令其等于0，可以使似然函数取最大值。这个使似然函数取得最大值的<span class="math inline">\(\hat{\boldsymbol{\theta}}\)</span>就是<span class="math inline">\(\boldsymbol{\theta}\)</span>的最大似然估计。通常做法为 <span class="math display">\[
+\begin{align*}
+\boldsymbol{\theta}_{\rm ML} &amp;= \mathop{\rm arg max}_\boldsymbol{\theta} p_{\rm model}(\mathbb{X};\boldsymbol{\theta}) \\
+&amp;= \mathop{\rm arg max}_\boldsymbol{\theta} \prod_{i=1}^m p_{\rm model}(\boldsymbol{x}^{(i)};\boldsymbol{\theta})
+\end{align*}
+\]</span> 由于通常情况下，<span class="math inline">\(p_{\rm model}(\boldsymbol{x}^{(i)};\boldsymbol{\theta})\)</span>都是一个非常小的值，而<span class="math inline">\(m\)</span>一般会非常大，因此连乘就会出现计算下溢，很快被近似为0。为了避免这种现象，可以对整个连乘项求对数，这样就把原来的小数连乘问题转化成了一些负数的连加问题，降低了计算下溢的风险。因此 <span class="math display">\[
+\boldsymbol{\theta}_{\rm ML} = \mathop{\rm arg max}_{\boldsymbol{\theta}}\sum_{i=1}^m \log p_{\rm model}(\boldsymbol{x}^{(i)};\boldsymbol{\theta})
+\]</span> 将上式除以<span class="math inline">\(m\)</span>并不会改变最后的结果，而且会得到一个与期望相关的式子 <span class="math display">\[
+\boldsymbol{\theta}_{\rm ML} = \mathop{\rm arg max}_{\boldsymbol{\theta}}\mathbb{E}_{ {\bf x} \sim \hat{p}_{\rm data}} \log p_{\rm model}(\boldsymbol{x};\boldsymbol{\theta})
+\]</span> 注意这里还不能说<span class="math inline">\({\bf x} \sim p_{\rm data}\)</span>，因为真实数据集可能是无限的，只能通过有限的取样，用有限来近似无限。所以这里<span class="math inline">\(\bf x\)</span>服从的分布是来自训练数据的经验分布。由于使<span class="math inline">\(f(x)\)</span>取最大值的<span class="math inline">\(x\)</span>也会使<span class="math inline">\(-f(x)\)</span>取最小值，因此 <span class="math display">\[
+\boldsymbol{\theta}_{\rm ML} = \mathop{\rm arg min}_{\boldsymbol{\theta}}-\mathbb{E}_{ {\bf x} \sim \hat{p}_{\rm data}} \log p_{\rm model}(\boldsymbol{x};\boldsymbol{\theta})
+\]</span> 上式可以很容易地扩展到估计条件概率<span class="math inline">\(P({\bf y}|{\bf x};\boldsymbol{\theta})\)</span>，从而根据给定的<span class="math inline">\(\bf x\)</span>预测<span class="math inline">\(\bf y\)</span>。如果假设样本独立同分布，将训练数据的经验分布<span class="math inline">\(\hat{p}_{\rm data}\)</span>看作是分布<span class="math inline">\(P\)</span>，模型定义的分布<span class="math inline">\(p_{\rm model}(\boldsymbol{y} |\boldsymbol{x};\boldsymbol{\theta})\)</span>看作是分布<span class="math inline">\(Q\)</span>，就得到了最开始交叉熵的定义。因此“负的对数似然与训练数据和模型分布间的交叉熵等价”，得到6.12式所示的代价函数 <span class="math display">\[
+J(\boldsymbol{\theta}) = -\mathbb{E}_{ {\bf x, y} \sim \hat{p}_{\rm data}}\log p_{\rm model}(\boldsymbol{y}|\boldsymbol{x})
+\]</span> 这里模型的分布<span class="math inline">\(p_{\rm model}\)</span>是根据要解决的问题而定义。常见的包括正态分布、伯努利分布和多元伯努利分布等</p>
+<h2 id="关于softmax一些性质的具体解释">关于softmax一些性质的具体解释</h2>
+<h3 id="softmax与max之间的关系">softmax与max之间的关系</h3>
+<p>电子版教材第160页提到：</p>
+<blockquote>
+<p>为了对第二项<span class="math inline">\(\log \sum_j \exp(z_j)\)</span>有一个直观的理解，注意到这一项可以大致近似为<span class="math inline">\(\max_jz_j\)</span></p>
+</blockquote>
+<p>对于这个结论，我一直想找一个更严谨的证明，但是却没有成功。根据维基百科的说法，更严格地说，<span class="math inline">\(\log \sum_j \exp(z_j)\)</span>这个函数（记为<span class="math inline">\(\rm LSE\)</span>）有上界和下界 <span class="math display">\[
+\max z_j \le {\rm LSE}(z_j) \le \max z_j + \log(n)
+\]</span> 其中<span class="math inline">\(n\)</span>是变量的个数</p>
+<p>当然，从直观上，这个结论也可以理解。当<span class="math inline">\(z_j\)</span>很大的时候，<span class="math inline">\(\exp(z_j)\)</span>会变得更大，同时使<span class="math inline">\(\exp(z_i), i \not= j\)</span>变得很小，这样<span class="math inline">\(\exp(z_j)\)</span>会为求和项做出大量贡献，使得<span class="math inline">\(\rm LSE\)</span>的结果偏向<span class="math inline">\(z_j\)</span>。不过笔者做了一些实验，发现<span class="math inline">\(\rm LSE\)</span>的值和<span class="math inline">\(\max z_j\)</span>之间的差距还不太能忽略</p>
+<h3 id="softmax的不变性">softmax的不变性</h3>
+<p>电子版教材6.32式给出了softmax函数的一个性质</p>
+<blockquote>
+<p><span class="math display">\[
+{\rm softmax}(\boldsymbol{z}) = {\rm softmax}(\boldsymbol{z} + c)
+\]</span></p>
+</blockquote>
+<p>这个性质可以如下证明 <span class="math display">\[
+\begin{aligned}
+{\rm softmax}(\boldsymbol{z} + c) &amp;= \frac{e^{\boldsymbol{z}_i+c}}{\sum_j e^{\boldsymbol{z}_j+c}} = \frac{e^{\boldsymbol{z}_i}e^c}{\sum_j e^{\boldsymbol{z}_j}e^c} = \frac{e^ce^{\boldsymbol{z}_i}}{e^c\sum_j e^{\boldsymbol{z}_j}} \\
+&amp;= \frac{e^{\boldsymbol{z}_i}}{\sum_j e^{\boldsymbol{z}_j}} = {\rm softmax}(\boldsymbol{z}) \  \  \  \blacksquare
+\end{aligned}
+\]</span></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/12/09/DLBook-6a-Deep-Feedforward-Networks-notes/" title="《深度学习》ch6. 深度前馈网络 注（上）">txshi-mt.com/2017/12/09/DLBook-6a-Deep-Feedforward-Networks-notes/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/神经网络/" rel="tag"># 神经网络</a>
+          
+            <a href="/tags/DLBook/" rel="tag"># DLBook</a>
+          
+            <a href="/tags/交叉熵/" rel="tag"># 交叉熵</a>
+          
+            <a href="/tags/softmax/" rel="tag"># softmax</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/05/DLBook-6a-Deep-Feedforward-Networks-summary/" rel="next" title="《深度学习》ch6. 深度前馈网络 记（上）">
+                <i class="fa fa-chevron-left"></i> 《深度学习》ch6. 深度前馈网络 记（上）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/12/22/UTNN-4-Learning-Feature-Vectors-for-Words/" rel="prev" title="Hinton神经网络与机器学习 4. 神经语言模型与词向量">
+                Hinton神经网络与机器学习 4. 神经语言模型与词向量 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#最大似然与交叉熵的关系"><span class="nav-number">1.</span> <span class="nav-text">&#x6700;&#x5927;&#x4F3C;&#x7136;&#x4E0E;&#x4EA4;&#x53C9;&#x71B5;&#x7684;&#x5173;&#x7CFB;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关于softmax一些性质的具体解释"><span class="nav-number">2.</span> <span class="nav-text">&#x5173;&#x4E8E;softmax&#x4E00;&#x4E9B;&#x6027;&#x8D28;&#x7684;&#x5177;&#x4F53;&#x89E3;&#x91CA;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#softmax与max之间的关系"><span class="nav-number">2.1.</span> <span class="nav-text">softmax&#x4E0E;max&#x4E4B;&#x95F4;&#x7684;&#x5173;&#x7CFB;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#softmax的不变性"><span class="nav-number">2.2.</span> <span class="nav-text">softmax&#x7684;&#x4E0D;&#x53D8;&#x6027;</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="矩阵分解,EdX-Columbia,协同过滤," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="协同过滤 传统推荐系统采用内容过滤，即使用产品和用户已有的信息做推荐，需要维护两方的档案（profile）。例如，产品侧需要维护电影信息、价格信息、产品描述等等。用户侧需要维护画像、问卷信息等。这些信息可能难以采集 协同过滤的思想是，使用用户之前的输入/行为来对未来进行推荐，这里不使用用户的先验信息。其核心是使用相同用户的评分来预测某一个用户的评分，而不需要知道被打分的是什么、谁打的分、打了多少分">
+<meta name="keywords" content="矩阵分解,EdX-Columbia,协同过滤">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Edx Columbia ML 17. 矩阵分解与协同过滤">
+<meta property="og:url" content="txshi-mt.com/2017/07/05/edx-columbia-17-Matrix-Factorization-Collaborative-Filtering/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="协同过滤 传统推荐系统采用内容过滤，即使用产品和用户已有的信息做推荐，需要维护两方的档案（profile）。例如，产品侧需要维护电影信息、价格信息、产品描述等等。用户侧需要维护画像、问卷信息等。这些信息可能难以采集 协同过滤的思想是，使用用户之前的输入/行为来对未来进行推荐，这里不使用用户的先验信息。其核心是使用相同用户的评分来预测某一个用户的评分，而不需要知道被打分的是什么、谁打的分、打了多少分">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.099Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Edx Columbia ML 17. 矩阵分解与协同过滤">
+<meta name="twitter:description" content="协同过滤 传统推荐系统采用内容过滤，即使用产品和用户已有的信息做推荐，需要维护两方的档案（profile）。例如，产品侧需要维护电影信息、价格信息、产品描述等等。用户侧需要维护画像、问卷信息等。这些信息可能难以采集 协同过滤的思想是，使用用户之前的输入/行为来对未来进行推荐，这里不使用用户的先验信息。其核心是使用相同用户的评分来预测某一个用户的评分，而不需要知道被打分的是什么、谁打的分、打了多少分">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/07/05/edx-columbia-17-Matrix-Factorization-Collaborative-Filtering/"/>
+
+
+
+
+
+  <title>Edx Columbia ML 17. 矩阵分解与协同过滤 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/07/05/edx-columbia-17-Matrix-Factorization-Collaborative-Filtering/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Edx Columbia ML 17. 矩阵分解与协同过滤</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-05T17:20:53+08:00">
+                Jul 5 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/统计机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">统计机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="协同过滤">协同过滤</h2>
+<p>传统推荐系统采用内容过滤，即使用产品和用户已有的信息做推荐，需要维护两方的档案（profile）。例如，产品侧需要维护电影信息、价格信息、产品描述等等。用户侧需要维护画像、问卷信息等。这些信息可能难以采集</p>
+<p>协同过滤的思想是，使用用户之前的输入/行为来对未来进行推荐，这里不使用用户的先验信息。其核心是使用相同用户的评分来预测某一个用户的评分，而不需要知道被打分的是什么、谁打的分、打了多少分。一种典型的协同过滤方法是给予邻居的方法，即定义一种评估用户相似性的方法，然后根据用户之间相似性的分数，让其它用户替某个具体用户做选择。两种过滤方法并非对立，可以相辅相成</p>
+<h2 id="矩阵分解">矩阵分解</h2>
+<p>假设评分矩阵<span class="math inline">\(M\)</span>是一个<span class="math inline">\(N_1 \times N_2\)</span>的矩阵，其中<span class="math inline">\(N_1\)</span>是用户数量，<span class="math inline">\(N_2\)</span>是物品数量，<span class="math inline">\(M_{ij}\)</span>是用户<span class="math inline">\(i\)</span>对物品<span class="math inline">\(j\)</span>的评分。可以预见到<span class="math inline">\(M\)</span>必然是一个极稀疏的矩阵，因为大部分用户都只能对很小一部分物品打分。推荐系统的目的就是要将其它缺失值预测出来。使用的方法是奇异值分解，即每个矩阵<span class="math inline">\(M\)</span>都可以分解为<span class="math inline">\(M=USV^\mathsf{T}\)</span>，其中<span class="math inline">\(U^\mathsf{T}U=I\)</span>，<span class="math inline">\(V^\mathsf{T}V=I\)</span>，<span class="math inline">\(S\)</span>是对角矩阵，所有<span class="math inline">\(S_{ii} \ge 0\)</span>。如果<span class="math inline">\(M\)</span>是<span class="math inline">\(n \times d\)</span>矩阵，则<span class="math inline">\(U\)</span>为<span class="math inline">\(n\times r\)</span>的，<span class="math inline">\(V^\mathsf{T}\)</span>为<span class="math inline">\(r \times d\)</span>的。其中<span class="math inline">\(r = {\rm rank}(M)\)</span></p>
+<p>从另一个角度看，如果<span class="math inline">\(N_1 \times N_2\)</span>矩阵<span class="math inline">\(M\)</span>可以分解成<span class="math inline">\(N_1 \times d\)</span>矩阵<span class="math inline">\(U\)</span>与<span class="math inline">\(d \times N_2\)</span>矩阵<span class="math inline">\(V\)</span>的乘积，<span class="math inline">\(U\)</span>中的每一行可以看做是用户<span class="math inline">\(u_i\)</span>的<span class="math inline">\(d\)</span>个特征，<span class="math inline">\(V\)</span>中的每一列也可以看作是物品<span class="math inline">\(v_j\)</span>的<span class="math inline">\(d\)</span>个特征，两者内积就是原始矩阵中<span class="math inline">\(M_{ij}\)</span>的值。</p>
+<p>令集合<span class="math inline">\(\Omega\)</span>包含了所有有观测值的行列对<span class="math inline">\((i,j)\)</span>，也就是 <span class="math display">\[
+\Omega = \{(i,j): M_{ij} {\rm\  is\  measured}\}
+\]</span> 即如果用户<span class="math inline">\(i\)</span>给物品<span class="math inline">\(j\)</span>打过分，那么<span class="math inline">\((i,j) \in \Omega\)</span>。令<span class="math inline">\(\Omega_{u_i}\)</span>是用户<span class="math inline">\(i\)</span>打过分的物品，<span class="math inline">\(\Omega_{v_j}\)</span>是给物品<span class="math inline">\(j\)</span>打过分的用户</p>
+<p>假设用户的location满足<span class="math inline">\(u_i \sim N(0, \lambda^{-1}I)\)</span>，物品的location满足<span class="math inline">\(v_j \sim N(0, \lambda^{-1}I)\)</span>，则整个数据的分布满足<span class="math inline">\(M_{ij} \sim N(u_i^\mathsf{T}v_j, \sigma^2)\)</span>。注意由于<span class="math inline">\(M_{ij}\)</span>是评分，每个值都基本是个离散值，因此其实不适合使用正态分布建模。但是如果采用这个假设，算法会比较容易实现而且最终模型也很可用</p>
+<p>令<span class="math inline">\(M_o\)</span>是<span class="math inline">\(M\)</span>中观测到的部分，<span class="math inline">\(M_m\)</span>是缺失的部分，则 <span class="math display">\[
+p(M_o | U,V) = \int p(M_o, M_m|U,V)dM_m
+\]</span> 又 <span class="math display">\[
+p(M_o, U, V) = {\left[\prod_{(i,j)\in \Omega} p(M_{ij}|u_i, v_j)\right]} \times \left[\prod_{i=1}^{N_1} p(u_i)\right]\left[\prod_{j=1}^{N_2} p(v_j)\right]
+\]</span> 因此有 <span class="math display">\[
+U_{\rm MAP}, V_{\rm MAP} = {\rm arg}\max_{U,V} \sum_{(i,j)\in \Omega} \ln p(M_{ij}|u_i, v_j) + \sum_{i=1}^{N_1} \ln p(u_i) + \sum_{j=1}^{N_2} \ln p(v_j)
+\]</span></p>
+<p>所以MAP目标函数为 <span class="math display">\[
+\mathcal{L} = -\sum_{(i,j) \in \Omega} \frac{1}{2\sigma^2}|\!|M_{ij} - u_i^\mathsf{T}v_j|\!|^2 - \sum_{i=1}^{N_1}\frac{\lambda}{2}|\!|u_i|\!|^2 - \sum_{j=1}^{N_2}\frac{\lambda}{2}|\!|v_j|\!|^2 + C
+\]</span> 求导得 <span class="math display">\[
+\begin{align*}
+\nabla_{u_i}\mathcal{L} &amp;= \sum_{j \in \Omega_{u_i}} \frac{1}{\sigma^2} (M_{ij} - u_i^\mathsf{T}v_j)v_j - \lambda u_i = 0 \\
+\nabla_{v_j}\mathcal{L} &amp;= \sum_{i \in \Omega_{v_j}} \frac{1}{\sigma^2} (M_{ij} - v_j^\mathsf{T}u_i)u_i - \lambda v_i = 0
+\end{align*}
+\]</span> 可以解得 <span class="math display">\[
+\begin{align*}
+u_i &amp;= \left(\lambda \sigma^2 I + \sum_{j \in \Omega_{u_i}} v_jv_j^\mathsf{T} \right)^{-1}\left(\sum_{j \in \Omega_{u_i}} M_{ij}v_j \right) \\
+v_j &amp;= \left(\lambda \sigma^2 I + \sum_{i \in \Omega_{v_j}} u_iu_i^\mathsf{T} \right)^{-1}\left(\sum_{i \in \Omega_{v_j}} M_{ij}u_i \right)
+\end{align*}
+\]</span></p>
+<p>这里也不能对所有<span class="math inline">\(u_i\)</span>和<span class="math inline">\(v_j\)</span>同时求解，所以可以使用类似Kmean或者GMM的方法来做坐标下降</p>
+<blockquote>
+<p><strong>概率矩阵分解算法</strong> 输入：一个不完全的评分矩阵<span class="math inline">\(M\)</span>，其中在<span class="math inline">\(\Omega\)</span>中的下标有值，以及秩<span class="math inline">\(d\)</span> 输出：<span class="math inline">\(N_1\)</span>个用户location <span class="math inline">\(u_i \in \mathbb{R}^d\)</span>，<span class="math inline">\(N_2\)</span>个物品location <span class="math inline">\(v_j \in \mathbb{R}^d\)</span> 初始化每个<span class="math inline">\(v_j\)</span>，对每个迭代， - 对<span class="math inline">\(i\)</span>从1到<span class="math inline">\(N_1\)</span>，更新user location <span class="math display">\[
+u_i = \left(\lambda \sigma^2 I + \sum_{j \in \Omega_{u_i}} v_jv_j^\mathsf{T} \right)^{-1}\left(\sum_{j \in \Omega_{u_i}} M_{ij}v_j \right)
+\]</span> - 对<span class="math inline">\(j\)</span>从1到<span class="math inline">\(N_2\)</span>，更新object location <span class="math display">\[
+v_j = \left(\lambda \sigma^2 I + \sum_{i \in \Omega_{v_j}} u_iu_i^\mathsf{T} \right)^{-1}\left(\sum_{i \in \Omega_{v_j}} M_{ij}u_i \right)
+\]</span> 预测方法：用户<span class="math inline">\(i\)</span>对物品<span class="math inline">\(j\)</span>的打分是<span class="math inline">\(u_i^\mathsf{T}v_j\)</span>的四舍五入</p>
+</blockquote>
+<p>单独把每个<span class="math inline">\(v_j\)</span>拿出来，对所有user location构成的矩阵<span class="math inline">\(U\)</span>，实际上是最小化带有惩罚项<span class="math inline">\(\lambda |\!|v_j|\!|^2\)</span>的均方误差<span class="math inline">\(\frac{1}{\sigma^2}(M_{ij} - u_i^\mathsf{T}v_j)^2\)</span>，可以看做是对<span class="math inline">\(v_j\)</span>做岭回归。整个问题也是<span class="math inline">\(N_1+N_2\)</span>个岭回归问题交织起来的问题。如果去掉<span class="math inline">\(u_i\)</span>和<span class="math inline">\(v_j\)</span>的先验分布，问题退化成最小二乘问题，但是要求解<span class="math inline">\(\left(\sum_{i\in \Omega_{v_j}}u_iu_i^\mathsf{T}\right)^{-1}\)</span>需要保证每个用户都对至少d个物品打分，每个物品至少有d个用户打过分，那个矩阵才有逆。但是这种假设在实际中很难成立，因此先验概率是必要的</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/07/05/edx-columbia-17-Matrix-Factorization-Collaborative-Filtering/" title="Edx Columbia ML 17. 矩阵分解与协同过滤">txshi-mt.com/2017/07/05/edx-columbia-17-Matrix-Factorization-Collaborative-Filtering/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/矩阵分解/" rel="tag"># 矩阵分解</a>
+          
+            <a href="/tags/EdX-Columbia/" rel="tag"># EdX-Columbia</a>
+          
+            <a href="/tags/协同过滤/" rel="tag"># 协同过滤</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/07/03/edx-columbia-16-Gaussian-Mixture-Model/" rel="next" title="EdX Columbia ML 16. 高斯混合模型">
+                <i class="fa fa-chevron-left"></i> EdX Columbia ML 16. 高斯混合模型
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/07/05/edx-columbia-18-Topic-Modeling-Non-negative-Matrix-Factorization/" rel="prev" title="EdX Columbia ML 18. 主题建模与非负矩阵分解">
+                EdX Columbia ML 18. 主题建模与非负矩阵分解 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#协同过滤"><span class="nav-number">1.</span> <span class="nav-text">&#x534F;&#x540C;&#x8FC7;&#x6EE4;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#矩阵分解"><span class="nav-number">2.</span> <span class="nav-text">&#x77E9;&#x9635;&#x5206;&#x89E3;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

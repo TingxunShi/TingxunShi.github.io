@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="EdX-Columbia,EM算法," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="引言 过去讲过的这些模型可以分为两类：概率模型和非概率模型。  对于概率模型，我们假设数据满足某些概率分布，例如贝叶斯分类器、Logistic回归、最小二乘和岭回归（如果从ML和MAP的角度看）以及贝叶斯线性回归 非概率模型不牵涉有关概率分布的假设，例如感知机、SVM、决策树和k均值聚类  对于以上所有模型，其实我们都定义了各自相对应的目标函数来优化，尽管优化的方法有很多种。其中概率模型的目标函数">
+<meta name="keywords" content="EdX-Columbia,EM算法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="EdX Columbia ML 15. 最大似然的EM算法">
+<meta property="og:url" content="txshi-mt.com/2017/07/03/edx-columbia-15-Maximum-Likelihood-EM-Algorithm/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="引言 过去讲过的这些模型可以分为两类：概率模型和非概率模型。  对于概率模型，我们假设数据满足某些概率分布，例如贝叶斯分类器、Logistic回归、最小二乘和岭回归（如果从ML和MAP的角度看）以及贝叶斯线性回归 非概率模型不牵涉有关概率分布的假设，例如感知机、SVM、决策树和k均值聚类  对于以上所有模型，其实我们都定义了各自相对应的目标函数来优化，尽管优化的方法有很多种。其中概率模型的目标函数">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.099Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="EdX Columbia ML 15. 最大似然的EM算法">
+<meta name="twitter:description" content="引言 过去讲过的这些模型可以分为两类：概率模型和非概率模型。  对于概率模型，我们假设数据满足某些概率分布，例如贝叶斯分类器、Logistic回归、最小二乘和岭回归（如果从ML和MAP的角度看）以及贝叶斯线性回归 非概率模型不牵涉有关概率分布的假设，例如感知机、SVM、决策树和k均值聚类  对于以上所有模型，其实我们都定义了各自相对应的目标函数来优化，尽管优化的方法有很多种。其中概率模型的目标函数">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/07/03/edx-columbia-15-Maximum-Likelihood-EM-Algorithm/"/>
+
+
+
+
+
+  <title>EdX Columbia ML 15. 最大似然的EM算法 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/07/03/edx-columbia-15-Maximum-Likelihood-EM-Algorithm/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">EdX Columbia ML 15. 最大似然的EM算法</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-03T09:58:12+08:00">
+                Jul 3 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/统计机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">统计机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="引言">引言</h2>
+<p>过去讲过的这些模型可以分为两类：概率模型和非概率模型。</p>
+<ul>
+<li>对于概率模型，我们假设数据满足某些概率分布，例如贝叶斯分类器、Logistic回归、最小二乘和岭回归（如果从ML和MAP的角度看）以及贝叶斯线性回归</li>
+<li>非概率模型不牵涉有关概率分布的假设，例如感知机、SVM、决策树和k均值聚类</li>
+</ul>
+<p>对于以上所有模型，其实我们都定义了各自相对应的目标函数来优化，尽管优化的方法有很多种。其中概率模型的目标函数都是最大似然。最基本假设为</p>
+<ul>
+<li>我们有一组模型参数<span class="math inline">\(\theta\)</span></li>
+<li>有一组数据<span class="math inline">\(\{x_1, \ldots, x_n\}\)</span></li>
+<li>假设一个条件概率分布<span class="math inline">\(p(x|\theta)\)</span></li>
+<li>假设样本是独立同分布的，即<span class="math inline">\(x_i \mathop{\sim}^{iid} p(x|\theta)\)</span></li>
+</ul>
+<p>最大似然是要找到能使得似然函数最大化的<span class="math inline">\(\theta\)</span>，即 <span class="math display">\[
+\begin{align*}
+\theta_{\rm ML} &amp;= {\rm arg}\max_\theta p(x_1, \ldots, x_n|\theta) \\
+&amp;= {\rm arg}\max_\theta \prod_{i=1}^n p(x_i|\theta) \\
+&amp;= {\rm arg}\max_\theta \sum_{i=1}^n \ln p(x_i|\theta)
+\end{align*}
+\]</span></p>
+<p>对于类似贝叶斯分类器这样的模型，<span class="math inline">\(\theta\)</span>可以从目标函数中求得解析解。对于更复杂的模型，可以把参数分割成<span class="math inline">\(\theta_1\)</span>、<span class="math inline">\(\theta_2\)</span>两组。尽管不能同时求出最优的<span class="math inline">\(\theta_1\)</span>和<span class="math inline">\(\theta_2\)</span>，但是可以使用kmeans中提到的坐标下降方法，分别迭代求解。</p>
+<p>第三种办法是当 <span class="math display">\[
+\theta_{1,{\rm ML}} = {\rm arg}\max_{\theta_1} \sum_{i=1}^n \ln p(x_i|\theta_1)
+\]</span> 很难直接优化时，引入一个变量<span class="math inline">\(\theta_2\)</span>，即去解决 <span class="math display">\[
+\theta_{1,{\rm ML}} = {\rm arg}\max_{\theta_1} \sum_{i=1}^n \ln p(x_i, \theta_2|\theta_1)
+\]</span> 这个式子可能更好求解。这是EM算法的基础</p>
+<h2 id="em算法expectation-maximization-期望最大化算法">EM算法（Expectation-Maximization, 期望最大化算法）</h2>
+<p>算法每次迭代大致可以分成两步：Expectation（期望步，类似于坐标下降对第一个变量进行优化）和Maximization（似然步，类似于坐标下降对第二个变量进行优化）</p>
+<p>可以从一个例子入手：假设<span class="math inline">\(x_i \in \mathbb{R}^d\)</span>是一个数据点，但是一些维度上的分量已经丢失了，那么可以把这个数据点分成两个部分</p>
+<ul>
+<li><span class="math inline">\(x_i^o\)</span>：数据点中已经观察到的部分</li>
+<li><span class="math inline">\(x_i^m\)</span>：数据点中缺失/未知的部分</li>
+</ul>
+<p>注意不同的数据点缺失的维度可能不同</p>
+<p>假设<span class="math inline">\(x_i \mathop{\sim}^{iid} N(\mu, \Sigma)\)</span>，想要求解 <span class="math display">\[
+\mu_{\rm ML}, \Sigma_{\rm ML} = {\rm arg}\max_{\mu, \Sigma} \sum_{i=1}^n \ln p(x_i^o|\mu, \Sigma)
+\]</span> 是比较困难的。但是如果我们找到了<span class="math inline">\(x_i^m\)</span>，就好办得多，即 <span class="math display">\[
+\mu_{\rm ML}, \Sigma_{\rm ML} = {\rm arg}\max_{\mu, \Sigma} \sum_{i=1}^n \ln \underbrace{p(x_i^o, x_i^m|\mu, \Sigma)}_{=p(x_i|\mu,\Sigma)}
+\]</span> 容易优化</p>
+<p>EM算法在优化<span class="math inline">\(\sum_{i=1}^n \ln p(x_i^o|\mu, \Sigma)\)</span>的同时还填入了缺失值<span class="math inline">\(\{x_1^m,\ldots, x_n^m\}\)</span>。通常情况下假设我们有两个参数集<span class="math inline">\(\theta_1, \theta_2\)</span>，其中 <span class="math display">\[
+p(x|\theta_1) = \int p(x, \theta_2|\theta_1)d\theta_2
+\]</span> 我们需要定义一个通用的目标函数来得到我们想要的结果：首先，需要可以以<span class="math inline">\(\theta_1\)</span>为自变量优化边缘概率密度<span class="math inline">\(p(x|\theta_1)\)</span>，其次，可以通过<span class="math inline">\(p(x,\theta_2|\theta_1)\)</span>来简化计算。这个目标函数可以写为以下形式(*) <span class="math display">\[
+\ln p(x|\theta_1) = \int q(\theta_2)\ln\frac{p(x,\theta_2|\theta_1)}{q(\theta_2)}d\theta_2 + \int q(\theta_2) \ln \frac{q(\theta_2)}{p(\theta_2|x,\theta_1)}d\theta_2
+\]</span> 其中<span class="math inline">\(q(\theta_2)\)</span>是任何概率分布，而且假设我们知道<span class="math inline">\(p(\theta_2|x,\theta_1)\)</span></p>
+<p>首先证明上式的正确性：由积分相加的法则和对数法则，有 <span class="math display">\[
+\int q(\theta_2)\ln\frac{p(x,\theta_2|\theta_1)}{q(\theta_2)}d\theta_2 + \int q(\theta_2) \ln \frac{q(\theta_2)}{p(\theta_2|x,\theta_1)}d\theta_2 = \int q(\theta_2) \ln \frac{p(x,\theta_2|\theta_1)q(\theta_2)}{p(\theta_2|x,\theta_1)q(\theta_2)} d\theta_2
+\]</span> 又 <span class="math display">\[
+p(a,b|c) = p(a|b,c)p(b|c) \Rightarrow p(b|c) = \frac{p(a,b|c)}{p(a|b,c)}
+\]</span> 因此有 <span class="math display">\[
+\int q(\theta_2) \ln \frac{p(x,\theta_2|\theta_1)q(\theta_2)}{p(\theta_2|x,\theta_1)q(\theta_2)} d\theta_2 = \int q(\theta_2) \ln p(x|\theta_1) d\theta_2 = \ln p(x|\theta_1) \int q(\theta_2)d\theta_2 = \ln p(x|\theta_1)
+\]</span></p>
+<p>*式的两个积分项各自有各自的意义。第一个积分项是对<span class="math inline">\(\theta_2\)</span>的积分，因此最后<span class="math inline">\(\theta_2\)</span>是可以被积掉的，也就是说最后就剩下一个关于<span class="math inline">\(\theta_1\)</span>的函数，<strong>定义这个函数为<span class="math inline">\(\mathcal{L}(x,\theta_1)\)</span></strong>；第二个积分项称为Kullback_Leibler差异，也称为相对熵，可以看作是衡量了分布<span class="math inline">\(q(\theta_2)\)</span>和分布<span class="math inline">\(p(\theta_2|x,\theta_1)\)</span>之间的重合程度。只有当<span class="math inline">\(p=q\)</span>时，第二项才为0</p>
+<p>总和项的意义在于，在迭代优化<span class="math inline">\(\ln p(x|\theta_1)\)</span>的过程中，可以保证得到的<span class="math inline">\(\theta_1\)</span>的序列能满足当前迭代的ln值大于前一个迭代的ln值，即<span class="math inline">\(\ln p(x|\theta_1^{(t)}) \ge \ln p(x|\theta_1^{(t-1)})\)</span>，而且<span class="math inline">\(\theta_1^{(t)}\)</span>最后会收敛于<span class="math inline">\(\ln p(x|\theta_1)\)</span>的一个局部最大值</p>
+<blockquote>
+<p>EM算法： 给定第<span class="math inline">\(t\)</span>个迭代时的<span class="math inline">\(\theta_1^{(t)}\)</span>，根据下列算法算出下一个迭代时该参数的值（如果是第一个迭代，可以随机生成一个初始值）： - E-Step：令<span class="math inline">\(q_t(\theta_2) = p(\theta_2|x,\theta_1^{(t)})\)</span>，计算 <span class="math display">\[
+\mathcal{L}_t(x, \theta_1) = \int q_t(\theta_2)\ln p(x,\theta_2|\theta_1)d\theta_2 - \int q_t(\theta_2)\ln q_t(\theta_2)d\theta_2
+\]</span> 其中后一项由于是常数，可以忽略掉 - M-Step：令<span class="math inline">\(\theta_1^{(t+1)} = {\rm arg}\max_{\theta_1}\mathcal{L}_t(x,\theta_1)\)</span></p>
+</blockquote>
+<h3 id="关于em算法可以提升ln-pxtheta_1的证明">关于EM算法可以提升<span class="math inline">\(\ln p(x|\theta_1)\)</span>的证明</h3>
+<p><span class="math display">\[
+\begin{align*}
+\ln p(x|\theta_1^{(t)}) &amp;= \mathcal{L}(x, \theta_1^{(t)}) + \underbrace{KL\left(q(\theta_2) || p(\theta_2|x_1, \theta_1^{(t)})\right)}_{=0\  \because\  q = p} \\
+&amp;= \mathcal{L}_t(x, \theta_1^{(t)})\  \  \  \  \leftarrow {\rm E-Step} \\
+&amp;\le \mathcal{L}_t(x, \theta_1^{(t+1)})\  \  \  \leftarrow {\rm M-Step} \\
+&amp;\le \mathcal{L}(x, \theta_1^{(t+1)}) + \underbrace{KL\left(q_t(\theta_2) || p(\theta_2|x_1, \theta_1^{(t+1)})\right)}_{&gt;0\  \because\  q \not= p} \\
+&amp;= \mathcal{L}(x, \theta_1^{(t+1)}) + {KL\left(q(\theta_2) || p(\theta_2|x_1, \theta_1^{(t+1)})\right)}\\
+&amp;= \ln p(x|\theta_1^{(t+1)})
+\end{align*}
+\]</span></p>
+<h3 id="使用em算法处理缺失数据">使用EM算法处理缺失数据</h3>
+<p>套用EM算法，缺失数据问题可以表示为 <span class="math display">\[
+\sum_{i=1}^n \ln p(x_i^o | \mu, \Sigma) = \sum_{i=1}^n \int q(x_i^m) \ln \frac{p(x_i^o, x_i^m|\mu, \Sigma)}{q(x_i^m)}dx_i^m + \sum_{i=1}^n \int q(x_i^m)\ln \frac{q(x_i^m)}{p(x_i^m|x_i^o, \mu, \Sigma)} dx_i^m
+\]</span> 其中<span class="math inline">\(x_i^o\)</span>是观察到的部分，<span class="math inline">\(x_i^m\)</span>是缺失的部分。不失一般性地，可以假设所有观察到的数据维度都在该条数据的前部，缺失数据都在后部，因此有 <span class="math display">\[
+x_i = \left[\!\begin{array}{c}    x_i^o \\ x_i^m    \end{array}\!\right] \sim N\left(\left[\!\begin{array}{c}    \mu_i^o \\ \mu_i^m    \end{array}\!\right] , \left[\!\begin{array}{cc}    \Sigma_i^{oo} &amp; \Sigma_i^{om} \\ \Sigma_i^{mo} &amp; \Sigma_i^{mm}    \end{array}\!\right]\right)
+\]</span></p>
+<p>略过证明，有结论 <span class="math display">\[
+\begin{align*}
+p(x_i^m | x_i^o, \mu, \Sigma) &amp;= N(\hat{\mu}_i, \hat{\Sigma}_i) \\
+\hat{\mu}_i &amp;= \mu_i^m + \Sigma_i^{mo}(\Sigma_i^{oo})^{-1}(x_i^o - \mu_i^o) \\
+\hat{\Sigma}_i &amp;= \Sigma_i^{mm} - \Sigma_i^{mo}(\Sigma_i^{oo})^{-1}\Sigma_i^{om}
+\end{align*}
+\]</span></p>
+<p>在E阶段，有 <span class="math display">\[
+\begin{align*}
+\mathbb{E}_{q(x_i^m)}[\ln p(x_i^o, x_i^m | \mu, \Sigma)] &amp;= \mathbb{E}_q [(x_i-\mu)^\mathsf{T}\Sigma^{-1}(x_i-\mu)] \\
+&amp;= \mathbb{E}_q [{\rm trace}\{\Sigma^{-1}(x_i - \mu)(x_i - \mu)^\mathsf{T}\}] \\
+&amp;= {\rm trace}\{\Sigma^{-1}\mathbb{E}_q[(x_i - \mu)(x_i - \mu)^\mathsf{T}]\}
+\end{align*}
+\]</span> 同时， <span class="math display">\[
+q(x_i^m) = p(x_i^m|x_i^o, \mu, \Sigma) = N(\hat{\mu}_i, \hat{\Sigma}_i)
+\]</span> 记<span class="math inline">\(\hat{x}_i\)</span>为将所有缺失的<span class="math inline">\(x_i\)</span>替换为<span class="math inline">\(\hat{\mu}_i\)</span>的向量，<span class="math inline">\(\hat{V}_i\)</span>为全零矩阵加<span class="math inline">\(\hat{\Sigma}_i\)</span>中缺失数据对应的部分，则 在M阶段，有 <span class="math display">\[
+\begin{align*}
+\mu_{\rm up},\Sigma_{\rm up} &amp;= {\rm arg}\max_{\mu, \Sigma} \sum_{i=1}^n \mathbb{E}_q [\ln p(x_i^o, x_i^m|\mu, \Sigma)] \\
+\mu_{\rm up} &amp;= \frac{1}{n}\sum_{i=1}^n \hat{x}_i \\
+\Sigma_{\rm up} &amp;= \frac{1}{n}\sum_{i=1}^n \{(\hat{x}_i - \mu_{\rm up})(\hat{x}_i - \mu_{\rm up})^\mathsf{T} + \hat{V}_i\}
+\end{align*}
+\]</span></p>
+<p>其中<span class="math inline">\(\mu\)</span>和<span class="math inline">\(\Sigma\)</span>的初始值可以设为0或随机值，然后逐步迭代，直到每步只能做出微小的改变</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/07/03/edx-columbia-15-Maximum-Likelihood-EM-Algorithm/" title="EdX Columbia ML 15. 最大似然的EM算法">txshi-mt.com/2017/07/03/edx-columbia-15-Maximum-Likelihood-EM-Algorithm/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/EdX-Columbia/" rel="tag"># EdX-Columbia</a>
+          
+            <a href="/tags/EM算法/" rel="tag"># EM算法</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/07/03/edx-columbia-14-Clustering-K-Means/" rel="next" title="EdX Columbia ML 14. 聚类与K-均值算法">
+                <i class="fa fa-chevron-left"></i> EdX Columbia ML 14. 聚类与K-均值算法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/07/03/edx-columbia-16-Gaussian-Mixture-Model/" rel="prev" title="EdX Columbia ML 16. 高斯混合模型">
+                EdX Columbia ML 16. 高斯混合模型 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">&#x5F15;&#x8A00;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#em算法expectation-maximization-期望最大化算法"><span class="nav-number">2.</span> <span class="nav-text">EM&#x7B97;&#x6CD5;&#xFF08;Expectation-Maximization, &#x671F;&#x671B;&#x6700;&#x5927;&#x5316;&#x7B97;&#x6CD5;&#xFF09;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#关于em算法可以提升ln-pxtheta_1的证明"><span class="nav-number">2.1.</span> <span class="nav-text">&#x5173;&#x4E8E;EM&#x7B97;&#x6CD5;&#x53EF;&#x4EE5;&#x63D0;&#x5347;<span class="math inline">\(\ln p(x|\theta_1)\)</span>&#x7684;&#x8BC1;&#x660E;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用em算法处理缺失数据"><span class="nav-number">2.2.</span> <span class="nav-text">&#x4F7F;&#x7528;EM&#x7B97;&#x6CD5;&#x5904;&#x7406;&#x7F3A;&#x5931;&#x6570;&#x636E;</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

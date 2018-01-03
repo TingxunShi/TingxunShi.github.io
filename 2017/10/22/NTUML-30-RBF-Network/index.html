@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="NTUML,kNN,k均值聚类,RBF," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="径向基函数网络假设函数 前面讲使用高斯核的SVM时曾经提到过这种模型的一个性质：在高斯核的帮助下，这种模型可以在无限维的空间里学习到一个最大间隔超平面。该模型的定义如下 \[ g_{\rm SVM}({\bf x}) = {\rm sign}\left(\sum_{\rm SV}\alpha_n y_n \exp(-\gamma\|{\bf x}-{\bf x}_n\|^2)+b\right) \">
+<meta name="keywords" content="NTUML,kNN,k均值聚类,RBF">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NTUML 30. 径向基函数网络">
+<meta property="og:url" content="txshi-mt.com/2017/10/22/NTUML-30-RBF-Network/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="径向基函数网络假设函数 前面讲使用高斯核的SVM时曾经提到过这种模型的一个性质：在高斯核的帮助下，这种模型可以在无限维的空间里学习到一个最大间隔超平面。该模型的定义如下 \[ g_{\rm SVM}({\bf x}) = {\rm sign}\left(\sum_{\rm SV}\alpha_n y_n \exp(-\gamma\|{\bf x}-{\bf x}_n\|^2)+b\right) \">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML30_nn_and_rbf_network.png">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.095Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NTUML 30. 径向基函数网络">
+<meta name="twitter:description" content="径向基函数网络假设函数 前面讲使用高斯核的SVM时曾经提到过这种模型的一个性质：在高斯核的帮助下，这种模型可以在无限维的空间里学习到一个最大间隔超平面。该模型的定义如下 \[ g_{\rm SVM}({\bf x}) = {\rm sign}\left(\sum_{\rm SV}\alpha_n y_n \exp(-\gamma\|{\bf x}-{\bf x}_n\|^2)+b\right) \">
+<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML30_nn_and_rbf_network.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/10/22/NTUML-30-RBF-Network/"/>
+
+
+
+
+
+  <title>NTUML 30. 径向基函数网络 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/10/22/NTUML-30-RBF-Network/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NTUML 30. 径向基函数网络</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-22T18:02:28+08:00">
+                Oct 22 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/统计机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">统计机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="径向基函数网络假设函数">径向基函数网络假设函数</h2>
+<p>前面讲使用高斯核的SVM时曾经提到过这种模型的一个性质：在高斯核的帮助下，这种模型可以在无限维的空间里学习到一个最大间隔超平面。该模型的定义如下 <span class="math display">\[
+g_{\rm SVM}({\bf x}) = {\rm sign}\left(\sum_{\rm SV}\alpha_n y_n \exp(-\gamma\|{\bf x}-{\bf x}_n\|^2)+b\right)
+\]</span> 从最后得到的假设函数来看，它做的事情还可以表述为，使用一系列高斯核函数做线性组合，它们各自的中心就是在支持向量上。高斯核函数又称为径向基函数（Radial Basis Function，RBF），这个词可以做如下分解：</p>
+<ul>
+<li>“径向”表示要求的函数值与某个距离有关，这个距离是新的点<span class="math inline">\(\bf x\)</span>和已知点<span class="math inline">\({\bf x}_n\)</span>之间的距离</li>
+<li>“基函数”表示这些函数要用来做线性组合。对于上式，系数就是<span class="math inline">\(\alpha_n y_n\)</span></li>
+</ul>
+<p>如果定义<span class="math inline">\(g_n({\bf x}) = y_n\exp(-\gamma\|{\bf x} - {\bf x}_n\|^2)\)</span>，这个函数就表示新的点与已知点够不够近，越近给的票越多，这个票数就是<span class="math inline">\(y_n\)</span>。这样一来，上面的SVM可以表示为 <span class="math display">\[
+g_{\rm SVM}({\bf x}) = {\rm sign}\left(\sum_{\rm SV} \alpha_n g_n({\bf x}) + b\right)
+\]</span> 这样更清楚地表明<span class="math inline">\(g_{\rm SVM}\)</span>其实就是<span class="math inline">\(g_n\)</span>的线性组合，每个<span class="math inline">\(g_n\)</span>代表一个径向假设。而径向基函数网络（RBF网络）就是这种模型的延伸。之所以说它是一个“网络”，就是因为其结构与之前讲过的神经网络有类似的地方。下图给出了两者的对比</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML30_nn_and_rbf_network.png" alt="神经网络与RBF网络的对比"><figcaption>神经网络与RBF网络的对比</figcaption>
+</figure>
+<p>可以看出，两者的输出相同，都是线性组合。不同的地方在隐含层：神经网络是计算权重和输入的内积，然后做非线性变换<span class="math inline">\(\tanh\)</span>；而RBF网络则是计算两点之间的距离，然后使用高斯函数做变换。从历史上讲，RBF网络实际是神经网络的分枝</p>
+<p>总体来看，RBF网络的假设函数可以写成如下形式 <span class="math display">\[
+h({\bf x}) = {\rm Output}\left(\sum_{m=1}^M \beta_m {\rm RBF}({\bf x}, \boldsymbol{\mu}_m)+b\right)
+\]</span> 其包括以下几个部分：</p>
+<ul>
+<li>径向基函数<span class="math inline">\(\rm RBF\)</span>，注意高斯函数只是其中一种，可以有其它选择</li>
+<li>中心点<span class="math inline">\(\boldsymbol{\mu}_m\)</span></li>
+<li>投票<span class="math inline">\(\beta_m\)</span></li>
+<li>输出转换<span class="math inline">\(\rm Output\)</span></li>
+</ul>
+<p>其中<span class="math inline">\(\boldsymbol{\mu}_m\)</span>和<span class="math inline">\(\beta_m\)</span>是两个关键变量</p>
+<p>如果把高斯核SVM看作是RBF网络的一个特例，则存在以下对应关系：</p>
+<ul>
+<li><span class="math inline">\({\rm RBF}\)</span>：高斯函数</li>
+<li><span class="math inline">\(\rm Output\)</span>：<span class="math inline">\(\rm sign\)</span>函数</li>
+<li><span class="math inline">\(M\)</span>：支持向量的数量</li>
+<li><span class="math inline">\({\boldsymbol{\mu}_m}\)</span>：SVM的各个支持向量</li>
+<li><span class="math inline">\(\beta_m\)</span>：由对偶问题解出的<span class="math inline">\(\alpha_m y_m\)</span></li>
+</ul>
+<p>因此RBF网络的问题就是，对给定的<span class="math inline">\(\rm RBF\)</span>和<span class="math inline">\(\rm Output\)</span> ，求出<span class="math inline">\(\boldsymbol{\mu}_m\)</span>和<span class="math inline">\(\beta_m\)</span></p>
+<p>前面提到过，核函数是在变换后的空间<span class="math inline">\(\mathcal{Z}\)</span>中的内积，因此能保证满足Mercer定理即可。核函数实际上描述了向量之间的相似性，而RBF描述的也是相似性，只不过这种相似性可以直接通过向量之间的距离来计算，因此可以定义不同的RBF，只要能满足对距离的定义就可以。一般情况下，随着距离的变大，RBF的值应该单调不增。也就是说，核函数和RBF是两种对距离的定义，而高斯函数就属于这两者的交集之中。除此以外，神经网络中每个神经元也可以看作是描述了一种距离的计算方式，为<span class="math inline">\(\tanh(\gamma {\bf x}^\mathsf{T}{\bf x}&#39; + 1)\)</span>。在DNA序列的应用中，可以使用编辑距离</p>
+<p>总而言之，RBF说明相似性是一种很好的定义特征变换的方法，这种相似性通过计算点到中心的距离可以获得</p>
+<h2 id="径向基函数网络学习">径向基函数网络学习</h2>
+<p>前面讲过，RBF网络的目的是找到一些中心，以及将RBF值线性组合起来的系数。在最简单的例子中，可以把看到过的所有数据点都当做中心。这种RBF网络称为全RBF网络，满足<span class="math inline">\(M=N\)</span>以及每个<span class="math inline">\(\boldsymbol{\mu}_m = {\bf x}_m\)</span>。其物理意义可以解释为，训练集中的每条数据<span class="math inline">\({\bf x}_m\)</span>对其周围的数据都应该有一定的影响，而影响力由<span class="math inline">\(\beta_m\)</span>决定。例如，假设每个点的影响力都一样，则对于新点，训练集中的每个点都会根据其到新点距离的远近做投票：总体来讲，一人一票，但是离得越近，系数越大。即<span class="math inline">\(\beta_m = 1 \cdot y_m\)</span>。这种假设函数的形式为 <span class="math display">\[
+g_{\rm uniform}({\bf x}) = {\rm sign}\left(\sum_{m=1}^N y_m\exp(-\gamma \|{\bf x}-{\bf x}_m\|^2)\right)
+\]</span> 即训练集中的每条数据都可以对新数据的所属类别发表意见，模型将所有人的意见收集起来，根据相似性分配票数，加权求和，最后输出。显然，对离新点<span class="math inline">\(\bf x\)</span>最近的数据点，它与新点的高斯函数值最大，说话最有分量。由于高斯函数随距离增大衰减很快，因此实际上往往这个点的标签可以决定最后结果。从这个角度来说，可以避免求和项，只需要找到距离新点最近的那个点就可以了。此时，模型的聚合退化成了模型的选择，假设函数变为 <span class="math display">\[
+g_{\rm nbor}({\bf x}) = y_m {\rm\  such\  that\  }{\bf x}{\rm\  closest\  to\  }{\bf x}_m
+\]</span> 这种方法称为<strong>最近邻法</strong>。在这种算法的基础上可以做一些扩展：不只找最近的邻居，而是找<span class="math inline">\(k\)</span>个最近的邻居，将它们的结果做聚合。这种扩展的方法称为<span class="math inline">\(k\)</span>-最近邻法（kNN）。kNN是一种比较“懒”的算法，但是却非常符合直觉。不过这种算法在测试时会比较费事</p>
+<p>全RBF有什么好处呢？考虑将这种网络用在回归问题中，误差函数使用平方误差，而且不再指定<span class="math inline">\(\beta_m\)</span>，而是让算法去优化这些系数。那么模型其实就是对经RBF变换过的数据求解线性回归。变换后的数据为 <span class="math display">\[
+{\bf z}_n = [{\rm RBF}({\bf x}_n, {\bf x}_1), {\rm RBF}({\bf x}_n, {\bf x}_2), \ldots, {\rm RBF}({\bf x}_n, {\bf x}_N)] \in \mathbb{R}^N
+\]</span> 由前面的结论，可以轻易求出最优的系数<span class="math inline">\(\boldsymbol{\beta} = {\rm (Z^\mathsf{T}Z)^{-1}Z^\mathsf{T}}{\bf y}\)</span>，其中<span class="math inline">\(\rm Z\)</span>是对称方阵。进一步地，如果使用高斯函数做RBF，且所有<span class="math inline">\({\bf x}_n\)</span>都不同，则这个<span class="math inline">\(Z\)</span>还是可逆的，系数<span class="math inline">\(\boldsymbol{\beta}\)</span>可以继续化简为<span class="math inline">\(\boldsymbol{\beta} = {\rm Z}^{-1}{\bf y}\)</span></p>
+<p>得到这个结果以后，如果要用得到的<span class="math inline">\(g\)</span>送入原来的训练数据，有 <span class="math display">\[
+g_{\rm RBF}({\bf x}_1) = \boldsymbol{\beta}^\mathsf{T}{\bf z}_1 = {\bf y}^\mathsf{T}{\rm Z^{-1}}({\rm Z}的第一列) = {\bf y}^\mathsf{T} \left[\begin{array}{c}1 &amp; 0 &amp; \ldots &amp; 0\end{array}\right]^\mathsf{T} = y_1
+\]</span> 以此类推，<span class="math inline">\(g_{\rm RBF}({\bf x}_n) = y_n\)</span>，<span class="math inline">\(E_{\rm in}(g_{\rm RBF}) = 0\)</span>，意味着有过拟合的危险。如果使用岭回归，则<span class="math inline">\(\boldsymbol{\beta} = ({\rm Z^\mathsf{T}Z} + \lambda{\rm I})^{-1}{\rm Z^\mathsf{T}}{\bf y}\)</span>就不会产生前面这种“完美”的结果。考虑到<span class="math inline">\(\rm Z\)</span>是两个点的高斯函数值，也就是使用高斯核得到的核矩阵<span class="math inline">\(\rm K\)</span>，则这个模型跟前面讲过的核岭回归有异曲同工之妙。在核岭回归中，<span class="math inline">\(\boldsymbol{\beta}_{\rm kernel\_ridge\_regression} = ({\rm K} + \lambda{\rm I})^{-1}{\bf y}\)</span>。只不过核岭回归是在无限多维空间中做正则，而正则化的全RBF是在<span class="math inline">\(N\)</span>维空间中做正则</p>
+<p>另外，回顾前面SVM的做法，它其实没有用到所有数据点做中心点，因此可以将中心点数量减少使得<span class="math inline">\(M &lt;\!\!&lt; N\)</span>，也可以起到正则化的作用。从物理意义上看，相当于不再让每个点都有话语权，而是选择一些代表出来去投票，代表所有人的意见。那么接下来的问题就是，如何找到好的代表呢？</p>
+<h2 id="k均值聚类算法">K均值聚类算法</h2>
+<p>要寻找好的代表，首先可以看一个比较简单的情况。假设在训练集里，有<span class="math inline">\({\bf x}_1 \approx {\bf x}_2\)</span>，那么它俩的RBF值应该也接近，所以没有必要在RBF网络里保存两份近似的值<span class="math inline">\({\rm RBF}({\bf x}, {\bf x}_1)\)</span>和<span class="math inline">\(\rm{RBF}({\bf x}, {\bf x}_2)\)</span>，而是让这两个数据点共用一个代表，也就是把这两个点<strong>聚类</strong>起来，得到<span class="math inline">\(\boldsymbol{\mu} \approx {\bf x}_1 \approx {\bf x}_2\)</span></p>
+<p>在本系列课程最开始的时候就提到过聚类问题，这是一种非常典型的非监督学习问题。稍微形式化地说，它是要把数据集合<span class="math inline">\(\{ {\bf x}_n\}\)</span>划分为<span class="math inline">\(M\)</span>个不相交的集合<span class="math inline">\(S_1, S_2, \ldots, S_M\)</span>，而且为每个<span class="math inline">\(S_m\)</span>选择一个代表<span class="math inline">\(\boldsymbol{\mu}_m\)</span>，使得对任意<span class="math inline">\({\bf x}_n \in S_m \Leftrightarrow \boldsymbol{\mu}_m \approx {\bf x}_n\)</span>。因此，聚类问题通常使用的误差函数通常是看数据点到自己所属类别的代表的距离的平方总和，写作如下形式 <span class="math display">\[
+E_{\rm in}(S_1, \ldots, S_M; \boldsymbol{\mu}_1, \ldots, \boldsymbol{\mu}_M) = \frac{1}{N}\sum_{n=1}^N\sum_{m=1}^M [\![{\bf x}_n \in S_m]\!]\|{\bf x}_n - \boldsymbol{\mu}_m\|^2
+\]</span> 聚类算法就是要最小化这样的目标函数，即解决如下最优化问题 <span class="math display">\[
+\min_{\{S_1, \ldots, S_M; \boldsymbol{\mu}_1, \ldots, \boldsymbol{\mu}_M\}}\sum_{n=1}^N\sum_{m=1}^M [\![{\bf x}_n \in S_m]\!]\|{\bf x}_n - \boldsymbol{\mu}_m\|^2
+\]</span> 这并不是一个容易解决的问题，因为它是一种组合最优化问题，而且变量<span class="math inline">\(S_1, \ldots, S_M\)</span>都是类型变量，<span class="math inline">\(\boldsymbol{\mu}_1, \ldots, \boldsymbol{\mu}_M\)</span>却是数值变量。不过因为这些变量可以分成两类<span class="math inline">\(S\)</span>和<span class="math inline">\(\boldsymbol{\mu}\)</span>，可以尝试使用各个击破的方法，先固定一组变量，对另一组变量做最优化，然后再反过来</p>
+<p>首先，固定<span class="math inline">\(\boldsymbol{\mu}_1, \ldots, \boldsymbol{\mu}_M\)</span>，为每个<span class="math inline">\({\bf x}_n\)</span>挑选一个最好的<span class="math inline">\(S_m\)</span>。由于每个<span class="math inline">\({\bf x}_n\)</span>都必须且只能对应一个最好的<span class="math inline">\(S_m\)</span>，而<span class="math inline">\(\boldsymbol{\mu}_m\)</span>固定所以可以知道<span class="math inline">\({\bf x}_n\)</span>到每个<span class="math inline">\(\boldsymbol{\mu}_m\)</span>的距离，因此这个最优化动作很简单，只需要把离<span class="math inline">\({\bf x}_n\)</span>最近的那个<span class="math inline">\(\boldsymbol{\mu}_m\)</span>分给它就好了</p>
+<p>接下来，固定<span class="math inline">\(S_1, \ldots, S_M\)</span>，选出各个类（簇）的代表。此时原始最优化问题退化成一个与<span class="math inline">\(\boldsymbol{\mu}_m\)</span>有关的无限值最优化问题，因此只需要求目标函数的梯度然后令其等于0即可。有 <span class="math display">\[
+\nabla_{\boldsymbol{\mu}_m}E_{\rm in} = -2\sum_{n=1}^N[\![{\bf x}_n \in S_m]\!]({\bf x}_n - \boldsymbol{\mu}_m) = -2\left(\left(\sum_{ {\bf x}_n \in S_m} {\bf x}_n\right)-|S_m|\boldsymbol{\mu}_m\right)
+\]</span> 令上式为0，则<span class="math inline">\(\boldsymbol{\mu}_m\)</span>是属于<span class="math inline">\(S_m\)</span>的<span class="math inline">\({\bf x}_n\)</span>的均值</p>
+<p>上述过程其实就是非常有名的聚类算法——K均值聚类算法的核心过程（这里的K其实就是前面说的M）。其完整流程如下：</p>
+<blockquote>
+<ol type="1">
+<li>初始化<span class="math inline">\(\boldsymbol{\mu}_1, \boldsymbol{\mu}_2, \ldots, \boldsymbol{\mu}_K\)</span>。通常做法是在<span class="math inline">\({\bf x}_n\)</span>里随机选<span class="math inline">\(K\)</span>个点</li>
+<li>交替最优化<span class="math inline">\(E_{\rm in}\)</span>，即重复以下过程直至收敛（收敛的判定方法通常是<span class="math inline">\(S_1, \ldots, S_K\)</span>不再变化
+<ul>
+<li>最优化<span class="math inline">\(S_1, S_2, \ldots, S_K\)</span>，即把<span class="math inline">\({\bf x}_n\)</span>分给离它最近的那个<span class="math inline">\(\boldsymbol{\mu}_i\)</span>所属的类簇</li>
+<li>最优化<span class="math inline">\(\boldsymbol{\mu}_1, \boldsymbol{\mu}_2, \ldots, \boldsymbol{\mu}_K\)</span>，即对每个<span class="math inline">\(S_k\)</span>，求属于该类簇所有点的均值</li>
+</ul></li>
+</ol>
+</blockquote>
+<p>由于这个过程一直在使<span class="math inline">\(E_{\rm in}\)</span>变小，因此算法一定会收敛</p>
+<p>K均值聚类算法可能是所有聚类算法里最有名的一个，其核心思路就是做交互最优化</p>
+<p>可以把K均值聚类算法与RBF网络结合起来，算法如下</p>
+<blockquote>
+<ol type="1">
+<li><p>使用K均值聚类算法（这里<span class="math inline">\(K=M\)</span>）得到<span class="math inline">\(M\)</span>个中心点<span class="math inline">\(\{\boldsymbol{\mu}_m\}\)</span></p></li>
+<li><p>使用RBF（例如高斯函数）围绕<span class="math inline">\(\boldsymbol{\mu}_m\)</span>构建变换<span class="math inline">\(\boldsymbol{\Phi}({\bf x})\)</span> <span class="math display">\[
+\boldsymbol{\Phi}({\bf x}) = [{\rm RBF}({\bf x}, \boldsymbol{\mu}_1), {\rm RBF}({\bf x}, \boldsymbol{\mu}_2), \ldots, {\rm RBF}({\bf x}, \boldsymbol{\mu}_M)]
+\]</span></p></li>
+<li><p>在变换后的数据<span class="math inline">\(\{(\boldsymbol{\Phi}({\bf x}_n), y_n)\}\)</span>上运行线性模型，得到<span class="math inline">\(\boldsymbol{\beta}\)</span></p></li>
+<li><p>返回<span class="math inline">\(g_{\rm RBFNET}({\bf x}) = {\rm LinearHypothesis}(\boldsymbol{\beta}, \boldsymbol{\Phi}({\bf x}))\)</span></p></li>
+</ol>
+</blockquote>
+<p>就像自动编码器一样，这里RBF网络也是使用无监督学习算法来萃取特征</p>
+<h2 id="k均值聚类和径向基函数网络实战">K均值聚类和径向基函数网络实战</h2>
+<p>实验说明K均值聚类算法的效果对K的设置和初始点的设置比较敏感。以及全RBF网络和kNN由于需要遍历所有数据集，因此预测时效率不高，所以不是很常用</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/10/22/NTUML-30-RBF-Network/" title="NTUML 30. 径向基函数网络">txshi-mt.com/2017/10/22/NTUML-30-RBF-Network/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/NTUML/" rel="tag"># NTUML</a>
+          
+            <a href="/tags/kNN/" rel="tag"># kNN</a>
+          
+            <a href="/tags/k均值聚类/" rel="tag"># k均值聚类</a>
+          
+            <a href="/tags/RBF/" rel="tag"># RBF</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/10/21/NTUML-29-Deep-Learning/" rel="next" title="NTUML 29. 深度学习">
+                <i class="fa fa-chevron-left"></i> NTUML 29. 深度学习
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/10/25/NTUML-31-Matrix-Factorization/" rel="prev" title="NTUML 31. 矩阵分解">
+                NTUML 31. 矩阵分解 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#径向基函数网络假设函数"><span class="nav-number">1.</span> <span class="nav-text">&#x5F84;&#x5411;&#x57FA;&#x51FD;&#x6570;&#x7F51;&#x7EDC;&#x5047;&#x8BBE;&#x51FD;&#x6570;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#径向基函数网络学习"><span class="nav-number">2.</span> <span class="nav-text">&#x5F84;&#x5411;&#x57FA;&#x51FD;&#x6570;&#x7F51;&#x7EDC;&#x5B66;&#x4E60;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#k均值聚类算法"><span class="nav-number">3.</span> <span class="nav-text">K&#x5747;&#x503C;&#x805A;&#x7C7B;&#x7B97;&#x6CD5;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#k均值聚类和径向基函数网络实战"><span class="nav-number">4.</span> <span class="nav-text">K&#x5747;&#x503C;&#x805A;&#x7C7B;&#x548C;&#x5F84;&#x5411;&#x57FA;&#x51FD;&#x6570;&#x7F51;&#x7EDC;&#x5B9E;&#x6218;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

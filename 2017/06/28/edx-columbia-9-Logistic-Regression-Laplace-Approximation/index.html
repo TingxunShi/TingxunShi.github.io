@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Logistic回归,EdX-Columbia,拉普拉斯近似," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Logistic回归：定义 我们希望能找到一种方法，可以将分离超平面（来自感知机）这一概念与概率工具（来自最小二乘线性回归）相结合 线性判别分析需要两个假设，其一是\(y\sim {\rm Bern}(\pi)\)，其二是\(x|y \sim N(\mu, \Sigma)\)。而且\(w_0\)和\(w\)都需要巨大的计算量求解。考虑LDA的逻辑，对于给定的\(x\)，只有当\(\ln [p(y=">
+<meta name="keywords" content="Logistic回归,EdX-Columbia,拉普拉斯近似">
+<meta property="og:type" content="article">
+<meta property="og:title" content="EdX Columbia ML 9. Logistic回归与拉普拉斯近似">
+<meta property="og:url" content="txshi-mt.com/2017/06/28/edx-columbia-9-Logistic-Regression-Laplace-Approximation/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="Logistic回归：定义 我们希望能找到一种方法，可以将分离超平面（来自感知机）这一概念与概率工具（来自最小二乘线性回归）相结合 线性判别分析需要两个假设，其一是\(y\sim {\rm Bern}(\pi)\)，其二是\(x|y \sim N(\mu, \Sigma)\)。而且\(w_0\)和\(w\)都需要巨大的计算量求解。考虑LDA的逻辑，对于给定的\(x\)，只有当\(\ln [p(y=">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.102Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="EdX Columbia ML 9. Logistic回归与拉普拉斯近似">
+<meta name="twitter:description" content="Logistic回归：定义 我们希望能找到一种方法，可以将分离超平面（来自感知机）这一概念与概率工具（来自最小二乘线性回归）相结合 线性判别分析需要两个假设，其一是\(y\sim {\rm Bern}(\pi)\)，其二是\(x|y \sim N(\mu, \Sigma)\)。而且\(w_0\)和\(w\)都需要巨大的计算量求解。考虑LDA的逻辑，对于给定的\(x\)，只有当\(\ln [p(y=">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/06/28/edx-columbia-9-Logistic-Regression-Laplace-Approximation/"/>
+
+
+
+
+
+  <title>EdX Columbia ML 9. Logistic回归与拉普拉斯近似 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/06/28/edx-columbia-9-Logistic-Regression-Laplace-Approximation/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">EdX Columbia ML 9. Logistic回归与拉普拉斯近似</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-28T15:45:23+08:00">
+                Jun 28 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/统计机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">统计机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="logistic回归定义">Logistic回归：定义</h2>
+<p>我们希望能找到一种方法，可以将分离超平面（来自感知机）这一概念与概率工具（来自最小二乘线性回归）相结合</p>
+<p>线性判别分析需要两个假设，其一是<span class="math inline">\(y\sim {\rm Bern}(\pi)\)</span>，其二是<span class="math inline">\(x|y \sim N(\mu, \Sigma)\)</span>。而且<span class="math inline">\(w_0\)</span>和<span class="math inline">\(w\)</span>都需要巨大的计算量求解。考虑LDA的逻辑，对于给定的<span class="math inline">\(x\)</span>，只有当<span class="math inline">\(\ln [p(y=1|x)/p(y=0|x)] &gt; 0\)</span>满足时，我们把它标记为<span class="math inline">\(y=1\)</span>。但是LDA并不直接定义<span class="math inline">\(p(y|x)\)</span>，而是将<span class="math inline">\(p(y)\)</span>定义为伯努利分布，将<span class="math inline">\(p(x|y)\)</span>按照自己希望的分布设计（例如定义为单个高斯分布），然后使用贝叶斯定律<span class="math inline">\(p(y|x) = p(x|y)p(y) / p(x)\)</span>并消掉<span class="math inline">\(p(x)\)</span>求出最后的值</p>
+<p>因此，我们可以直接从<span class="math inline">\(p(y|x)\)</span>入手。考虑之前提到的log odds <span class="math display">\[
+L = 
+\ln \frac{p(y=+1|x)}{p(y=-1|x)}
+\]</span> 可以注意到</p>
+<ol type="1">
+<li>如果$L &gt;!!&gt; 0 <span class="math inline">\(，则我们更有把握说\)</span>y=+1$</li>
+<li>如果$L &lt;!!&lt; 0 <span class="math inline">\(，则我们更有把握说\)</span>y=-1$</li>
+<li>如果<span class="math inline">\(L = 0\)</span>，则都可以</li>
+</ol>
+<p>而线性函数<span class="math inline">\(x^\mathsf{T}w + w_0\)</span>可以满足我们的这些需求：</p>
+<ul>
+<li>可以计算超平面跟向量的距离。用<span class="math inline">\((w, w_0)\)</span>表示，为 <span class="math display">\[
+\left|\frac{x^\mathsf{T}w}{|\!|w|\!|_2} + \frac{w_0}{|\!|w|\!|_2}\right|
+\]</span></li>
+<li>函数的符号可以指明<span class="math inline">\(x\)</span>在超平面的哪一侧</li>
+<li><span class="math inline">\(x\)</span>远离/靠近<span class="math inline">\(H\)</span>意味着我们的信心越强/越弱</li>
+</ul>
+<p>因此我们可以用超平面来表示前面的log odds，即 <span class="math display">\[
+\ln \frac{p(y=+1|x)}{p(y=-1|x)} = x^\mathsf{T}w + w_0
+\]</span></p>
+<p>这里我们对<span class="math inline">\(w_0\)</span>，<span class="math inline">\(w\)</span>和<span class="math inline">\(x\)</span>都没有任何假设，不像LDA有很多前提条件。</p>
+<p>考虑到要有<span class="math inline">\(p(y=-1|x) = 1- p(y=+1|x)\)</span>，可以解得 <span class="math display">\[
+p(y=+1|x) = \frac{\exp\{x^\mathsf{T}w + w_0\}}{1 + {\exp\{x^\mathsf{T}w + w_0\}}} = \sigma(x^\mathsf{T}w + w_0)
+\]</span></p>
+<p><span class="math inline">\(\sigma\)</span>被称作是sigmoid函数</p>
+<p>因此到这里我们可以得到完整的问题定义： 令 <span class="math display">\[
+w \leftarrow \left[\!\begin{array}{c} w_0 \\ w   \end{array}\!\right],\  x \leftarrow \left[\!\begin{array}{c} 1 \\ x   \end{array}\!\right]
+\]</span> 令<span class="math inline">\((x_1, y_1), \ldots, (x_n, y_n)\)</span>为一系列二元分类的数据集，且有<span class="math inline">\(y \in \{-1, +1\}\)</span>，<strong>Logistic回归模型</strong>认为每个<span class="math inline">\(y_i\)</span>都是独立生成的，而且有 <span class="math display">\[
+P(y_i = +1|x_i, w) = \sigma(x_i^\mathsf{T}w),\  \  \sigma(x_i;w) = \frac{e^{x_i^\mathsf{T}w}}{1 + e^{x_i^\mathsf{T}w}}
+\]</span></p>
+<p>Logistic回归是一个判别方法（计算<span class="math inline">\(p(y|x)\)</span>），LDA/Bayes分类器是生成方法（对<span class="math inline">\(x\)</span>建模，计算<span class="math inline">\(p(x|y)\)</span>和<span class="math inline">\(p(y)\)</span>）</p>
+<h2 id="logistic回归似然">Logistic回归似然</h2>
+<p>记<span class="math inline">\(\sigma_i(w) = \sigma(x_i^\mathsf{T}w)\)</span>，则<span class="math inline">\(y_1, \ldots, y_n\)</span>的联合似然为 <span class="math display">\[
+\begin{align*}
+p(y_1, \ldots, y_n|x_1, \ldots, x_n,w) &amp;= \prod_{i=1}^n p(y_i|x_i, w) \\
+&amp;= \prod_{i=1}^n \sigma_i(w)^{1(y_i = +1)}(1-\sigma_i(w))^{1(y_i = -1)}
+\end{align*}
+\]</span></p>
+<p>式子可以进一步化简 <span class="math display">\[
+\begin{align*}
+&amp;\frac{e^{y_ix_i^\mathsf{T}w}}{1 + e^{y_ix_i^\mathsf{T}w}} = \left(\frac{e^{x_i^\mathsf{T}w}}{1 + e^{x_i^\mathsf{T}w}}\right)^{1(y_i = +1)}\left(1-\frac{e^{x_i^\mathsf{T}w}}{1 + e^{x_i^\mathsf{T}w}}\right)^{1(y_i = -1)} \\
+\rightarrow &amp;\sigma_i(y_i\cdot w) = \sigma_i(w)^{1(y_i = +1)}(1-\sigma_i(w))^{1(y_i = -1)}
+\end{align*}
+\]</span></p>
+<p>因此联合似然可以简写为 <span class="math display">\[
+p(y_1, \ldots, y_n|x_1, \ldots, x_n,w) = \prod_{i=1}^n \sigma_i(y_i \cdot w)
+\]</span></p>
+<p>我们的目标是求<span class="math inline">\(w\)</span>使得这个值最大化。其MLE解为 <span class="math display">\[
+\begin{align*}
+w_{\rm ML} &amp;= {\rm arg}\max_w \sum_{i=1}^n \ln \sigma_i(y_i\cdot w) \\
+&amp;= {\rm arg}\max_w \mathcal{L}
+\end{align*}
+\]</span></p>
+<p>该式也没有解析解，需要迭代求解。在第<span class="math inline">\(t\)</span>步，有 <span class="math display">\[
+w^{(t+1)} = w^{(t)} + \eta \nabla_w \mathcal{L}
+\]</span> 其中 <span class="math display">\[
+\nabla_w \mathcal{L} = \sum_{i=1}^n (1-\sigma_i(y_i \cdot w))y_ix_i
+\]</span></p>
+<p>由于<span class="math inline">\(\sigma_i(y_i\cdot w)\)</span>是分对的概率，因此<span class="math inline">\(1-\sigma_i(y_i \cdot w)\)</span>是分错的概率。即每次梯度下降都会选取分错的点着重学习，修改<span class="math inline">\(w\)</span>。实际上正确的点也有贡献，但是错误的点贡献更大，这点与感知机算法不同</p>
+<p>如果某个超平面可以分离所有训练数据，那么<span class="math inline">\(||w||_2\)</span>逼近<span class="math inline">\(\infty\)</span>，即对每个<span class="math inline">\((x_i,y_i)\)</span>都有<span class="math inline">\(\sigma_i(y_i,w) \rightarrow 1\)</span>，可能会过拟合。因此我们也可以加一个<span class="math inline">\(\ell_2\)</span>正则项<span class="math inline">\(\lambda w^\mathsf{T}w\)</span>，最优权重变成了 <span class="math display">\[
+\begin{align*}
+w_{\rm MAP} &amp;= {\rm arg}\max_w \sum_{i=1}^n \ln \sigma_i (y_i \cdot w) - \lambda w^\mathsf{T}w \\
+&amp;= {\rm arg}\max_w \sum_{i=1}^n \ln \sigma (y_i x_i^\mathsf{T} w) - \frac{\lambda}{2} w^\mathsf{T}w
+\end{align*}
+\]</span></p>
+<p>这里正则项可以看做是<span class="math inline">\(w\)</span>的先验，即<span class="math inline">\(w \sim N(0, \lambda^{-1}I)\)</span>。后验为 <span class="math display">\[
+p(w|x, y) = \frac{p(w)\prod_{i=1}^n\sigma_i(y_i \cdot w)}{\int p(w)\prod_{i=1}^n\sigma_i(y_i \cdot w) dw }
+\]</span> 这个式子无法直接求解，只能逼近</p>
+<h2 id="拉普拉斯近似">拉普拉斯近似</h2>
+<p>因为无法求解<span class="math inline">\(p(w|x,y)\)</span>，所以只能退而求其次地选择一个分布来对其进行近似。可以说 <span class="math display">\[
+p(w|x,y) \approx {\rm Normal}(\mu, \Sigma)
+\]</span> 现在就是要求解出<span class="math inline">\(\mu\)</span>和<span class="math inline">\(\Sigma\)</span></p>
+<p>做一个转化，可知 <span class="math display">\[
+p(w|x,y) = \frac{e^{\ln p(y,w|x)}}{\int e^{\ln p(y,w|x)} dw}
+\]</span> 我们的目的是对<span class="math inline">\(\ln p(y,w|x)\)</span>进行近似</p>
+<p>令<span class="math inline">\(f(w) = \ln p(y,w|x)\)</span>，则可以对其进行二阶Taylor展开。即对变量<span class="math inline">\(w \in \mathbb{R}^{d+1}\)</span>，对任意一个点<span class="math inline">\(z \in \mathbb{R}^{d+1}\)</span>，有 <span class="math display">\[
+f(w) \approx f(z) + (w-z)^\mathsf{T}\nabla f(z) + \frac{1}{2}(w-z)^\mathsf{T}(\nabla^2f(z))(w-z)
+\]</span></p>
+<p>其中<span class="math inline">\(\nabla f(z)\)</span>是<span class="math inline">\(\nabla_wf(w)|_z\)</span>的缩写</p>
+<p>在拉普拉斯近似中，<span class="math inline">\(z= w_{\rm MAP}\)</span></p>
+<p>所以将上式代入，可得 <span class="math display">\[
+\begin{align*}
+p(w|x,y) &amp;= \frac{e^{f(w)}}{\int e^{f(w)}dw} \\
+&amp;\approx \frac{e^{f(z) + (w-z)^\mathsf{T}\nabla f(z) + \frac{1}{2}(w-z)^\mathsf{T}(\nabla^2f(z))(w-z)}}{\int e^{f(z) + (w-z)^\mathsf{T}\nabla f(z) + \frac{1}{2}(w-z)^\mathsf{T}(\nabla^2f(z))(w-z)} dw}
+\end{align*}
+\]</span></p>
+<p>这里<span class="math inline">\(f(z)\)</span>与<span class="math inline">\(w\)</span>无关，因此分母中可以把这一项从积分中提出来，然后与分子中的相同项约掉。而且由于<span class="math inline">\(w_{\rm MAP}\)</span>的定义就是使<span class="math inline">\(\nabla f(w)\)</span>为0 的<span class="math inline">\(w\)</span>，因此将其代入，分子分母中一阶导数都为0，也可以消掉，所以上式相当于 <span class="math display">\[
+p(w|x,y) \approx \frac{e^{-\frac{1}{2}(w-w_{\rm MAP})^\mathsf{T}\left(-\nabla^2 \ln p(y, w_{\rm MAP}|x)\right)(w - w_{\rm MAP})}}{\int e^{-\frac{1}{2}(w-w_{\rm MAP})^\mathsf{T}\left(-\nabla^2 \ln p(y, w_{\rm MAP}|x)\right)(w - w_{\rm MAP})} dw}
+\]</span> 可以看出这是一个多变量高斯分布，其中<span class="math inline">\(\mu = w_{\rm MAP}, \Sigma = \left(-\nabla^2 \ln p(y, w_{\rm MAP}|x)\right)^{-1}\)</span></p>
+<p>其中 <span class="math display">\[
+\nabla^2 \ln p(y, w_{\rm MAP}|x) = -\lambda I - \sum_{i=1}^n \sigma (y_i \cdot x_i^\mathsf{T}w_{\rm MAP})\left(1 - \sigma (y_i \cdot x_i^\mathsf{T}w_{\rm MAP})\right)x_ix_i^\mathsf{T}
+\]</span></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/06/28/edx-columbia-9-Logistic-Regression-Laplace-Approximation/" title="EdX Columbia ML 9. Logistic回归与拉普拉斯近似">txshi-mt.com/2017/06/28/edx-columbia-9-Logistic-Regression-Laplace-Approximation/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Logistic回归/" rel="tag"># Logistic回归</a>
+          
+            <a href="/tags/EdX-Columbia/" rel="tag"># EdX-Columbia</a>
+          
+            <a href="/tags/拉普拉斯近似/" rel="tag"># 拉普拉斯近似</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/27/edx-columbia-8-Linear-Classifier-Perceptron/" rel="next" title="EdX Columbia ML 8. 线性分类器与感知机">
+                <i class="fa fa-chevron-left"></i> EdX Columbia ML 8. 线性分类器与感知机
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/06/28/edx-columbia-10-kernel-methods-gaussian-process/" rel="prev" title="EdX Columbia ML 10. 核方法与高斯过程">
+                EdX Columbia ML 10. 核方法与高斯过程 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#logistic回归定义"><span class="nav-number">1.</span> <span class="nav-text">Logistic&#x56DE;&#x5F52;&#xFF1A;&#x5B9A;&#x4E49;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#logistic回归似然"><span class="nav-number">2.</span> <span class="nav-text">Logistic&#x56DE;&#x5F52;&#x4F3C;&#x7136;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#拉普拉斯近似"><span class="nav-number">3.</span> <span class="nav-text">&#x62C9;&#x666E;&#x62C9;&#x65AF;&#x8FD1;&#x4F3C;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

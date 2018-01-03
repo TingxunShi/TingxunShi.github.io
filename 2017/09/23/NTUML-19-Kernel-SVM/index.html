@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="NTUML,SVM,核方法," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="核技巧 前面提到，对偶问题最后也能写成二次规划问题的标准形式。乍一看，问题的变量数为\(N\)，条件数为\(N+1\)，跟数据的维度\(\tilde{d}\)无关，但是需要注意的是，\(\rm Q_D\)中的每一项计算方式为两个\(y\)相乘再乘上两个\(\bf z\)的内积（\(q_{n, m} = y_ny_m{\bf z}_n^\mathsf{T}{\bf z}_m\)}），这个内积就跟\(">
+<meta name="keywords" content="NTUML,SVM,核方法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NTUML 19. 核支持向量机">
+<meta property="og:url" content="txshi-mt.com/2017/09/23/NTUML-19-Kernel-SVM/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="核技巧 前面提到，对偶问题最后也能写成二次规划问题的标准形式。乍一看，问题的变量数为\(N\)，条件数为\(N+1\)，跟数据的维度\(\tilde{d}\)无关，但是需要注意的是，\(\rm Q_D\)中的每一项计算方式为两个\(y\)相乘再乘上两个\(\bf z\)的内积（\(q_{n, m} = y_ny_m{\bf z}_n^\mathsf{T}{\bf z}_m\)}），这个内积就跟\(">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML18_poly2.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML19_gaussian_svm.png">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.092Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NTUML 19. 核支持向量机">
+<meta name="twitter:description" content="核技巧 前面提到，对偶问题最后也能写成二次规划问题的标准形式。乍一看，问题的变量数为\(N\)，条件数为\(N+1\)，跟数据的维度\(\tilde{d}\)无关，但是需要注意的是，\(\rm Q_D\)中的每一项计算方式为两个\(y\)相乘再乘上两个\(\bf z\)的内积（\(q_{n, m} = y_ny_m{\bf z}_n^\mathsf{T}{\bf z}_m\)}），这个内积就跟\(">
+<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML18_poly2.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/09/23/NTUML-19-Kernel-SVM/"/>
+
+
+
+
+
+  <title>NTUML 19. 核支持向量机 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/09/23/NTUML-19-Kernel-SVM/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NTUML 19. 核支持向量机</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-23T10:28:59+08:00">
+                Sep 23 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/统计机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">统计机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="核技巧">核技巧</h2>
+<p>前面提到，对偶问题最后也能写成二次规划问题的标准形式。乍一看，问题的变量数为<span class="math inline">\(N\)</span>，条件数为<span class="math inline">\(N+1\)</span>，跟数据的维度<span class="math inline">\(\tilde{d}\)</span>无关，但是需要注意的是，<span class="math inline">\(\rm Q_D\)</span>中的每一项计算方式为两个<span class="math inline">\(y\)</span>相乘再乘上两个<span class="math inline">\(\bf z\)</span>的内积（<span class="math inline">\(q_{n, m} = y_ny_m{\bf z}_n^\mathsf{T}{\bf z}_m\)</span>}），这个内积就跟<span class="math inline">\(\tilde{d}\)</span>有关了。如果数据维度很大，那么<span class="math inline">\(\rm Q_D\)</span>的计算量就很大，成为了求解问题的瓶颈所在。如果使用某种技巧把<span class="math inline">\({\bf z}_n^\mathsf{T}{\bf z}_m\)</span>这个直接做内积步骤替换掉，那么计算效率就能得到比较大的提升</p>
+<p>经过进一步分析可以发现，之前的讨论都是在<span class="math inline">\(\mathcal{Z}\)</span>空间做的。但是<span class="math inline">\(\bf z\)</span>实际上是原始数据<span class="math inline">\(\bf x\)</span>经过非线性变换<span class="math inline">\(\boldsymbol{\Phi}\)</span>得到，因此求<span class="math inline">\({\bf z}_n^\mathsf{T}{\bf z}_m\)</span>实际上是两步：先做变换，再内积。这两个步骤如果能合起来，是不是计算会快一点？</p>
+<p>先从一个比较简单的例子入手：考虑之前提到的二次多项式变换 <span class="math display">\[
+\boldsymbol{\Phi}_2({\bf x}) = (1, x_1, x_2, \ldots, x_d, x_1^2, x_1x_2, \ldots x_1x_d, x_2x_1, x_2^2, \ldots ,x_2x_d, \ldots, x_d^2)
+\]</span> 这里为了简单起见，将<span class="math inline">\(x_1x_2\)</span>和<span class="math inline">\(x_2x_1\)</span>都放了进来。接下来，假设有两个数据点<span class="math inline">\(\bf x\)</span>和<span class="math inline">\(\bf x&#39;\)</span>，看一看先转换再做内积的结果，有 <span class="math display">\[
+\begin{align*}
+\boldsymbol{\Phi}_2({\bf x})^\mathsf{T}\boldsymbol{\Phi}_2({\bf x}&#39;) &amp;= 1 +\sum_{i=1}^dx_ix_i&#39; + \sum_{i=1}^d\sum_{j=1}^dx_ix_jx_i&#39;x_j&#39; \\
+&amp;= 1+\sum_{i=1}^dx_ix_i&#39; + \sum_{i=1}^d x_ix_i&#39;\sum_{j=1}^dx_jx_j&#39; \\
+&amp;= 1 + {\bf x}^\mathsf{T}{\bf x}&#39; + ({\bf x}^\mathsf{T}{\bf x}&#39;)({\bf x}^\mathsf{T}{\bf x}&#39;)
+\end{align*}
+\]</span> 化简以后，<span class="math inline">\(\boldsymbol{\Phi}_2({\bf x})^\mathsf{T}\boldsymbol{\Phi}_2({\bf x}&#39;)\)</span>的计算复杂度从<span class="math inline">\(O(d^2)\)</span>降到了<span class="math inline">\(O(d)\)</span>。因此，在某些情况下，如果把变换和内积这两个步骤合起来，计算效率可以得到提高。这里可以把转换+内积这个合并步称为<strong>核函数</strong>，即对变换<span class="math inline">\(\boldsymbol{\Phi}\)</span>有对应的核函数<span class="math inline">\(K_\boldsymbol{\Phi}\)</span>满足 <span class="math display">\[
+K_\boldsymbol{\Phi}({\bf x}, {\bf x}&#39;) \equiv \boldsymbol{\Phi}({\bf x})^\mathsf{T}\boldsymbol{\Phi}({\bf x}&#39;)
+\]</span> 在本例中，有 <span class="math display">\[
+\boldsymbol{\Phi}_2 \Leftrightarrow K_{\boldsymbol{\Phi}_2}({\bf x}, {\bf x}&#39;) = 1 + ({\bf x}^\mathsf{T}{\bf x}&#39;) + ({\bf x}^\mathsf{T}{\bf x}&#39;)^2
+\]</span> 有了核函数以后，原始对偶SVM的算法可以有如下几点修改</p>
+<ul>
+<li><p>矩阵<span class="math inline">\(\rm Q_D\)</span>中的每一项<span class="math inline">\(q_{n, m}\)</span>的计算得到了简化：<span class="math inline">\(q_{n, m} = y_ny_m {\bf z}_n^\mathsf{T}{\bf z}_m = y_ny_mK({\bf x}_n, {\bf x}_m)\)</span>。注意这里给核函数传递的是在原始空间<span class="math inline">\(\mathcal{X}\)</span>的向量，提出核函数也就是为了避免在高维空间的计算</p></li>
+<li><p>计算最优的偏置<span class="math inline">\(b\)</span>时，也会用到。具体为（注意<span class="math inline">\({\bf w}= \sum_{n=1}^N \alpha_n y_n {\bf z}_n\)</span>） <span class="math display">\[
+b = y_s - {\bf w}^\mathsf{T}{\bf z}_s = y_s - \left(\sum_{n=1}^N \alpha_ny_n{\bf z}_n\right)^\mathsf{T}{\bf z}_s = y_s - \sum_{n=1}^N \alpha_ny_n\left(K({\bf x}_n, {\bf x}_s)\right)
+\]</span> 这里<span class="math inline">\(({\bf x}_s, y_s)\)</span>是得到的任意一个支持向量</p></li>
+<li><p>类似地，得到最优的<span class="math inline">\({\bf w}\)</span>和<span class="math inline">\(b\)</span>以后，对新的测试输入<span class="math inline">\(\bf x\)</span>，也可以引入核函数来做预测 <span class="math display">\[
+g_{\rm SVM}({\bf x}) = {\rm sign}({\bf w}^\mathsf{T}\boldsymbol{\Phi}({\bf x}) + b) = {\rm sign}\left(\sum_{n=1}^N \alpha_ny_nK({\bf x}_n, {\bf x}) + b\right)
+\]</span></p></li>
+</ul>
+<p>可以注意到，原有对偶问题求解的时候，里面所有要在<span class="math inline">\(\tilde{d}\)</span>维空间<span class="math inline">\(\mathcal{Z}\)</span>做的操作，最后都可以在<span class="math inline">\(d\)</span>维空间<span class="math inline">\(\mathcal{X}\)</span>通过核函数<span class="math inline">\(K\)</span>得到相等的结果。这种方法也称为“核技巧”，即把所有转换-内积的步骤都换成计算核函数的值，因此在算法里就不会依赖<span class="math inline">\(\tilde{d}\)</span>了</p>
+<p>引入核函数以后，就可以得到核硬边界SVM算法（Kernel Hard-Margin SVM Algorithm）</p>
+<blockquote>
+<ol type="1">
+<li><p><span class="math inline">\(q_{n,m} = y_ny_m K({\bf x}_n, {\bf x}_m); {\bf p} = -{\bf 1}_N\)</span> （<span class="math inline">\(\rm A\)</span>和<span class="math inline">\(\bf c\)</span>还是对偶硬边界SVM算法中的对应值）</p></li>
+<li><p><span class="math inline">\(\boldsymbol{\alpha} \leftarrow {\rm QP}({\rm Q_D}, {\bf p}, {\rm A}, {\bf c})\)</span></p></li>
+<li><p>任选一个支持向量<span class="math inline">\(({\bf x}_s, y_s)\)</span>，计算<span class="math inline">\(b \leftarrow \left(y_s - \sum_{\rm SV\  indices}\alpha_ny_nK({\bf x}_n, {\bf x}_s)\right)\)</span></p></li>
+<li><p>将所有支持向量、对应的<span class="math inline">\(\alpha_n\)</span>和<span class="math inline">\(b\)</span>返回。对新的<span class="math inline">\(\bf x\)</span>，计算 <span class="math display">\[
+g_{\rm SVM}({\bf x}) = {\rm sign}\left(\sum_{\rm SV\  indices}\alpha_ny_nK({\bf x}_n, {\bf x})+b\right)
+\]</span></p></li>
+</ol>
+</blockquote>
+<p>假设核函数的计算时间为<span class="math inline">\(k\)</span>，则算法中第一步的时间复杂度仅为<span class="math inline">\(O(kN^2)\)</span>，第二步只有<span class="math inline">\(N\)</span>个变量和<span class="math inline">\(N\)</span>个限制条件，第三、四步的时间复杂度为<span class="math inline">\(O(k\#{\rm SV})\)</span>。因此可以看到，引入核函数以后，就可以完全避免在<span class="math inline">\(\tilde{d}\)</span>维空间做计算，而且核SVM的预测还是只需要支持向量就可以</p>
+<h2 id="多项式核">多项式核</h2>
+<p>除去上一节给出的变换，还有其它一些比较常见的二次多项式变换方法，例如 <span class="math display">\[
+\begin{align*}
+\boldsymbol{\Phi}_2({\bf x}) = (1, \sqrt{2}x_1, \ldots, \sqrt{2}x_d, x_1^2, \ldots, x_d^2) &amp;\Leftrightarrow K_{2&#39;}({\bf x}, {\bf x}&#39;) = 1 + 2{\bf x^\mathsf{T}x}&#39;+({\bf x^\mathsf{T}x}&#39;)^2 \\
+\boldsymbol{\Phi}_2({\bf x}) = (1,\sqrt{2\gamma}x_1, \ldots, \sqrt{2\gamma}x_d, \gamma x_1^2, \ldots, \gamma x_d^2) &amp;\Leftrightarrow K_2({\bf x}, {\bf x}&#39;) = 1 + 2\gamma{\bf x^\mathsf{T}x}&#39; + \gamma^2({\bf x^\mathsf{T}x}&#39;)^2 \\
+&amp;= (1+\gamma{\bf x^\mathsf{T}x}&#39;)^2 \hspace{3ex} (\gamma &gt; 0)
+\end{align*}
+\]</span> 可以看到<span class="math inline">\(K_2\)</span>的计算比<span class="math inline">\(K_{\boldsymbol{\Phi}_2}\)</span>更简单一些，而能力相同（两者映射到的空间相同）。但是要注意的是，转换不同，内积就不同。内积不同，距离就不同。而SVM是由距离决定的，因此会得到不同的边界。实际上<span class="math inline">\(K_2\)</span>更常用</p>
+<p>下图中给出了使用不同的核和同一个核使用不同<span class="math inline">\(\gamma\)</span>的效果。其中带方框的点是支持向量</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML18_poly2.png" alt="使用不同的核和同一个核使用不同gamma的SVM。其中带方框的点是支持向量"><figcaption>使用不同的核和同一个核使用不同gamma的SVM。其中带方框的点是支持向量</figcaption>
+</figure>
+<p>由上图可知，不同的<span class="math inline">\(g_{\rm SVM}\)</span>会使用不同的支持向量，也就会产生的不同的边界。而使用什么核和<span class="math inline">\(\gamma\)</span>也是很难在学习之前就能判断出来的。究竟哪个核，这个核的哪个<span class="math inline">\(\gamma\)</span>最合适，也得通过交叉验证的方法来判断</p>
+<p>进一步地，可以加入两个新的变量<span class="math inline">\(\zeta\)</span>和多项式次数<span class="math inline">\(Q\)</span>，得到一个更广义的多项式核，即（均设定<span class="math inline">\(\gamma &gt; 0, \zeta \ge 0\)</span>） <span class="math display">\[
+\begin{align*}
+K_2({\bf x}, {\bf x}&#39;) &amp;= (\zeta + \gamma {\bf x^\mathsf{T}x}&#39;)^2 \\
+K_3({\bf x}, {\bf x}&#39;) &amp;= (\zeta + \gamma {\bf x^\mathsf{T}x}&#39;)^3 \\
+&amp;\vdots \\
+K_Q({\bf x}, {\bf x}&#39;) &amp;= (\zeta + \gamma {\bf x^\mathsf{T}x}&#39;)^Q
+\end{align*}
+\]</span> 这说明，原来的<span class="math inline">\(Q\)</span>次多项式变换<span class="math inline">\(\boldsymbol{\Phi}_Q\)</span>在引入参数为<span class="math inline">\((\zeta, \gamma)\)</span>的核以后，可以得到相同的效果。而核函数的计算方法又使得不再需要将经过<span class="math inline">\(\boldsymbol{\Phi}_Q\)</span>变换得到的<span class="math inline">\(\bf z\)</span>展开，极大加快了计算效率。这种将SVM和多项式核结合起来的方法称为<strong>多项式SVM</strong></p>
+<p>多项式核里比较特殊的一种是<span class="math inline">\(\zeta=0, \gamma = 1, Q=1\)</span>。这种核称为线性核。尽管高次多项式核非常强大，但是真正实验模型时还是应该先从线性核这种简单模型试起</p>
+<h2 id="高斯核">高斯核</h2>
+<p>由上一节可知，如果设计一个很好的核函数，则可以使用<span class="math inline">\(O(d)\)</span>的时间复杂度计算原始数据被映射到<span class="math inline">\(\tilde{d}\)</span>维空间以后的内积。那么有没有可能有这么一种核函数，使得可以很方便地计算<em>无限维</em>空间的内积呢？的确存在这么一种核函数。接下来的推导中，为了方便起见，假设<span class="math inline">\(\bf x\)</span>只有一个维度，记为<span class="math inline">\(x\)</span>，则 <span class="math display">\[
+\begin{align*}
+K(x, x&#39;) &amp;= \exp(-(x-x&#39;)^2) \\
+&amp;= \exp(-(x)^2)\exp(-(x&#39;)^2)\exp(2xx&#39;) \\
+&amp;= \exp(-(x)^2)\exp(-(x&#39;)^2)\left(\sum_{i=0}^\infty\frac{(2xx&#39;)^i}{i!}\right) \hspace{3ex}{\rm Taylor\  expansion} \\
+&amp;= \sum_{i=0}^\infty\left(\exp(-(x)^2)\exp(-(x&#39;)^2)\sqrt{\frac{2^i}{i!}}\sqrt{\frac{2^i}{i!}} (x)^i(x&#39;)^i\right) \\
+&amp;= \boldsymbol{\Phi}(x)^\mathsf{T}\boldsymbol{\Phi}(x&#39;)
+\end{align*}
+\]</span> 即多项式变换 <span class="math display">\[
+\boldsymbol{\Phi}(x) = \exp(-x^2)\cdot \left(1, \sqrt{\frac{2}{1!}}x, \sqrt{\frac{2^2}{2!}}x^2,\ldots\right)
+\]</span> 可以把<span class="math inline">\(x\)</span>映射到一个无限维空间，而在该空间两个元素的内积可以在原始空间很方便地使用高斯函数求解。更普遍性地，称形如 <span class="math display">\[
+K({\bf x}, {\bf x}&#39;) = \exp\left(-\gamma |\!|{\bf x} - {\bf x}&#39;|\!|^2\right), {\hspace{3ex}}\gamma&gt;0
+\]</span> 这样的核函数为<strong>高斯核</strong></p>
+<p>将高斯核的表示代入到核SVM中，可以得到使用高斯核的SVM的形式 <span class="math display">\[
+\begin{align*}
+g_{\rm SVM}({\bf x}) &amp;= {\rm sign}\left(\sum_{\rm SV}\alpha_ny_n K({\bf x}_n, {\bf x})+b\right)  \\
+&amp;= {\rm sign}\left(\sum_{\rm SV}\alpha_ny_n \exp\left(-\gamma|\!|{\bf x}-{\bf x}_n|\!|^2\right)+b\right)  
+\end{align*}
+\]</span> 此时SVM实际上是以各支持向量<span class="math inline">\({\bf x}_n\)</span>为中心的高斯函数的线性组合。考虑到“线性组合”的意义，高斯核通常也称为径向基函数核（Radial Basis Function kernel, RBF kernel）。高斯核函数的使用进一步展示了核SVM的强大：不需要太多的数据点（仅使用支持向量），也不需要太多的计算（仅在原始<span class="math inline">\(d\)</span>维空间做向量运算），就能得到特别复杂的边界（因为高斯核实际上隐含地将原始数据映射到了无限维空间），而且很鲁棒（SVM本身最大边界的性质）。核函数的简洁性使得我们也不需要去显式地把转换<span class="math inline">\(\boldsymbol{\Phi}\)</span>写出来，对偶SVM的性质使得我们不需要去存储最优的<span class="math inline">\(\bf w\)</span>，只需要存好哪些是支持向量以及这些支持向量对应的<span class="math inline">\(\alpha_n\)</span>就可以</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML19_gaussian_svm.png" alt="使用不同gamma的高斯核的比较"><figcaption>使用不同gamma的高斯核的比较</figcaption>
+</figure>
+<p>上图给出了使用不同<span class="math inline">\(\gamma\)</span>的高斯核SVM的示意图。可以看出，<span class="math inline">\(\gamma\)</span>越大，对应的高斯函数越尖锐，模型越容易过拟合。这里也说明SVM是不容易过拟合，但是不会永远不过拟合。使用高斯核时，<span class="math inline">\(\gamma\)</span>的选取仍然是需要仔细考虑的。当<span class="math inline">\(\gamma\rightarrow \infty\)</span>时，如果<span class="math inline">\(K\)</span>是高斯核函数，则<span class="math inline">\(K({\bf x, x}&#39;) = [\![{\bf x} = {\bf x}&#39;]\!]\)</span></p>
+<h2 id="核的比较">核的比较</h2>
+<p>本讲一共介绍了三种常见的核，下面对它们做一比较</p>
+<ul>
+<li>最简单的线性核<span class="math inline">\(K({\bf x, x}&#39;) = {\bf x^\mathsf{T}x}&#39;\)</span>实际上没有对原始数据做任何变化。这种核最简单最安全，而且最快（直接对原始问题用QP求解器求解）。最后得到的模型解释性也比较强，<span class="math inline">\(\bf w\)</span>会给出每个特征的权重，支持向量会给出每个数据点的重要性。其坏处是可用的场景比较有限，数据并不总是线性可分的。然而无论如何，线性核都是最简单直接的工具，应该在最开始的时候就试用一下</li>
+<li>多项式核<span class="math inline">\(K({\bf x}, {\bf x}&#39;) = (\zeta + \gamma {\bf x^\mathsf{T}x}&#39;)^Q\)</span>的好处是可用场景比线性核要广泛，而且工程师可以通过限制<span class="math inline">\(Q\)</span>的大小来对模型的复杂度加以控制。其坏处是当<span class="math inline">\(Q\)</span>比较大时，如果<span class="math inline">\(|\zeta + \gamma {\bf x^\mathsf{T}x}&#39;| &lt; 1\)</span>则核函数值会逼近0，如果<span class="math inline">\(|\zeta + \gamma {\bf x^\mathsf{T}x}&#39;| &gt; 1\)</span>则核函数值会非常大。总体来讲，数值计算会不太稳定。而且，这个模型里有三个参数<span class="math inline">\((\gamma, \zeta, Q)\)</span>，调参也比较困难。因此，多项式核可能仅适用于<span class="math inline">\(Q\)</span>比较小的场景，而且在这种情况下有时反而把<span class="math inline">\(\boldsymbol{\Phi}({\bf x})\)</span>展开然后代入到线性核求解效率更高</li>
+<li>高斯核<span class="math inline">\(K({\bf x}, {\bf x}&#39;) = \exp\left(-\gamma |\!|{\bf x} - {\bf x}&#39;|\!|^2\right)\)</span>可以算出最复杂的边界，而且由于其值域为<span class="math inline">\((0, 1]\)</span>，计算稳定性也比较高，不会出现浮点数计算的上溢和下溢。这个核函数只有一个参数<span class="math inline">\(\gamma\)</span>可调，也比较容易调参。但是由于它把原始数据映射到无限维空间，因此没有一个直观的<span class="math inline">\(\bf w\)</span>可以用来解释模型。它的计算也比线性核慢，也更容易过拟合。总体来讲，高斯核是一种最常用的核函数，但是用的时候一定要小心</li>
+</ul>
+<p>当然，还可以使用其它核函数。从本质上看，核函数实际上是相似性的某种度量方式，其度量的是<span class="math inline">\(\bf x\)</span>和<span class="math inline">\(\bf x&#39;\)</span>经过变换以后在空间<span class="math inline">\(\mathcal{Z}\)</span>中的相似性。那么所有相似性都能用一个合法的核函数来表示呢？并非总是如此。给定函数<span class="math inline">\(K\)</span>，令<span class="math inline">\(k_{ij} = K({\bf x}_i, {\bf x}_j)\)</span>，则矩阵<span class="math inline">\(\rm K\)</span>必须同时满足以下两个条件（充要条件），<span class="math inline">\(K\)</span>才是合法的核函数。这两个条件包括</p>
+<ul>
+<li><span class="math inline">\(\rm K\)</span>是对称的</li>
+<li><span class="math inline">\(K\)</span>必须是半正定的</li>
+</ul>
+<p>这个条件称为<strong>Mercer条件</strong></p>
+<p>自定义核是可能的，不过需要注意的是，也是很难的</p>
+<hr>
+<p><strong>额外的话</strong></p>
+<p>我大概算了算，这应该是我第五遍听关于SVM的课了（吴恩达Coursera课、吴恩达CS229、白思理哥伦比亚大学EdX课、林轩田课x2）。如果算上看<a href="http://blog.pluskid.org/?page_id=683" target="_blank" rel="noopener">pluskid大神</a>、<a href="http://www.cnblogs.com/jerrylead/archive/2011/03/13/1982639.html" target="_blank" rel="noopener">JerryLead大神</a>两神的文章，SVM的理论我不知道过了多少遍。但是遗憾的是，一是由于我天性驽钝，二是因为我有学而不思的毛病，关于“核方法”这个概念，我每次都是很快拾起，然后更快忘记。这次重听林轩田老师的课，我决定努力从各个方面试着战胜自己一次。其中之一就是试着写一点自己关于核方法的理解，让自己能多思考一点，进而把核方法这个概念和思想留在脑子里的时间延长一些，+ns</p>
+<p>既然是自己理解的，肯定会有这样那样的问题。欢迎在知乎专栏里指正</p>
+<p>首先一点，核方法是一个独立的方法。大部分课程在讲授核方法的时候，都会在讲SVM时引入它。相比较而言，白思理的课程更微妙一些，是先讲核再讲SVM。所以我觉得核方法和SVM的关系应该是这样：核方法提供了一种在低维空间对向量做计算的方式，通过这种方式计算出来的结果，与通过某种映射将原始向量映射到高维空间以后在高维空间做内积的结果是一致的。SVM的对偶问题里计算<span class="math inline">\(\rm Q\)</span>时、根据支持向量计算<span class="math inline">\(b\)</span>时以及对新的<span class="math inline">\(\bf x\)</span>计算估计值<span class="math inline">\(\hat{y}\)</span>时，都有高维空间计算内积的需求，而这个计算恰好能用核函数在原始空间计算的结果替代，如此而已。更简单地说，是SVM可以用到核方法，而不是SVM产生了核方法</p>
+<p>其次一点，在很多讲核SVM的讲义里，都可以看到类似这样的写法（事实上，在林的课件里，就有类似的写法）： <span class="math display">\[
+K\langle{\bf x}, {\bf x}&#39;\rangle = \boldsymbol{\Phi}({\bf x})^\mathsf{T}\boldsymbol{\Phi}({\bf x}&#39;)
+\]</span> 初学者最开始看到这个式子的时候，不知道会不会像驽钝的我一样，开始好奇一些其实不用好奇的问题，例如：</p>
+<ul>
+<li>尖角符号代表了什么意义啊？</li>
+<li>这个对应的<span class="math inline">\(\boldsymbol{\Phi}\)</span>应该是怎样的啊？</li>
+<li>映射了以后的那个高维空间<span class="math inline">\(\mathcal{Z}\)</span>应该是什么样的啊？</li>
+</ul>
+<p>在这里我试着回答以前的我一下</p>
+<ul>
+<li>尖角符号没毛意义，写成<span class="math inline">\(K({\bf x}, {\bf x}&#39;)\)</span>这种普通函数的形式一点问题都没有。核方法的核心是核函数，核函数，归根到底，还是函数，就是给你两个向量，定义一种计算方法，没了。值得玩味的是，这种计算方法里一般会有原始向量的内积运算。多项式核里这个内积是写在明面上的，高斯核稍微不那么明显，但是考虑两点：首先，<span class="math inline">\(|\!|{\bf v}|\!|^2 = {\bf v^\mathsf{T}v}\)</span>，其次，看上面展开计算的式子，其实也有内积的影子</li>
+<li><span class="math inline">\(K\)</span>对应的<span class="math inline">\(\boldsymbol{\Phi}\)</span>和<span class="math inline">\(\mathcal{Z}\)</span>是什么样的，这个在理论证明提出的核函数有效时可能应该需要分析，但是如果只站在应用层面，我觉得是不用太关心的。事实上，提出核函数的目的就是为了避免直接像高维空间的变换和在高维空间的计算，如果问题使得我们必须要提出一个自定义的核函数，证明时只需要证明 1. 这个新的核函数确实好用 2. 这个核函数满足Mercer条件，可能就可以了。另外，讲义中给出了<span class="math inline">\(K\)</span>对应的矩阵<span class="math inline">\(\rm K\)</span>，我甚至怀疑在证明<span class="math inline">\(\rm K\)</span>是半正定的时候，也不需要把所有<span class="math inline">\(\boldsymbol{\Phi}({\bf x}_i)^\mathsf{T}\boldsymbol{\Phi}({\bf x}_j)\)</span>都列出来放在一个大的矩阵里，肯定有其它更抽象的证明方法</li>
+</ul>
+<p>所以最后再唠叨一句，核方法的意义就在于，我们只需要关心核函数<span class="math inline">\(K\)</span>是什么样的就行，它后头的<span class="math inline">\(\boldsymbol{\Phi}, \mathcal{Z}\)</span>都是透明的了</p>
+<p>另外，关于核方法，我的好友咲神写了两篇<a href="http://sakigami-yang.me/2017/08/13/about-kernel-01/" target="_blank" rel="noopener">更干</a>，<a href="http://sakigami-yang.me/2017/08/13/about-kernel-02/" target="_blank" rel="noopener">更数学</a>的博客，也可以作为参考</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/09/23/NTUML-19-Kernel-SVM/" title="NTUML 19. 核支持向量机">txshi-mt.com/2017/09/23/NTUML-19-Kernel-SVM/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/NTUML/" rel="tag"># NTUML</a>
+          
+            <a href="/tags/SVM/" rel="tag"># SVM</a>
+          
+            <a href="/tags/核方法/" rel="tag"># 核方法</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/18/NTUML-18-Dual-SVM/" rel="next" title="NTUML 18. 对偶支持向量机">
+                <i class="fa fa-chevron-left"></i> NTUML 18. 对偶支持向量机
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/09/23/NTUML-20-Soft-Margin-SVM/" rel="prev" title="NTUML 20. 软间隔支持向量机">
+                NTUML 20. 软间隔支持向量机 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#核技巧"><span class="nav-number">1.</span> <span class="nav-text">&#x6838;&#x6280;&#x5DE7;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#多项式核"><span class="nav-number">2.</span> <span class="nav-text">&#x591A;&#x9879;&#x5F0F;&#x6838;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#高斯核"><span class="nav-number">3.</span> <span class="nav-text">&#x9AD8;&#x65AF;&#x6838;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#核的比较"><span class="nav-number">4.</span> <span class="nav-text">&#x6838;&#x7684;&#x6BD4;&#x8F83;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

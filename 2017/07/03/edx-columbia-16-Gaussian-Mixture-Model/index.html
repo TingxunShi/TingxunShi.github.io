@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="EdX-Columbia,GMM," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="软聚类与硬聚类 硬分类：以kmean为代表，每个数据点只被赋给一个簇，即便该数据点离簇的中心点很远 软分类：会对每个点属于哪个簇赋予一个概率（breaks the data across clusters intelligently） 如果使用加权算法，可以把硬聚类的kmean变成软聚类  输入：数据点\(x_1, \ldots, x_n\)，每个\(x \in \mathbb{R}^d\) 目标">
+<meta name="keywords" content="EdX-Columbia,GMM">
+<meta property="og:type" content="article">
+<meta property="og:title" content="EdX Columbia ML 16. 高斯混合模型">
+<meta property="og:url" content="txshi-mt.com/2017/07/03/edx-columbia-16-Gaussian-Mixture-Model/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="软聚类与硬聚类 硬分类：以kmean为代表，每个数据点只被赋给一个簇，即便该数据点离簇的中心点很远 软分类：会对每个点属于哪个簇赋予一个概率（breaks the data across clusters intelligently） 如果使用加权算法，可以把硬聚类的kmean变成软聚类  输入：数据点\(x_1, \ldots, x_n\)，每个\(x \in \mathbb{R}^d\) 目标">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.099Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="EdX Columbia ML 16. 高斯混合模型">
+<meta name="twitter:description" content="软聚类与硬聚类 硬分类：以kmean为代表，每个数据点只被赋给一个簇，即便该数据点离簇的中心点很远 软分类：会对每个点属于哪个簇赋予一个概率（breaks the data across clusters intelligently） 如果使用加权算法，可以把硬聚类的kmean变成软聚类  输入：数据点\(x_1, \ldots, x_n\)，每个\(x \in \mathbb{R}^d\) 目标">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/07/03/edx-columbia-16-Gaussian-Mixture-Model/"/>
+
+
+
+
+
+  <title>EdX Columbia ML 16. 高斯混合模型 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/07/03/edx-columbia-16-Gaussian-Mixture-Model/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">EdX Columbia ML 16. 高斯混合模型</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-03T10:13:56+08:00">
+                Jul 3 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/统计机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">统计机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="软聚类与硬聚类">软聚类与硬聚类</h2>
+<p>硬分类：以kmean为代表，每个数据点只被赋给一个簇，即便该数据点离簇的中心点很远 软分类：会对每个点属于哪个簇赋予一个概率（breaks the data across clusters intelligently）</p>
+<p>如果使用加权算法，可以把硬聚类的kmean变成软聚类</p>
+<blockquote>
+<p>输入：数据点<span class="math inline">\(x_1, \ldots, x_n\)</span>，每个<span class="math inline">\(x \in \mathbb{R}^d\)</span> 目标：以<span class="math inline">\(\phi_i\)</span>和<span class="math inline">\(\mu_k\)</span>为变量，最小化<span class="math inline">\(\mathcal{L} = \sum_{i=1}^n\sum_{k=1}^K\phi_i(k)\frac{||x_i - \mu_k||^2}{\beta}\)</span> 条件：<span class="math inline">\(\phi_i(k)&gt;0, \sum_{i=1}^K \phi_i(k) = 1, \beta&gt;0\)</span> 迭代执行以下两步直至算法终止 1. 更新<span class="math inline">\(\phi\)</span>：对每个<span class="math inline">\(i\)</span>，更新其所属簇的权重 <span class="math display">\[
+\phi_i(k) = \frac{\exp\{-\frac{1}{\beta}||x_i - \mu_k||^2\}}{\sum_j \exp\{-\frac{1}{\beta}||x_i - \mu_j||^2\}},\  {\rm for\  }k=1,\ldots,K
+\]</span> 2. 更新<span class="math inline">\(\mu\)</span>：对每个<span class="math inline">\(k\)</span>，使用加权均值更新<span class="math inline">\(\mu_k\)</span> <span class="math display">\[
+\mu_k = \frac{\sum_i x_i\phi_i(k)}{\sum_i \phi_i(k)}
+\]</span></p>
+</blockquote>
+<h2 id="混合模型">混合模型</h2>
+<p>在之前的加权kmeans算法中，权重向量<span class="math inline">\(\phi_i\)</span>可以看作是<span class="math inline">\(x_i\)</span>赋给每个簇的概率。实际上，<strong>混合模型</strong>是一种概率模型，其中<span class="math inline">\(\phi_i\)</span>是根据模型得出的概率分布。它定义了</p>
+<ul>
+<li>每个簇 (cluster) <span class="math inline">\(c_i\)</span>的先验分布</li>
+<li>给定簇<span class="math inline">\(c_i\)</span>时，数据<span class="math inline">\(x_i\)</span>的似然分布</li>
+</ul>
+<p>可以把这两个概念和Bayes分类器中的类别先验和类条件似然相对比。不过贝叶斯分类器是有监督学习，类（class）是给定的，而混合模型是无监督学习，簇（cluster）是自己推出的</p>
+<p>混合模型是一种生成模型（定义了数据上的概率分布），可以看做是简单分布的加权组合，权重由离散概率分布定义。注意简单分布必须来自于同一个分布族</p>
+<blockquote>
+<p><strong>混合模型</strong> 数据：<span class="math inline">\(x_1,\ldots, x_n\)</span>，其中每个<span class="math inline">\(x_i \in \mathcal{X}\)</span> 模型参数：<span class="math inline">\(K\)</span>维空间上的分布<span class="math inline">\(\pi\)</span>和参数<span class="math inline">\(\theta_1, \ldots, \theta_K\)</span> 生成过程： 1. 生成簇：<span class="math inline">\(c_i \mathop{\sim}^{iid} {\rm Discrete}(\pi) \Rightarrow {\rm Prob}(c_i = k|\pi) = \pi_k\)</span> 2. 生成数据：<span class="math inline">\(x_i \sim p(x|\theta_{c_i})\)</span></p>
+</blockquote>
+<p>每个<span class="math inline">\(x_i\)</span>在初始时会依离散分布<span class="math inline">\(\pi\)</span>分给某个簇<span class="math inline">\(c_i\)</span>。注意簇的参数<span class="math inline">\(\theta\)</span>随其所依赖的分布不同而不同。若我们假设数据是由正态分布生成，则<span class="math inline">\(\theta\)</span>就是<span class="math inline">\(\mu\)</span>和<span class="math inline">\(\Sigma\)</span>。如果两个数据划给同一个簇，则意味着我们假设这两个数据由同一个分布生成。分布实际定义了数据可能出现的区域，权重定义了区域内数据的密度</p>
+<h3 id="高斯混合模型">高斯混合模型</h3>
+<p>这里假设<span class="math inline">\(\pi\)</span>是<span class="math inline">\(K\)</span>维的概率分布（感觉是离散随机变量<span class="math inline">\(\pi\)</span>有<span class="math inline">\(K\)</span>个可能值），对第<span class="math inline">\(k\)</span>个<span class="math inline">\(\mathbb{R}^d\)</span>上的正态分布，其期望和方差为<span class="math inline">\((\mu_k, \Sigma_k)\)</span>。定义<span class="math inline">\(\boldsymbol{\mu} = \{\mu_1, \ldots, \mu_K\}\)</span>，<span class="math inline">\(\boldsymbol{\Sigma} = \{\Sigma_1, \ldots, \Sigma_k\}\)</span>，我们的目的是从给定的数据学习<span class="math inline">\(\pi, \boldsymbol{\mu},\boldsymbol{\Sigma}\)</span>。其中，给定的数据假设以<span class="math inline">\({\rm Discrete}(\pi)\)</span>的分布分配给簇<span class="math inline">\(c_i\)</span>，<span class="math inline">\(c_i\)</span>中的数据<span class="math inline">\(x_i \sim N(\mu_{c_i}, \Sigma_{c_i})\)</span></p>
+<p>解决方法还是求最大似然，具体使用的是EM算法，其中簇<span class="math inline">\(c_i\)</span>是隐变量（辅助变量） <span class="math display">\[
+p(x_1, \ldots, x_n|\pi, \boldsymbol{\mu}, \boldsymbol{\Sigma}) = \prod_{i=1}^n p(x_i|\pi, \boldsymbol{\mu}, \boldsymbol{\Sigma}) = \prod_{i=1}^n \sum_{k=1}^K p(x_i,c_i = k | \pi, \boldsymbol{\mu}, \boldsymbol{\Sigma})
+\]</span> 由于<span class="math inline">\(c_i\)</span>是离散变量，因此将其求和相当于对其积分，也可以消掉辅助变量。这里不通过坐标下降计算<span class="math inline">\(\prod_{i=1}^n p(x_i, c_i|\pi, \boldsymbol{\mu}, \boldsymbol{\Sigma})\)</span>的原因是求解结果最终会把每个数据点指定给一个簇，从而把问题转变成了硬聚类问题。因此，通过把<span class="math inline">\(c_i\)</span>看作是辅助变量，我们使用EM算法是通过<span class="math inline">\(\sum_{i=1}^n \ln p(x_i, c_i|\pi, \boldsymbol{\mu}, \boldsymbol{\Sigma})\)</span>来最大化<span class="math inline">\(\sum_{i=1}^n \ln p(x_i|\pi, \boldsymbol{\mu}, \boldsymbol{\Sigma})\)</span></p>
+<p>套用公式 <span class="math display">\[
+\ln p(x|\theta_1) = \int q(\theta_2)\ln\frac{p(x,\theta_2|\theta_1)}{q(\theta_2)}d\theta_2 + \int q(\theta_2) \ln \frac{q(\theta_2)}{p(\theta_2|x,\theta_1)}d\theta_2
+\]</span> 可知高斯混合模型的EM目标函数是 <span class="math display">\[
+\sum_{i=1}^n \ln p(x_i|\pi, \boldsymbol{\mu}, \boldsymbol{\Sigma}) = \sum_{i=1}^n\sum_{k=1}^K q(c_i = k) \ln \frac{p(x_i, c_i = k|\pi, \boldsymbol{\mu}, \boldsymbol{\Sigma})}{q(c_i = k)} + \sum_{i=1}^n\sum_{k=1}^K q(c_i = k)\ln\frac{q(c_i = k)}{p(c_i|x_i, \pi, \boldsymbol{\mu}, \boldsymbol{\Sigma})}
+\]</span> 在EM算法的一次迭代中，首先要把<span class="math inline">\(q(c_i = k)\)</span>置为<span class="math inline">\(p(c_i = k|x_i ,\pi, \boldsymbol{\mu}, \boldsymbol{\Sigma})\)</span>。由贝叶斯定律<span class="math inline">\(P(A|B) \propto P(A)P(B|A)\)</span>，有 <span class="math display">\[
+\begin{align*}
+p(c_i = k|x_i, \pi, \boldsymbol{\mu}, \boldsymbol{\Sigma}) &amp; \propto p(c_i = k | \pi, \boldsymbol{\mu}, \boldsymbol{\Sigma}) p(x_i|c_i=k, \pi, \boldsymbol{\mu}, \boldsymbol{\Sigma})\\
+&amp;= p(c_i = k|\pi)p(x_i|c_i = k, \boldsymbol{\mu}, \boldsymbol{\Sigma})
+\end{align*}
+\]</span> 可以解得给定<span class="math inline">\(\pi, \boldsymbol{\mu}, \boldsymbol{\Sigma}\)</span>时<span class="math inline">\(c_i\)</span>的后验分布 <span class="math display">\[
+q(c_i = k) = \frac{\pi_k N(x_i|\mu_k, \Sigma_k)}{\sum_j \pi_j N(x_i|\mu_j, \Sigma_j)}
+\]</span> 记上式为<span class="math inline">\(\phi_i(k)\)</span>，则EM算法的E-step和M-step分别为</p>
+<ul>
+<li>E-step：使用更新的<span class="math inline">\(q\)</span>求<span class="math inline">\(Q\)</span>的期望，其中 <span class="math display">\[
+Q= \sum_{i=1}^n\sum_{k=1}^K \phi_i (k) \ln p(x_i,c_i=k|\pi, \mu_k, \Sigma_k) + C
+\]</span></li>
+<li>M-step：对<span class="math inline">\(\pi\)</span>和各自的<span class="math inline">\(\mu_k,\Sigma_k\)</span>求<span class="math inline">\(Q\)</span>的最大值 由于<span class="math inline">\(p(x_i,c_i = k|\pi, \mu_k, \Sigma_k) = \pi_kN(x_i|\mu_k, \Sigma_k)\)</span>，因此<span class="math inline">\(Q=\sum_{i=1}^n \sum_{k=1}^K \phi_i(k) \{\ln \pi_k + \ln N(x_i|\mu_k, \Sigma_k)\}\)</span></li>
+</ul>
+<p>具体的过程如下</p>
+<ul>
+<li>E-step：对<span class="math inline">\(i=1,\ldots,n\)</span>，令 <span class="math display">\[
+\phi_i(k) = \frac{\pi_k N(x_i|\mu_k, \Sigma_k)}{\sum_j \pi_j N(x_i|\mu_j, \Sigma_j)},\  {\rm for\  }k=1,\ldots,K
+\]</span></li>
+<li>M-step：对<span class="math inline">\(k=1,\ldots,K\)</span>，定义<span class="math inline">\(n_k = \sum_{i=1}^n \phi_i(k)\)</span>，更新 <span class="math display">\[
+\begin{align*}
+\pi_k &amp;= \frac{n_k}{n} \\
+\mu_k &amp;= \frac{1}{n_k}\sum_{i=1}^n \phi_i (k)x_i \\
+\Sigma_k &amp;= \frac{1}{n_k}\sum_{i=1}^n \phi_i(k)(x_i - \mu_k)(x_i - \mu_k)^T 
+\end{align*}
+\]</span></li>
+</ul>
+<p>GMM理论上可以学到任意数量的分类，因此会过拟合。解决方法是假设<span class="math inline">\(\pi\)</span>满足Dirichlet分布</p>
+<h3 id="广义混合模型的求解">广义混合模型的求解</h3>
+<p>输入：<span class="math inline">\(x_1,\ldots, x_n\)</span>，其中<span class="math inline">\(x\in \mathcal{X}\)</span> 目标：最大化<span class="math inline">\(\mathcal{L} = \sum_{i=1}^n \ln p(x_i|\pi, \boldsymbol{\theta})\)</span>，其中<span class="math inline">\(p(x|\theta_k)\)</span>是问题相关的 步骤：迭代EM两步直到<span class="math inline">\(\mathcal{L}\)</span>足够小</p>
+<ul>
+<li>E-step：对<span class="math inline">\(i=1,\ldots, n\)</span>，令 <span class="math display">\[
+\phi_i(k) = \frac{\pi_k p(x_i|\theta_k)}{\sum_j \pi_j p(x_i|\theta_j)},\  {\rm for\  }k=1,\ldots,K
+\]</span></li>
+<li>M-step：对<span class="math inline">\(k=1,\ldots, K\)</span>，定义<span class="math inline">\(n_k = \sum_{i=1}^n \phi_i(k)\)</span>，令 <span class="math display">\[
+\pi_k = \frac{n_k}{n}, \theta_k = {\rm arg}\max_\theta \sum_{i=1}^n \phi_i(k)\ln p(x_i|\theta)
+\]</span></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/07/03/edx-columbia-16-Gaussian-Mixture-Model/" title="EdX Columbia ML 16. 高斯混合模型">txshi-mt.com/2017/07/03/edx-columbia-16-Gaussian-Mixture-Model/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/EdX-Columbia/" rel="tag"># EdX-Columbia</a>
+          
+            <a href="/tags/GMM/" rel="tag"># GMM</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/07/03/edx-columbia-15-Maximum-Likelihood-EM-Algorithm/" rel="next" title="EdX Columbia ML 15. 最大似然的EM算法">
+                <i class="fa fa-chevron-left"></i> EdX Columbia ML 15. 最大似然的EM算法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/07/05/edx-columbia-17-Matrix-Factorization-Collaborative-Filtering/" rel="prev" title="Edx Columbia ML 17. 矩阵分解与协同过滤">
+                Edx Columbia ML 17. 矩阵分解与协同过滤 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#软聚类与硬聚类"><span class="nav-number">1.</span> <span class="nav-text">&#x8F6F;&#x805A;&#x7C7B;&#x4E0E;&#x786C;&#x805A;&#x7C7B;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#混合模型"><span class="nav-number">2.</span> <span class="nav-text">&#x6DF7;&#x5408;&#x6A21;&#x578B;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#高斯混合模型"><span class="nav-number">2.1.</span> <span class="nav-text">&#x9AD8;&#x65AF;&#x6DF7;&#x5408;&#x6A21;&#x578B;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#广义混合模型的求解"><span class="nav-number">2.2.</span> <span class="nav-text">&#x5E7F;&#x4E49;&#x6DF7;&#x5408;&#x6A21;&#x578B;&#x7684;&#x6C42;&#x89E3;</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

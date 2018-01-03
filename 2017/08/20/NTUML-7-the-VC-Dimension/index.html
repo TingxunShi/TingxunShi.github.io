@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="NTUML,统计学习理论," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="VC维的定义 第六讲证明，如果样本数\(N\)足够大且假设集合\(\mathcal{H}\)的成长函数\(m_{\mathcal{H}}(N)\)存在突破点，那么就有\(E_{\rm out} \approx E_{\rm in}\)。其中更具体地，如果成长函数存在突破点\(k\)，那么当\(N &amp;gt; k\)时，成长函数的值由上限函数\(B(N, k)\)所限制，该值等于\(\sum_{i=0">
+<meta name="keywords" content="NTUML,统计学习理论">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NTUML 7. VC维">
+<meta property="og:url" content="txshi-mt.com/2017/08/20/NTUML-7-the-VC-Dimension/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="VC维的定义 第六讲证明，如果样本数\(N\)足够大且假设集合\(\mathcal{H}\)的成长函数\(m_{\mathcal{H}}(N)\)存在突破点，那么就有\(E_{\rm out} \approx E_{\rm in}\)。其中更具体地，如果成长函数存在突破点\(k\)，那么当\(N &amp;gt; k\)时，成长函数的值由上限函数\(B(N, k)\)所限制，该值等于\(\sum_{i=0">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML07_vc_message">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.096Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NTUML 7. VC维">
+<meta name="twitter:description" content="VC维的定义 第六讲证明，如果样本数\(N\)足够大且假设集合\(\mathcal{H}\)的成长函数\(m_{\mathcal{H}}(N)\)存在突破点，那么就有\(E_{\rm out} \approx E_{\rm in}\)。其中更具体地，如果成长函数存在突破点\(k\)，那么当\(N &amp;gt; k\)时，成长函数的值由上限函数\(B(N, k)\)所限制，该值等于\(\sum_{i=0">
+<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML07_vc_message">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/08/20/NTUML-7-the-VC-Dimension/"/>
+
+
+
+
+
+  <title>NTUML 7. VC维 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/08/20/NTUML-7-the-VC-Dimension/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NTUML 7. VC维</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-20T20:18:07+08:00">
+                Aug 20 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/统计机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">统计机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="vc维的定义">VC维的定义</h2>
+<p>第六讲证明，如果样本数<span class="math inline">\(N\)</span>足够大且假设集合<span class="math inline">\(\mathcal{H}\)</span>的成长函数<span class="math inline">\(m_{\mathcal{H}}(N)\)</span>存在突破点，那么就有<span class="math inline">\(E_{\rm out} \approx E_{\rm in}\)</span>。其中更具体地，如果成长函数存在突破点<span class="math inline">\(k\)</span>，那么当<span class="math inline">\(N &gt; k\)</span>时，成长函数的值由上限函数<span class="math inline">\(B(N, k)\)</span>所限制，该值等于<span class="math inline">\(\sum_{i=0}^{k-1}{N \choose i}\)</span>，其最高项为<span class="math inline">\(N^{k-1}\)</span>是<span class="math inline">\(N\)</span>的多项式函数。而观察<span class="math inline">\(B(N, k)\)</span>的值表和<span class="math inline">\(N^{k-1}\)</span>的值表，可以发现当<span class="math inline">\(N \ge 2, k\ge 3\)</span>时，<span class="math inline">\(B(N, k)\)</span>就已经很小于<span class="math inline">\(N^{k-1}\)</span>了。因此可以得到成长函数一个宽松的上界，即 <span class="math display">\[
+m_\mathcal{H}(N) \le B(N, k) = \sum_{i=0}^{k-1}{N \choose i} \le N^{k-1}
+\]</span> 由于机器学习算法<span class="math inline">\(\mathcal{A}\)</span>最后只会选择出一个模型<span class="math inline">\(g\)</span>，因此这个模型遭遇“坏事情”（即<span class="math inline">\(|E_{\rm in}(g) - E_{\rm out}(g)|\)</span>比较大）的概率肯定小于<span class="math inline">\(\mathcal{H}\)</span>中任意一个模型<span class="math inline">\(h\)</span>遭遇“坏事情”的概率。再代入前面推出的VC上界和成长函数的上界，对统计上足够大的数据集<span class="math inline">\(\mathcal{D}\)</span>和算法<span class="math inline">\(g = \mathcal{A(D) \in H}\)</span>，如果<span class="math inline">\(k \ge 3\)</span>有（因为已经说了<span class="math inline">\(\mathcal{D}\)</span>足够大，因此肯定有<span class="math inline">\(N\)</span>足够大，即<span class="math inline">\(N \ge 2\)</span>） <span class="math display">\[
+\begin{align*}
+&amp;P_\mathcal{D}\left[|E_{\rm in}(g) - E_{\rm out}(g)| &gt; \epsilon \right] \\
+\le &amp;P_\mathcal{D}[\exists h \in \mathcal{H}{\rm\  s.t.\  }|E_{\rm in}(h) - E_{\rm out}(h)| &gt; \epsilon ] \\
+\le &amp;4m_{\mathcal{H}}(2N)\exp\left(-\frac{1}{8}\epsilon^2N\right) \\
+\le &amp;4(2N)^{k-1}\exp\left(-\frac{1}{8}\epsilon^2N\right)\hspace{3ex}({\rm if\  }k{\rm\  exists})
+\end{align*}
+\]</span> 即在以下三种条件同时满足的情况下，机器可能会学习。包括</p>
+<ul>
+<li>成长函数的停止点为<span class="math inline">\(k\)</span>（<span class="math inline">\(\mathcal{H}\)</span>足够好）</li>
+<li><span class="math inline">\(N\)</span>足够大，可以一般化结论<span class="math inline">\(E_{\rm out} \approx E_{\rm in}\)</span>（<span class="math inline">\(\mathcal{D}\)</span>足够好）</li>
+<li>算法<span class="math inline">\(\mathcal{A}\)</span>选出的模型<span class="math inline">\(g\)</span>能有足够小的<span class="math inline">\(E_{\rm in}\)</span>（<span class="math inline">\(\mathcal{A}\)</span>足够好）</li>
+</ul>
+<p>（以及一点好的运气）</p>
+<p>那么这些推导与VC维有什么关系？简单说，<strong>VC维是“最大非停止点”的更正式的说法</strong>，是假设函数集<span class="math inline">\(\mathcal{H}\)</span>的一种性质。在<span class="math inline">\(N\)</span>小于等于<span class="math inline">\(\mathcal{H}\)</span>的VC维（记为<span class="math inline">\(d_{\rm VC}(\mathcal{H})\)</span>）时，存在某种形式的<span class="math inline">\(N\)</span>个输入可以被<span class="math inline">\(\mathcal{H}\)</span>打散；当<span class="math inline">\(N &gt; d_{\rm VC}(\mathcal{H})\)</span>时，任意<span class="math inline">\(N\)</span>个输入都不能被<span class="math inline">\(\mathcal{H}\)</span>打散，即达到了停止点。这个定义可以写作</p>
+<blockquote>
+<p><span class="math inline">\(\mathcal{H}\)</span>的VC维，记做<span class="math inline">\(d_{\rm VC}(\mathcal{H})\)</span>，指的是满足<span class="math inline">\(m_\mathcal{H}(N) = 2^N\)</span>的最大的<span class="math inline">\(N\)</span>。从数值上，其等于最小的停止点<span class="math inline">\(k\)</span>减去1</p>
+</blockquote>
+<p>如果<span class="math inline">\(\mathcal{H}\)</span>没有停止点，则<span class="math inline">\(d_{\rm VC}(\mathcal{H}) = \infty\)</span></p>
+<p>化用前面的结论，有当<span class="math inline">\(N\ge 2, d_{\rm VC} \ge 2\)</span>时，<span class="math inline">\(m_\mathcal{H}(N) \le N^{d_{\rm VC}}\)</span></p>
+<p>那么第六讲中分析的一些<span class="math inline">\(\mathcal{H}\)</span>的VC维如下所示：</p>
+<ul>
+<li>正射线的VC维是1</li>
+<li>正区间的VC维是2</li>
+<li>凸集的VC维是<span class="math inline">\(\infty\)</span></li>
+<li>二维空间中感知机的VC维是3</li>
+</ul>
+<p>即“好的假设集”总是有有限的VC维，这意味着其会将<span class="math inline">\(E_{\rm out}(g) \approx E_{\rm in}(g)\)</span>一般化，而且与算法<span class="math inline">\(\mathcal{A}\)</span>的形式、数据的分布<span class="math inline">\(P\)</span>和目标函数<span class="math inline">\(f\)</span>的形式都无关</p>
+<p>（注意由本节的fun time，即便对<strong>某</strong><span class="math inline">\(N\)</span>个输入不能被<span class="math inline">\(\mathcal{H}\)</span>打散，也不能确定<span class="math inline">\(d_{\rm VC}(\mathcal{H})\)</span>与<span class="math inline">\(N\)</span>的关系。如果要有<span class="math inline">\(d_{\rm VC}(\mathcal{H}) &lt; N\)</span>，要求的是<strong>任意</strong><span class="math inline">\(N\)</span>个输入都不能被<span class="math inline">\(\mathcal{H}\)</span>打散）</p>
+<h2 id="感知机的vc维">感知机的VC维</h2>
+<p>对于二维的感知机，一方面，如果数据集<span class="math inline">\(\mathcal{D}\)</span>线性可分，意味着感知机PLA算法可以收敛，即当迭代了足够的步数<span class="math inline">\(T\)</span>以后，有<span class="math inline">\(E_{\rm in}(g) = 0\)</span>。另一方面，如果数据来自于某个概率分布，且标签由某个确定的目标函数所产生（即<span class="math inline">\({\bf x}_n \sim P, y_n = f({\bf x}_n)\)</span>，那么由于二维感知机的VC维是3，因此“坏事情”发生的概率很小，<span class="math inline">\(N\)</span>足够大时，有<span class="math inline">\(E_{\rm out}(g) \approx E_{\rm in}(g)\)</span>。两者综合起来，有<span class="math inline">\(E_{\rm out}(g) \approx 0\)</span>，即二维感知机算法是能达到学习效果的</p>
+<p>同样的推论能否应用在<span class="math inline">\(\bf x\)</span>有多于两个特征的情况？回顾之前的分析，一维感知机（正/负射线）的VC维是2，二维感知机的VC维是3，那么是否有<span class="math inline">\(d\)</span>维感知机的VC维是<span class="math inline">\(d+1\)</span>？接下来试着证明之（本节简记“<span class="math inline">\(d\)</span>维空间感知机的VC维”为<span class="math inline">\(d_{\rm VC}\)</span> ）：</p>
+<p>首先证明<span class="math inline">\(d_{\rm VC} \ge d + 1\)</span>。若要证明该命题，只需构造<span class="math inline">\(d + 1\)</span>个输入，使得该输入可以被感知机假设集<span class="math inline">\(\mathcal{H}\)</span>打散即可。我们做如下构造：这<span class="math inline">\(d+1\)</span>条数据中，第一条是<span class="math inline">\(d\)</span>维空间的零点，第二条到第d+1条中第<span class="math inline">\(i\  (i = \{1,2,\ldots, d\})\)</span>个分量为1其它分量为0。将<span class="math inline">\(x_0 = 1\)</span>补入矩阵，有 <span class="math display">\[
+{\rm X} = \left[\begin{matrix} -{\bf x}_1^\mathsf{T} - \\ -{\bf x}_2^\mathsf{T} - \\ -{\bf x}_3^\mathsf{T} - \\  \vdots \\ -{\bf x}_{d+1}^\mathsf{T} -   \end{matrix}\right] = \left[\begin{matrix}1 &amp; 0 &amp; 0 &amp; \cdots &amp; 0\\ 1 &amp; 1 &amp; 0 &amp; \cdots &amp; 0 \\ 1 &amp; 0 &amp; 1 &amp; \cdots &amp; 0 \\ \vdots &amp; \vdots &amp; &amp; \ddots &amp;\vdots \\ 1 &amp; 0 &amp; 0 &amp; \cdots &amp; 1\end{matrix}\right]
+\]</span> 注意<span class="math inline">\(\rm X\)</span>是可逆的，即其逆矩阵存在且唯一。而“打散”意味着，对于任意一种<span class="math inline">\(y_1, y_2 ,\cdots, y_{d+1}\)</span>的排列组合<span class="math inline">\(\bf y\)</span>，总有<span class="math inline">\({\rm sign}({\rm X}{\bf w}) = {\bf y}\)</span>。而由于若<span class="math inline">\({\rm X}{\bf w} = {\bf y}\)</span>，前面的式子也成立。又因为<span class="math inline">\(\rm X\)</span>可逆，因此只需要使权重<span class="math inline">\(\bf w\)</span>为<span class="math inline">\({\rm X}^{-1}{\bf y}\)</span>，就可以满足对任意的<span class="math inline">\(\bf y\)</span>有<span class="math inline">\({\rm sign}({\rm X}{\bf w}) = {\bf y}\)</span>，因此这个<span class="math inline">\({\rm X}\)</span>可以被<span class="math inline">\(\mathcal{H}\)</span>打散，<span class="math inline">\(d_{\rm VC} \ge d + 1\)</span></p>
+<p>接下来证明<span class="math inline">\(d_{\rm VC} \le d+1\)</span>，即任何<span class="math inline">\(d+2\)</span>个输入都不能被<span class="math inline">\(\mathcal{H}\)</span>打散。要证明这个任意性比较困难，但是可以先回到二维空间再仔细研究一番。</p>
+<p>之前提到，如果输入三个点位于直角坐标系中<span class="math inline">\((0,0), (0,1), (1,0)\)</span>这三个点，那么输入可以被<span class="math inline">\(\mathcal{H}\)</span>打散。如果加入第四个点<span class="math inline">\((1,1)\)</span>会怎么样？首先可以把这四个点写出来放进矩阵中，即 <span class="math display">\[
+{\rm X} = \left[\begin{matrix} -{\bf x}_1^\mathsf{T} - \\ -{\bf x}_2^\mathsf{T} - \\ -{\bf x}_3^\mathsf{T} - \\   -{\bf x}_{4}^\mathsf{T} -   \end{matrix}\right] = \left[\begin{matrix}1 &amp; 0 &amp; 0 \\ 1 &amp; 1 &amp; 0 \\ 1 &amp; 0 &amp; 1  \\ 1 &amp; 1 &amp; 1\end{matrix}\right]
+\]</span> 进一步，假设<span class="math inline">\(y_2 = y_3 = \circ (+1), y_1 = \times (-1)\)</span>，由前面的分析可知<span class="math inline">\(y_4\)</span>一定不能为<span class="math inline">\(\times\)</span>，否则整个数据集线性不可分。接下来解释为什么会出现这样的情况（或者说，来看如果数据集线性可分那为什么<span class="math inline">\(y_4\)</span>一定为<span class="math inline">\(\circ\)</span>）</p>
+<p>根据矩阵中的关系，可以得到<span class="math inline">\({\bf x}_4 = {\bf x}_2 + {\bf x}_3 - {\bf x}_1\)</span>。由于数据集线性可分，因此存在一个最优的权重<span class="math inline">\(\bf w\)</span>。将这个权重左乘到等式中，有<span class="math inline">\({\bf w}^\mathsf{T}{\bf x}_4 = {\bf w}^\mathsf{T}{\bf x}_2 + {\bf w}^\mathsf{T}{\bf x}_3 - {\bf w}^\mathsf{T}{\bf x}_1\)</span> 。又<span class="math inline">\(y_2 = y_3 = +1, y_1=-1\)</span>，由<span class="math inline">\(\rm sign\)</span>函数的性质可知必然有<span class="math inline">\({\bf w}^\mathsf{T}{\bf x}_2 &gt; 0, {\bf w}^\mathsf{T}{\bf x}_3 &gt; 0, {\bf w}^\mathsf{T}{\bf x}_1 &lt; 0\)</span>。但是由于<span class="math inline">\({\bf w}^\mathsf{T}{\bf x}_1\)</span>这一项前面是符，因此将这些负号系代入，可知<span class="math inline">\({\bf w}^\mathsf{T}{\bf x}_4\)</span>必然大于0，对应为<span class="math inline">\(y_4\)</span>必然是正的。造成这种现象的根源是<span class="math inline">\({\bf x}_4\)</span>是其它三项的线性组合，数据集线性相关。因此可以得到结论：<strong>输入数据的线性相关性限制了二分法分类器的种类数目</strong></p>
+<p>将上面的推导过程推广到<span class="math inline">\(d\)</span>维空间。假设<span class="math inline">\({\bf x}\)</span>有<span class="math inline">\(d\)</span>个维度，补入<span class="math inline">\(x_0\)</span>以后有<span class="math inline">\(d+1\)</span>个维度，现在数据集里有<span class="math inline">\(d+2\)</span>条数据。由线性代数的知识可知，这<span class="math inline">\(d+2\)</span>个变量肯定线性相关，因此存在不全为0的<span class="math inline">\(a_i\)</span>使得<span class="math inline">\({\bf x}_{d+2} = a_1{\bf x}_1 + a_2{\bf x}_2 + \ldots + a_{d+1}{\bf x}_{d + 1}\)</span>。如果<span class="math inline">\(\bf w\)</span>与各个<span class="math inline">\(\bf x_i\)</span>的内积得到的符号恰好是<span class="math inline">\(a_i\)</span>的符号，那么<span class="math inline">\({\bf w}^\mathsf{T}{\bf x}_{d+2}\)</span>的符号一定是正的，<span class="math inline">\(y_{d+2}\)</span>不可能属于负类。因此任何<span class="math inline">\(\rm X\)</span>不能被打散</p>
+<p>（这里有一种更直接而且更严谨的说法：由于线性相关性的存在，<span class="math inline">\({\bf x}_{d+2}\)</span>的符号完全剩余<span class="math inline">\(d+1\)</span>个<span class="math inline">\({\bf x}\)</span>决定。如果最优的<span class="math inline">\(\bf w\)</span>也存在，那么<span class="math inline">\({\bf w}^\mathsf{T}{\bf x}_{d+2}\)</span>的符号一定是确定的，如果<span class="math inline">\(y_{d+2}\)</span>的符号和这个确定的符号不一致，那么就会线性不可分，也就是说<span class="math inline">\(\rm X\)</span>不能被打散）</p>
+<p>因此，<span class="math inline">\(d_{\rm VC} \ge d + 1, d_{\rm VC} \le d + 1 \Rightarrow d_{\rm VC} = d+1\)</span></p>
+<p><span class="math inline">\(\blacksquare\)</span></p>
+<h2 id="vc维的物理意义">VC维的物理意义</h2>
+<p>在前面的证明中可以发现一个有趣的现象：<span class="math inline">\(d\)</span>维感知机的VC维是<span class="math inline">\(d+1\)</span>，同时其权重又有<span class="math inline">\(d+1\)</span>个分量，两者之间是否存在关系？可以认为假设参数<span class="math inline">\({\bf w} = （w_0, w_1, \ldots, w_d)\)</span>定义了<strong>自由度</strong>的概念，而VC维的物理意义可以理解为假设集<span class="math inline">\(\mathcal{H}\)</span>在做二元分类问题时自由度的的大小。自由度越大，VC维越大，分类器能力越强。</p>
+<p>例如，正射线的VC维是1，其自由变量正好也有一个，是<span class="math inline">\(a\)</span>（大于<span class="math inline">\(a\)</span>的都标为正）。正区间的VC维是2，其自由变量正好也有两个，是<span class="math inline">\(\ell\)</span>和<span class="math inline">\(r\)</span>（落在区间<span class="math inline">\([\ell, r)\)</span>的都标为正）。因此，<em>大致上</em>可以理解为，VC维就是模型可调节的自由参数数量（不过这个说法并不总是对的）。</p>
+<p>既然VC维代表了<span class="math inline">\(\mathcal{H}\)</span>的自由度，回顾第五讲，当时有一个大<span class="math inline">\(M\)</span>小<span class="math inline">\(M\)</span>的权衡问题：小<span class="math inline">\(M\)</span>可以保证<span class="math inline">\(E_\rm{in}\)</span>和<span class="math inline">\(E_\rm{out}\)</span>接近，但是选择太少，可能找不到使<span class="math inline">\(E_\rm{in}\)</span>很小的<span class="math inline">\(g\)</span>；而大<span class="math inline">\(M\)</span>可以找到使<span class="math inline">\(E_{\rm in}\)</span>很小的<span class="math inline">\(g\)</span>，却不能保证“坏事情”发生的概率很小。由于前面对VC上界的推导证明当<span class="math inline">\(\mathcal{H}\)</span>无限时<span class="math inline">\(M\)</span>可以被<span class="math inline">\(2(2N)^{d_\rm{VC}}\)</span>所代替，因此可以类似地说，VC维小可以保证<span class="math inline">\(E_\rm{in}\)</span>和<span class="math inline">\(E_\rm{out}\)</span>接近，但是模型的能力太弱，可能找不到使<span class="math inline">\(E_\rm{in}\)</span>很小的<span class="math inline">\(g\)</span>；而VC维大意味着模型能力足够强，可以找到使<span class="math inline">\(E_{\rm in}\)</span>很小的<span class="math inline">\(g\)</span>，却不能保证“坏事情”发生的概率很小。这说明，<strong>选择合适的VC维（也就是选择合适的假设集合<span class="math inline">\(\mathcal{H}\)</span>），是非常重要的！</strong></p>
+<h2 id="对vc维的更深入解释">对VC维的更深入解释</h2>
+<p>要想更深入地解释VC维，需要对原有VC上界的形式做一个改写。记原有的VC上界为<span class="math inline">\(\delta\)</span>，即 <span class="math display">\[
+\delta = 4(2N)^{d_{\rm VC}}\exp\left(-\frac{1}{8}\epsilon^2N\right)
+\]</span> 从另一个角度看，该上界是“坏事情”发生概率的上界，同时也可以据此求出是“好事情”（即<span class="math inline">\(|E_\rm{in} (g) - E_\rm{out}(g)| \le \epsilon\)</span>）发生的概率的下界。有 <span class="math display">\[
+P[|E_\rm{in} (g) - E_\rm{out}(g)| \le \epsilon] \ge 1-\delta
+\]</span> 对刚才<span class="math inline">\(\delta\)</span>的表达式做简单代数变换，可以得到<span class="math inline">\(\epsilon\)</span>的表达式 <span class="math display">\[
+\epsilon = \sqrt{\frac{8}{N}\ln\left(\frac{4(2N)^{d_{\rm VC}}}{\delta}\right)}
+\]</span> 称<span class="math inline">\(|E_\rm{in} (g) - E_\rm{out}(g)|\)</span>为一般化误差，可知 <span class="math display">\[
+|E_\rm{in} (g) - E_\rm{out}(g)| \le \sqrt{\frac{8}{N}\ln\left(\frac{4(2N)^{d_{\rm VC}}}{\delta}\right)}
+\]</span> 因此可以得到<span class="math inline">\(E_\rm{out}\)</span>类似“置信区间”的范围，为 <span class="math display">\[
+E_{\rm{in}}(g) - \sqrt{\frac{8}{N}\ln\left(\frac{4(2N)^{d_{\rm VC}}}{\delta}\right)} \le E_{\rm out}(g) \le E_{\rm in} + \sqrt{\frac{8}{N}\ln\left(\frac{4(2N)^{d_{\rm VC}}}{\delta}\right)}
+\]</span> 一般不关心<span class="math inline">\(E_\rm{out}\)</span>的下界，但是会关心其上界。其中根号里面的项称为<strong>模型复杂度</strong>，可以看作是关于样本大小、假设集合和VC上界的函数<span class="math inline">\(\Omega(N, \mathcal{H}, \delta)\)</span>，而<span class="math inline">\(\sqrt{\Omega(N, \mathcal{H}, \delta)}\)</span>称作<em>模型复杂度提升带来的代价</em>。</p>
+<p>可以把VC维和模型在样本内外的误差之间的关系作图表示</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML07_vc_message" alt="VC维与样本内外误差之间的关系"><figcaption>VC维与样本内外误差之间的关系</figcaption>
+</figure>
+<p>从图中可知，随着<span class="math inline">\(d_\rm{VC}\)</span>变大，模型可以打散的输入越多，因此<span class="math inline">\(E_\rm{in}\)</span>会变小。但是这样会使得模型复杂度提高。当<span class="math inline">\(d_\rm{VC}\)</span>维不那么大的时候，<span class="math inline">\(E_{\rm in}\)</span>下降的速度超过模型复杂度提升的速度，<span class="math inline">\(E_{\rm out}\)</span>会下降。但是超过某个临界点<span class="math inline">\(d_{\rm VC}^\ast\)</span>以后，模型复杂度提升的速度更快，<span class="math inline">\(E_{\rm out}\)</span>经过最小值以后会上升。这意味着最好的VC维<span class="math inline">\(d_{\rm VC}^\ast\)</span>通常在中间取得，并不是越大越好。考虑到VC维和模型复杂度的关系，这说明<strong><span class="math inline">\(\mathcal{H}\)</span>并非总是越强大越好！</strong></p>
+<p>VC维的另外一个作用就是可以决定样本复杂度，即做多大的采样能够将“坏事件“（训练集内外误差差值大于<span class="math inline">\(\epsilon\)</span>）发生的概率控制在<span class="math inline">\(\delta\)</span>以内。例如，如果<span class="math inline">\(\epsilon=0.1, \delta=0.1, d_\rm{VC} = 3\)</span>，那么理论上需要采集29300条数据才能满足要求，此时样本数<span class="math inline">\(N \approx 10000d_\rm{VC}\)</span>。不过实践中，通常<span class="math inline">\(N \approx 10d_{\rm VC}\)</span>就够用了。这意味着，VC上界是一个非常宽松的上界，这是因为</p>
+<ul>
+<li>使用了Hoeffding不等式，这个上界估计独立于产生数据的概率分布，也独立于目标函数的形式</li>
+<li>使用了成长函数<span class="math inline">\(m_\mathcal{H}(N)\)</span>而没有使用假设函数个数<span class="math inline">\(|\mathcal{H}({\bf x}_1 , \ldots {\bf x}_N)|\)</span>，因此独立于具体的数据（成长函数也是高估）</li>
+<li>使用了多项式上限<span class="math inline">\(N^{d_\rm{VC}}\)</span>来代替成长函数<span class="math inline">\(m_\mathcal{H}(N)\)</span>，因此独立于任何假设函数集合<span class="math inline">\(\mathcal{H}\)</span>，只用考虑VC维这一个参数</li>
+<li>使用了事件并的发生概率的上界，即将算法<span class="math inline">\(\mathcal{A}\)</span>选出遇到”坏事件“假设函数的概率提高了很多</li>
+</ul>
+<p>即计算VC上界时采用了很多宽松的估计。不过在理论上，这个上界想改进，让它更紧一些，也比较难。因此之后设计算法时，更多要注意的是VC上界背后透露的哲学思想，以此来作指导（例如不能让<span class="math inline">\(\mathcal{H}\)</span>太过强大等等）。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/08/20/NTUML-7-the-VC-Dimension/" title="NTUML 7. VC维">txshi-mt.com/2017/08/20/NTUML-7-the-VC-Dimension/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/NTUML/" rel="tag"># NTUML</a>
+          
+            <a href="/tags/统计学习理论/" rel="tag"># 统计学习理论</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/08/16/NTUML-6-Theory-of-Generalization/" rel="next" title="NTUML 6. 一般化理论">
+                <i class="fa fa-chevron-left"></i> NTUML 6. 一般化理论
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/08/21/NTUML-8-Noise-and-Error/" rel="prev" title="NTUML 8. 噪声和错误">
+                NTUML 8. 噪声和错误 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#vc维的定义"><span class="nav-number">1.</span> <span class="nav-text">VC&#x7EF4;&#x7684;&#x5B9A;&#x4E49;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#感知机的vc维"><span class="nav-number">2.</span> <span class="nav-text">&#x611F;&#x77E5;&#x673A;&#x7684;VC&#x7EF4;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#vc维的物理意义"><span class="nav-number">3.</span> <span class="nav-text">VC&#x7EF4;&#x7684;&#x7269;&#x7406;&#x610F;&#x4E49;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对vc维的更深入解释"><span class="nav-number">4.</span> <span class="nav-text">&#x5BF9;VC&#x7EF4;&#x7684;&#x66F4;&#x6DF1;&#x5165;&#x89E3;&#x91CA;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="NTUML,正则化," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="什么是过拟合 假设现在要做一个一维数据集的回归分析，数据集一共有5个点，目标函数是一个二次函数，所有的\(x_i, i = 1, 2, 3, 4, 5\)都是随机产生，其对应的标签\(y_i\)是对应的目标函数值加上一点微小的噪声。由于拿到数据集以后并不知道目标函数的形式，因此一种思路是使用前面提到的多项式变换，引入一些四维特征。这样，拟合出的四维函数\(g\)可以完美地穿过这五个点，做到\(E_">
+<meta name="keywords" content="NTUML,正则化">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NTUML 13. 过拟合的危害">
+<meta property="og:url" content="txshi-mt.com/2017/09/09/NTUML-13-Hazard-of-Overfitting/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="什么是过拟合 假设现在要做一个一维数据集的回归分析，数据集一共有5个点，目标函数是一个二次函数，所有的\(x_i, i = 1, 2, 3, 4, 5\)都是随机产生，其对应的标签\(y_i\)是对应的目标函数值加上一点微小的噪声。由于拿到数据集以后并不知道目标函数的形式，因此一种思路是使用前面提到的多项式变换，引入一些四维特征。这样，拟合出的四维函数\(g\)可以完美地穿过这五个点，做到\(E_">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML13_overfit_example.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML13_high_order_target_functions.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML13_high_order_target_functions_learning_curves.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML13_sigma_n_impact.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML13_qf_n_impact.png">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.090Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NTUML 13. 过拟合的危害">
+<meta name="twitter:description" content="什么是过拟合 假设现在要做一个一维数据集的回归分析，数据集一共有5个点，目标函数是一个二次函数，所有的\(x_i, i = 1, 2, 3, 4, 5\)都是随机产生，其对应的标签\(y_i\)是对应的目标函数值加上一点微小的噪声。由于拿到数据集以后并不知道目标函数的形式，因此一种思路是使用前面提到的多项式变换，引入一些四维特征。这样，拟合出的四维函数\(g\)可以完美地穿过这五个点，做到\(E_">
+<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML13_overfit_example.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/09/09/NTUML-13-Hazard-of-Overfitting/"/>
+
+
+
+
+
+  <title>NTUML 13. 过拟合的危害 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/09/09/NTUML-13-Hazard-of-Overfitting/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NTUML 13. 过拟合的危害</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-09T22:47:55+08:00">
+                Sep 9 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/统计机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">统计机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="什么是过拟合">什么是过拟合</h2>
+<p>假设现在要做一个一维数据集的回归分析，数据集一共有5个点，目标函数是一个二次函数，所有的<span class="math inline">\(x_i, i = 1, 2, 3, 4, 5\)</span>都是随机产生，其对应的标签<span class="math inline">\(y_i\)</span>是对应的目标函数值加上一点微小的噪声。由于拿到数据集以后并不知道目标函数的形式，因此一种思路是使用前面提到的多项式变换，引入一些四维特征。这样，拟合出的四维函数<span class="math inline">\(g\)</span>可以完美地穿过这五个点，做到<span class="math inline">\(E_{\rm in}(g) = 0\)</span>。但是显而易见，这种情况下<span class="math inline">\(E_{\rm out}(g)\)</span>会非常大，导致了比较差的泛化结果。前面曾经提到过，当<span class="math inline">\(h\)</span>的VC维特别大时，就会导致这种情况发生。只有当<span class="math inline">\(h\)</span>的VC维取到最优情况<span class="math inline">\(d_{\rm VC}^\ast\)</span>时，才能使得<span class="math inline">\(E_{\rm in}\)</span>和<span class="math inline">\(E_{\rm out}\)</span>都取到最小。当<span class="math inline">\(h\)</span>的VC维很大，超过<span class="math inline">\(d_{\rm VC}^\ast\)</span>时，随着VC维的升高，<span class="math inline">\(E_{\rm in}\)</span>仍然会降低，但是<span class="math inline">\(E_{\rm out}\)</span>会不降反增。称这种现象为<strong>过拟合</strong>。对应地，当<span class="math inline">\(h\)</span>的VC维比较小，没有达到<span class="math inline">\(d_{\rm VC}^\ast\)</span>时，随着VC维的减小，<span class="math inline">\(E_{\rm in}\)</span>和<span class="math inline">\(E_{\rm out}\)</span>都会增加。称这种现象为<strong>欠拟合</strong>。下图给出了一个关于过拟合的状况示例</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML13_overfit_example.png" alt="过拟合的例子。左图是使用复杂度恰到好处的模型拟合的结果，右边是使用过于复杂的模型拟合的结果"><figcaption>过拟合的例子。左图是使用复杂度恰到好处的模型拟合的结果，右边是使用过于复杂的模型拟合的结果</figcaption>
+</figure>
+<p>以上所讲的概念可以用开车的过程做类比——</p>
+<ul>
+<li>过拟合，类似于出车祸</li>
+<li>使用太复杂，<span class="math inline">\(d_{\rm VC}\)</span>太大的模型，类似于开太快</li>
+<li>数据中噪声比较多，类似于路面情况不平</li>
+<li>数据集大小<span class="math inline">\(N\)</span>比较小，类似于司机对路面状况观察比较有限，对路况不熟</li>
+</ul>
+<h2 id="噪声与数据集大小的角色">噪声与数据集大小的角色</h2>
+<p>接下来进行更多的实验来探索过拟合这一现象。我们设计了两个不同的目标函数和数据集，其分别为</p>
+<ul>
+<li>目标函数是某个十次多项式，数据产生时加入一些噪声，产生15个数据点</li>
+<li>目标函数是某个50次多项式，数据产生时不加入噪声，产生15个数据点</li>
+</ul>
+<p>然后，对这两个数据集，都使用二次多项式和十次多项式拟合，观察这两个模型的效果。记二次多项式模型为<span class="math inline">\(g_2 \in \mathcal{H}_2\)</span>，十次多项式模型为<span class="math inline">\(g_{10} \in \mathcal{H}_{10}\)</span>。下图给出了两组方法在两组数据集上的效果比较。绿色为<span class="math inline">\(g_2\)</span>，红色为<span class="math inline">\(g_{10}\)</span></p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML13_high_order_target_functions.png" alt="二次多项式模型与十次多项式模型在两数据集上效果的比较。左边数据集由某个十次多项式产生，噪声适中；右边数据集由某个50次多项式产生，噪声非常小"><figcaption>二次多项式模型与十次多项式模型在两数据集上效果的比较。左边数据集由某个十次多项式产生，噪声适中；右边数据集由某个50次多项式产生，噪声非常小</figcaption>
+</figure>
+<p>对于左边的数据集，<span class="math inline">\(g_2\)</span>的<span class="math inline">\(E_{\rm in}\)</span>为0.050，<span class="math inline">\(g_{10}\)</span>的<span class="math inline">\(E_{\rm in}\)</span>为0.034，后者稍胜。但是前者的<span class="math inline">\(E_{\rm out}\)</span>为0.127，后者达到了9。对于右边的数据集，<span class="math inline">\(g_2\)</span>的<span class="math inline">\(E_{\rm in}\)</span>为0.029，<span class="math inline">\(g_{10}\)</span>的<span class="math inline">\(E_{\rm in}\)</span>为0.00001。而<span class="math inline">\(E_{\rm out}\)</span>的差距更多：前者0.120，后者居然达到了7680！可以看到，在这样两个由高次多项式产生的数据集上，使用高次多项式拟合出来的模型仍然发生了严重的过拟合现象。尤其是对于由十次多项式产生的数据集，按照道理，二次多项式模型应该没有能力在其上获得很好的效果，但是其<span class="math inline">\(E_{\rm out}\)</span>却的确取得了一个比较令人满意的结果。应该如何解释这种“以退为进”的现象？</p>
+<p>这里回顾一下对不同的假设集合，其<span class="math inline">\(E_{\rm in}\)</span>/<span class="math inline">\(E_{\rm out}\)</span>与数据集大小<span class="math inline">\(N\)</span>之间的关系，可见下图</p>
+<p><img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML13_high_order_target_functions_learning_curves.png"></p>
+<p>如图所示，所有的二次多项式假设集<span class="math inline">\(\mathcal{H}_2\)</span>和所有的十次多项式假设集<span class="math inline">\(\mathcal{H}_{10}\)</span>都遵循了同样的规律：</p>
+<ul>
+<li>随着数据量<span class="math inline">\(N\)</span>的增长，<span class="math inline">\(E_{\rm out}\)</span>会下降，<span class="math inline">\(E_{\rm in}\)</span>会上升。最后当<span class="math inline">\(N\rightarrow \infty\)</span>时，<span class="math inline">\(|E_{\rm in} - E_{\rm out}| \rightarrow 0\)</span></li>
+<li><span class="math inline">\(E_{\rm in}\)</span>永远小于<span class="math inline">\(E_{\rm out}\)</span>。因为模型在学习数据时，总会学习到其所看见的数据中的噪声，并对其进行拟合。而对看不见的数据就难以对噪声拟合很好。由于假设数据集噪声的期望为0，因此当偏向一面时，就会远离另一面</li>
+<li><span class="math inline">\(\mathcal{H}_{10}\)</span>的<span class="math inline">\(E_{\rm in}\)</span>永远低于<span class="math inline">\(\mathcal{H}_2\)</span>的</li>
+</ul>
+<p>除此以外，当<span class="math inline">\(N\rightarrow \infty\)</span>时，更复杂的<span class="math inline">\(\mathcal{H}_{10}\)</span>的确会得到更好的<span class="math inline">\(E_{\rm out}\)</span>。因为模型VC维更大，能力更强。但是当<span class="math inline">\(N\)</span>不够大时，<span class="math inline">\(\mathcal{H}_{10}\)</span>的<span class="math inline">\(E_{\rm out}\)</span>会非常大。实际上，图中显示，当<span class="math inline">\(N\)</span>比较小时（落在灰色区域），<span class="math inline">\(E_{\rm out}(\mathcal{H}_{10}) &gt; E_{\rm out}(\mathcal{H}_{2})\)</span>，表现出了过拟合（“聪明反被聪明误”）。因此，<strong>数据量不够大时，总应该使用更简单的模型！</strong></p>
+<p>但是这里有一个问题：对于第二个数据集，明明数据集里没有噪声，为什么简单的模型表现也会好？实际上，模型复杂度提升以后，其效果可以看做是类似于往数据集里添加了噪声。这一情况将在下节继续探讨</p>
+<h2 id="确定性噪声">确定性噪声</h2>
+<p>接下来看一个更细节的实验，来观察何时会发生过拟合。想象数据产生的过程为目标函数加上一些随机噪声，即<span class="math inline">\(y = f(x) + \epsilon\)</span>。其中噪声的分布为方差为<span class="math inline">\(\sigma^2\)</span>的高斯分布。因此有 <span class="math display">\[
+y \sim {\rm Gaussian}\left(\underbrace{\sum_{q=0}^{Q_t}\alpha_qx^q}_{f(x)}, \sigma^2\right)
+\]</span> 这里，<span class="math inline">\(\sigma^2\)</span>控制了噪声的强度，<span class="math inline">\(f(x)\)</span>控制了模型的复杂度。记<span class="math inline">\(f(x)\)</span>的复杂度为<span class="math inline">\(Q_f\)</span>，其与多项式的最高次数挂钩：如果<span class="math inline">\(f(x)\)</span>是10次多项式，<span class="math inline">\(Q_f = 10\)</span>；如果<span class="math inline">\(f(x)\)</span>是50次多项式，<span class="math inline">\(Q_f = 50\)</span>。记实验使用的数据量为<span class="math inline">\(N\)</span>，这里要探索不同的<span class="math inline">\((N, \sigma^2)\)</span>和不同的<span class="math inline">\((N, Q_f)\)</span>对过拟合的影响</p>
+<p>这里，候选的假设集合仍然和前面的设置一样，分别是<span class="math inline">\(g_2 \in \mathcal{H}_2\)</span>和<span class="math inline">\(g_{10} \in \mathcal{H}_{10}\)</span>。由前面的分析，<span class="math inline">\(g_{10}\)</span>过拟合的概率比较大，那么这个过拟合的程度如何衡量？这里使用的方法是<span class="math inline">\(E_{\rm out}(g_{10}) - E_{\rm out}(g_2)\)</span></p>
+<p>首先看固定模型复杂度<span class="math inline">\(Q_f = 20\)</span>以后，过拟合度与<span class="math inline">\(N\)</span>和<span class="math inline">\(\sigma^2\)</span>的关系。这里颜色越深，过拟合程度越严重。显见当样本量小，误差大的时候，过拟合比较严重；而样本量大，误差小的时候，不太容易过拟合</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML13_sigma_n_impact.png" alt="模型复杂度固定时，样本量与噪声强度对过拟合的影响"><figcaption>模型复杂度固定时，样本量与噪声强度对过拟合的影响</figcaption>
+</figure>
+<p>接着看固定噪声强度<span class="math inline">\(\sigma^2 = 1\)</span>以后，过拟合度与<span class="math inline">\(Q_f\)</span>和<span class="math inline">\(N\)</span>的关系。</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML13_qf_n_impact.png" alt="噪声强度固定时，样本量与模型复杂度对过拟合的影响"><figcaption>噪声强度固定时，样本量与模型复杂度对过拟合的影响</figcaption>
+</figure>
+<p>大部分情况下，这种情况与前述实验类似，也是左上角容易过拟合，右下角不容易过拟合。这再次说明模型复杂度可以扮演噪声的角色。称前面施加的正态噪声为<strong>随机噪声</strong>，模型复杂度带来的噪声为<strong>确定性噪声</strong>，可以看出造成过拟合的因素有如下几条</p>
+<ul>
+<li>数据量太小</li>
+<li>随机噪声太大</li>
+<li>确定性噪声太大</li>
+<li>使用的模型比目标函数更复杂（注意第二幅图左下角）</li>
+</ul>
+<p><strong>过拟合常常存在，并很容易发生</strong></p>
+<p>可以从另一个角度去理解确定性噪声：当目标函数<span class="math inline">\(f\)</span>过于复杂，<span class="math inline">\(f\notin \mathcal{H}\)</span>时，<span class="math inline">\(f\)</span>的一些性质不能被<span class="math inline">\(\mathcal{H}\)</span>中的任意假设所描述（例如一个10次多项式，它的一些弯折是无法被二次多项式所描述的）。因此<span class="math inline">\(\mathcal{H}\)</span>中最好的假设<span class="math inline">\(h^\ast\)</span>和<span class="math inline">\(f\)</span>之间的差距就是确定性噪声。实际上，确定性噪声与随机噪声差别不大（参考伪随机数生成器的原理），不过它并不是完全随机的，依赖于<span class="math inline">\(\mathcal{H}\)</span>和给定的<span class="math inline">\(\bf x\)</span></p>
+<h2 id="应对过拟合">应对过拟合</h2>
+<p>在知道了过拟合的概念和产生原因以后，就可以设计对过拟合的应对方案。仍以开车作比喻，有</p>
+<ul>
+<li>先使用简单模型训练，类似于开慢车</li>
+<li>对数据做一些清洗，类似于使用更准确的路况</li>
+<li>观察数据，根据对数据的理解，按照相同规律产生一些新的数据（data hinting），类似于多看一些路况</li>
+<li>使用正则化方法，类似于踩刹车</li>
+<li>验证模型，类似于常看仪表盘</li>
+</ul>
+<p>其中正则化和模型验证在之后讲解。数据清洗包括了两种方法，一种是矫正数据的标签，另一种是直接把脏数据移除。不过这种方法对模型的影响不定，可能非常有限</p>
+<p>对于data hinting，一种很经典的例子就是在手写数字识别问题中，对已有的手写数字图像做翻转或者倾斜，产生一些新的例子（称作虚拟的例子）。这里要注意，这种方法产生的数据已经不是<span class="math inline">\(\overset{ {\rm i.i.d.}}{\sim} P({\bf x}, y)\)</span>，因此加进来的数据要有道理，而且不能离原有数据太远</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/09/09/NTUML-13-Hazard-of-Overfitting/" title="NTUML 13. 过拟合的危害">txshi-mt.com/2017/09/09/NTUML-13-Hazard-of-Overfitting/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/NTUML/" rel="tag"># NTUML</a>
+          
+            <a href="/tags/正则化/" rel="tag"># 正则化</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/04/NTUML-12-Nonlinear-Transformation/" rel="next" title="NTUML 12. 非线性变换">
+                <i class="fa fa-chevron-left"></i> NTUML 12. 非线性变换
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/09/10/NTUML-14-Regularization/" rel="prev" title="NTUML 14. 正则化">
+                NTUML 14. 正则化 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是过拟合"><span class="nav-number">1.</span> <span class="nav-text">&#x4EC0;&#x4E48;&#x662F;&#x8FC7;&#x62DF;&#x5408;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#噪声与数据集大小的角色"><span class="nav-number">2.</span> <span class="nav-text">&#x566A;&#x58F0;&#x4E0E;&#x6570;&#x636E;&#x96C6;&#x5927;&#x5C0F;&#x7684;&#x89D2;&#x8272;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#确定性噪声"><span class="nav-number">3.</span> <span class="nav-text">&#x786E;&#x5B9A;&#x6027;&#x566A;&#x58F0;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#应对过拟合"><span class="nav-number">4.</span> <span class="nav-text">&#x5E94;&#x5BF9;&#x8FC7;&#x62DF;&#x5408;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

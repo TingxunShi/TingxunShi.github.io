@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="神经网络,UTNN,反向传播," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="学习线性神经元的权重 本节首先来看使用线性神经元的神经网络如何学习权重。这个结构看起来像普通感知机，但是其实学习过程是不一样的。感知机的学习过程是调整权重，让权重向量向更好的权重向量靠近，而线性神经元虽然也是在调整权重，但是目的是让输出向目标输出靠近 感知机算法中保证的一个基本情况在神经网络里不会出现：在感知机中，两个有效权重的平均仍然是个有效权重；但是对神经网络，并不一定会是这样。因此，神经网络">
+<meta name="keywords" content="神经网络,UTNN,反向传播">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hinton神经网络与机器学习 3. 反向传播">
+<meta property="og:url" content="txshi-mt.com/2017/11/21/UTNN-3-the-Backpropagation-Learning-Procedure/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="学习线性神经元的权重 本节首先来看使用线性神经元的神经网络如何学习权重。这个结构看起来像普通感知机，但是其实学习过程是不一样的。感知机的学习过程是调整权重，让权重向量向更好的权重向量靠近，而线性神经元虽然也是在调整权重，但是目的是让输出向目标输出靠近 感知机算法中保证的一个基本情况在神经网络里不会出现：在感知机中，两个有效权重的平均仍然是个有效权重；但是对神经网络，并不一定会是这样。因此，神经网络">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_03_error_surface.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_03_sgd.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_03_gradient_descent_bad_case.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_03_back_propagation.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_03_example_of_overfitting.png">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.097Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hinton神经网络与机器学习 3. 反向传播">
+<meta name="twitter:description" content="学习线性神经元的权重 本节首先来看使用线性神经元的神经网络如何学习权重。这个结构看起来像普通感知机，但是其实学习过程是不一样的。感知机的学习过程是调整权重，让权重向量向更好的权重向量靠近，而线性神经元虽然也是在调整权重，但是目的是让输出向目标输出靠近 感知机算法中保证的一个基本情况在神经网络里不会出现：在感知机中，两个有效权重的平均仍然是个有效权重；但是对神经网络，并不一定会是这样。因此，神经网络">
+<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_03_error_surface.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/11/21/UTNN-3-the-Backpropagation-Learning-Procedure/"/>
+
+
+
+
+
+  <title>Hinton神经网络与机器学习 3. 反向传播 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/11/21/UTNN-3-the-Backpropagation-Learning-Procedure/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Hinton神经网络与机器学习 3. 反向传播</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-21T22:30:52+08:00">
+                Nov 21 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/深度学习/" itemprop="url" rel="index">
+                    <span itemprop="name">深度学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="学习线性神经元的权重">学习线性神经元的权重</h2>
+<p>本节首先来看使用线性神经元的神经网络如何学习权重。这个结构看起来像普通感知机，但是其实学习过程是不一样的。感知机的学习过程是调整权重，让权重向量向更好的权重向量靠近，而线性神经元虽然也是在调整权重，但是目的是让输出向目标输出靠近</p>
+<p>感知机算法中保证的一个基本情况在神经网络里不会出现：在感知机中，两个有效权重的平均仍然是个有效权重；但是对神经网络，并不一定会是这样。因此，神经网络的学习方法与感知机的学习方法不同——对于多层神经网络，它甚至就不该被叫做是“多层感知机”。训练神经网络时，是通过观察实际输出值是否靠近目标输出来判断网络的学习能力是否在增强。这种方法对验证非凸优化问题时也适用，不过不适用于感知机算法。对于感知机算法，即便权重向量在靠近正确的权重，输出可能也会远离正确的输出</p>
+<p>多层神经网络里最简单的情况是使用线性函数做神经元。假设权重向量为<span class="math inline">\(\bf w\)</span>，输入向量为<span class="math inline">\(\bf x\)</span>，那么神经元的预测值就是 <span class="math display">\[
+y = \sum_i w_ix_i = {\bf w^\mathsf{T}x}
+\]</span> 由于此时观察的是预测值与实际值的距离，因此这里使用两者之间差的平方（平方误差）来衡量。这个问题是有解析解的，但是神经网络并不准备用这种方法求解权重：一方面，从科学角度，生物神经元的工作方式应该不是求解一个符号方程；另一方面，从工程角度，希望找到一个更普适的做法，来让它也适用于多层非线性神经元的情况。解析解法只能适用于使用平方误差、线性激活的情况，而迭代解法尽管效率低一些，但更容易适用于更复杂的系统</p>
+<p>具体的迭代解法为，首先定义误差函数： <span class="math display">\[
+E= \frac{1}{2}\sum_{n\in {\rm training}}(t^n - y^n)^2
+\]</span> 将误差函数对权重求导 <span class="math display">\[
+\frac{\partial E}{\partial w_i} = \frac{1}{2}\sum_n\frac{\partial y^n}{\partial w_i}\frac{dE^n}{dy^n} = -\sum_nx_i^n(t^n-y^n)
+\]</span> 因此“delta rule”，也就是权重的更新规则为 <span class="math display">\[
+\Delta w_i = -\epsilon\frac{\partial E}{\partial w_i} = \sum_n\epsilon x_i^n(t^n-y^n)
+\]</span> 现在的问题是，这种迭代式算法（称为<strong>梯度下降</strong>）最后能得到正确答案吗？也许最后得到的不是最佳答案，但是如果把学习率<span class="math inline">\(\epsilon\)</span>调小，则可以接近最佳答案。另一个问题是这种算法的效率如何。需要注意的是，如果输入向量的两个维度高度相关，则学习效率会比较差。如果使用在线的权重更新规则，也就是每遇到一个样本就更新一次权重，那么这跟感知机的权重更新规则很像。不过，此时变化量大小同时由残差大小<span class="math inline">\(t^n - y^n\)</span>和学习率决定，因此选择一个正确的学习率是件比较麻烦的事儿：如果学习率太大，系统会不稳定；如果学习率太小，收敛又会比较慢</p>
+<h2 id="误差曲面">误差曲面</h2>
+<p>可以通过误差曲面（error surface）来理解线性神经元学习过程中发生了什么。考虑最简单的情况，假设权重只有两个维度，使用线性神经元和平方误差函数，那么以这两个权重为水平坐标，误差值为纵坐标，可以画出一个误差曲面。这个曲面的纵切面都是一个抛物线，横切面总是一个椭圆。更复杂一些。当权重不太大的时候，误差曲面会是光滑的，但是可能仍然存在许多局部最小值点</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_03_error_surface.png" alt="误差曲面示意图"><figcaption>误差曲面示意图</figcaption>
+</figure>
+<p>通过误差曲面，可以知道梯度下降每一步其实就是计算误差函数对权重的导数，如果将权重沿着导数方向变化，那就是在误差曲面上沿着最陡的方向下降了一步。如果从上往下看这个误差曲面，就可以画出一些椭圆形的等高线。如果使用批处理的梯度下降法，就可以使得权重沿着正确的角度向中间逼近，但是每次更新权重都需要把所有<span class="math inline">\(x_i^n(t^n-y^n)\)</span>加起来。也可以使用在线学习的方法做，即每看过一个测试数据就更新一次权重，这时更新权重时所走的角度就会受到训练数据的限制</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_03_sgd.png" alt="在线梯度下降受到训练数据的限制"><figcaption>在线梯度下降受到训练数据的限制</figcaption>
+</figure>
+<p>如上图所示，第一次更新权重是根据第一条数据，因此移动方向垂直于第一条数据对应的蓝线，第二次更新权重时根据第二条数据，移动方向垂直于第二条数据对应的蓝线，以此类推，循环往复。权重也会曲折地向着两条蓝线的交点前进</p>
+<p>考虑一种极端情况，就是输入数据限制线几乎平行，等高线是特别长的椭圆的时候。如下图所示</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_03_gradient_descent_bad_case.png" alt="梯度下降的最差情况"><figcaption>梯度下降的最差情况</figcaption>
+</figure>
+<p>此时，梯度下降的每个方向基本都垂直于向着极值点的方向，每次迭代时迈出的那一步都只向极值点靠近很小的一点，因此训练时间就会特别长</p>
+<h2 id="学习logistic神经元的权重">学习Logistic神经元的权重</h2>
+<p>为了将线性神经元的学习规则扩展到由非线性神经元组成的多层网络的学习规则，需要做两点</p>
+<p>首先，需要将学习规则扩展到单个非线性神经元，这里选用的非线性激活函数是Logistic函数。这个函数的输出是一个实数值，图像平滑，而且在实数集上有界。神经元的激活函数如下： <span class="math display">\[
+z = b + \sum_{i}x_iw_i,\  y=\frac{1}{1+e^{-z}}
+\]</span> 这里<span class="math inline">\(y\)</span>就是一个Logistic函数，可以简记为<span class="math inline">\(y=\sigma(z)\)</span>。可以容易地推导出对<span class="math inline">\(z \in \mathbb{R}, y \in (-1, 1)\)</span>。Logistic函数的另一个性质是求导比较容易，即有 <span class="math display">\[
+y = \sigma(z) \Rightarrow \frac{dy}{dz} = y(1-y)
+\]</span> 接下来就是求误差函数对权重的导数，有 <span class="math display">\[
+\frac{\partial E}{\partial w_i} = \sum_{n} \frac{\partial y^n}{\partial w_i}\frac{\partial E}{\partial y^n} = \sum_n \frac{\partial z}{\partial w_i}\frac{dy}{dz}\frac{\partial E}{\partial y^n} = -\sum_n x_i^ny^n(1-y^n)(t^n-y^n)
+\]</span></p>
+<h2 id="反向传播算法">反向传播算法</h2>
+<p>在得到前面的结论以后，就可以来到核心问题：如何学习多层特征，也就是隐藏层的权重。这种学习方法称为反向传播算法，于20世纪80年代提出，是那个年代人工智能领域一个最主要的成果，也引起了人们对神经网络井喷式的关注</p>
+<p>如果使用的神经网络没有隐藏层，那么其建模能力非常有限。如果像感知机那样手工加一层硬编码的特征，网络的能力是更强大了，但是为新任务设计特征又成了一个难点，而且需要开发人员手动解决</p>
+<p>一种直接的，有点像强化学习的想法是，随机对权重做一些调整，观察对模型性能造成了什么影响。如果影响是正面的，就把这个权重保存起来。这种做法的问题是效率太低了，可能要正向传播计算很多次才能有效调整一次权重。而且判断权重效果好不好不能只看一条训练数据，需要很多训练数据才能下结论。而且当训练接近结束的时候，权重的调整不能太大，否则几乎肯定会把事情搞砸，因为此时权重的大小已经接近理想。与反向传播相比，这种做法慢的倍数大概相当于网络中权重的数量，通常会是几百万倍！</p>
+<p>那么，可不可以并行随机调整所有权重，然后观察结果呢？也不行，因为这样还是要尝试很多遍，而每一次都是对所有权重的不同随机干扰，而随机调整权重为的是看在某个维度上的效果，那么所有在其它维度上的修改实际上都是噪声。另一种做法是随机修改隐藏层单元的激活值（activity），而不是修改权重，因为隐藏层单元的数量比权重数量少，因此这样做可能会效率高一些，但是仍然不如反向传播算法（慢的倍数变成了神经元的数量）</p>
+<p>反向传播算法背后的思想是，我们不知道隐藏层单元应该做什么，它们被称作“隐藏层”就是因为没人能解释它们的状态应该是什么，但是对某条给定的数据，当修改某个隐藏层单元的激活值时，可以计算误差变化得多快。因此，我们不再把看隐藏层单元的激活值，而是看误差对隐藏激活值的偏导数。由于每个隐藏单元都会影响许多不同的输出单元，因此如果有很多输出单元的话，就会对总体误差造成很多不同的影响，这些影响可以被有效地组合起来，所以就可以同时有效计算所有隐藏单元的误差导数。一旦得到了误差导数，就可以知道对某个训练数据，修改隐藏单元的激活值以后误差变化多快，因此就可以知道误差对隐藏激活值的导数，进而知道误差对指向某隐藏单元的权重的导数</p>
+<p>因此，反向传播算法的大致方法就是，首先计算每个输出单元的输出与目标值之间的差值，将这个差值转化为误差导数。然后，利用后一层得到的误差导数，计算本层的误差（相对于激活值的）导数，再使用这个导数计算误差相对于输入权重的导数。注意由于隐藏层节点通常连向多个输出层节点，因此求导时需要将它们都加起来。如下给出了一个例子</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_03_back_propagation.png" alt="反向传播示意"><figcaption>反向传播示意</figcaption>
+</figure>
+<p>上图中，节点<span class="math inline">\(j\)</span>是输出层节点，<span class="math inline">\(i\)</span>是它前面的隐藏层节点，输出误差仍然使用平方误差，因此正向传播时满足 <span class="math display">\[
+z_j = \sum_i w_{ij}y_i,\  \  y_j = \sigma(z_j),\  \  E= \frac{1}{2}\sum_{j \in {\rm output}}(t_j - y_j)^2
+\]</span> 对应的反向传播就有 <span class="math display">\[
+\begin{align*}
+\frac{\partial E}{\partial y_j} &amp;= -(t_j - y_j) \\
+\frac{\partial E}{\partial z_j} &amp;= \frac{dy_j}{dz_j}\cdot\frac{\partial E}{\partial y_j} = y_j(1-y_j)\cdot\frac{\partial E}{\partial y_j} \\
+\frac{\partial E}{\partial y_i} &amp;= \sum_j \frac{dz_j}{dy_i}\cdot \frac{\partial E}{\partial z_j} = \sum_jw_{ij}\cdot \frac{\partial E}{\partial z_j} \\
+\frac{\partial E}{\partial w_{ij}} &amp;= \frac{\partial z_j}{\partial w_{ij}}\cdot \frac{\partial E}{\partial z_j} = y_i\cdot \frac{\partial E}{\partial z_j}
+\end{align*}
+\]</span></p>
+<h2 id="如何使用反向传播算法计算出来的导数">如何使用反向传播算法计算出来的导数</h2>
+<p>推导出如何计算误差关于隐藏层权重的导数，是使神经网络有效学习的关键要素。不过即便这个问题解决了，还有一些其它的问题需要关注。只有把这些问题都解决了，才能得到一个完整的、正确的学习过程</p>
+<p>其中一些问题是优化问题。也就是，如何使用在单个数据上的误差导数来得到一组好的权重？这部分内容将在第六章讲授。另一个问题是如何保证学习到的权重可以很好地泛化推广。也就是说，如何保证它们在那些没有用来训练的数据上也表现良好？这部分内容将在第七章讲授。不过，这里将会给出一些概述</p>
+<h3 id="优化问题">优化问题</h3>
+<p>所谓优化问题，实际上关心的是如何使用权重导数。第一个问题是，更新权重的频率怎样合适？可以每看到一条数据就更新一次，此时是使用该条数据的信息通过反向传播计算误差导数，然后对权重微调。很明显，这样会导致权重波动比较大，因为对每条数据得到的误差导数都是不同的。不过通常来讲，如果对权重的修改足够小，那么还是会走在正确的方向上。一种看似不错的修改是使用完整的一批数据做训练，把所有数据上的误差导数加在一起，然后在这个方向上走一步。但是通常来讲，初始化的权重效果都不太好，而所使用的训练集可能非常大，我们并不想在所有数据上走一遍来修改某些已经可以预料到效果很差的权重。更合理的做法是，在能理性推断应该把权重往哪个方向上修改之前，先看少部分训练数据，直到训练快结束时，才看更多的训练数据。这就带来了一种折中的方法——小批量学习法（mini-batch learning）：随机挑选一部分训练样本，确定大致的方向，让权重的波动不太大。这种学习方法是最常用的</p>
+<p>另一个问题是，权重更新多少比较合适。一种方法是手动设置一批学习率，将导数与之相乘，修改权重。更好的方法是让学习率自适应，如果误差值上下抖动不收敛，就减小学习率；如果每次权重掉得相对比较大，就增大学习率。甚至，可以为网络中的每个连接都设置一个学习率，这样有些权重就能学得快些，有些能学得慢些。再进一步，都不一定选择最陡峭的下降方向！回忆前面那个被拉长的椭圆型的误差表面，如果每一步都沿着最陡的方向走，其实是垂直于了应该下降的方向，反而不是好事。在很多学习问题中，尤其是学习接近结束时，这是一个典型问题。所以，理性的选择时选择一个别的更好的方向，不过想找到这个方向实际比较困难</p>
+<h3 id="泛化问题">泛化问题</h3>
+<p>第二个问题是，网络在它没看到过的数据上表现能有多好。问题原因是，尽管训练数据包含了从输入到输出上的一些规律信息，但是也含有两类噪声：</p>
+<ul>
+<li>第一类噪声是目标值可能不可靠。这种情况一般不用太担心</li>
+<li>第二类噪声是取样误差。也就是说，输入和输出之间存在的规律联系实际上可能是偶然造成的，因为采样时采到了一些特殊的样例——尤其是样本比较小的时候。例如，在教学生什么是多边形时，不好的做法是只拿出正方形和长方形，说“这就是多边形”。这些的确是多边形，但是对于之前没接触过这一概念的人来说，他们不会意识到多边形可以有三条边也可以有六条边，也不会意识到多边形的几个角不一定非得都是直角。如果你拿出的是三角形和六边形，那么学生又不会意识到多边形不一定非得是凸的，内角不一定非得是60度的倍数。总之，不管如何仔细地选择样本，对于样本的任意有限集合，总会有一些偶然的规律出现。而训练模型时，无法告知机器这个规律是偶然的还是必然的，所以模型对这两种规律都会去学习。而当模型足够大足够有力的时候，它会很好地拟合取样误差，造成灾难性的后果，泛化能力极差</li>
+</ul>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_03_example_of_overfitting.png" alt="过拟合的例子"><figcaption>过拟合的例子</figcaption>
+</figure>
+<p>上图给出了一个例子。对于给出的这六个点，可以使用一个自由度为2的模型（绿色直线）来拟合，它只能穿过一个点；也可以使用一个自由度为6或者更高的模型来拟合（红色直线），它可以完美地穿过所有点。但是如果新的输入数据是箭头指向的输入值，应该用哪个模型预测的结果呢？能很好拟合<em>大量</em>数据的模型是令人信服的，而复杂模型在小数据集上表现良好是稀松平常的。对于目前的例子，大多数人会选择绿线上的蓝点作为预测值。但是如果给出十倍的数据，这些数据都离红线很近，大家就会信任红线了</p>
+<p>这种对数据拟合过于完美，以至于很好拟合了取样误差的现象，叫做<strong>过拟合</strong>。这里，简单介绍一下神经网络中用来防止过拟合的方法，但是更细致的讨论留待之后（大部分在第七章）</p>
+<ul>
+<li>权值衰减（weight decay）：试图将神经网络的权重稳定在一个小值上，甚至上大多数权重都为0。这样做是为了让模型简单</li>
+<li>权值共享（weight sharing）：让很多权重保持取相同值，也可以让模型简单。你不必须要知道这个值应该是什么，实际上这个值是学出来的。不过要保证很多权重都是这个值</li>
+<li>提早停止（early stopping）：选定一个伪测试集，观察网络在这个数据集上的性能。如果性能下降，停止训练</li>
+<li>模型平均（model averaging）：训练很多不同的网络，将它们平均起来，以减少误差</li>
+<li>贝叶斯拟合（Bayesian fitting）：模型平均一种更漂亮的做法</li>
+<li>神经元丢弃（dropout）：通过在训练时随机关闭一些隐藏单元来使模型更加鲁棒</li>
+<li>生成预训练（generative pre-training）：一种更复杂的方法，将在本课将结束时介绍</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/11/21/UTNN-3-the-Backpropagation-Learning-Procedure/" title="Hinton神经网络与机器学习 3. 反向传播">txshi-mt.com/2017/11/21/UTNN-3-the-Backpropagation-Learning-Procedure/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/神经网络/" rel="tag"># 神经网络</a>
+          
+            <a href="/tags/UTNN/" rel="tag"># UTNN</a>
+          
+            <a href="/tags/反向传播/" rel="tag"># 反向传播</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/11/18/UTNN-2-the-Perceptron-Learning-Procedure/" rel="next" title="Hinton神经网络与机器学习 2. 感知机">
+                <i class="fa fa-chevron-left"></i> Hinton神经网络与机器学习 2. 感知机
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/11/25/CS20SI-1-Introduction/" rel="prev" title="CS20SI 01. TensorFlow基本概念：张量、图和会话">
+                CS20SI 01. TensorFlow基本概念：张量、图和会话 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#学习线性神经元的权重"><span class="nav-number">1.</span> <span class="nav-text">&#x5B66;&#x4E60;&#x7EBF;&#x6027;&#x795E;&#x7ECF;&#x5143;&#x7684;&#x6743;&#x91CD;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#误差曲面"><span class="nav-number">2.</span> <span class="nav-text">&#x8BEF;&#x5DEE;&#x66F2;&#x9762;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#学习logistic神经元的权重"><span class="nav-number">3.</span> <span class="nav-text">&#x5B66;&#x4E60;Logistic&#x795E;&#x7ECF;&#x5143;&#x7684;&#x6743;&#x91CD;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#反向传播算法"><span class="nav-number">4.</span> <span class="nav-text">&#x53CD;&#x5411;&#x4F20;&#x64AD;&#x7B97;&#x6CD5;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何使用反向传播算法计算出来的导数"><span class="nav-number">5.</span> <span class="nav-text">&#x5982;&#x4F55;&#x4F7F;&#x7528;&#x53CD;&#x5411;&#x4F20;&#x64AD;&#x7B97;&#x6CD5;&#x8BA1;&#x7B97;&#x51FA;&#x6765;&#x7684;&#x5BFC;&#x6570;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#优化问题"><span class="nav-number">5.1.</span> <span class="nav-text">&#x4F18;&#x5316;&#x95EE;&#x9898;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#泛化问题"><span class="nav-number">5.2.</span> <span class="nav-text">&#x6CDB;&#x5316;&#x95EE;&#x9898;</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

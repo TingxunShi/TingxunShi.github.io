@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="NTUML,线性回归," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="线性回归问题 回顾之前举的银行信用卡问题，如果要关注的问题不再是“给不给发卡”而是“发多大的额度”，那么这就不再是一个二元分类问题，而输出空间已经是实数集（这里实际上是实数集的一个子集）了，因此是一个回归问题。 回归问题的假设函数应该是什么样的？假设已经提取好了\(d\)个特征\(x_1, x_2, \ldots, x_d\)，可以像感知机问题那样再加入一个新的常数项\(x_0\)组成输入向量\(">
+<meta name="keywords" content="NTUML,线性回归">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NTUML 9. 线性回归">
+<meta property="og:url" content="txshi-mt.com/2017/08/28/NTUML-9-Linear-Regression/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="线性回归问题 回顾之前举的银行信用卡问题，如果要关注的问题不再是“给不给发卡”而是“发多大的额度”，那么这就不再是一个二元分类问题，而输出空间已经是实数集（这里实际上是实数集的一个子集）了，因此是一个回归问题。 回归问题的假设函数应该是什么样的？假设已经提取好了\(d\)个特征\(x_1, x_2, \ldots, x_d\)，可以像感知机问题那样再加入一个新的常数项\(x_0\)组成输入向量\(">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML09_hat_matrix.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUMLNTUML09_linear_regression_err_in.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML09_learning_curve.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML09_error_functions.png">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.096Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NTUML 9. 线性回归">
+<meta name="twitter:description" content="线性回归问题 回顾之前举的银行信用卡问题，如果要关注的问题不再是“给不给发卡”而是“发多大的额度”，那么这就不再是一个二元分类问题，而输出空间已经是实数集（这里实际上是实数集的一个子集）了，因此是一个回归问题。 回归问题的假设函数应该是什么样的？假设已经提取好了\(d\)个特征\(x_1, x_2, \ldots, x_d\)，可以像感知机问题那样再加入一个新的常数项\(x_0\)组成输入向量\(">
+<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML09_hat_matrix.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/08/28/NTUML-9-Linear-Regression/"/>
+
+
+
+
+
+  <title>NTUML 9. 线性回归 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/08/28/NTUML-9-Linear-Regression/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NTUML 9. 线性回归</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-28T19:58:08+08:00">
+                Aug 28 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/统计机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">统计机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="线性回归问题">线性回归问题</h2>
+<p>回顾之前举的银行信用卡问题，如果要关注的问题不再是“给不给发卡”而是“发多大的额度”，那么这就不再是一个二元分类问题，而输出空间已经是实数集（这里实际上是实数集的一个子集）了，因此是一个回归问题。</p>
+<p>回归问题的假设函数应该是什么样的？假设已经提取好了<span class="math inline">\(d\)</span>个特征<span class="math inline">\(x_1, x_2, \ldots, x_d\)</span>，可以像感知机问题那样再加入一个新的常数项<span class="math inline">\(x_0\)</span>组成输入向量<span class="math inline">\(\bf x\)</span>。一个直观的做法是为每个特征赋予一个权重<span class="math inline">\(w_i\)</span>，这样这些特征的加权均值就应该接近于期望得到的<span class="math inline">\(y\)</span>，即 <span class="math display">\[
+y \approx \sum_{i=0}^d w_ix_i
+\]</span> 这其实就是线性回归的假设函数了，即<span class="math inline">\(h({\bf x}) = {\bf w}^\mathsf{T}{\bf x}\)</span>。可以看到这个假设函数跟感知机的有点像，但是不需要取符号，因为最后要得到的结果就应该是个连续值。</p>
+<p>要洞悉线性回归的思想，可以从最简单的情况入手。假设输入只有一个维度，平面<span class="math inline">\(\mathbb{R}^2\)</span>上的直角坐标系横轴为输入<span class="math inline">\(x\)</span> ，纵轴为输出<span class="math inline">\(y\)</span>，那么训练数据就是落在坐标系上的若干个点，而对任意<span class="math inline">\(x \in \mathbb{R}\)</span>，假设函数求出来的对应的值<span class="math inline">\(h(x) \in \mathbb{R}\)</span>应该连成一条直线。期望是对于训练集里任意的点<span class="math inline">\(x_i\)</span>，假设函数值<span class="math inline">\(h(x_i)\)</span>应该尽量接近于这个点已知的值<span class="math inline">\(y_i\)</span>。那么如何衡量<span class="math inline">\(h(x_i)\)</span>和<span class="math inline">\(y_i\)</span>的接近程度？一种方法就是计算这两个值之间差的绝对值<span class="math inline">\(|h(x_i) - y(i)|\)</span>，称作<strong>残差</strong>。线性回归的目的就是找到合适的超平面，使得残差尽量小。类似的道理推广到n维空间<span class="math inline">\(\mathbb{R}^n\)</span>也是一样的</p>
+<p>既然问题求解的目的已经确定，那么对应的误差衡量函数就很明朗。通常情况下，回归问题所使用的误差函数叫做平方误差函数，即 <span class="math display">\[
+{\rm err}(\hat{y}, y) = (\hat{y} - y)^2
+\]</span> 如前面讨论的那样，误差通常会被分为样本内误差和样本外误差。样本内误差被记为 <span class="math display">\[
+E_{\rm in}(h) = \frac{1}{N}\sum_{n=1}^N(h({\bf x}_n) - y_n)^2
+\]</span> 由于有<span class="math inline">\(h({\bf x}_n) = {\bf w}^\mathsf{T}{\bf x}_n\)</span>，因此一个<span class="math inline">\(h\)</span>通常会对应于一个<span class="math inline">\(\bf w\)</span>，<span class="math inline">\(E_{\rm in}\)</span>也可以表示为一个关于<span class="math inline">\({\bf w}\)</span>的函数。类似地，样本外误差也可以表示为一个关于<span class="math inline">\(\bf w\)</span>的函数 <span class="math display">\[
+E_{\rm out}({\bf w}) = \mathcal{E}_{({\bf x}, y) \sim P}({\bf w}^\mathsf{T}{\bf x} - y)^2
+\]</span> 根据之前的课程，接下来要着重解决的问题就是怎么使<span class="math inline">\(E_{\rm in}\)</span>尽可能小</p>
+<h2 id="线性回归算法">线性回归算法</h2>
+<p>首先可以试着把上一节得到的<span class="math inline">\(E_{\rm in}\)</span>用矩阵形式表示，以使得其形式变得更加简洁。 <span class="math display">\[
+\begin{align*}
+E_{\rm in}({\bf w}) &amp;= \frac{1}{N}\sum_{n=1}^N({\bf w}^\mathsf{T}{\bf x}_n - y_n)^2 = \frac{1}{N}\sum_{n=1}^N({\bf x}_n^\mathsf{T}{\bf w} - y_n)^2 \\
+&amp;=\frac{1}{N} \left|\!\left|\begin{array}{c} {\bf x}_1^\mathsf{T}{\bf w} - y_1 \\ {\bf x}_2^\mathsf{T}{\bf w} - y_2 \\ \cdots \\ {\bf x}_N^\mathsf{T}{\bf w} - y_N \end{array}\right|\!\right|^2 \\
+&amp;= \frac{1}{N} \left|\!\left|\left[\begin{array}{c}--{\bf x}_1^\mathsf{T}-- \\ --{\bf x}_2^\mathsf{T}-- \\ \cdots \\ --{\bf x}_N^\mathsf{T}-- \end{array}\right]{\bf w}-\left[\begin{array}{c}y_1 \\ y_2 \\ \cdots \\ y_N\end{array}\right]\right|\!\right|^2 \\
+&amp;= \frac{1}{N}|\!|{\rm X}{\bf w} - {\bf y}|\!|^2
+\end{align*}
+\]</span> 最后得到的各矩阵/向量维度为：</p>
+<ul>
+<li><span class="math inline">\({\rm X}\)</span>：<span class="math inline">\(N\times (d+1)\)</span></li>
+<li><span class="math inline">\({\bf w}\)</span>：$ (d+1) 1$</li>
+<li><span class="math inline">\({\bf y}\)</span>：<span class="math inline">\(N \times 1\)</span></li>
+</ul>
+<p>由于<span class="math inline">\(E_{\rm in}\)</span>中只有<span class="math inline">\({\bf w}\)</span>是未知数，而经过证明可以发现，<span class="math inline">\(E_{\rm in}(\bf w)\)</span>是连续且可微的凸函数。凸函数的一个重要性之就是，其在极值点的梯度为0，而梯度的定义是把函数在每个方向上做偏微分，因此在极值点梯度的每个分量都是0。即最优的<span class="math inline">\(\bf w_{\rm LIN}\)</span>满足<span class="math inline">\(\nabla E_{\rm in}({\bf w}_{\rm LIN}) = {\bf 0}\)</span></p>
+<p>将<span class="math inline">\(E_{\rm in}\)</span>的表达式展开并由以下两条矩阵求导规则（<span class="math inline">\(\rm A\)</span>是矩阵） <span class="math display">\[
+\begin{align*}
+\frac{\partial ({\bf x}^\mathsf{T}{\rm A}{\bf x})}{\partial {\bf x}} &amp;= 2{\rm A}{\bf x} \\
+\frac{\partial ({\bf x}^\mathsf{T}{\bf a})}{\partial {\bf x}} &amp;= {\bf a}
+\end{align*}
+\]</span> 可知 <span class="math display">\[
+\begin{align*}
+E_{\rm in}(\bf w) &amp;= \frac{1}{N}|\!|{\rm X}{\bf w} - {\bf y}|\!|^2 = \frac{1}{N}({\rm X}{\bf w} - {\bf y})^\mathsf{T}({\rm X}{\bf w} - {\bf y}) &amp;&amp; {\rm definition\  of\  norm}\\ 
+&amp;= \frac{1}{N}({\bf w}^\mathsf{T}{\rm X}^\mathsf{T} - {\bf y}^\mathsf{T})({\rm X}{\bf w} - {\bf y}) &amp;&amp; {\rm rule\  of\  transpose}\\
+&amp;= \frac{1}{N}({\bf w}^\mathsf{T}{\rm X}^\mathsf{T}{\rm X}{\bf w} - {\bf w}^\mathsf{T}{\rm X}^\mathsf{T}{\bf y} - {\bf y}^\mathsf{T}{\rm X}{\bf w} + {\bf y}^\mathsf{T}{\bf y}) \\
+&amp;= \frac{1}{N}({\bf w}^\mathsf{T}{\rm X}^\mathsf{T}{\rm X}{\bf w} - 2{\bf w}^\mathsf{T}{\rm X}^\mathsf{T}{\bf y} + {\bf y}^\mathsf{T}{\bf y})  &amp;&amp;{ {\bf w}^\mathsf{T}{\rm X}^\mathsf{T}{\bf y}}{\rm\  is\  a\  scalar,\  }{a^\mathsf{T} = a}\\
+\nabla E_{\rm in}(\bf w) &amp;= \frac{1}{N}(2{\rm X}{\bf w} - 2{\rm X}^\mathsf{T}{\bf y}) = \frac{2}{N}({\rm X}^\mathsf{T}{\rm X}{\bf w} - {\rm X}^\mathsf{T}{\bf y}) 
+\end{align*}
+\]</span> 将<span class="math inline">\(\nabla_{\rm in}({\bf w})\)</span>置为0，如果<span class="math inline">\({\rm X}^\mathsf{T}{\rm X}\)</span>是可逆的，那么可以容易解出 <span class="math display">\[
+{\bf w}_{\rm LIN} = ({\rm X}^\mathsf{T}{\rm X})^{-1}{\rm X}^\mathsf{T}{\bf y}
+\]</span> 其中<span class="math inline">\(({\rm X}^\mathsf{T}{\rm X})^{-1}{\rm X}^\mathsf{T}\)</span>称为<span class="math inline">\(\rm X\)</span>的<strong>伪逆</strong>，记做<span class="math inline">\({\rm X}^\dagger\)</span>。由于通常有<span class="math inline">\(N &gt;\!&gt; d + 1\)</span>，因此<span class="math inline">\(X^\dagger\)</span>通常都会存在</p>
+<p>但是有少部分情况有<span class="math inline">\(N &lt; d + 1​\)</span>，这样会有很多组解。不过即便如此，使用其它定义伪逆矩阵的方法，仍然可以得到其中的一个解有<span class="math inline">\({\bf w}_{\rm LIN} = {\rm X}^\dagger {\bf y}​\)</span></p>
+<p><strong>实践中如果需要计算<span class="math inline">\({\bf w}_{\rm LIN}\)</span>，一般都直接用计算<span class="math inline">\({\rm X}^\dagger\)</span>的函数，而不是手动计算<span class="math inline">\(({\rm X}^\mathsf{T}{\rm X})^{-1}{\rm X}^\mathsf{T}\)</span></strong></p>
+<p>因此线性回归算法可以定义如下：</p>
+<blockquote>
+<p>1). 从数据集<span class="math inline">\(\mathcal{D}\)</span>中构造输入矩阵<span class="math inline">\(\rm X\)</span>和输出向量<span class="math inline">\(\bf y\)</span>： <span class="math display">\[
+{\rm X} = \underbrace{\left[\begin{array}{c}--{\bf x}_1^\mathsf{T}-- \\ --{\bf x}_2^\mathsf{T}-- \\ \cdots \\ --{\bf x}_N^\mathsf{T}--\end{array}\right]}_{N \times (d + 1)}\hspace{2ex} {\bf y} =\underbrace{\left[\begin{array}{c}y_1 \\ y_2 \\ \cdots \\ y_N\end{array}\right]}_{N \times 1}
+\]</span> 2). 计算伪逆<span class="math inline">\(\underbrace{ {\rm X}^\dagger}_{(d+1) \times N}\)</span></p>
+<p>3). 计算最优权重<span class="math inline">\(\underbrace{ {\bf w}_{\rm LIN}}_{(d+1) \times 1} = {\rm X}^\dagger {\bf y}\)</span></p>
+</blockquote>
+<h2 id="一般化问题">一般化问题</h2>
+<p>所以线性回归问题真的是一种机器学习问题，上述的算法真的是一种机器学习算法么？看起来最优权重的值一步就能算出来（这种解称为<strong>解析解</strong>或者<strong>闭合形式解</strong>），在计算过程中也没有迭代地减小<span class="math inline">\(E_{\rm in}\)</span>和<span class="math inline">\(E_{\rm out}\)</span></p>
+<p>实际上，这是一种机器学习算法，因为</p>
+<ul>
+<li>它有好的<span class="math inline">\(E_{\rm in}\)</span></li>
+<li>变量有限，<span class="math inline">\(E_{\rm out}\)</span>是有限的</li>
+<li>伪逆的计算过程是迭代的过程，其过程也可以算是在减小<span class="math inline">\(E_{\rm in}\)</span></li>
+</ul>
+<p>所谓“黑猫白猫，抓得住老鼠就是好猫”，只要<span class="math inline">\(E_{\rm out}({\bf w}_{\rm LIN})\)</span>足够小，这个算法就可以看作是一种好的算法。下面试着证明<span class="math inline">\(\overline{E_{\rm in}}\)</span>足够小，但是同样的思想可以用来证明<span class="math inline">\(E_{\rm out}\)</span>也足够小</p>
+<p>由于<span class="math inline">\(\overline{E_{\rm in}}\)</span>是对所有可能数据集<span class="math inline">\(E_{\rm in}\)</span>的平均值，而这些数据都来自于相同的分布，因此可以表示为 <span class="math display">\[
+\overline{E_{\rm in}} = \mathcal{E}_{\mathcal{D} \sim P^N}\{E_{\rm in}({\bf w}_{\rm LIN}{\rm\  w.r.t\  }\mathcal{D})\}
+\]</span> 其中每个<span class="math inline">\(E_{\rm in}\)</span>又可以如下表示 <span class="math display">\[
+\begin{align*}
+E_{\rm in}({\bf w}_{\rm LIN}) &amp;= \frac{1}{N}|\!|{\bf y} - \hat{\bf y}|\!|^2 = \frac{1}{N}|\!|{\bf y} -{\rm X}{\bf w}_{\rm LIN}|\!|^2 \\
+&amp;= \frac{1}{N}|\!|{\bf y} - {\rm XX}^\dagger{\bf y}|\!|^2 = \frac{1}{N}|\!|({\rm I} - {\rm XX}^\dagger){\bf y}|\!|^2
+\end{align*}
+\]</span> 称<span class="math inline">\({\rm XX}^\dagger\)</span>为“帽子矩阵”，记为<span class="math inline">\(\rm H\)</span> ，因为真实值<span class="math inline">\(\bf y\)</span>与之相乘会得到预测值<span class="math inline">\(\hat{\bf y}\)</span>。帽子矩阵的几何意义可以通过下图解释</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML09_hat_matrix.png" alt="帽子矩阵的几何意义"><figcaption>帽子矩阵的几何意义</figcaption>
+</figure>
+<p>该图中，<span class="math inline">\({\bf y} \in \mathbb{R}^N\)</span>，而<span class="math inline">\(\hat{\bf y}\)</span>是<span class="math inline">\(\rm X\)</span>中每个列的线性组合，因此<span class="math inline">\(\hat{\bf y}\)</span>属于<span class="math inline">\(\rm X\)</span>的列空间。线性回归要让<span class="math inline">\(\bf y\)</span>和<span class="math inline">\(\hat{\bf y}\)</span>尽可能小，而<span class="math inline">\(\hat{\bf y}\)</span>实际上是<span class="math inline">\(\bf y\)</span>在<span class="math inline">\(\rm X\)</span>列空间（下面简记为<span class="math inline">\(\rm span\)</span> ）中的投影，为了让两者的残差<span class="math inline">\({\bf y}-\hat{\bf y}\)</span>尽可能小，即让<span class="math inline">\(\bf y\)</span>到<span class="math inline">\(\rm span\)</span>的距离最短，因此只能有<span class="math inline">\({\bf y}-\hat{\bf y}\)</span> 垂直于 <span class="math inline">\({\rm span}\)</span>。所以<span class="math inline">\(\rm H\)</span>起到的就是投影的作用，将任意向量<span class="math inline">\(\bf y\)</span>投影到<span class="math inline">\(\rm X\)</span>的列空间中，投影成<span class="math inline">\(\hat{\bf y}\)</span>，而<span class="math inline">\({\rm I} - {\rm H}\)</span>则是计算残差<span class="math inline">\({\bf y}-\hat{\bf y}\)</span>，它有一个很好的性质： <span class="math display">\[
+{\rm trace}({\rm I}- {\rm H}) = N - (d + 1)
+\]</span> 这条性质的物理意义在于，自由度为<span class="math inline">\(N\)</span>的向量被投影到<span class="math inline">\(d+1\)</span>维空间以后，残差的自由度最多只有<span class="math inline">\(N-(d+1)\)</span>。证明如下（简记<span class="math inline">\(\rm trace\)</span>为<span class="math inline">\(\rm tr\)</span>，并记<span class="math inline">\({\rm I}_d\)</span>是<span class="math inline">\(d\)</span>维单位矩阵）： <span class="math display">\[
+\begin{align*}
+{\rm tr(I-H)} &amp;= {\rm tr(I}_n) - {\rm tr(H)} &amp;&amp; {\rm tr(A+B) = tr(A) + tr(B)} \\
+&amp;= N- {\rm tr(H)} \\
+{\rm tr(H)} &amp;= {\rm tr(XX}^\dagger) \\
+&amp;= {\rm tr(X(X^\mathsf{T}X)^{-1}X^\mathsf{T})} &amp;&amp; {\rm definition\  of\  X}^\dagger \\
+&amp;=  {\rm tr((X^\mathsf{T}X)^{-1}X^\mathsf{T}X)} &amp;&amp; {\rm tr(AB) = tr(BA)} \\
+&amp;= {\rm tr(I}_{d+1}) \\
+&amp;= d+1 \\
+\therefore {\rm tr(I-H)} &amp;= N- (d+1) \hspace{3ex} \blacksquare
+\end{align*}
+\]</span> 对<span class="math inline">\(\bf y\)</span>引入误差，情况会略有变化，见下图</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUMLNTUML09_linear_regression_err_in.png" alt="线性回归训练集内误差均值的计算"><figcaption>线性回归训练集内误差均值的计算</figcaption>
+</figure>
+<p>假设现在有一个理想的目标函数<span class="math inline">\(f\)</span>，那么<span class="math inline">\(f({\rm X})\)</span>肯定会落在<span class="math inline">\(\rm X\)</span>的列空间中。现在，可以把观察到的<span class="math inline">\(\bf y\)</span>看作是理想目标函数值与噪声的加和，即<span class="math inline">\({\bf y} = f({\rm X}) + {\rm noise}\)</span>。由于要考察的残差仍然是<span class="math inline">\({\bf y} - \hat{\bf y}\)</span>，因此这个残差可以看作是噪声经过矩阵<span class="math inline">\(\rm I-H\)</span>的转换，即<span class="math inline">\(E_{\rm in}\)</span>就是把<span class="math inline">\(\rm I-H\)</span>用在噪声上。将这个关系代入到残差的表达式中，有： <span class="math display">\[
+\begin{align*}
+E_{\rm in}({\bf w}_{\rm LIN}) = \frac{1}{N} |\!|{\bf y} - \hat{\bf y}|\!|^2 &amp;= \frac{1}{N}|\!|{\rm (I-H)noise}|\!|^2 \\
+&amp;= \frac{1}{N}(N-(d+1))|\!|{\rm noise}|\!|^2
+\end{align*}
+\]</span> 因此可以得到<span class="math inline">\(E_{\rm in}\)</span>和<span class="math inline">\(E_{\rm out}\)</span>的均值（不过后者的计算更加复杂） <span class="math display">\[
+\begin{align*}
+\overline{E_{\rm in}} = {\rm noise\  level} \cdot \left(1 - \frac{d+1}{N}\right) \\
+\overline{E_{\rm out}} = {\rm noise\  level} \cdot \left(1 + \frac{d+1}{N}\right) 
+\end{align*}
+\]</span> 哲学上的意义是，噪声的存在使得模型的学习过程中也对噪声数据进行了学习，学到的<span class="math inline">\(\bf w\)</span>可能偏向了某个方向。由于测试数据是新鲜的，没看到过的，没用在学习过程中的数据，因此此消彼长，误差对偏向的方向惩罚更多。这样可以得到一个学习曲线图</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML09_learning_curve.png" alt="学习曲线"><figcaption>学习曲线</figcaption>
+</figure>
+<p>可以看到，随着样本数量<span class="math inline">\(N\)</span>的增大，<span class="math inline">\(E_{\rm in}\)</span>增大，<span class="math inline">\(E_{\rm out}\)</span>减小。但是最后随着<span class="math inline">\(N \rightarrow \infty\)</span>，两者都会收敛到<span class="math inline">\(\sigma^2\)</span>，即noise level。因此一般化误差（即<span class="math inline">\(E_{\rm in}\)</span>与<span class="math inline">\(E_{\rm out}\)</span>平均情况下相差多少）为<span class="math inline">\(\frac{2(d+1)}{N}\)</span></p>
+<p>综上所述，当<span class="math inline">\(N\)</span>尽可能大，噪声不影响时，学习是已经发生了的</p>
+<h2 id="用于二元分类的线性回归">用于二元分类的线性回归</h2>
+<p>考虑之前提到的线性分类问题，已经被证明是NP难的。而线性回归却有非常有效的解析解可以一步得出结果。既然分类问题的结果<span class="math inline">\(\{-1, +1\} \in \mathbb{R}\)</span>，也在线性回归的解空间里，那么可不可以用线性回归的思想求解分类问题呢？有人提出了一种做法：</p>
+<ol type="1">
+<li>在数据集<span class="math inline">\(\mathcal{D}\)</span>上运行线性回归算法，求出<span class="math inline">\({\bf w}_{\rm LIN}\)</span></li>
+<li>返回<span class="math inline">\(g({\bf x}) = {\rm sign}({\bf w}_{\rm LIN}^\mathsf{T}{\bf x})\)</span></li>
+</ol>
+<p>如何说明这个做法是可行的呢？注意两个问题最大的区别是两者的误差函数定义不同：</p>
+<ul>
+<li>0/1分类问题的损失函数为<span class="math inline">\({\rm err}_{0/1} = [\![{\rm sign}({\bf w}^\mathsf{T}{\bf x}) \not= y]\!]\)</span></li>
+<li>回归问题的损失函数为最小平方误差<span class="math inline">\({\rm err_{sqr}} = \left({\bf w}^\mathsf{T}{\bf x} - y\right)^2\)</span></li>
+</ul>
+<p>可以画出两个函数的曲线（横轴为<span class="math inline">\({\bf w}^\mathsf{T}{\bf x}\)</span>，纵轴为<span class="math inline">\(\rm err\)</span>），分情况讨论（期望<span class="math inline">\(y=1\)</span>还是<span class="math inline">\(y=-1\)</span>）</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML09_error_functions.png" alt="0/1误差函数与最小平方误差函数的图像比较。左为期望样本为正例的情况，右为期望样本为负例的情况"><figcaption>0/1误差函数与最小平方误差函数的图像比较。左为期望样本为正例的情况，右为期望样本为负例的情况</figcaption>
+</figure>
+<p>先看左边数据为正例的情况。由于此时数据为正例，因此其标签为1。最小平方误差函数以<span class="math inline">\({\bf w}^\mathsf{T}{\bf x}\)</span>为自变量时，函数图像是一个抛物线，在<span class="math inline">\({\bf w}^\mathsf{T}{\bf x} = y = 1\)</span>时取得最低点0。此时0/1分类误差函数也取得0，因为此时<span class="math inline">\({\bf w}^\mathsf{T}{\bf x}\)</span>的符号与<span class="math inline">\(y\)</span>相同，不等号不成立，因此两函数交于<span class="math inline">\((1, 0)\)</span>点。此外，当<span class="math inline">\({\bf w}^\mathsf{T}{\bf x} = 0\)</span>时，该点正好处在0/1分类误差函数变化的阶梯点上。但是由于<span class="math inline">\({\bf w}^\mathsf{T}{\bf x}\)</span>的符号跟<span class="math inline">\(y\)</span>的符号不一致，因此0/1误差函数取1。而最小平方差函数在此时的值也为1（<span class="math inline">\((0-1)^2 = 1\)</span>），因此两函数还交于<span class="math inline">\((0, 1)\)</span>点。画出所有图像以后，可以发现在<span class="math inline">\(\mathbb{R}\)</span>上总有<span class="math inline">\({\rm err}_{\rm sqrt} \ge {\rm err}_{0/1}\)</span>。同样的结论也可以用在右边数据为负例的情况。因此，由VC维的理论可以有 <span class="math display">\[
+\begin{align*}
+{\rm classification\  }E_{\rm out}({\bf w}) &amp;\le {\rm classification\  }E_{\rm in}({\bf w}) + \sqrt{\cdots\cdots} \\
+&amp; \le {\rm regression\  }E_{\rm in}({\bf w}) + \sqrt{\cdots\cdots}
+\end{align*}
+\]</span> 即回归问题的样本内误差加上一个常量，可以是分类问题样本外误差的一个上界。所以最优化的<span class="math inline">\({\bf w}_{\rm LIN}\)</span>也可以解决分类问题。实践中，<span class="math inline">\({\bf w}_{\rm LIN}\)</span>是一个不错的基线分类器，也可以用来做PLA算法或口袋算法的初始权重</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/08/28/NTUML-9-Linear-Regression/" title="NTUML 9. 线性回归">txshi-mt.com/2017/08/28/NTUML-9-Linear-Regression/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/NTUML/" rel="tag"># NTUML</a>
+          
+            <a href="/tags/线性回归/" rel="tag"># 线性回归</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/08/21/NTUML-8-Noise-and-Error/" rel="next" title="NTUML 8. 噪声和错误">
+                <i class="fa fa-chevron-left"></i> NTUML 8. 噪声和错误
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/08/30/NTUML-10-Logistic-Regression/" rel="prev" title="NTUML 10. Logistic回归">
+                NTUML 10. Logistic回归 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#线性回归问题"><span class="nav-number">1.</span> <span class="nav-text">&#x7EBF;&#x6027;&#x56DE;&#x5F52;&#x95EE;&#x9898;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#线性回归算法"><span class="nav-number">2.</span> <span class="nav-text">&#x7EBF;&#x6027;&#x56DE;&#x5F52;&#x7B97;&#x6CD5;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一般化问题"><span class="nav-number">3.</span> <span class="nav-text">&#x4E00;&#x822C;&#x5316;&#x95EE;&#x9898;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#用于二元分类的线性回归"><span class="nav-number">4.</span> <span class="nav-text">&#x7528;&#x4E8E;&#x4E8C;&#x5143;&#x5206;&#x7C7B;&#x7684;&#x7EBF;&#x6027;&#x56DE;&#x5F52;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

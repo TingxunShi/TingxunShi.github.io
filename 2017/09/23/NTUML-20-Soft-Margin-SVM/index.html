@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="NTUML,SVM," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="动机与原始问题 上一讲最后提到，SVM也会出现过拟合的情况。那么在什么时候SVM会过拟合呢？其中一种情况是使用太强力的\(\boldsymbol{\Phi}\)，而另一种情况是坚持认为数据是完全可分的。回顾之前的理论，如果总是坚持要完全可分输入数据，就是要找到一个\(g\)使得输入数据可以被\(g\)打散，因此也就增大了过拟合的可能性 回想之前介绍的口袋算法，这个算法对那些线性不可分的数据集做了一">
+<meta name="keywords" content="NTUML,SVM">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NTUML 20. 软间隔支持向量机">
+<meta property="og:url" content="txshi-mt.com/2017/09/23/NTUML-20-Soft-Margin-SVM/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="动机与原始问题 上一讲最后提到，SVM也会出现过拟合的情况。那么在什么时候SVM会过拟合呢？其中一种情况是使用太强力的\(\boldsymbol{\Phi}\)，而另一种情况是坚持认为数据是完全可分的。回顾之前的理论，如果总是坚持要完全可分输入数据，就是要找到一个\(g\)使得输入数据可以被\(g\)打散，因此也就增大了过拟合的可能性 回想之前介绍的口袋算法，这个算法对那些线性不可分的数据集做了一">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML20_margin_violation.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML20_soft_margin_gaussian_svm.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML20_different_SVs.png">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.092Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NTUML 20. 软间隔支持向量机">
+<meta name="twitter:description" content="动机与原始问题 上一讲最后提到，SVM也会出现过拟合的情况。那么在什么时候SVM会过拟合呢？其中一种情况是使用太强力的\(\boldsymbol{\Phi}\)，而另一种情况是坚持认为数据是完全可分的。回顾之前的理论，如果总是坚持要完全可分输入数据，就是要找到一个\(g\)使得输入数据可以被\(g\)打散，因此也就增大了过拟合的可能性 回想之前介绍的口袋算法，这个算法对那些线性不可分的数据集做了一">
+<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML20_margin_violation.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/09/23/NTUML-20-Soft-Margin-SVM/"/>
+
+
+
+
+
+  <title>NTUML 20. 软间隔支持向量机 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/09/23/NTUML-20-Soft-Margin-SVM/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NTUML 20. 软间隔支持向量机</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-23T10:29:11+08:00">
+                Sep 23 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/统计机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">统计机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="动机与原始问题">动机与原始问题</h2>
+<p>上一讲最后提到，SVM也会出现过拟合的情况。那么在什么时候SVM会过拟合呢？其中一种情况是使用太强力的<span class="math inline">\(\boldsymbol{\Phi}\)</span>，而另一种情况是坚持认为数据是完全可分的。回顾之前的理论，如果总是坚持要完全可分输入数据，就是要找到一个<span class="math inline">\(g\)</span>使得输入数据可以被<span class="math inline">\(g\)</span>打散，因此也就增大了过拟合的可能性</p>
+<p>回想之前介绍的口袋算法，这个算法对那些线性不可分的数据集做了一些退让：不再要求得到的超平面可以完全分开已知数据，但求最优超平面犯的错误越少越好，即口袋算法得到的<span class="math inline">\(b, {\bf w}\)</span>满足 <span class="math display">\[
+\min_{b, {\bf w}}\sum_{n=1}^N [\![y_n \not= {\rm sign}({\bf w^\mathsf{T}z}_n + b)]\!]
+\]</span> 相比而言，前面提到的硬间隔SVM的条件实在是太苛刻了：不仅要求每个样本都分对，还要求每个样本离分离超平面有一定的距离。因此，可以适当放松要求，让它对错分的样本不再施加到超平面的距离限制，只控制错分样本的数目让其越少越好（即不让模型无止境地犯错）。这样，得到的优化问题变成了 <span class="math display">\[
+\begin{align*}
+\min_{b, {\bf w}}\hspace{2ex}&amp;\frac{1}{2}{\bf w^\mathsf{T}w} + C\cdot \sum_{n=1}^N [\![y_n \not= {\rm sign}({\bf w^\mathsf{T}z}_n + b)]\!] \\
+{\rm s.t.} \hspace{2ex} &amp;y_n({\bf w^\mathsf{T}z}_n + b) \ge 1 {\rm\  for\  correct\  }n \\
+&amp;y_n ({\bf w^\mathsf{T}z}_n + b) \ge -\infty{\rm\  for\  incorrect\  }n
+\end{align*}
+\]</span> 这里<span class="math inline">\(C\)</span>控制了在训练集上准确性和间隔大小这两者之间的平衡。<span class="math inline">\(C\)</span>越大，越倾向于不要再训练集上犯错误；<span class="math inline">\(C\)</span>越小，越倾向于在正确分类的数据上分类器间隔尽可能大</p>
+<p>上述问题可以对表达形式做一步化简，得到一个等价的问题 <span class="math display">\[
+\begin{align*}
+\min_{b, {\bf w}}\hspace{2ex}&amp;\frac{1}{2}{\bf w^\mathsf{T}w} + C\cdot \sum_{n=1}^N [\![y_n \not= {\rm sign}({\bf w^\mathsf{T}z}_n + b)]\!] \\
+{\rm s.t.} \hspace{2ex} &amp;y_n({\bf w^\mathsf{T}z}_n + b) \ge 1 -\infty\cdot [\![y_n \not= {\rm sign}({\bf w^\mathsf{T}z}_n + b)]\!]
+\end{align*}
+\]</span> 注意这个问题的限制条件里有<span class="math inline">\(N\)</span>个布尔表达式<span class="math inline">\([\![\cdot]\!]\)</span>，因此不是线性约束，整个问题不能再用二次规划求解器来求解，之前的对偶方法、核方法也就没法做了。而且“预测错”也有两种错误的方法，一种是离边界很近的错误，一种是离边界很远的错误，这个问题也没法区分这两种错误，因此需要对这个问题进行修改。一种修改方法是对每个数据点引入<span class="math inline">\(\xi_n\)</span>这个变量，表示分类器在这个数据点上犯的错误的严重性。最优化问题里要优化的问题也不再简单记录“犯了多少错误”，而是记录所有数据点总共犯错误的情况。即要求解的问题和约束为如下形式 <span class="math display">\[
+\begin{align*}
+\min_{b, {\bf w}}\hspace{2ex}&amp;\frac{1}{2}{\bf w^\mathsf{T}w} + C\cdot \sum_{n=1}^N \xi_n\\
+{\rm s.t.} \hspace{2ex} &amp;y_n({\bf w^\mathsf{T}z}_n + b) \ge 1 -\xi_n,\  \xi_n \ge 0 \forall n
+\end{align*}
+\]</span> 这样一来，所有约束条件都是线性约束，要求解的目标问题是二次函数，又可以用QP求解器求解了。这种问题称为<strong>软间隔支持向量机</strong>，其中<span class="math inline">\(\xi_n\)</span>记录的是数据点的“间隔破坏程度”，如下图所示</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML20_margin_violation.png" alt="软间隔SVM的示意图。图中在间隔内的蓝点是破坏点，紫色的距离长度是它对间隔的破坏程度，也就是问题描述中的xi_n"><figcaption>软间隔SVM的示意图。图中在间隔内的蓝点是破坏点，紫色的距离长度是它对间隔的破坏程度，也就是问题描述中的xi_n</figcaption>
+</figure>
+<p>上面描述的问题中，<span class="math inline">\(C\)</span>越大，表示对错误的容忍程度越小，对所有点尽可能不错分；<span class="math inline">\(C\)</span>越小，表示对错误的容忍程度越大，要求的间隔越宽</p>
+<p>新的问题有<span class="math inline">\(\tilde{d} + 1 + N\)</span>个变量，有<span class="math inline">\(2N\)</span>个约束条件。接下来，就要用对偶问题来移除问题对<span class="math inline">\(\tilde{d}\)</span>的依赖</p>
+<h2 id="对偶问题">对偶问题</h2>
+<p>对原始问题 <span class="math display">\[
+\begin{align*}
+\min_{b, {\bf w}}\hspace{2ex}&amp;\frac{1}{2}{\bf w^\mathsf{T}w} + C\cdot \sum_{n=1}^N \xi_n\\
+{\rm s.t.} \hspace{2ex} &amp;y_n({\bf w^\mathsf{T}z}_n + b) \ge 1 -\xi_n,\  \xi_n \ge 0 \forall n
+\end{align*}
+\]</span> 可以看到对每个点都有两个约束条件。引入拉格朗日乘子<span class="math inline">\(\alpha_n\)</span>和<span class="math inline">\(\beta_n\)</span>，可以得到拉格朗日函数 <span class="math display">\[
+\begin{align*}
+\mathcal{L}(b, {\bf w}, \boldsymbol{\xi}, \boldsymbol{\alpha}, \boldsymbol{\beta}) = &amp;\frac{1}{2}{\bf w^\mathsf{T}w} + C\cdot \sum_{n=1}^N \xi_n \\
+&amp; +\sum_{n=1}^N \alpha_n\cdot (1-\xi_n - y_n({\bf w^\mathsf{T}z}_n + b)) + \sum_{n=1}^N \beta_n \cdot (-\xi_n)
+\end{align*}
+\]</span> 对应的对偶问题可以写为 <span class="math display">\[
+\begin{align*}
+\max_{\alpha_n \ge 0, \beta_n \ge 0} \left(\min_{b, {\bf w}, \boldsymbol{\xi}}  \frac{1}{2}{\bf w^\mathsf{T}w} + C\cdot \sum_{n=1}^N \xi_n  +\sum_{n=1}^N \alpha_n\cdot (1-\xi_n - y_n({\bf w^\mathsf{T}z}_n + b)) + \sum_{n=1}^N \beta_n \cdot (-\xi_n)\right)
+\end{align*}
+\]</span> 解这个问题可以用第18讲中相同的技巧：最优的<span class="math inline">\(\boldsymbol{\xi}\)</span>必然满足<span class="math inline">\(\frac{\partial \mathcal{L}}{\partial \xi_n} = 0\)</span>，因此可以先解这个关系式 <span class="math display">\[
+\frac{\partial \mathcal{L}}{\partial \xi_n} = 0 \Rightarrow C - \alpha_n-\beta_n = 0
+\]</span> 因此可以把<span class="math inline">\(\beta_n\)</span>换掉，即<span class="math inline">\(\beta_n = C - \alpha_n\)</span>，并施加一个写明的约束条件<span class="math inline">\(0 \le \alpha_n \le C\)</span>。将<span class="math inline">\(\beta_n\)</span>的这个表达式代入到上面的对偶问题，可以消掉<span class="math inline">\(\beta_n\)</span>和<span class="math inline">\(\xi_n\)</span>，问题转化为 <span class="math display">\[
+\max_{0\le \alpha_n \le C, \beta_n = C-\alpha_n}\left(\min_{b, {\bf w}}  \frac{1}{2}{\bf w^\mathsf{T}w} + \sum_{n=1}^N \alpha_n\cdot (1-y_n({\bf w^\mathsf{T}z}_n + b)) \right)
+\]</span> 这个问题和第18讲中推出的对偶问题非常相近，只是最外部<span class="math inline">\(\alpha_n\)</span>的条件有细微差别。利用同样的方法可以推出 <span class="math display">\[
+\begin{align*}
+\frac{\partial \mathcal{L}}{\partial b} = 0 &amp;\Rightarrow \sum_{n=1}^N\alpha_ny_n = 0 \\
+\frac{\partial \mathcal{L}}{\partial {\bf w}} = 0 &amp;\Rightarrow {\bf w} = \sum_{n=1}^N\alpha_ny_n{\bf z}_n
+\end{align*}
+\]</span> 因此，软间隔SVM对偶问题的标准形式为 <span class="math display">\[
+\begin{align*}
+\min_{\boldsymbol{\alpha}} \hspace{2ex}&amp;\frac{1}{2}\sum_{n=1}^N\sum_{m=1}^N \alpha_n\alpha_m y_ny_m{\bf z}_n^\mathsf{T}{\bf z}_m - \sum_{n=1}^N\alpha_n \\
+{\rm subject\  to} \hspace{2ex}&amp;\sum_{n=1}^Ny_n\alpha_n = 0; \\
+&amp; 0 \le \alpha_n \le C, {\rm for\  }n=1,2,\ldots,N
+\end{align*}
+\]</span> 与前面硬间隔SVM对偶问题的标准形式的唯一区别就是这里<span class="math inline">\(\alpha_n\)</span>有了上限<span class="math inline">\(C\)</span>。这也是一个标准的二次规划问题，有<span class="math inline">\(N\)</span>个变量，<span class="math inline">\(2N+1\)</span>个限制条件</p>
+<h2 id="软间隔svm传递的信息">软间隔SVM传递的信息</h2>
+<p>得到软间隔SVM对偶问题的标准形式以后，求解这个问题的步骤与第18讲硬间隔SVM对偶问题的求解步骤基本类似（如果引入核方法，那么就把在高维空间算内积的步骤用核函数代替）。由于<span class="math inline">\(C\)</span>和<span class="math inline">\(\xi_n\)</span>的存在，软间隔SVM不再像硬间隔SVM那样数据必须线性可分时才能有解，而是总有解的。因此软间隔SVM是一种更灵活的模型，在实践中是最常用的SVM模型</p>
+<p>接下来的问题是软间隔SVM如何求解<span class="math inline">\(b\)</span>，因为这两个毕竟是不同的QP问题，KKT条件不完全相同。对于软间隔SVM，其互补松弛条件（complementary slackness）为 <span class="math display">\[
+\begin{align*}
+\alpha_n(1-\xi_n - y_n({\bf w^\mathsf{T}z}_n + b)) &amp;= 0 \\
+\beta_n(-\xi_n) &amp;= 0
+\end{align*}
+\]</span> 将前面推出的<span class="math inline">\(\beta_n\)</span>的关系式代入，有 <span class="math display">\[
+\begin{align*}
+\alpha_n(1-\xi_n - y_n({\bf w^\mathsf{T}z}_n + b)) &amp;= 0 \\
+(C-\alpha_n)\xi_n&amp;= 0
+\end{align*}
+\]</span> 假设<span class="math inline">\(\alpha_s &gt; 0\)</span>，即<span class="math inline">\(s\)</span>是一个支持向量，由第一个式子，可以求出 <span class="math display">\[
+b = y_s - y_s\xi_s - {\bf w^\mathsf{T}z}_s
+\]</span> （注意这里用到了<span class="math inline">\(y_s\)</span>的一个特点：因为<span class="math inline">\(y_s \in \{-1, +1\}\)</span>，因此任意数除以<span class="math inline">\(y_s\)</span>与乘以<span class="math inline">\(y_s\)</span>的效果是一样的）</p>
+<p>这里带了一个惩罚项，如果要算出<span class="math inline">\(\xi_s\)</span>，就得先算出<span class="math inline">\(b\)</span>，造成了一个鸡生蛋蛋生鸡的问题。因此要看第二个式子，如果<span class="math inline">\(\alpha_s &lt; C\)</span>，那么就会有<span class="math inline">\(\xi_s = 0\)</span>。这种<span class="math inline">\(0 &lt; \alpha_s &lt; C\)</span>的支持向量称为自由的支持向量。综上所述，使用任意<em>自由的</em>支持向量<span class="math inline">\(({\bf x}_s, y_s)\)</span>，都可以求出唯一的<span class="math inline">\(b\)</span>为 <span class="math display">\[
+b = y_s - \sum_{ {\rm SV\  indices\  }n} \alpha_ny_nK({\bf x}_n, {\bf x}_s)
+\]</span> 当然，极少数的情况下，没有自由的支持向量，那么<span class="math inline">\(b\)</span>就只能通过一系列不等式得出，此时可能有不止一个<span class="math inline">\(b\)</span>存在</p>
+<p>软间隔SVM（使用高斯核）的例子如下图所示。可以看到，小的<span class="math inline">\(C\)</span>可能会有欠拟合，而大的<span class="math inline">\(C\)</span>仍然会导致过拟合的现象。因此，对软间隔SVM，仍然要小心地选择<span class="math inline">\((\gamma, C)\)</span></p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML20_soft_margin_gaussian_svm.png" alt="使用高斯核的软间隔SVM在设置不同的C时的效果"><figcaption>使用高斯核的软间隔SVM在设置不同的C时的效果</figcaption>
+</figure>
+<p>由前面的互补松弛条件，可以看到不同的数据点对应的<span class="math inline">\(\alpha_n\)</span>可以分为三种</p>
+<ul>
+<li>非支持向量，<span class="math inline">\(\alpha_n = 0, \xi_n = 0\)</span> 。这种点被正确分类，且远离分离超平面的间隔边界</li>
+<li>自由支持向量，<span class="math inline">\(0 &lt; \alpha_n &lt; C, \xi_n = 0\)</span> 。这种点被正确分类，骑在分离超平面的间隔边界上，决定<span class="math inline">\(b\)</span>值</li>
+<li>受限的支持向量，<span class="math inline">\(\alpha_n=C\)</span> 。这种点的<span class="math inline">\(\xi_n = 1-y_n({\bf w^\mathsf{T}z}_n + b)\)</span>，肯定越过了间隔边界。这种店如果要分还能分成两种：一种是跨过了间隔边界，但是没跨过分离超平面；还一种是已经跨过了分离超平面</li>
+</ul>
+<p>这三种点可见下图示意。其中自由支持向量以方框圈出，受限的支持向量以三角圈出</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML20_different_SVs.png" alt="三种不同类型的支持向量"><figcaption>三种不同类型的支持向量</figcaption>
+</figure>
+<h2 id="模型选择">模型选择</h2>
+<p>前面说过，对高斯SVM（之后提到SVM都默认是软间隔SVM+核方法），不同的<span class="math inline">\((C, \gamma)\)</span>都会产生不同的分隔边界。到底怎样的组合才是最好的？还是要用交叉验证的方法来选择</p>
+<p>这里着重观察交叉验证中最特殊的一种交叉验证：留一交叉验证（LOOCV）。由前面的讲解，可知在训练样本数为<span class="math inline">\(N\)</span>的情况下，LOOCV可以看做是N折交叉验证。这里要证明的一点是：</p>
+<blockquote>
+<p>对于SVM，有 <span class="math display">\[
+E_{\rm LOOCV} \le \frac{\#{\rm SV}}{N}
+\]</span></p>
+</blockquote>
+<p>证明如下：</p>
+<p>假设对<span class="math inline">\(({\bf x}_N, y_N)\)</span>，解出来最优的<span class="math inline">\(\alpha_N=0\)</span>，则该点不是支持向量。因此，如果把这个点从原始数据集中除去，剩下的<span class="math inline">\((\alpha_1, \alpha_2, \ldots, \alpha_{N-1})\)</span>仍然是剩下的数据集按照算法求出来的最优的<span class="math inline">\(\boldsymbol{\alpha}\)</span>。也就是说，在LOOCV时如果去掉的是非支持向量点，那么得到的<span class="math inline">\(g^-\)</span>和不去掉这个点得到的<span class="math inline">\(g\)</span>是一样的。考虑到非支持向量点肯定是被正确分类，且远离边界的点，因此有 <span class="math display">\[
+\begin{align*}
+e_{\rm non-SV} &amp;= {\rm err}(g^-, {\rm non\text{-}SV}) \\
+&amp;= {\rm err}(g, {\rm non\text{-}SV}) = 0
+\end{align*}
+\]</span> 对支持向量，有<span class="math inline">\(e_{\rm SV} \le 1\)</span></p>
+<p>将这些式子都加起来求平均，可知 <span class="math display">\[
+E_{\rm LOOCV} \le \frac{\# {\rm SV}}{N}
+\]</span> <span class="math inline">\(\blacksquare\)</span></p>
+<p>这意味着似乎可以通过支持向量的数量来判断SVM算法是否过拟合。如果一个算法的支持向量数比较少，那么它过拟合的风险可能就比较小。但是实际应用时，有这么几点需要注意</p>
+<ul>
+<li><p><span class="math inline">\({\#{\rm SV}}(C, \gamma)\)</span>是<span class="math inline">\((C, \gamma)\)</span>一个<strong>不平滑</strong>的函数，因此很难优化</p></li>
+<li><p><span class="math inline">\(\#{\rm SV}\)</span>只是<span class="math inline">\(E_{\rm LOOCV}\)</span>的上界，并非确界</p></li>
+</ul>
+<p>因此，如果在调参时太耗时间，可以先干掉一些支持向量数太多的模型，然后再去仔细验证剩下的模型</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/09/23/NTUML-20-Soft-Margin-SVM/" title="NTUML 20. 软间隔支持向量机">txshi-mt.com/2017/09/23/NTUML-20-Soft-Margin-SVM/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/NTUML/" rel="tag"># NTUML</a>
+          
+            <a href="/tags/SVM/" rel="tag"># SVM</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/23/NTUML-19-Kernel-SVM/" rel="next" title="NTUML 19. 核支持向量机">
+                <i class="fa fa-chevron-left"></i> NTUML 19. 核支持向量机
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/10/02/NTUML-21-Kernel-Logistic-Regression/" rel="prev" title="NTUML 21. 核Logistic回归">
+                NTUML 21. 核Logistic回归 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#动机与原始问题"><span class="nav-number">1.</span> <span class="nav-text">&#x52A8;&#x673A;&#x4E0E;&#x539F;&#x59CB;&#x95EE;&#x9898;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对偶问题"><span class="nav-number">2.</span> <span class="nav-text">&#x5BF9;&#x5076;&#x95EE;&#x9898;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#软间隔svm传递的信息"><span class="nav-number">3.</span> <span class="nav-text">&#x8F6F;&#x95F4;&#x9694;SVM&#x4F20;&#x9012;&#x7684;&#x4FE1;&#x606F;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#模型选择"><span class="nav-number">4.</span> <span class="nav-text">&#x6A21;&#x578B;&#x9009;&#x62E9;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

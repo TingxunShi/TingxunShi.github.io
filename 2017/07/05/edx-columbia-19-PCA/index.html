@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="PCA,EdX-Columbia,SVD," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="PCA 通常被用来做维度缩减，即将数据从高维空间投影到低维空间，同时尽可能完整地保留原有的信息，可以由一个例子来看。假设在二维空间中存在一个单位向量\(q\)，即\(|\!|q|\!| = 1\)，对于同一空间中的其它向量\(x_i\)，该向量在\(q\)上的投影对应的向量为\(d\cdot \frac{q}{|\!|q|\!|} = dq\)（假设长度为\(d\)）。设\(x_i\)与\(q\)">
+<meta name="keywords" content="PCA,EdX-Columbia,SVD">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Edx Columbia ML 19. 主成分分析 (PCA)">
+<meta property="og:url" content="txshi-mt.com/2017/07/05/edx-columbia-19-PCA/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="PCA 通常被用来做维度缩减，即将数据从高维空间投影到低维空间，同时尽可能完整地保留原有的信息，可以由一个例子来看。假设在二维空间中存在一个单位向量\(q\)，即\(|\!|q|\!| = 1\)，对于同一空间中的其它向量\(x_i\)，该向量在\(q\)上的投影对应的向量为\(d\cdot \frac{q}{|\!|q|\!|} = dq\)（假设长度为\(d\)）。设\(x_i\)与\(q\)">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.100Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Edx Columbia ML 19. 主成分分析 (PCA)">
+<meta name="twitter:description" content="PCA 通常被用来做维度缩减，即将数据从高维空间投影到低维空间，同时尽可能完整地保留原有的信息，可以由一个例子来看。假设在二维空间中存在一个单位向量\(q\)，即\(|\!|q|\!| = 1\)，对于同一空间中的其它向量\(x_i\)，该向量在\(q\)上的投影对应的向量为\(d\cdot \frac{q}{|\!|q|\!|} = dq\)（假设长度为\(d\)）。设\(x_i\)与\(q\)">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/07/05/edx-columbia-19-PCA/"/>
+
+
+
+
+
+  <title>Edx Columbia ML 19. 主成分分析 (PCA) | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/07/05/edx-columbia-19-PCA/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Edx Columbia ML 19. 主成分分析 (PCA)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-05T17:32:27+08:00">
+                Jul 5 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/统计机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">统计机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="pca">PCA</h2>
+<p>通常被用来做维度缩减，即将数据从高维空间投影到低维空间，同时尽可能完整地保留原有的信息，可以由一个例子来看。假设在二维空间中存在一个单位向量<span class="math inline">\(q\)</span>，即<span class="math inline">\(|\!|q|\!| = 1\)</span>，对于同一空间中的其它向量<span class="math inline">\(x_i\)</span>，该向量在<span class="math inline">\(q\)</span>上的投影对应的向量为<span class="math inline">\(d\cdot \frac{q}{|\!|q|\!|} = dq\)</span>（假设长度为<span class="math inline">\(d\)</span>）。设<span class="math inline">\(x_i\)</span>与<span class="math inline">\(q\)</span>的夹角为<span class="math inline">\(\theta\)</span>，则<span class="math inline">\(d = |\!|x_i|\!|\cos \theta\)</span>。又<span class="math inline">\(\cos \theta = \frac{q^\mathsf{T}x_i}{|\!|q|\!||\!|x_i|\!|}\)</span>，因此 <span class="math display">\[
+d = |\!|x_i|\!|\cos\theta = |\!|x_i|\!|\cdot \frac{q^\mathsf{T}x_i}{|\!|q|\!||\!|x_i|\!|} = q^\mathsf{T}x_i
+\]</span> 即<span class="math inline">\(x_i\)</span>在<span class="math inline">\(q\)</span>上投影对应的向量为<span class="math inline">\((q^\mathsf{T}x_i)q\)</span>。这样，二维向量<span class="math inline">\(x_i\)</span>的信息被降为了一维的<span class="math inline">\(q^\mathsf{T}x_i\)</span>来保存，维度减小，但是信息没有丢失。最好的<span class="math inline">\(q\)</span>满足平方近似误差最小，即 <span class="math display">\[
+\begin{align*}
+q &amp;= {\rm arg}\min_q \sum_{i=1}^n |\!|x_i - qq^\mathsf{T}x_i|\!|^2\  \  \  {\rm subject\  to}\  q^\mathsf{T}q = 1 \\
+&amp;= {\rm arg}\min_q \sum_{i=1}^n x_i^\mathsf{T}x_i - q^\mathsf{T}\underbrace{\left(\sum_{i=1}^n x_ix_i^\mathsf{T}\right)}_{=XX^\mathsf{T}}q
+\end{align*}
+\]</span> 由于第一项与<span class="math inline">\(q\)</span>无关，第二项带负号，因此上述问题等价于 <span class="math display">\[
+q = {\rm arg}\max_q q^\mathsf{T}(XX^\mathsf{T})q\  \  \  {\rm subject\  to}\  q^\mathsf{T}q = 1 
+\]</span> 这里变化为特征值分解的问题。<span class="math inline">\(q\)</span>是<span class="math inline">\(XX^\mathsf{T}\)</span>的第一个特征向量，<span class="math inline">\(\lambda = q^\mathsf{T}(XX^\mathsf{T})q\)</span>是第一个特征值 具体解释如下：对上述优化问题引入Lagrange乘子，则优化问题转化为 <span class="math display">\[
+\begin{align*}
+\mathcal{L} &amp;= q^\mathsf{T}(XX^\mathsf{T})q + \lambda (1-q^\mathsf{T}q) \\
+\nabla \mathcal{L}_q &amp;= 2XX^\mathsf{T}q - 2q\lambda 
+\end{align*}
+\]</span> 令<span class="math inline">\(\nabla \mathcal{L}=0\)</span>可以得到<span class="math inline">\(XX^\mathsf{T}q =\lambda q\)</span>，这里也是特征值与特征向量的定义。而由于 <span class="math display">\[
+\begin{align*}
+q^\mathsf{T}(XX^\mathsf{T})q &amp;= q^\mathsf{T}\lambda q\  \  (\because (XX^\mathsf{T})q = \lambda q)\\
+&amp;= \lambda q^\mathsf{T}q \\
+&amp;= \lambda\  \  (\because q^\mathsf{T}q = 1)
+\end{align*}
+\]</span> 因此求最大的<span class="math inline">\(q^\mathsf{T}(XX^\mathsf{T})q\)</span>等于求最大<span class="math inline">\(\lambda\)</span>，即最大的特征值</p>
+<p>上述表示可以推广到将数据降维到<span class="math inline">\(K\)</span>维的情况，即 <span class="math display">\[
+\begin{align*}
+q &amp;= {\rm arg}\min_q \sum_{q=1}^n \left|\!\left|x_i - \underbrace{\sum_{k=1}^K(x_i^\mathsf{T}q_k)q_k}_{ {\rm approximates\  } x}\right|\!\right|^2\  \  \  {\rm s.t.}\  q_k^\mathsf{T}q_k&#39; = \begin{cases}1, &amp; k = k&#39; \\ 0, &amp; k \not= k&#39;\end{cases} \\
+&amp;= {\rm arg}\min_q \sum_{i=1}^n x_i^\mathsf{T}x_i - \sum_{k=1}^K q_k^\mathsf{T} \underbrace{\left(\sum_{i=1}^n x_ix_i^\mathsf{T} \right)}_{=XX^\mathsf{T}}q_k
+\end{align*}
+\]</span></p>
+<p>因此投影为 <span class="math display">\[
+x_{\rm proj} = \left[\begin{array}{c}   q_1^\mathsf{T}x \\  \vdots  \\ q^\mathsf{T}_K x \end{array}\right],\  \  x \approx \sum_{k=1}^K (q_k^\mathsf{T}x)q_k = Qx_{\rm proj}
+\]</span></p>
+<p>使用SVD分解，可以得到<span class="math inline">\(X=USV^\mathsf{T}\)</span>。我们有<span class="math inline">\(XX^\mathsf{T} = US^2U^\mathsf{T}\)</span>，可以推出<span class="math inline">\(Q=U, \lambda_i = (S^2)_{ii} \ge 0\)</span>，即<span class="math inline">\(XX^\mathsf{T}\)</span>是半正定矩阵，因此特征值有<span class="math inline">\(r = \min\{d, n\}\)</span>个，且 <span class="math display">\[
+\lambda_1 \ge \lambda_2 \ge \ldots \ge \lambda_r &gt; 0
+\]</span></p>
+<p><strong>PCA之前一般要做一个预处理，把<span class="math inline">\(x\)</span>的每个维度减去该列的均值</strong></p>
+<h2 id="概率pca">概率PCA</h2>
+<p>使用SVD分解，有<span class="math inline">\(X=USV^\mathsf{T}\)</span>。如果我们用矩阵<span class="math inline">\(W\)</span>和<span class="math inline">\(Z\)</span>近似，即<span class="math inline">\(X\approx WZ\)</span>，其中</p>
+<ul>
+<li><span class="math inline">\(W\)</span>是一个<span class="math inline">\(d \times K\)</span>矩阵，类似特征向量组成的集合，但是并不需要正交</li>
+<li><span class="math inline">\(Z\)</span>的第<span class="math inline">\(i\)</span>列<span class="math inline">\(z_i \in \mathbb{R}^K\)</span>是<span class="math inline">\(x_i\)</span>在低维空间的表示</li>
+</ul>
+<p>则概率PCA的生成过程为 <span class="math display">\[
+x_i \sim N(Wz_i, \sigma^2I),\  \  z_i \sim N(0,I)
+\]</span></p>
+<p>目标是在边缘分布下（即积分掉<span class="math inline">\(z_i\)</span>以后）找出<span class="math inline">\(W\)</span>的最大似然估计，即 <span class="math display">\[
+W_{\rm ML} = {\rm arg}\max_W \ln p(x_1, \ldots, x_n|W) = {\rm arg}\max_W \sum_{i=1}^n \ln p(x_i|W)
+\]</span> 由于<span class="math inline">\(p(x_i|W) = N(x_i |0, \sigma^2I + WW^\mathsf{T})\)</span> <span class="math display">\[
+N(x_i |0, \sigma^2I + WW^\mathsf{T}) = \frac{1}{(2\pi)^{\frac{d}{2}}\left|\sigma^2 I + WW^\mathsf{T}\right|^{\frac{1}{2}}}e^{-\frac{1}{2}x^\mathsf{T}(\sigma^2I + WW^\mathsf{T})^{-1}x}
+\]</span> 可以借助<span class="math inline">\(z_1, \ldots, z_n\)</span>来使用EM算法求解</p>
+<blockquote>
+<p>概率PCA的EM算法 输入：数据<span class="math inline">\(x_{1:n}, x_i \in \mathbb{R}^d\)</span>，模型<span class="math inline">\(x_i \sim N(W_{z_i}, \sigma^2), z_i \sim N(0,I), z\in \mathbb{R}^K\)</span> 输出：<span class="math inline">\(W\)</span>的点估计和<span class="math inline">\(z_i\)</span>的后验分布 E步：令每个<span class="math inline">\(q(z_i) = p(z_i|x_i, W) = N(z_i|\mu_i, \Sigma_i)\)</span>，其中 <span class="math display">\[
+\Sigma_i = (I + W^\mathsf{T}W/\sigma^2)^{-1},\  \  \mu_i = \Sigma_iW^\mathsf{T}x_i / \sigma^2
+\]</span> M步：最大化E步的目标函数<span class="math inline">\(\mathcal{L}\)</span>，更新<span class="math inline">\(W\)</span> <span class="math display">\[
+W = \left[\sum_{i=1}^n x_i\mu_i^\mathsf{T}\right]\left[\sigma^2I + \sum_{i=1}^n (\mu_i\mu_i^\mathsf{T}+\Sigma_i)\right]^{-1}
+\]</span></p>
+</blockquote>
+<h2 id="核pca">核PCA</h2>
+<p>在原始的PCA中，<span class="math inline">\(\sum_{i=1}^n x_ix_i^\mathsf{T}\)</span>可以写作<span class="math inline">\(XX^\mathsf{T}\)</span>。如果我们使用<span class="math inline">\(\phi(x)\)</span>把特征从<span class="math inline">\(\mathbb{R}^d\)</span>映射到<span class="math inline">\(\mathbb{R}^D\)</span>，即做特征值分解 <span class="math display">\[
+\left[\sum_{i=1}^n \phi(x_i)\phi(x_i)^\mathsf{T}\right]q_k = \lambda_kq_k
+\]</span> 同时又不真正在高维空间中做计算，即，如何不显式使用<span class="math inline">\(\phi(\cdot)\)</span>和<span class="math inline">\(q\)</span>，直接做PCA？</p>
+<p>由于由前式有 <span class="math display">\[
+\sum_{i=1}^n \phi(x_i)\underbrace{(\phi(x_i)^\mathsf{T}q_k)/\lambda_k}_{=a_{ki}} = q_k
+\]</span> 因此<span class="math inline">\(q_k\)</span>可以写为 <span class="math display">\[
+q_k = \sum_{i=1}^n a_{ki}\phi(x_i)
+\]</span> 其中<span class="math inline">\(\mathbf{a}_k \in \mathbb{R}^n\)</span></p>
+<p>因此我们可以不学习<span class="math inline">\(q_k\)</span>，直接学习<span class="math inline">\(\mathbf{a}_k\)</span>。把上面<span class="math inline">\(q_k\)</span>的式子代回原始公式，有 <span class="math display">\[
+\sum_{i=1}^n \phi(x_i) \sum_{j=1}^n a_{kj}\underbrace{\phi(x_i)^\mathsf{T}\phi(x_j)}_{K(x_i, x_j)} = \lambda_k \sum_{i=1}^n a_{ki}\phi(x_i)
+\]</span> 对于赏识，左右两边再乘以<span class="math inline">\(\phi(x_l)^\mathsf{T}\)</span>，<span class="math inline">\(l \in \{1,\ldots, n\}\)</span>，可以得到 <span class="math display">\[
+K^2\mathbf{a}_k = \lambda_k K \mathbf{a}_k \Leftrightarrow K\mathbf{a}_k = \lambda_k \mathbf{a}_k
+\]</span> 其中<span class="math inline">\(K\)</span>是在数据上构建的<span class="math inline">\(n\times n\)</span>核矩阵</p>
+<blockquote>
+<p>核PCA 输入：数据<span class="math inline">\(x_1, \ldots, x_n, x\in \mathbb{R}^d\)</span>，以及核函数<span class="math inline">\(K(x_i, x_j)\)</span> 构造数据上的核矩阵，例如 <span class="math display">\[
+K_{ij} = b\exp\left\{-\frac{|\!|x_i - x_j|\!|^2}{c}\right\}
+\]</span> 对核矩阵做特征值分解，得到前<span class="math inline">\(r &lt;\!\!&lt; n\)</span>个特征值/特征向量 <span class="math inline">\((\lambda_1, \mathbf{a}_1) , \ldots, (\lambda_r, \mathbf{a}_r)\)</span> 输出：<span class="math inline">\(x_i\)</span>的低维表示，先将<span class="math inline">\(x_i\)</span>映射到<span class="math inline">\(\phi(x_i)\)</span>，然后投影为<span class="math inline">\(q_k^\mathsf{T}\phi(x_i)\)</span> <span class="math display">\[
+x_i \mathop{\rightarrow}^{\rm proj} \left[\begin{matrix} \lambda_1a_{1i} \\ \vdots \\ \lambda_ra_{ri} \end{matrix}\right]
+\]</span> 其中<span class="math inline">\(a_{ki}\)</span>是第<span class="math inline">\(k\)</span>个特征向量<span class="math inline">\(\mathbf{a}_k\)</span>的第<span class="math inline">\(i\)</span>维</p>
+</blockquote>
+<p>对新数据也可以做类似的kernel trick，只不过有 <span class="math display">\[
+\begin{align*}
+x_0 &amp;\mathop{\rightarrow}^{\rm proj} \left[\begin{matrix} \phi(x_0)^\mathsf{T}q_1 \\ \vdots \\ \phi(x_0)^\mathsf{T}q_r \end{matrix}\right] \\
+\phi(x_0)^\mathsf{T}q_k &amp;= \sum_{i=1}^n a_{ki}\phi(x_0)^\mathsf{T}\phi(x_i) = \sum_{i=1}^n a_{ki}K(x_0, x_i)
+\end{align*}
+\]</span></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/07/05/edx-columbia-19-PCA/" title="Edx Columbia ML 19. 主成分分析 (PCA)">txshi-mt.com/2017/07/05/edx-columbia-19-PCA/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/PCA/" rel="tag"># PCA</a>
+          
+            <a href="/tags/EdX-Columbia/" rel="tag"># EdX-Columbia</a>
+          
+            <a href="/tags/SVD/" rel="tag"># SVD</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/07/05/edx-columbia-18-Topic-Modeling-Non-negative-Matrix-Factorization/" rel="next" title="EdX Columbia ML 18. 主题建模与非负矩阵分解">
+                <i class="fa fa-chevron-left"></i> EdX Columbia ML 18. 主题建模与非负矩阵分解
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/07/09/edx-columbia-20-Markov-Model-Semi-Supervised-Learning/" rel="prev" title="EdX Columbia ML 20. 马尔科夫模型和半监督学习">
+                EdX Columbia ML 20. 马尔科夫模型和半监督学习 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#pca"><span class="nav-number">1.</span> <span class="nav-text">PCA</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#概率pca"><span class="nav-number">2.</span> <span class="nav-text">&#x6982;&#x7387;PCA</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#核pca"><span class="nav-number">3.</span> <span class="nav-text">&#x6838;PCA</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

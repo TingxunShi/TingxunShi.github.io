@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="NTUML,机器学习实践经验," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="奥卡姆剃刀  Entia non sunt multiplicanda praeter necessitatem —-William of Occam (1287-1347)  该拉丁格言的意译为“如无必要，勿增实体”。用在机器学习的领域，意味着对数据最简单的拟合往往也是最好的。不过这里有两个问题：1. 说一个模型“简单”是什么意思，2. 我们怎么知道越简单就越好 简单的模型 之前其实提到过什么是">
+<meta name="keywords" content="NTUML,机器学习实践经验">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NTUML 16. 三条锦囊妙计">
+<meta property="og:url" content="txshi-mt.com/2017/09/14/NTUML-16-Three-Learning-Principles/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="奥卡姆剃刀  Entia non sunt multiplicanda praeter necessitatem —-William of Occam (1287-1347)  该拉丁格言的意译为“如无必要，勿增实体”。用在机器学习的领域，意味着对数据最简单的拟合往往也是最好的。不过这里有两个问题：1. 说一个模型“简单”是什么意思，2. 我们怎么知道越简单就越好 简单的模型 之前其实提到过什么是">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-09-15%2009.44.11.png">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.091Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NTUML 16. 三条锦囊妙计">
+<meta name="twitter:description" content="奥卡姆剃刀  Entia non sunt multiplicanda praeter necessitatem —-William of Occam (1287-1347)  该拉丁格言的意译为“如无必要，勿增实体”。用在机器学习的领域，意味着对数据最简单的拟合往往也是最好的。不过这里有两个问题：1. 说一个模型“简单”是什么意思，2. 我们怎么知道越简单就越好 简单的模型 之前其实提到过什么是">
+<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-09-15%2009.44.11.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/09/14/NTUML-16-Three-Learning-Principles/"/>
+
+
+
+
+
+  <title>NTUML 16. 三条锦囊妙计 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/09/14/NTUML-16-Three-Learning-Principles/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NTUML 16. 三条锦囊妙计</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-14T21:55:21+08:00">
+                Sep 14 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/统计机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">统计机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="奥卡姆剃刀">奥卡姆剃刀</h2>
+<blockquote>
+<p>Entia non sunt multiplicanda praeter necessitatem</p>
+<p>—-William of Occam (1287-1347)</p>
+</blockquote>
+<p>该拉丁格言的意译为“如无必要，勿增实体”。用在机器学习的领域，意味着<strong>对数据最简单的拟合往往也是最好的</strong>。不过这里有两个问题：1. 说一个模型“简单”是什么意思，2. 我们怎么知道越简单就越好</p>
+<h3 id="简单的模型">简单的模型</h3>
+<p>之前其实提到过什么是“简单的假设”。如果一个假设<span class="math inline">\(h\)</span>简单，通常它的复杂度<span class="math inline">\(\Omega(h)\)</span>不高，需要定义的参数少。另外，也提到过什么是“简单的假设集”。如果一个假设集简单，它包含的有效假设不多，成长函数增长比较慢。这两个定义并不冲突：假设一个假设集<span class="math inline">\(\mathcal{H}\)</span>只有<span class="math inline">\(2^\ell\)</span>个假设，那么属于它的每个假设<span class="math inline">\(h\)</span>只需要<span class="math inline">\(\ell\)</span>个比特就能描述。因此，这两者之间的关系为， <span class="math display">\[
+{\rm small\  }\Omega(h) \Leftarrow {\rm small\  }\Omega(\mathcal{H})
+\]</span> 因此，或者使用简单的模型，或者使用正则化得到简单的假设，这样就会对数据集有简单的解释</p>
+<h3 id="简单就好">简单就好</h3>
+<p>除去数学证明，还可以通过一些富有哲学意味的推演来说明简单的就是好的。假设使用了一个简单的模型<span class="math inline">\(\mathcal{H}\)</span>，那么它的成长函数<span class="math inline">\(m_\mathcal{H}(N)\)</span>就会比较小，成长比较慢。这样，如果给模型随便给出<span class="math inline">\(N\)</span>条数据（数据标签随机产生），那么这个模型很不太可能完美拟合数据（概率大概是<span class="math inline">\(\frac{m_\mathcal{H}(N)}{2^N}\)</span>）。反过来，如果模型对数据的拟合非常好，则说明这个拟合的结果是有显著性的，数据应该有迹可循。而这个推论对复杂的模型是不能成立的，即对于复杂数据，即是其可以对数据表现良好，也不敢说这个结果是有显著性的</p>
+<hr>
+<p>因此，在实操时，首先就应该使用线性模型，而且要时时思考有没有过度使用模型的现象</p>
+<h2 id="取样偏差">取样偏差</h2>
+<p>先来看个故事。1948年美国总统候选，民主党的候选人是杜鲁门，共和党则是杜威。投票结束后，某报纸进行了一次电话民调，抽样估计谁会赢。抽样结束以后，写下了《杜威击败杜鲁门》的报道</p>
+<p>然而，实际上，获胜的是杜鲁门！造成这个反转的原因，不是因为编辑弄错，也不是运气不好，而是因为电话很贵，所以抽样到的都是有钱人，当年正好有钱人是杜威的票仓，因此这样做很容易得出杜威获胜的结论。这告诉我们</p>
+<blockquote>
+<p>如果数据抽样是有偏的，学习得到的结果也是有偏的</p>
+</blockquote>
+<p>回想当初推导VC上界时，少数几条限制条件之一就是训练集和测试集数据应该来自同一个分布。假设训练集数据来自<span class="math inline">\(P_1({\bf x}, y)\)</span>而测试集数据来自于<span class="math inline">\(P_2 \not= P_1\)</span>，VC理论就不成立了。就像问已知一个学生刻苦学习了数学，问他在英语考试中会取得什么样的成绩一样——谁知道呢</p>
+<p>另一个例子来源于林轩田老师本人的经历：在做Netflix的电影推荐系统时，主办方称如果准确率能提升10%就有100万奖金可以拿，而林老师提的第一个模型在验证集上就提升了13%的准确率。这里有什么问题？问题在于他构建验证集是使用传统的<strong>随机</strong>取样法，而实际比赛要求的是根据某个人前几次的观影记录来推测其对<strong>后几部</strong>电影的评分，即测试集和验证集的分布还是不同的。这个隐蔽的错误再次证明，<strong>要了解测试环境，进而让训练环境与测试环境尽量接近</strong>。对于刚才的例子，训练时就可以给时间轴上靠后的数据权重更大，并使用后面的数据做验证集</p>
+<p>之前介绍的信用卡批准这一案例实际上也有同样的问题：我们拿到的信用卡使用数据其实都是来自于银行已经核发了信用卡的顾客，即顾客群体已经被做了一部分筛查。如果这些数据不进行调整就用来训练模型，可能会造成问题，因为它面向的顾客群体与之前相比多了一些会被原系统毙掉的顾客，而模型对这些顾客的表现很可能与预期不符合</p>
+<h2 id="数据窥探">数据窥探</h2>
+<p>前面曾经说过，如果肉眼偷看了数据，尽管设计出来的模型看似VC维很低，但是实际上如果考虑到人脑“附加的模型复杂度”，VC维仍然会很高。因此，在做多项式变换<span class="math inline">\(\boldsymbol{\Phi}\)</span>时，不应该提前窥探数据</p>
+<p>然而数据窥探的概念其实远比前面所说的过程要宽泛。严格来讲，需要记住</p>
+<blockquote>
+<p>无论数据集影响了学习过程中的哪一步，学习得到的模型效果都要被打个问号</p>
+</blockquote>
+<p>假设拿到了某种货币8年的汇率情况，希望对汇率的走势进行预测（假设是用过去20天的汇率情况预测第21天的汇率情况）。一种自然的对数据集的划分是把前6年的数据作为训练集，后2年的数据作为测试集。可以看出来，这是一个回归问题</p>
+<p>处理该问题时，为了避免原始数据取值范围太大对模型造成影响，通常要对数据做一个缩放（scale）。正常的情况下，应该是将训练数据和测试数据分别作缩放操作。但是如果将这两组数据放在一起缩放，缩放缩放完以后再划分，会是什么结果？</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-09-15%2009.44.11.png" alt="数据窥探对模型造成的影响"><figcaption>数据窥探对模型造成的影响</figcaption>
+</figure>
+<p>可以看出，尽管后两年的数据没有直接参与训练，但是仍然对模型效果产生了影响。因为在缩放的时候，训练数据已经隐含地知道了测试数据的一些统计信息（例如最大值、最小值、均值、标准差等等）</p>
+<p>学术研究中也有类似数据窥探的现象。一般研究时，都会有一个标准数据集<span class="math inline">\(\mathcal{D}\)</span>。假设研究机构A提出了一个模型<span class="math inline">\(\mathcal{H}_1\)</span>在<span class="math inline">\(\mathcal{D}\)</span>上表现良好，那么就会发表文章。后人如果做出了改进，提出的<span class="math inline">\(\mathcal{H}_2\)</span>比<span class="math inline">\(\mathcal{H}_1\)</span>更好，也会发表文章。假设某个人做出了<span class="math inline">\(m\)</span>个模型，实际上该模型的一般化能力需要被怀疑一下，因为此时该模型的VC维已经是<span class="math inline">\(d_{\rm VC}(\bigcup_m\mathcal{H}_m)\)</span>。因此越晚发表的论文其实受数据窥探的影响越严重</p>
+<blockquote>
+<p>“如果在一个犯人身上拷问越久，ta就越容易招供”</p>
+</blockquote>
+<p>然而，完全避免数据窥探是非常难的，只能尽力做好以下几点</p>
+<ul>
+<li>不到必须的时候，不使用测试集。或者小心地使用验证集</li>
+<li>不在看过数据以后再决定用什么特征</li>
+<li>时刻保持一颗怀疑之心</li>
+</ul>
+<h2 id="三生三事">三生三事</h2>
+<p>本课到此为止（也就是机器学习基石课）讲的东西基本都跟“三”有关，最后来一起梳理一下</p>
+<ul>
+<li>三项跟机器学习有关的概念：数据挖掘、人工智能和统计学</li>
+<li>三条理论保证：Hoeffding, Multi-Bin Hoeffding, VC</li>
+<li>三种线性模型：PLA/pocket（使用0/1误差）、线性回归（使用平方误差）和Logistic回归（使用交叉熵误差）</li>
+<li>三种重要的工具：特征变换、正则化、验证</li>
+<li>三条锦囊妙计：奥卡姆剃刀、抽样偏差、数据窥测</li>
+<li>三条未来的发展方向（机器学习技法课的内容）：更强力的变换方法、更丰富的正则化方法、更少标签时的处理方式</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/09/14/NTUML-16-Three-Learning-Principles/" title="NTUML 16. 三条锦囊妙计">txshi-mt.com/2017/09/14/NTUML-16-Three-Learning-Principles/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/NTUML/" rel="tag"># NTUML</a>
+          
+            <a href="/tags/机器学习实践经验/" rel="tag"># 机器学习实践经验</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/09/12/NTUML-15-Validation/" rel="next" title="NTUML 15. 验证">
+                <i class="fa fa-chevron-left"></i> NTUML 15. 验证
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/09/18/NTUML-17-Linear-SVM/" rel="prev" title="NTUML 17. 线性支持向量机">
+                NTUML 17. 线性支持向量机 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#奥卡姆剃刀"><span class="nav-number">1.</span> <span class="nav-text">&#x5965;&#x5361;&#x59C6;&#x5243;&#x5200;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#简单的模型"><span class="nav-number">1.1.</span> <span class="nav-text">&#x7B80;&#x5355;&#x7684;&#x6A21;&#x578B;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#简单就好"><span class="nav-number">1.2.</span> <span class="nav-text">&#x7B80;&#x5355;&#x5C31;&#x597D;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#取样偏差"><span class="nav-number">2.</span> <span class="nav-text">&#x53D6;&#x6837;&#x504F;&#x5DEE;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据窥探"><span class="nav-number">3.</span> <span class="nav-text">&#x6570;&#x636E;&#x7AA5;&#x63A2;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三生三事"><span class="nav-number">4.</span> <span class="nav-text">&#x4E09;&#x751F;&#x4E09;&#x4E8B;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

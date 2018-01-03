@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="线性回归,EdX-Columbia,岭回归," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="最小二乘法的概率解释 对于多元高斯分布，假设协方差矩阵\(\Sigma = \sigma^2 I\)，概率密度为 \[ p(y|\mu, \sigma^2) = \frac{1}{(2\pi \sigma^2)^{\frac{n}{2}}}\exp\left(-\frac{1}{2\sigma^2}(y-\mu)^\mathsf{T}(y-\mu)\right) \] 假设\(\mu = Xw\)">
+<meta name="keywords" content="线性回归,EdX-Columbia,岭回归">
+<meta property="og:type" content="article">
+<meta property="og:title" content="EdX Columbia ML 3. 最小二乘II &amp; 岭回归">
+<meta property="og:url" content="txshi-mt.com/2017/06/24/edx-columbia-3-Least-Squares-II-Ridge-Regression/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="最小二乘法的概率解释 对于多元高斯分布，假设协方差矩阵\(\Sigma = \sigma^2 I\)，概率密度为 \[ p(y|\mu, \sigma^2) = \frac{1}{(2\pi \sigma^2)^{\frac{n}{2}}}\exp\left(-\frac{1}{2\sigma^2}(y-\mu)^\mathsf{T}(y-\mu)\right) \] 假设\(\mu = Xw\)">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.101Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="EdX Columbia ML 3. 最小二乘II &amp; 岭回归">
+<meta name="twitter:description" content="最小二乘法的概率解释 对于多元高斯分布，假设协方差矩阵\(\Sigma = \sigma^2 I\)，概率密度为 \[ p(y|\mu, \sigma^2) = \frac{1}{(2\pi \sigma^2)^{\frac{n}{2}}}\exp\left(-\frac{1}{2\sigma^2}(y-\mu)^\mathsf{T}(y-\mu)\right) \] 假设\(\mu = Xw\)">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/06/24/edx-columbia-3-Least-Squares-II-Ridge-Regression/"/>
+
+
+
+
+
+  <title>EdX Columbia ML 3. 最小二乘II & 岭回归 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/06/24/edx-columbia-3-Least-Squares-II-Ridge-Regression/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">EdX Columbia ML 3. 最小二乘II & 岭回归</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-24T21:07:58+08:00">
+                Jun 24 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/统计机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">统计机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="最小二乘法的概率解释">最小二乘法的概率解释</h2>
+<p>对于多元高斯分布，假设协方差矩阵<span class="math inline">\(\Sigma = \sigma^2 I\)</span>，概率密度为 <span class="math display">\[
+p(y|\mu, \sigma^2) = \frac{1}{(2\pi \sigma^2)^{\frac{n}{2}}}\exp\left(-\frac{1}{2\sigma^2}(y-\mu)^\mathsf{T}(y-\mu)\right)
+\]</span> 假设<span class="math inline">\(\mu = Xw\)</span>，求解<span class="math inline">\(w\)</span>的最大似然，会得到什么？实际上还是求解 <span class="math display">\[
+\hat{w}_{\rm ML} = \mathop{\rm arg}\max_w - \frac{1}{2\sigma^2} |\!|y-Xw|\!|^2
+\]</span> 即最小二乘和最大似然的解是一样的</p>
+<p>最大似然隐含的意思在于，误差<span class="math inline">\(\epsilon_i = y_i - x_i^\mathsf{T}w\)</span>是独立的高斯噪声，等价于以下三种说法：</p>
+<ol type="1">
+<li><span class="math inline">\(y_i = x_i^\mathsf{T}w + \epsilon_i,\  \  \epsilon_i \mathop{\sim}^{iid}N(0,\sigma^2), i = 1,\ldots,n\)</span></li>
+<li><span class="math inline">\(y_i \mathop{\sim}^{ind} N(x_i^\mathsf{T}w, \sigma^2), i = 1, \ldots, n\)</span></li>
+<li><span class="math inline">\(y \sim N(Xw, \sigma^2I)\)</span></li>
+</ol>
+<p>如果我们假设了有<span class="math inline">\(y \sim N(Xw, \sigma^2I)\)</span>，根据此分布，我们可以计算最大似然解的期望，有 <span class="math display">\[\begin{align*}
+\mathbb{E}[w_{\rm ML}] &amp;= \mathbb{E}[(X^\mathsf{T}X)^{-1}X^\mathsf{T}y]\ \ （最小二乘中w的解析解） \\
+&amp;= \int [(X^\mathsf{T}X)^{-1}X^\mathsf{T}y]p(y|X,w)dy\ \ （连续随机变量的期望E[g(X)] = \int_{-\infty}^{\infty} g(x)f_X(x)dx）\\
+&amp;= (X^\mathsf{T}X)^{-1}X^\mathsf{T}\int yp(y|X,w)dy \\
+&amp;= (X^\mathsf{T}X)^{-1}X^\mathsf{T}\mathbb{E}[y] \\
+&amp;= (X^\mathsf{T}X)^{-1}X^\mathsf{T}Xw \ \ (y \sim N(Xw, \sigma^2I)) \\
+&amp;= w
+\end{align*}
+
+即最大似\]</span>然估计<span class="math inline">\(w_{\rm ML}\)</span>是<span class="math inline">\(w\)</span>的一个无偏估计。但是要考虑到还有方差的存在，如果方差很大的话，即便期望是无偏的，也很可能会看到比较奇怪的值，因此需要对方差做一个判断。</p>
+<p>如果有<span class="math inline">\(y \sim N(\mu, \Sigma)\)</span>，则 <span class="math display">\[
+{\rm var}[y] = \mathbb{E}[(y-\mathbb{E}[y])(y-\mathbb{E}[y])^\mathsf{T}] = \Sigma
+\]</span> 代入<span class="math inline">\(\mathbb{E}[y] = \mu\)</span>，有 <span class="math display">\[\begin{align*}
+{\rm var}[y] &amp;= \mathbb{E}[(y-\mu)(y-\mu)^\mathsf{T}] \\
+&amp;= \mathbb{E}[yy^\mathsf{T} - y\mu^\mathsf{T} - \mu y^\mathsf{T} + \mu\mu^\mathsf{T}] \\
+&amp;= \mathbb{E}[yy^\mathsf{T}] - \mathbb{E}[y]\mu^\mathsf{T} - \mu \mathbb{E}[y^\mathsf{T}] + \mu\mu^\mathsf{T} \\
+&amp;= \mathbb{E}[yy^\mathsf{T}] - \mu\mu^\mathsf{T} - \mu \mu^\mathsf{T} + \mu\mu^\mathsf{T} \\
+&amp;= \mathbb{E}[yy^\mathsf{T}] - \mu\mu^\mathsf{T}
+\end{align*}\]</span></p>
+<p>即<span class="math inline">\(\mathbb{E}[yy^\mathsf{T}] = \Sigma + \mu\mu^\mathsf{T}\)</span></p>
+<p>因此可以计算<span class="math inline">\(w\)</span>的方差，即 <span class="math display">\[\begin{align*}
+{\rm var}[w_{\rm ML}] &amp;= \mathbb{E}[(w_{\rm ML}-\mathbb{E}[w_{\rm ML}])(w_{\rm ML}-\mathbb{E}[w_{\rm ML}])^\mathsf{T}] \\
+&amp;= \mathbb{E}[w_{\rm ML}w_{\rm ML}^\mathsf{T}] - \mathbb{E}[w_{\rm ML}]\mathbb{E}[w_{\rm ML}]^\mathsf{T}
+\end{align*}\]</span></p>
+<p>由于<span class="math inline">\(w = (X^\mathsf{T}X)^{-1}X^\mathsf{T}y\)</span>且<span class="math inline">\(\mathbb{E}[w_{\rm ML}] = w\)</span>，而且<span class="math inline">\((X^\mathsf{T}X)\)</span>是对称矩阵，其逆也是对称矩阵，因此<span class="math inline">\(((X^\mathsf{T}X)^{-1})^\mathsf{T} = (X^\mathsf{T}X)^{-1}\)</span>。带入到上面可知 <span class="math display">\[\begin{align*}
+{\rm var}[w_{\rm ML}] &amp;= \mathbb{E}[(X^\mathsf{T}X)^{-1}X^\mathsf{T}yy^\mathsf{T}X(X^\mathsf{T}X)^{-1}]-ww^\mathsf{T} \\
+&amp;= (X^\mathsf{T}X)^{-1}X^\mathsf{T}\mathbb{E}[yy^\mathsf{T}]X(X^\mathsf{T}X)^{-1} - ww^\mathsf{T}
+\end{align*}\]</span></p>
+<p>由于<span class="math inline">\(\mathbb{E}[yy^\mathsf{T}] = \Sigma + \mu\mu^\mathsf{T}\)</span>且<span class="math inline">\(y \sim N(Xw, \sigma^2I)\)</span>，即<span class="math inline">\(\mu = Xw, \Sigma = \sigma^2 I\)</span>，因此</p>
+<span class="math display">\[\begin{align*}
+{\rm var}[w_{\rm ML}] &amp;= (X^\mathsf{T}X)^{-1}X^\mathsf{T}\mathbb{E}[yy^\mathsf{T}]X(X^\mathsf{T}X)^{-1} - ww^\mathsf{T} \\
+&amp;= (X^\mathsf{T}X)^{-1}X^\mathsf{T} (\Sigma + \mu\mu^\mathsf{T}) X(X^\mathsf{T}X)^{-1} - ww^\mathsf{T} \\
+&amp;= (X^\mathsf{T}X)^{-1}X^\mathsf{T} (\sigma^2I + Xww^\mathsf{T}X^\mathsf{T}) X(X^\mathsf{T}X)^{-1} - ww^\mathsf{T} \\
+&amp;= (X^\mathsf{T}X)^{-1}X^\mathsf{T}\sigma^2IX(X^\mathsf{T}X)^{-1} + (X^\mathsf{T}X)^{-1}X^\mathsf{T}Xww^\mathsf{T}X^\mathsf{T}X(X^\mathsf{T}X)^{-1}- ww^\mathsf{T}
+\end{align*}\]</span>
+<p>由于<span class="math inline">\(\sigma^2\)</span>是标量可以提出来，因此上式可以化简为 <span class="math display">\[
+{\rm var}[w_{\rm ML}] = \sigma^2(X^\mathsf{T}X)^{-1}
+\]</span></p>
+<p>因此在如果我们假设<span class="math inline">\(y\)</span>满足高斯分布，即<span class="math inline">\(y \sim N(Xw, \sigma^2I)\)</span>，就有 <span class="math display">\[
+\mathbb{E}[w_{\rm ML}] = w,\  \  {\rm var}[w_{\rm ML}] = \sigma^2(X^\mathsf{T}X)^{-1}
+\]</span> 如果<span class="math inline">\(\sigma^2(X^\mathsf{T}X)^{-1}\)</span>太大，那么<span class="math inline">\(w_{\rm ML}\)</span>就会敏感于<span class="math inline">\(y\)</span>的值，不利于用其做预测</p>
+<h2 id="岭回归">岭回归</h2>
+<p>由于方差的存在，<span class="math inline">\(w\)</span>可能会变得很大，而这是我们所不希望看到的。因此可以在目标函数上加一个正则项来控制<span class="math inline">\(w\)</span>的大小，即类似下式这样的形式： <span class="math display">\[
+w_{\rm OPT} = {\rm arg}\min_w |\!|y-Xw|\!|^2 + \lambda g(w)
+\]</span> 其中<span class="math inline">\(\lambda &gt; 0\)</span>是正则化参数，<span class="math inline">\(g(w) &gt; 0\)</span>是惩罚函数，将<span class="math inline">\(w\)</span>引向所希望的性质。具体地，对于岭回归，有 <span class="math display">\[
+w_{\rm RR} = {\rm arg}\min_w |\!|y-Xw|\!|^2 + \lambda |\!|w|\!|^2
+\]</span> 其中<span class="math inline">\(g(w) = |\!|w|\!|^2\)</span>对大的<span class="math inline">\(w\)</span>进行了惩罚。注意到目标函数的第二项和第一项之间存在着平衡关系，由<span class="math inline">\(\lambda\)</span>控制。如果<span class="math inline">\(\lambda \rightarrow 0\)</span>，则<span class="math inline">\(w_{\rm RR} \rightarrow w_{\rm LS}\)</span>；如果<span class="math inline">\(\lambda \rightarrow \infty\)</span>，则<span class="math inline">\(w_{\rm RR} \rightarrow 0\)</span></p>
+<p>求解析解可得 <span class="math display">\[\begin{align*}
+\mathcal{L} &amp;= |\!|y-Xw|\!|^2 + \lambda |\!|w|\!|^2 \\
+&amp;= (y - Xw)^\mathsf{T}(y-Xw) + \lambda w^\mathsf{T}w \\
+\nabla_w \mathcal{L} &amp;= -2X^\mathsf{T}y + 2X^\mathsf{T}Xw + 2\lambda w = 0 \\
+\Rightarrow w_{\rm RR} &amp;= (\lambda I + X^\mathsf{T}X)^{-1}X^\mathsf{T}y
+\end{align*}\]</span></p>
+<p>使用岭回归之前需要对数据先做预处理： <span class="math display">\[\begin{align*}
+y &amp;\leftarrow y - \frac{1}{n}\sum_{i=1}^n y_i \\
+x_{ij} &amp;\leftarrow \frac{x_{ij} - \bar{x}_{.j}}{\hat{\sigma}_j} \\
+\hat{\sigma}_j &amp; = \sqrt{\frac{1}{n} \sum_{i=1}^n (x_{ij} - \bar{x}_{.j})^2}
+\end{align*}\]</span></p>
+<h3 id="对岭回归的进一步分析">对岭回归的进一步分析</h3>
+<p>可以通过奇异值分解SVD来进一步探索最小二乘法和岭回归之间的关系。SVD的核心理论是对于任何<span class="math inline">\(n\times d\)</span>矩阵<span class="math inline">\(X\)</span>（假设<span class="math inline">\(n&gt;d\)</span>），都可以将其分解为<span class="math inline">\(X=USV^\mathsf{T}\)</span>，其中</p>
+<ol type="1">
+<li><span class="math inline">\(U: n \times d\)</span>正交矩阵，即<span class="math inline">\(U^\mathsf{T}U=I\)</span></li>
+<li><span class="math inline">\(S: d \times d\)</span>非负对角矩阵，即<span class="math inline">\(S_{ii}\ge 0\)</span>且对<span class="math inline">\(i \not= j\)</span>有<span class="math inline">\(S_{ij} = 0\)</span></li>
+<li><span class="math inline">\(V: d \times d\)</span>正交矩阵，即<span class="math inline">\(V^\mathsf{T}V = VV^\mathsf{T} = I\)</span></li>
+</ol>
+<p>因此可以得出以下等式 <span class="math display">\[
+X^\mathsf{T}X = (USV^\mathsf{T})^\mathsf{T}(USV^\mathsf{T}) = VS^2V^\mathsf{T}, XX^\mathsf{T} = US^2U^\mathsf{T} \\
+(X^\mathsf{T}X)^{-1} = (VS^2V^\mathsf{T})^{-1} = VS^{-2}V^\mathsf{T}
+\]</span></p>
+<p>因此<span class="math inline">\(w\)</span>的方差可以重写为 <span class="math display">\[
+{\rm var}[w_{\rm LS}] = \sigma^2(X^\mathsf{T}X)^{-1} = \sigma^2VS^{-2}V^\mathsf{T}
+\]</span> 如果对某个<span class="math inline">\(i\)</span>，<span class="math inline">\(S_{ii}\)</span>特别小，那么其逆会特别大，导致方差变大（这说明<span class="math inline">\(X\)</span>中的一些列有很高的相关性） 同时，对新的数据进行最小平方预测，结果为 <span class="math display">\[
+y_{\rm new} = x_{\rm new}^\mathsf{T}w_{\rm LS} = x_{\rm new}^\mathsf{T}(X^\mathsf{T}X)^{-1}X^\mathsf{T}y = x_{\rm new}^\mathsf{T}VS^{-1}U^\mathsf{T}y
+\]</span> 也可以看出来如果<span class="math inline">\(S^{-1}\)</span>很大，则预测结果会不稳定</p>
+<p>可以推导出最小二乘得出的权重和岭回归得出的权重之间的关系： <span class="math display">\[\begin{align*}
+w_{\rm RR} &amp;= (\lambda I + X^\mathsf{T}X)^{-1}X^\mathsf{T}y \\
+&amp;= (\lambda I + X^\mathsf{T}X)^{-1}(X^\mathsf{T}X)(X^\mathsf{T}X)^{-1}X^\mathsf{T}y \\
+&amp;= (\lambda I + X^\mathsf{T}X)^{-1}(X^\mathsf{T}X)w_{\rm LS} \\
+&amp;= [(X^\mathsf{T}X)(\lambda(X^\mathsf{T}X)^{-1} + I)]^{-1}(X^\mathsf{T}X)w_{\rm LS}
+\end{align*}\]</span> 由于对于两个对称矩阵有<span class="math inline">\((AB)^{-1} = B^{-1}A^{-1}\)</span>，因此 <span class="math display">\[\begin{align*}
+w_{\rm RR} &amp;= [(X^\mathsf{T}X)(\lambda(X^\mathsf{T}X)^{-1} + I)]^{-1}(X^\mathsf{T}X)w_{\rm LS} \\
+&amp;= (\lambda(X^\mathsf{T}X)^{-1} + I)^{-1}(X^\mathsf{T}X)^{-1}(X^\mathsf{T}X)w_{\rm LS} \\
+&amp;= (\lambda(X^\mathsf{T}X)^{-1} + I)^{-1}w_{\rm LS}
+\end{align*}\]</span></p>
+<p>代入奇异值分解的结果，且考虑<span class="math inline">\(VV^\mathsf{T}=I\)</span>，有</p>
+<span class="math display">\[\begin{align*}
+w_{\rm RR} &amp;= (\lambda(X^\mathsf{T}X)^{-1} + I)^{-1}w_{\rm LS} \\
+&amp;= (\lambda VS^{-2}V^\mathsf{T} + I)^{-1}w_{\rm LS} \\
+&amp;= (V(\lambda S^{-2}V^\mathsf{T}+V^\mathsf{T}))^{-1}w_{\rm LS} \\
+&amp;= (V(\lambda S^{-2} + I)V^\mathsf{T})^{-1}w_{\rm LS} \\
+&amp;= V(\lambda S^{-2} + I)^{-1}V^\mathsf{T}w_{\rm LS} \\
+&amp;:= VMV^\mathsf{T}w_{\rm LS}
+\end{align*}\]</span>
+<p>其中<span class="math inline">\(M_{ii} = \frac{S_{ii}^2}{\lambda + S_{ii}^2}\)</span></p>
+<p>也可以把奇异值分解的结果带入到<span class="math inline">\(w_{\rm LS}\)</span>的求解中</p>
+<span class="math display">\[\begin{align*}
+w_{\rm LS} &amp;= (X^\mathsf{T}X)^{-1}X^\mathsf{T}y \\
+&amp;= VS^{-2}V^\mathsf{T}VS^\mathsf{T}U^\mathsf{T}y \\
+&amp;= VS^{-2}SU^\mathsf{T}y \\
+&amp;= VS^{-1}U^\mathsf{T}y
+\end{align*}\]</span>
+<p>代入到上式，有 <span class="math display">\[
+w_{\rm RR} = VS_{\lambda}^{-1}U^\mathsf{T}y,\  \  S_{\lambda}^{-1} = \left[\!\begin{array}{rrr}    \frac{S_{11}}{\lambda+S_{11}^2}&amp;&amp;0\\    &amp;\ddots&amp;\\    0&amp;&amp;\frac{S_{dd}}{\lambda+S_{dd}^2}    \end{array}\!\right]
+\]</span></p>
+<p>岭回归也可以看作是最小二乘的一个特例情况。如果如下定义<span class="math inline">\(\hat{y} \approx \hat{X}w\)</span>，即 <span class="math display">\[
+\left[\begin{array}{c}    y \\ 0 \\  \vdots  \\ 0  \end{array}\right] \approx \left[\begin{array}{ccc}    - &amp; X &amp; - \\ \sqrt{\lambda} &amp; &amp; 0 \\ &amp; \ddots &amp; \\ 0 &amp; &amp; \sqrt{\lambda}  \end{array}\right] \left[\begin{array}{c}    w_1 \\  \vdots  \\ w_d  \end{array}\right]
+\]</span> 如果对这个回归问题求解<span class="math inline">\(w_{\rm LS}\)</span>，则找到了原始回归问题的<span class="math inline">\(w_{\rm RR}\)</span> <span class="math display">\[\begin{align*}
+(\hat{y} - \hat{X}w)^\mathsf{T}(\hat{y} - \hat{X}w) &amp;= (y-Xw)^\mathsf{T}(y-Xw) + (\sqrt{\lambda}w)^\mathsf{T}(\sqrt{\lambda}w) \\
+&amp;= |\!|y-Xw|\!|^2 + \lambda |\!|w|\!|^2
+\end{align*}\]</span></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/06/24/edx-columbia-3-Least-Squares-II-Ridge-Regression/" title="EdX Columbia ML 3. 最小二乘II & 岭回归">txshi-mt.com/2017/06/24/edx-columbia-3-Least-Squares-II-Ridge-Regression/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/线性回归/" rel="tag"># 线性回归</a>
+          
+            <a href="/tags/EdX-Columbia/" rel="tag"># EdX-Columbia</a>
+          
+            <a href="/tags/岭回归/" rel="tag"># 岭回归</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/24/edx-columbia-2-Linear-Regression-Least-Squares/" rel="next" title="EdX Columbia ML 2. 线性回归与最小二乘">
+                <i class="fa fa-chevron-left"></i> EdX Columbia ML 2. 线性回归与最小二乘
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/06/24/edx-columbia-4-Biases-Variances-Bayes-Rule-MAP-Inference/" rel="prev" title="EdX Columbia ML 4. 偏差方差、贝叶斯定律与MAP推断">
+                EdX Columbia ML 4. 偏差方差、贝叶斯定律与MAP推断 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#最小二乘法的概率解释"><span class="nav-number">1.</span> <span class="nav-text">&#x6700;&#x5C0F;&#x4E8C;&#x4E58;&#x6CD5;&#x7684;&#x6982;&#x7387;&#x89E3;&#x91CA;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#岭回归"><span class="nav-number">2.</span> <span class="nav-text">&#x5CAD;&#x56DE;&#x5F52;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#对岭回归的进一步分析"><span class="nav-number">2.1.</span> <span class="nav-text">&#x5BF9;&#x5CAD;&#x56DE;&#x5F52;&#x7684;&#x8FDB;&#x4E00;&#x6B65;&#x5206;&#x6790;</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

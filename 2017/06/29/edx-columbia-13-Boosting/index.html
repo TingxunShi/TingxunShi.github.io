@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Boosting,EdX-Columbia,集成方法," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="算法 也是一种集成方法，但是与bagging有所差别  Bagging：不同分类器并行在bootstrap出来的样本集上跑，互相不依赖 Boosting：后一个分类器依赖前一个分类器的结果以及加权误差。每个分类器也有自己的权重   AdaBoost算法（抽样版） 给定数据点\((x_1, y_1), \ldots, (x_n, y_n), x\in \mathcal{X}, y \in \{-1,">
+<meta name="keywords" content="Boosting,EdX-Columbia,集成方法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="EdX Columbia ML 13. Boosting">
+<meta property="og:url" content="txshi-mt.com/2017/06/29/edx-columbia-13-Boosting/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="算法 也是一种集成方法，但是与bagging有所差别  Bagging：不同分类器并行在bootstrap出来的样本集上跑，互相不依赖 Boosting：后一个分类器依赖前一个分类器的结果以及加权误差。每个分类器也有自己的权重   AdaBoost算法（抽样版） 给定数据点\((x_1, y_1), \ldots, (x_n, y_n), x\in \mathcal{X}, y \in \{-1,">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.098Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="EdX Columbia ML 13. Boosting">
+<meta name="twitter:description" content="算法 也是一种集成方法，但是与bagging有所差别  Bagging：不同分类器并行在bootstrap出来的样本集上跑，互相不依赖 Boosting：后一个分类器依赖前一个分类器的结果以及加权误差。每个分类器也有自己的权重   AdaBoost算法（抽样版） 给定数据点\((x_1, y_1), \ldots, (x_n, y_n), x\in \mathcal{X}, y \in \{-1,">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/06/29/edx-columbia-13-Boosting/"/>
+
+
+
+
+
+  <title>EdX Columbia ML 13. Boosting | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/06/29/edx-columbia-13-Boosting/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">EdX Columbia ML 13. Boosting</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-29T17:02:47+08:00">
+                Jun 29 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/统计机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">统计机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="算法">算法</h2>
+<p>也是一种集成方法，但是与bagging有所差别</p>
+<ul>
+<li>Bagging：不同分类器并行在bootstrap出来的样本集上跑，互相不依赖</li>
+<li>Boosting：后一个分类器依赖前一个分类器的结果以及加权误差。每个分类器也有自己的权重</li>
+</ul>
+<blockquote>
+<p><strong>AdaBoost算法（抽样版）</strong> 给定数据点<span class="math inline">\((x_1, y_1), \ldots, (x_n, y_n), x\in \mathcal{X}, y \in \{-1, +1\}\)</span>，令<span class="math inline">\(w_1(i) = \frac{1}{n}\)</span> 对<span class="math inline">\(t=1,\ldots,T\)</span> 1. 根据分布<span class="math inline">\(w_t\)</span>，取样得出大小为<span class="math inline">\(n\)</span>的bootstrap数据集<span class="math inline">\(\mathcal{B}_t\)</span>。注意选出<span class="math inline">\((x_i,y_i)\)</span>的概率是<span class="math inline">\(w_t(i)\)</span>，并不是<span class="math inline">\(\frac{1}{n}\)</span> 2. 使用<span class="math inline">\(\mathcal{B}_t\)</span>中的数据学习出分类器<span class="math inline">\(f_t\)</span> 3. 使用以下公式求出该分类器的错误率<span class="math inline">\(\epsilon_t\)</span>和权重<span class="math inline">\(\alpha_t\)</span> <span class="math display">\[
+\epsilon_t = \sum_{i=1}^n w_t(i)1\{y_i \not= f_t(x_i)\} \\
+\alpha_t = \frac{1}{2}\ln\left(\frac{1-\epsilon_t}{\epsilon_t}\right)
+\]</span> 4. 更新权重 <span class="math display">\[
+\hat{w}_{t+1}(i) = w_t(i)e^{-\alpha_t y_i f_t(x_i)} \\
+w_{t+1}(i) =\  \frac{\hat{w}_{t+1}(i)}{\sum_j \hat{w}_{t+1}(j)}
+\]</span></p>
+</blockquote>
+<p>分类规则设为 <span class="math display">\[
+ f_{\rm boost}(x_0) = {\rm sign}\left(\sum_{t=1}^\mathsf{T} \alpha_tf_t(x_0)\right)
+\]</span></p>
+<p>考虑权重更新公式，假设是二分类问题，<span class="math inline">\(y_i \in \mathcal{Y} = \{-1, +1\}\)</span>，有 <span class="math display">\[
+w_{t+1}^{(i)} = w_t^{(i)}e^{-\alpha_i y_i f_i(x_i)}
+\]</span></p>
+<ul>
+<li>由<span class="math inline">\(\alpha_i\)</span>的定义以及所有基分类器都能比瞎猜效果好一点，因此所有<span class="math inline">\(\alpha_i\)</span>都会大于0。假设<span class="math inline">\(f_i(x_i)\)</span>被正确分类，那么指数最后会是一个负数，该值对应权重小于1，在下一轮被“降级”</li>
+<li>反之，如果<span class="math inline">\(f_i(x_i)\)</span>是错误分类，指数会是正数，该值对应权重大于1，在下一轮被“升级”</li>
+</ul>
+<p>令<span class="math inline">\(\phi(x) = [f_1(x), \ldots, f_T(x)]^\top\)</span>，其中<span class="math inline">\(f_t(x) \in \{-1, +1\}\)</span>，则可以把<span class="math inline">\(\phi(x)\)</span>看作是<span class="math inline">\(x\)</span>到高维特征的一个映射，而向量<span class="math inline">\(\mathbf{\alpha} = [\alpha_1, \ldots, \alpha_T]^\top\)</span>则对应于一个超平面，因此分类器可以写为 <span class="math display">\[
+f_{\rm boost}(x_0) = {\rm sign}(\phi(x_0)^\top \mathbf{\alpha})
+\]</span> 即boosting同时学习特征映射规则和超平面</p>
+<h2 id="分析">分析</h2>
+<p>主要就是要证明一个定理： &gt; 使用AdaBoost算法，如果<span class="math inline">\(\epsilon_t\)</span>是分类器<span class="math inline">\(f_t\)</span>的加权误差，则对分类器<span class="math inline">\(f_{\rm boost}(x_0) = {\rm sign}\left(\sum_{t=1}^\mathsf{T} \alpha_tf_t(x_0)\right)\)</span>，其训练误差有上界： <span class="math display">\[
+\frac{1}{n} \sum_{i=1}^n 1\{y_i \not= f_{\rm boost}(x_i)\} \le \exp\left(-2\sum_{i=1}^\mathsf{T}(\frac{1}{2}-\epsilon_t)^2\right)
+\]</span></p>
+<p>这意味着即便组成boosting的基分类器，即便其准确度仅略高于瞎猜，在有足够多样本的前提下，也可以把训练误差降到一个非常小的值</p>
+<p><strong>证明</strong>： 令<span class="math inline">\(Z_t = \sum_j \hat{w}_{t+1}(j)\)</span>， 第一步，有 <span class="math display">\[
+\begin{align*}
+w_{T+1}(i) &amp;= w_1(i) \times \frac{e^{-\alpha_1y_if_1(x_i)}}{Z_1} \times \ldots \times \frac{e^{-\alpha_Ty_if_T(x_i)}}{Z_T} \\
+&amp;= \frac{1}{n}\frac{e^{-y_i\sum_{t=1}^\mathsf{T} \alpha_tf_t(x_i)}}{\prod_{t=1}^\mathsf{T}Z_t} \\
+&amp;= \frac{1}{n}\frac{e^{-y_if_{\rm boost}^{(T)}(x_i)}}{\prod_{t=1}^\mathsf{T}Z_t}
+\end{align*}
+\]</span> 第二步，首先从上一步有 <span class="math display">\[
+w_{T+1}(i)\prod_{t=1}^\mathsf{T}Z_t = \frac{1}{n}e^{-y_if_{\rm boost}^{(T)}(x_i)}
+\]</span> 接下来，对于第<span class="math inline">\(i\)</span>个样本，</p>
+<ul>
+<li>如果分类正确，则<span class="math inline">\(y_if_{\rm boost}^{(T)}(x_i) &gt; 0\)</span>，因此<span class="math inline">\(0 &lt; e^{-y_if_{\rm boost}^{(T)}(x_i)} &lt; 1\)</span>。而<span class="math inline">\(1\{y_i \not= f_{\rm boost}^{(T)}(x_i)\} = 0\)</span>，因此<span class="math inline">\(1\{y_i \not= f_{\rm boost}^{(T)}(x_i)\} &lt; e^{-y_if_{\rm boost}^{(T)}(x_i)}\)</span></li>
+<li>如果分类错误，则<span class="math inline">\(y_if_{\rm boost}^{(T)}(x_i) &lt; 0\)</span>，因此<span class="math inline">\(e^{-y_if_{\rm boost}^{(T)}(x_i)} &gt; 1\)</span>。而<span class="math inline">\(1\{y_i \not= f_{\rm boost}^{(T)}(x_i)\} = 1\)</span>，因此仍然有<span class="math inline">\(1\{y_i \not= f_{\rm boost}^{(T)}(x_i)\} &lt; e^{-y_if_{\rm boost}^{(T)}(x_i)}\)</span> 即总有 <span class="math display">\[
+1\{y_i \not= f_{\rm boost}^{(T)}(x_i)\} &lt; e^{-y_if_{\rm boost}^{(T)}(x_i)} = nw_{T+1}(i)\prod_{t=1}^\mathsf{T}Z_t
+\]</span> 所以 <span class="math display">\[
+\begin{align*}
+\frac{1}{n}\sum_{i=1}^n 1\{y_i \not= f_{\rm boost}^{(T)}(x_i)\} &amp;\le \frac{1}{n} \sum_{i=1}^n e^{-y_if_{\rm boost}^{(T)}(x_i)} \\
+&amp;= \sum_{i=1}^n w_{T+1}(i)\prod_{t=1}^\mathsf{T}Z_t
+\end{align*}
+\]</span> 由于所有<span class="math inline">\(w_{T+1}(i)\)</span>都是被归一化的，因此上式中求和项总和为1，可以忽略掉，所以最后有 <span class="math display">\[
+\frac{1}{n}\sum_{i=1}^n 1\{y_i \not= f_{\rm boost}^{(T)}(x_i)\} \le \prod_{i=1}^\mathsf{T} Z_t
+\]</span></li>
+</ul>
+<p>第三步，根据定义 <span class="math display">\[
+\begin{align*}
+Z_t &amp;= \sum_{i=1}^n w_t(i)e^{-\alpha_ty_if_t(x_i)} \\
+&amp;= \sum_{i : y_i = f_t(x_i)}e^{-\alpha_t}w_t(i) + \sum_{i : y_i \not= f_t(x_i)}e^{\alpha_t}w_t(i) \\
+&amp;= e^{-\alpha_t}(1-\epsilon_t) + e^{\alpha_t}\epsilon_t
+\end{align*}
+\]</span> 其中最后一步是来自于<span class="math inline">\(\epsilon_t\)</span>的定义</p>
+<p>由第二步的结论和上面的推导，如果想让训练误差尽量小，可以让<span class="math inline">\(Z_t\)</span>以<span class="math inline">\(\alpha_t\)</span>为变量尽量小。求解得 <span class="math display">\[
+\alpha_t = \frac{1}{2}\ln\left(\frac{1-\epsilon_t}{\epsilon_t}\right)
+\]</span> 代回<span class="math inline">\(Z_t\)</span>的表达式，可知 <span class="math display">\[
+\begin{align*}
+Z_t &amp;= 2\sqrt{\epsilon_t(1-\epsilon_t)} \\
+&amp;= \sqrt{1-4(\frac{1}{2}-\epsilon_t)^2}
+\end{align*}
+\]</span> 由不等式<span class="math inline">\(1-x\le e^{-x}\)</span>，有 <span class="math display">\[
+\begin{align*}
+Z_t &amp;= \left(1-4(\frac{1}{2}-\epsilon_t)^2\right)^{\frac{1}{2}} \\
+&amp;\le \left(e^{-4(\frac{1}{2}-\epsilon_t)^2}\right)^{\frac{1}{2}} \\
+&amp;= e^{-2(\frac{1}{2}-\epsilon_t)^2}
+\end{align*}
+\]</span></p>
+<p>所以有 <span class="math display">\[
+\prod_{t=1}^\mathsf{T} Z_t \le \prod_{t=1}^\mathsf{T} e^{-2(\frac{1}{2}-\epsilon_t)^2} = e^{-2\sum_{t=1}^\mathsf{T} (\frac{1}{2}-\epsilon_t)^2}
+\]</span></p>
+<p>综上所述 <span class="math display">\[
+\frac{1}{n}\sum_{i=1}^n 1\{y_i \not= f_{\rm boost}^{(T)}(x_i)\} \le \prod_{i=1}^\mathsf{T} Z_t \le e^{-2\sum_{t=1}^\mathsf{T} (\frac{1}{2}-\epsilon_t)^2}
+\]</span> <span class="math inline">\(\blacksquare\)</span></p>
+<p>注意，Boosting可以把训练误差降到0，但是却很少过拟合</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/06/29/edx-columbia-13-Boosting/" title="EdX Columbia ML 13. Boosting">txshi-mt.com/2017/06/29/edx-columbia-13-Boosting/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Boosting/" rel="tag"># Boosting</a>
+          
+            <a href="/tags/EdX-Columbia/" rel="tag"># EdX-Columbia</a>
+          
+            <a href="/tags/集成方法/" rel="tag"># 集成方法</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/29/edx-columbia-12-Decision-Tree-Random-Forest/" rel="next" title="EdX Columbia ML 12. 决策树与随机森林">
+                <i class="fa fa-chevron-left"></i> EdX Columbia ML 12. 决策树与随机森林
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/07/03/edx-columbia-14-Clustering-K-Means/" rel="prev" title="EdX Columbia ML 14. 聚类与K-均值算法">
+                EdX Columbia ML 14. 聚类与K-均值算法 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#算法"><span class="nav-number">1.</span> <span class="nav-text">&#x7B97;&#x6CD5;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分析"><span class="nav-number">2.</span> <span class="nav-text">&#x5206;&#x6790;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

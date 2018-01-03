@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="EdX-Columbia,聚类,kmeans," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="无监督学习算法 给定数据，不给标签，探寻数据本身的结构。按照贝叶斯的描述，就是去对\(p(x)\)建模 聚类 （问题描述没新意的不写了，老司机都懂） K均值算法 最简单，最基础的聚类算法 输入：\(x_1, \ldots, x_n\)，其中\(x \in \mathbb{R}^d\) 输出：向量\(c\)代表给每个数据点赋的类别编号，以及\(K\)个均值向量\(\mu\)  \(\mathbf{c">
+<meta name="keywords" content="EdX-Columbia,聚类,kmeans">
+<meta property="og:type" content="article">
+<meta property="og:title" content="EdX Columbia ML 14. 聚类与K-均值算法">
+<meta property="og:url" content="txshi-mt.com/2017/07/03/edx-columbia-14-Clustering-K-Means/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="无监督学习算法 给定数据，不给标签，探寻数据本身的结构。按照贝叶斯的描述，就是去对\(p(x)\)建模 聚类 （问题描述没新意的不写了，老司机都懂） K均值算法 最简单，最基础的聚类算法 输入：\(x_1, \ldots, x_n\)，其中\(x \in \mathbb{R}^d\) 输出：向量\(c\)代表给每个数据点赋的类别编号，以及\(K\)个均值向量\(\mu\)  \(\mathbf{c">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.098Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="EdX Columbia ML 14. 聚类与K-均值算法">
+<meta name="twitter:description" content="无监督学习算法 给定数据，不给标签，探寻数据本身的结构。按照贝叶斯的描述，就是去对\(p(x)\)建模 聚类 （问题描述没新意的不写了，老司机都懂） K均值算法 最简单，最基础的聚类算法 输入：\(x_1, \ldots, x_n\)，其中\(x \in \mathbb{R}^d\) 输出：向量\(c\)代表给每个数据点赋的类别编号，以及\(K\)个均值向量\(\mu\)  \(\mathbf{c">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/07/03/edx-columbia-14-Clustering-K-Means/"/>
+
+
+
+
+
+  <title>EdX Columbia ML 14. 聚类与K-均值算法 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/07/03/edx-columbia-14-Clustering-K-Means/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">EdX Columbia ML 14. 聚类与K-均值算法</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-03T09:52:38+08:00">
+                Jul 3 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/统计机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">统计机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="无监督学习算法">无监督学习算法</h2>
+<p>给定数据，不给标签，探寻数据本身的结构。按照贝叶斯的描述，就是去对<span class="math inline">\(p(x)\)</span>建模</p>
+<h2 id="聚类">聚类</h2>
+<p>（问题描述没新意的不写了，老司机都懂）</p>
+<h2 id="k均值算法">K均值算法</h2>
+<p>最简单，最基础的聚类算法 <strong>输入</strong>：<span class="math inline">\(x_1, \ldots, x_n\)</span>，其中<span class="math inline">\(x \in \mathbb{R}^d\)</span> <strong>输出</strong>：向量<span class="math inline">\(c\)</span>代表给每个数据点赋的类别编号，以及<span class="math inline">\(K\)</span>个均值向量<span class="math inline">\(\mu\)</span></p>
+<ul>
+<li><span class="math inline">\(\mathbf{c} = (c_1, \ldots, c_n), c_i \in \{1,\ldots, K\}\)</span>。如果<span class="math inline">\(c_i = c_j = k\)</span>，说明<span class="math inline">\(x_j\)</span>和<span class="math inline">\(x_i\)</span>被一起归到了类别<span class="math inline">\(k\)</span>中</li>
+<li><span class="math inline">\(\mathbf{\mu} = (\mu_1, \ldots, \mu_K), \mu_k \in \mathbb{R}^d\)</span>，每个<span class="math inline">\(\mu_k\)</span>（称作中点centroid）都定义了一个类别</li>
+</ul>
+<p>这个问题对应的目标函数需要满足两个条件：1. 能说明什么是好的<span class="math inline">\(\mathbf{c}\)</span>和<span class="math inline">\(\mathbf{\mu}\)</span>，2. 易于优化</p>
+<p>因此对应的目标函数是 <span class="math display">\[
+\mathcal{L} = \sum_{i=1}^n\sum_{k=1}^K 1\{c_i = k\}|\!|x_i - \mu_k|\!|^2 = \sum_{i=1}^K\sum_{i:c_i = k}|\!|x_i - \mu_k|\!|^2
+\]</span> 对应最优的<span class="math inline">\(\mathbf{c}\)</span>和<span class="math inline">\(\mathbf{\mu}\)</span>为： <span class="math display">\[
+\mu^\ast, \mathbf{c}^\ast = {\rm arg}\min_{\mu, \mathbf{c}}\sum_{i=1}^n\sum_{k=1}^K 1\{c_i = k\}|\!|x_i - \mu_k|\!|^2
+\]</span> 这里我们只对各个数据点与<strong>对应</strong>中心点之间的距离进行惩罚，并不考虑那些没有与其对应的中心点。此外这个问题是一个非凸问题，因此只能得到局部最优解。</p>
+<p>该函数也没有解析解，不能直接令导数为0求解，只能迭代。但是迭代的方法有别于前面提到的梯度下降法，因为<span class="math inline">\(c\)</span>是一个离散值，不可能对<span class="math inline">\(c\)</span>进行求导，因此需要使用别的方法。这里使用的是坐标下降法，即先固定<span class="math inline">\(c\)</span>求解最优的<span class="math inline">\(\mu\)</span>，再固定<span class="math inline">\(\mu\)</span>求解最优的<span class="math inline">\(c\)</span>，如此反复。<span class="math inline">\(\mu\)</span>的初始值可以随机取。迭代的原因是，求解出的新的最优的<span class="math inline">\(c\)</span>可能会与之前求解<span class="math inline">\(\mu\)</span>时固定的<span class="math inline">\(c\)</span>不一样，进而得到更优的<span class="math inline">\(\mu\)</span>，反之亦然——即是因为<span class="math inline">\(\mu\)</span>和<span class="math inline">\(c\)</span>有相互依赖关系</p>
+<p>所以整个算法每步可以分两个子步骤：</p>
+<ul>
+<li>赋类步骤：在<span class="math inline">\(\mu\)</span>确定的前提下，对<span class="math inline">\(\mathbf{c}\)</span>进行更新。可以把目标函数进行改写 <span class="math display">\[
+\mathcal{L} = \underbrace{\left(\sum_{k=1}^K1\{c_1=k\}|\!|x_1-\mu_k|\!|^2\right)}_{\text{distance of }x_1\text{ to its assigned centroid}} + \cdots + \underbrace{\left(\sum_{k=1}^K1\{c_n=k\}|\!|x_n-\mu_k|\!|^2\right)}_{\text{distance of }x_n\text{ to its assigned centroid}}
+\]</span> 可以看到，加法项之间互相独立，因此如果要使目标函数最小，只需要分别将各求和项取到最小。由于<span class="math inline">\(c_i\)</span>只能取<span class="math inline">\(K\)</span>个离散值，因此无法求导。但是由于一般<span class="math inline">\(K\)</span>值不大，因此可以遍历<span class="math inline">\(K\)</span>个中点找到最优的<span class="math inline">\(c_i\)</span>有 <span class="math display">\[
+c_i = {\rm arg}\min_k |\!|x_i - \mu_k|\!|^2
+\]</span></li>
+<li>更新步骤：在<span class="math inline">\(\mathbf{c}\)</span>确定的前提下， 对<span class="math inline">\(\mu\)</span>进行更新。可以把目标函数写成另一种形式（<span class="math inline">\(K\)</span>个求和项的和） <span class="math display">\[
+\mathcal{L} = \underbrace{\left(\sum_{i=1}^N1\{c_i=1\}|\!|x_i-\mu_1|\!|^2\right)}_{\text{sum squared distance of data in cluster #1}} + \cdots + \underbrace{\left(\sum_{i=1}^N1\{c_i=K\}|\!|x_i-\mu_K|\!|^2\right)}_{\text{sum squared distance of data in cluster #K}}
+\]</span> 各求和项之间也独立，因此可以分别对每个<span class="math inline">\(k\)</span>进行优化。令<span class="math inline">\(n_k = \sum_{i=1}^n 1\{c_i =k \}\)</span>，因此 <span class="math display">\[
+\mu_k = {\rm arg}\min_\mu \sum_{i=1}^n 1\{c_i = k\}|\!|x_i - \mu|\!|^2 \rightarrow \mu_k = \frac{1}{n_k}\sum_{i=1}^n x_i 1\{c_i = k\}
+\]</span> 即<span class="math inline">\(\mu_k\)</span>是类<span class="math inline">\(k\)</span>中所有点的均值</li>
+</ul>
+<p>k均值算法的流程就是重复上述两个步骤直至收敛——由于每次对<span class="math inline">\(c\)</span>或者<span class="math inline">\(\mu\)</span>的更新都会减少<span class="math inline">\(\mathcal{L}\)</span>，因此<span class="math inline">\(\mathcal{L}\)</span>总是会单调递减，且<span class="math inline">\(\mathcal{L} \ge 0\)</span>，因此最终会收敛在某个点上。但是由于<span class="math inline">\(\mathcal{L}\)</span>非凸，因此最后应该会收敛到一个局部最优解</p>
+<p>算法的另一个问题是如何选择最优的<span class="math inline">\(K\)</span>。实际上，随着<span class="math inline">\(K\)</span>的增大，目标函数一定会减少（极端情况下，当<span class="math inline">\(K=N\)</span>时，所有类别的中心店就是数据点本身，此时<span class="math inline">\(\mathcal{L}=0\)</span>），因此看什么时候不减是不现实的。常用的选择方法包括</p>
+<ul>
+<li>使用先验知识</li>
+<li>观察相对变化量。假设最优的<span class="math inline">\(K\)</span>为<span class="math inline">\(K^\ast\)</span>，那么对<span class="math inline">\(K \le K^\ast\)</span>，增加<span class="math inline">\(K\)</span>导致的<span class="math inline">\(\mathcal{L}\)</span>相对变化量肯定比<span class="math inline">\(K &gt; K^\ast\)</span>要大</li>
+<li>通常k均值的结果是一个更大应用的组成部分，因此在超过某个点以后即便<span class="math inline">\(\mathcal{L}\)</span>还在变小，主应用的效果可能也会变差</li>
+</ul>
+<p>扩展：K-medoid算法，就是不使用欧几里得距离计算<span class="math inline">\(x\)</span>与中心点的距离。例如可以使用<span class="math inline">\(\ell_1\)</span>正则化的方法来计算<span class="math inline">\(|x_i - \mu_k|\)</span>，这样可以对离群点更加鲁棒</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/07/03/edx-columbia-14-Clustering-K-Means/" title="EdX Columbia ML 14. 聚类与K-均值算法">txshi-mt.com/2017/07/03/edx-columbia-14-Clustering-K-Means/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/EdX-Columbia/" rel="tag"># EdX-Columbia</a>
+          
+            <a href="/tags/聚类/" rel="tag"># 聚类</a>
+          
+            <a href="/tags/kmeans/" rel="tag"># kmeans</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/29/edx-columbia-13-Boosting/" rel="next" title="EdX Columbia ML 13. Boosting">
+                <i class="fa fa-chevron-left"></i> EdX Columbia ML 13. Boosting
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/07/03/edx-columbia-15-Maximum-Likelihood-EM-Algorithm/" rel="prev" title="EdX Columbia ML 15. 最大似然的EM算法">
+                EdX Columbia ML 15. 最大似然的EM算法 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#无监督学习算法"><span class="nav-number">1.</span> <span class="nav-text">&#x65E0;&#x76D1;&#x7763;&#x5B66;&#x4E60;&#x7B97;&#x6CD5;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#聚类"><span class="nav-number">2.</span> <span class="nav-text">&#x805A;&#x7C7B;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#k均值算法"><span class="nav-number">3.</span> <span class="nav-text">K&#x5747;&#x503C;&#x7B97;&#x6CD5;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

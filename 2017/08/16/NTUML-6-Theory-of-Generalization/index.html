@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="NTUML,统计学习理论," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="停止点对成长函数值的限制 如果对于某个\(\mathcal{H}\)，其停止点\(k=2\)，这透露了什么信息？这意味着当\(N=1\)时，可以产生两种二分法分类器，\(m_\mathcal{H} = 2\)；但是当\(N=2\)时，由于达到了停止点，由定义必然有\(m_\mathcal{H} (N) &amp;lt; 2^2 = 4\)，因此最多产生三种分类器。 那么当\(N=3\)呢？我们把分类器集合">
+<meta name="keywords" content="NTUML,统计学习理论">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NTUML 6. 一般化理论">
+<meta property="og:url" content="txshi-mt.com/2017/08/16/NTUML-6-Theory-of-Generalization/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="停止点对成长函数值的限制 如果对于某个\(\mathcal{H}\)，其停止点\(k=2\)，这透露了什么信息？这意味着当\(N=1\)时，可以产生两种二分法分类器，\(m_\mathcal{H} = 2\)；但是当\(N=2\)时，由于达到了停止点，由定义必然有\(m_\mathcal{H} (N) &amp;lt; 2^2 = 4\)，因此最多产生三种分类器。 那么当\(N=3\)呢？我们把分类器集合">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML06_B_4_3">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML06_bound_func_table">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.096Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NTUML 6. 一般化理论">
+<meta name="twitter:description" content="停止点对成长函数值的限制 如果对于某个\(\mathcal{H}\)，其停止点\(k=2\)，这透露了什么信息？这意味着当\(N=1\)时，可以产生两种二分法分类器，\(m_\mathcal{H} = 2\)；但是当\(N=2\)时，由于达到了停止点，由定义必然有\(m_\mathcal{H} (N) &amp;lt; 2^2 = 4\)，因此最多产生三种分类器。 那么当\(N=3\)呢？我们把分类器集合">
+<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML06_B_4_3">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/08/16/NTUML-6-Theory-of-Generalization/"/>
+
+
+
+
+
+  <title>NTUML 6. 一般化理论 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/08/16/NTUML-6-Theory-of-Generalization/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NTUML 6. 一般化理论</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-16T14:28:47+08:00">
+                Aug 16 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/统计机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">统计机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="停止点对成长函数值的限制">停止点对成长函数值的限制</h2>
+<p>如果对于某个<span class="math inline">\(\mathcal{H}\)</span>，其停止点<span class="math inline">\(k=2\)</span>，这透露了什么信息？这意味着当<span class="math inline">\(N=1\)</span>时，可以产生两种二分法分类器，<span class="math inline">\(m_\mathcal{H} = 2\)</span>；但是当<span class="math inline">\(N=2\)</span>时，由于达到了停止点，由定义必然有<span class="math inline">\(m_\mathcal{H} (N) &lt; 2^2 = 4\)</span>，因此最多产生三种分类器。</p>
+<p>那么当<span class="math inline">\(N=3\)</span>呢？我们把分类器集合先置为空集，然后一点点加入可能的分类器来看</p>
+<ol type="1">
+<li>第一个分类器，将<span class="math inline">\({\bf x}_1, {\bf x}_2, {\bf x}_3\)</span>分别标记为<span class="math inline">\(\circ,\circ,\circ\)</span>，这个分类器是合法的。因为任意取两个<span class="math inline">\({\bf x}_i\)</span>只有一种组合，没有被<span class="math inline">\(\mathcal{H}\)</span>打散，保持了停止点的性质</li>
+<li>第二个分类器标记为<span class="math inline">\(\circ,\circ,\times\)</span>，也合法</li>
+<li>第三个分类器标记为<span class="math inline">\(\circ, \times, \circ\)</span>，仍然合法</li>
+<li>第四个分类器，此时要小心。如果标记为<span class="math inline">\(\circ,\times, \times\)</span>，那么结合前面已经有的分类器，如果把<span class="math inline">\({\bf x}_1\)</span>去掉，看<span class="math inline">\({\bf x}_2\)</span>和<span class="math inline">\({\bf x}_3\)</span>组合的情况，就会有<span class="math inline">\(\{\circ,\circ\}\)</span>、<span class="math inline">\(\{\circ,\times\)</span>}、<span class="math inline">\(\{\times, \circ\}\)</span>、<span class="math inline">\(\{\times,\times\}\)</span>四种情况，即这两个输入被<span class="math inline">\(\mathcal{H}\)</span>打散。因此这样的分类器打破了停止点的性质，是非法的。经过分析可知第四个分类器只能标记为<span class="math inline">\(\times,\circ,\circ\)</span></li>
+<li>第五个分类器，此时只有三个选择（因为<span class="math inline">\(\circ,\times, \times\)</span>已经在上一步判定为不可行），可以逐个考察
+<ul>
+<li>标记为<span class="math inline">\(\times,\circ,\times\)</span>是不行的，因为<span class="math inline">\(\mathcal{H}\)</span>打散了<span class="math inline">\({\bf x}_1\)</span>和<span class="math inline">\({\bf x}_3\)</span></li>
+<li>标记为<span class="math inline">\(\times,\times,\circ\)</span>是不行的，因为<span class="math inline">\(\mathcal{H}\)</span>打散了<span class="math inline">\({\bf x}_1\)</span>和<span class="math inline">\({\bf x}_2\)</span></li>
+<li>标记为<span class="math inline">\(\times,\times,\times\)</span>是不行的，因为<span class="math inline">\(\mathcal{H}\)</span>还是打散了<span class="math inline">\({\bf x}_1\)</span>和<span class="math inline">\({\bf x}_2\)</span></li>
+</ul></li>
+</ol>
+<p>即当<span class="math inline">\(N=3\)</span>时，最多产生四种分类器。因此我们可以初步得到一个推论，即<strong>只要出现了停止点</strong><span class="math inline">\(k\)</span><strong>，它就会对所有</strong><span class="math inline">\(N&gt;k\)</span><strong>时最大可能的成长函数</strong><span class="math inline">\(m_\mathcal{H}(N)\)</span><strong>施加了一些限制</strong>。这样就可以得出一个想法 <span class="math display">\[
+\begin{align*}
+&amp;m_\mathcal{H}(N) \\
+\le &amp; {\rm\  maximum\  possible\  }m_\mathcal{H}(N){\rm\  given\  }k \\
+\le &amp; poly(N)
+\end{align*}
+\]</span> 如果上述猜测能够被证明，而且<span class="math inline">\(m_\mathcal{H}\)</span>可以取代Hoeffding不等式上界中的<span class="math inline">\(M\)</span>，那么感知机算法就是可行的</p>
+<h2 id="上限函数基本情况">上限函数：基本情况</h2>
+<p>由前面的讨论，在成长函数的基础上，可以定义一个<strong>上限函数</strong>（bounding function）<span class="math inline">\(B(N, k)\)</span>，表示当停止点为<span class="math inline">\(k\)</span>时最大可能的<span class="math inline">\(m_\mathcal{H}(N)\)</span>值。可以通过一个更抽象的排列组合问题来研究上限函数的值：假设输入是一个长度为<span class="math inline">\(N\)</span>的，由<span class="math inline">\(\circ\)</span>和<span class="math inline">\(\times\)</span>组成的向量，如果限定任意长度为<span class="math inline">\(k\)</span>的子向量都不能被打散（即对任意长度为<span class="math inline">\(k\)</span>的子向量，都不会出现<span class="math inline">\(\circ\)</span>和<span class="math inline">\(\times\)</span>的所有<span class="math inline">\(2^k\)</span>中组合），则这个向量最多有多少种可能？</p>
+<p>对这个问题进行抽象的好处是，抽象以后不再需要<span class="math inline">\(\mathcal{H}\)</span>的具体形态。例如，无论<span class="math inline">\(\mathcal{H}\)</span>是正区间还是1维感知机，它们的停止点都是3，因此上限函数都是<span class="math inline">\(B(N,3)\)</span></p>
+<p>在有了上限函数的定义以后，我们想要证明 <span class="math display">\[
+B(N, k) \le poly(N)
+\]</span> 首先，根据前一节的讨论，有</p>
+<blockquote>
+<p><span class="math display">\[
+B(2,2) = 3, B(3,2)=4
+\]</span></p>
+</blockquote>
+<p>然后，根据前一节最后Fun time的小题，有</p>
+<blockquote>
+<p><span class="math display">\[
+B(N,1) = 1
+\]</span></p>
+</blockquote>
+<p>再次，如果<span class="math inline">\(N&lt;k\)</span>，那么此时不受停止点约束，可以随意让<span class="math inline">\(\mathcal{H}\)</span>打散，因此</p>
+<blockquote>
+<p><span class="math display">\[
+B(N, k) = 2^N{\rm\  for\  }N&lt;k
+\]</span></p>
+</blockquote>
+<p>最后，如果<span class="math inline">\(N=k\)</span>，只需要从所有<span class="math inline">\(2^k\)</span>种分类器中删掉一个就能满足停止点约束，因此</p>
+<blockquote>
+<p><span class="math display">\[
+B(N, k) = 2^N - 1{\rm\  for\  }N = k
+\]</span></p>
+</blockquote>
+<p>注意，已经证明有二维空间中的感知机的停止点<span class="math inline">\(k=4\)</span>，<span class="math inline">\(N=4\)</span>时的成长函数值<span class="math inline">\(m_\mathcal{H}(4)\)</span>为14，而<span class="math inline">\(B(4,4) = 15\)</span>，因此上限函数实际给出的是一个宽松的上界</p>
+<h2 id="上限函数其它情况的推导">上限函数：其它情况的推导</h2>
+<p><span class="math inline">\(N&gt;k\)</span>且<span class="math inline">\(k\not=1\)</span>的情况比较复杂。不过经过观察，似乎<span class="math inline">\(B(4,3)\)</span>与<span class="math inline">\(B(3,?)\)</span>有联系：把已有的4个点去掉一个，或者向原有的3个点增加一个，问题就会互相转化。</p>
+<p>暴力搜索以后，发现<span class="math inline">\(B(4,3) = 11\)</span>。但是这个值怎么与前一行的值联系起来呢？可以将<span class="math inline">\(B(4,3)\)</span>的解重新整理，归为两类，如下图所示</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML06_B_4_3" alt="B(4,3)合法分类器的全部形式与归类"><figcaption>B(4,3)合法分类器的全部形式与归类</figcaption>
+</figure>
+<p>其中橙色部分的解都是“成双成对”的，即(1, 5)，(2, 8)，(3, 10)，(4, 11)这些分类器只是对<span class="math inline">\({\bf x}_4\)</span>的分法不同。而紫色部分的解相对“形单影只”，没有其它组合可以对应。如果记橙色部分的数量是<span class="math inline">\(2\alpha\)</span>，紫色部分的数量是<span class="math inline">\(\beta\)</span>，那么首先可以立即得到<span class="math inline">\(B(4,3) = 11 = 2\alpha + \beta\)</span></p>
+<p>进一步地，从输入集中去掉<span class="math inline">\({\bf x}_4\)</span>以后，可以得到<span class="math inline">\(\alpha + \beta\)</span>个二分法分类器。由上限函数中参数值可知，目前的假设集合<span class="math inline">\(\mathcal{H}\)</span>停止点为3，意味着不存在能打散三个输入的假设函数，所以<span class="math inline">\(\alpha+\beta\)</span>也不应该打散这三个输入。因此可以得到第一个推导 <span class="math display">\[
+\alpha + \beta \le B(3,3)
+\]</span> 接下来，对橙色部分的分类器去掉<span class="math inline">\({\bf x}_4\)</span>，得到去重以后在<span class="math inline">\({\bf x}_1, {\bf x}_2, {\bf x}_3\)</span>上分类器的集合。如果这个集合里的某个分类器子集能够将任意两个<span class="math inline">\({\bf x}_i, {\bf x}_j\)</span>组成的输入打散，则由于其处于橙色部分，对<span class="math inline">\({\bf x}_4\)</span>可以产生完全的<span class="math inline">\(2^1 = 2\)</span>个不同的分类结果，因此可以把<span class="math inline">\({\bf x}_i, {\bf x}_j, {\bf x}_4\)</span>打散，与<span class="math inline">\(\mathcal{H}\)</span>停止点<span class="math inline">\(k\)</span>为3这一假设相悖。因此这<span class="math inline">\(\alpha\)</span>个分类器不能打散任意两个输入，即 <span class="math display">\[
+\alpha \le B(3,2)
+\]</span> 将上面的推导组合并推广，可以得到如下结论 <span class="math display">\[
+\begin{align*}
+B(N, k) &amp;= 2\alpha + \beta \\
+\alpha + \beta &amp;\le B(N-1, k) \\
+\alpha &amp;\le B(N-1, k-1) \\
+\Rightarrow B(N, k) &amp;\le B(N-1, k) + B(N-1, k-1)
+\end{align*}
+\]</span> 即得到了上限函数的上限。最后可以填出如下的表格</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML06_bound_func_table" alt="上限函数的上限表"><figcaption>上限函数的上限表</figcaption>
+</figure>
+<p>由上表的边界情况和递推式，有 <span class="math display">\[
+B(N, k) \le \sum_{i=0}^{k-1}{N \choose i}
+\]</span> 而不等式的右边最高项为<span class="math inline">\(N^{k-1}\)</span>。因此，对假设集合<span class="math inline">\(\mathcal{H}\)</span>，如果其存在停止点且值为<span class="math inline">\(k\)</span>，则其成长函数<span class="math inline">\(m_\mathcal{H}(N)\)</span>的上限由上限函数<span class="math inline">\(B(N,k)\)</span>决定，上限函数的上限由一个多项式函数<span class="math inline">\(O(N^{k-1})\)</span>决定，综上所述，如果停止点存在，则<span class="math inline">\(m_\mathcal{H}(N)\)</span>是多项式的。实际上，还可以证明<span class="math inline">\(B(N,k) \ge \sum_{i=0}^{k-1}{N \choose i}\)</span>，即两者之间是相等的</p>
+<h2 id="mathcalh中坏情况发生概率上界的证明"><span class="math inline">\(\mathcal{H}\)</span>中“坏情况”发生概率上界的证明</h2>
+<p>在证明了成长函数是多项式复杂度以后，一个自然的想法是把成长函数值放进Hoeffding不等式右侧，替换掉<span class="math inline">\(M\)</span>。然而事情实际上并不如此遂意，直接替换的结果是不对的。尽管如此，还是可以得到一个形式差不多的上界，即<strong>在<span class="math inline">\(N\)</span>足够大的情况下</strong>，有 <span class="math display">\[
+P[\exists h\in \mathcal{H} {\rm\  s.t.\  }|E_{\rm in}(h) - E_{\rm out}(h)| &gt; \epsilon] \le 2\cdot 2m_{\mathcal{H}}(2N)\cdot \exp\left(-2\cdot \frac{1}{16}\epsilon^2 N\right)
+\]</span> 接下来，给出一个概要的证明，主要是针对一些多出来的常数是如何发生的：</p>
+<p>首先，在不等号左侧，有一个棘手的<span class="math inline">\(E_{\rm out}\)</span>需要解决。因为训练集的大小总是有限的，因此<span class="math inline">\(E_{\rm in}(h)\)</span>也是有限的。但是<span class="math inline">\(E_{\rm out}\)</span>却是无限的。所以关键问题是怎么把这个无限值转变成有限值。如何用有限多个点知道<span class="math inline">\(E_{\rm out}\)</span>呢？核心思想是借鉴之前训练-测试的方法，使用验证集来进行估计。可以取样出<span class="math inline">\(N\)</span>个点构成验证集<span class="math inline">\(\mathcal{D}&#39;\)</span>，估计出<span class="math inline">\(E_{\rm in}&#39;\)</span>。由于<span class="math inline">\(E_{\rm in}\)</span>、<span class="math inline">\(E_{\rm in}&#39;\)</span>的分布应该都类似于期望为<span class="math inline">\(E_{\rm out}\)</span>的正态分布，因此如果某个假设函数<span class="math inline">\(h\)</span>有其<span class="math inline">\(E_{\rm in}\)</span>跟<span class="math inline">\(E_{\rm out}\)</span>差得很远，那么有很大的概率（大于1/2）其<span class="math inline">\(E_{\rm in}\)</span>离<span class="math inline">\(E_{\rm in}&#39;\)</span>也很远，所以可以用<span class="math inline">\(E_{\rm in}&#39;\)</span>换掉<span class="math inline">\(E_{\rm out}\)</span>。换完以后，有（更具体的数学证明不再列出） <span class="math display">\[
+\frac{1}{2}P[\exists h\in \mathcal{H} {\rm\  s.t.\  }|E_{\rm in}(h) - E_{\rm out}(h)| &gt; \epsilon] \le P[\exists h\in \mathcal{H} {\rm\  s.t.\  }|E_{\rm in}(h) - E_{\rm in}&#39;(h)| &gt; \frac{\epsilon}{2}]
+\]</span> 接下来，由于<span class="math inline">\(E_{\rm in}\)</span>有<span class="math inline">\(m_\mathcal{H}(N)\)</span>种，<span class="math inline">\(E_{\rm in}&#39;\)</span>也有<span class="math inline">\(m_\mathcal{H}(N)\)</span>种，因此综合起来，一共有<span class="math inline">\(m_\mathcal{H}(2N)\)</span>种假设函数可以使用。使用之前事件并的概率的上界，有 <span class="math display">\[
+{\rm BAD} \le 2m_{\mathcal{H}}(2N)P[\exists h\in \mathcal{H} {\rm\  s.t.\  }|E_{\rm in}(h) - E_{\rm in}&#39;(h)| &gt; \frac{\epsilon}{2}]
+\]</span> 最后看上述不等式中<span class="math inline">\(P​\)</span>的上界。还是使用之前类似的罐子举例子，只不过此时罐子中有<span class="math inline">\(2N​\)</span>个球，要比较的是挑出的<span class="math inline">\(N​\)</span>个球观测到的概率和罐里<span class="math inline">\(N​\)</span>个球反映的概率之间差别，由于全体观测反映的概率可以用取出球观测到的概率和罐内球反映的概率取均值得到，因此通过简单的计算，两者有以下关系 <span class="math display">\[
+|E_{\rm in} - E_{\rm in}&#39;| &gt; \frac{\epsilon}{2} \Leftrightarrow \left|E_{\rm in} - \frac{E_{\rm in} + E_{\rm in}&#39;}{2}\right| &gt; \frac{\epsilon}{4}
+\]</span> 其中$ $可以看做是一个总体的概率，因此概率的上界可以用Hoeffding不等式求出（不过注意这里其实是无放回的Hoeffding不等式），即 <span class="math display">\[
+P[\exists h\in \mathcal{H} {\rm\  s.t.\  }|E_{\rm in}(h) - E_{\rm in}&#39;(h)| &gt; \frac{\epsilon}{2}] \le 2\exp\left(-2\left(\frac{\epsilon}{4}\right)^2N\right)
+\]</span> 综上所述，证明了VC（Vapnik-Chervonenkis）上界，即 <span class="math display">\[
+P[\exists h\in \mathcal{H} {\rm\  s.t.\  }|E_{\rm in}(h) - E_{\rm out}(h)| &gt; \epsilon] \le 4m_{\mathcal{H}}(2N)\cdot \exp\left(-\frac{1}{8}\epsilon^2 N\right)
+\]</span> 最后回到感知机算法。由于二维空间感知机的停止点为4，因此<span class="math inline">\(m_\mathcal{H}(N)\)</span>是<span class="math inline">\(O(N^3)\)</span>的，多项式时间复杂度。当<span class="math inline">\(N\)</span>增大时，<span class="math inline">\(m_\mathcal{H}(N)\)</span>的增长速度小于指数函数的衰减速度，整体上“坏事情”发生的概率大幅度减小。所以如果感知机算法<span class="math inline">\(\mathcal{A}\)</span>选出了<span class="math inline">\(E_{\rm in}\)</span>最小的<span class="math inline">\(g\)</span>，这个<span class="math inline">\(g\)</span>也会有最小的<span class="math inline">\(E_{\rm out}\)</span>，达到机器学习的效果</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/08/16/NTUML-6-Theory-of-Generalization/" title="NTUML 6. 一般化理论">txshi-mt.com/2017/08/16/NTUML-6-Theory-of-Generalization/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/NTUML/" rel="tag"># NTUML</a>
+          
+            <a href="/tags/统计学习理论/" rel="tag"># 统计学习理论</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/08/14/NTUML-5-Training-versus-Testing/" rel="next" title="NTUML 5. 训练 vs. 测试">
+                <i class="fa fa-chevron-left"></i> NTUML 5. 训练 vs. 测试
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/08/20/NTUML-7-the-VC-Dimension/" rel="prev" title="NTUML 7. VC维">
+                NTUML 7. VC维 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#停止点对成长函数值的限制"><span class="nav-number">1.</span> <span class="nav-text">&#x505C;&#x6B62;&#x70B9;&#x5BF9;&#x6210;&#x957F;&#x51FD;&#x6570;&#x503C;&#x7684;&#x9650;&#x5236;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#上限函数基本情况"><span class="nav-number">2.</span> <span class="nav-text">&#x4E0A;&#x9650;&#x51FD;&#x6570;&#xFF1A;&#x57FA;&#x672C;&#x60C5;&#x51B5;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#上限函数其它情况的推导"><span class="nav-number">3.</span> <span class="nav-text">&#x4E0A;&#x9650;&#x51FD;&#x6570;&#xFF1A;&#x5176;&#x5B83;&#x60C5;&#x51B5;&#x7684;&#x63A8;&#x5BFC;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mathcalh中坏情况发生概率上界的证明"><span class="nav-number">4.</span> <span class="nav-text"><span class="math inline">\(\mathcal{H}\)</span>&#x4E2D;&#x201C;&#x574F;&#x60C5;&#x51B5;&#x201D;&#x53D1;&#x751F;&#x6982;&#x7387;&#x4E0A;&#x754C;&#x7684;&#x8BC1;&#x660E;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

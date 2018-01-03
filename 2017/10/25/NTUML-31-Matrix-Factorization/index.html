@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="NTUML,矩阵分解," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="线性网络假设函数 在本系列课程的第一讲里，曾讲到过一种称为“推荐系统”的问题，也就是根据用户对电影的评分历史，估计ta对一部新电影可能的评分。也就是说，对于第\(m\)部电影，其数据集\(\mathcal{D}_m\)可以表示为 \[ \{(\tilde{\bf x}_n = (n), y_n = r_{nm}): \  {\rm user\  }n{\rm\    rated\  movie\">
+<meta name="keywords" content="NTUML,矩阵分解">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NTUML 31. 矩阵分解">
+<meta property="og:url" content="txshi-mt.com/2017/10/25/NTUML-31-Matrix-Factorization/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="线性网络假设函数 在本系列课程的第一讲里，曾讲到过一种称为“推荐系统”的问题，也就是根据用户对电影的评分历史，估计ta对一部新电影可能的评分。也就是说，对于第\(m\)部电影，其数据集\(\mathcal{D}_m\)可以表示为 \[ \{(\tilde{\bf x}_n = (n), y_n = r_{nm}): \  {\rm user\  }n{\rm\    rated\  movie\">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML31_linear_network.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML31_mat_fact.png">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.095Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NTUML 31. 矩阵分解">
+<meta name="twitter:description" content="线性网络假设函数 在本系列课程的第一讲里，曾讲到过一种称为“推荐系统”的问题，也就是根据用户对电影的评分历史，估计ta对一部新电影可能的评分。也就是说，对于第\(m\)部电影，其数据集\(\mathcal{D}_m\)可以表示为 \[ \{(\tilde{\bf x}_n = (n), y_n = r_{nm}): \  {\rm user\  }n{\rm\    rated\  movie\">
+<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML31_linear_network.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/10/25/NTUML-31-Matrix-Factorization/"/>
+
+
+
+
+
+  <title>NTUML 31. 矩阵分解 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/10/25/NTUML-31-Matrix-Factorization/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NTUML 31. 矩阵分解</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-25T21:46:25+08:00">
+                Oct 25 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/统计机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">统计机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="线性网络假设函数">线性网络假设函数</h2>
+<p>在本系列课程的第一讲里，曾讲到过一种称为“推荐系统”的问题，也就是根据用户对电影的评分历史，估计ta对一部新电影可能的评分。也就是说，对于第<span class="math inline">\(m\)</span>部电影，其数据集<span class="math inline">\(\mathcal{D}_m\)</span>可以表示为 <span class="math display">\[
+\{(\tilde{\bf x}_n = (n), y_n = r_{nm}): \  {\rm user\  }n{\rm\    rated\  movie\  }m\}
+\]</span> 这种数据与前面介绍的数据最大的不同是，<span class="math inline">\(\tilde{\bf x}_n\)</span>是抽象特征，只是一个用户的编号ID。我们不知道ta背后是男是女，是长是幼，对电影是什么口味，只知道ta打过了哪些分数。那么如何从这些数据里学到每个用户的喜好呢？</p>
+<p>首先，要考虑如何表示这种特征。需要注意的是，用户ID只是一个离散的数值，没有什么实际意义。此外，对用户ID的比较、四则运算等也是没有意义的（一般来说，用户ID越小，说明用户注册时间越早，所以可能会透露出一些额外的信息。不过这里认为评分和注册时间没有什么关系）。类似的特征有很多，例如人的血型，编程语言种类等等。这种没有数值关联性的特征通常称为<strong>类别特征</strong>。目前为止，介绍过的大部分模型基本都是接受数值特征，例外情况只有决策树及其延伸（例如随机森林）。因此，要把这些类别特征利用到更广泛的模型中，就需要将它们转成数值特征，这也是特征变换的一种。不过这种特征变换通常是预先定义好的，这种预先定义的动作就称为<strong>编码</strong>。一种比较简单的编码方式称为二值向量编码方式（binary vector encoding，更常见的称呼方法是独热编码 one hot encoding）：假设对于该变量有<span class="math inline">\(t\)</span>种取值，那么就建立一个长度为<span class="math inline">\(t\)</span>的数组，每一位都分给一种可能的取值情况。当该特征属于某种取值时，其对应的那一位置为1，其余位置为0。例如，人的血型有A、B、O和AB四种取值情况，那么这四个值可以分别表示为 <span class="math display">\[
+\begin{align*}
+{\tt A} &amp;= [1, 0, 0, 0]^\mathsf{T} \\
+{\tt B} &amp; = [0, 1, 0, 0]^\mathsf{T} \\
+{\tt O} &amp;= [0, 0, 1, 0]^\mathsf{T} \\
+{\tt AB} &amp;=[0, 0, 0, 1]^\mathsf{T} \\
+\end{align*}
+\]</span> 因此，对第m个电影，编码后的数据<span class="math inline">\(\mathcal{D}_m\)</span>可以表示为 <span class="math display">\[
+\{({\bf x}_n = {\rm OneHotEncoded}(n), y_n = r_{nm}): \  {\rm user\  }n{\rm\    rated\  movie\  }m\}
+\]</span> 进一步地，可以把用户对所有电影的评分收集起来，得到一个联合数据<span class="math inline">\(\mathcal{D}\)</span> <span class="math display">\[
+\{({\bf x}_n = {\rm OneHotEncoded}(n), {\bf y}_n = [\begin{array}{cccccc}r_{n1} &amp; ? &amp;? &amp;r_{n4} &amp; r_{n5} &amp; \ldots &amp; r_{nM}\end{array}]^\mathsf{T})\}
+\]</span> 由于用户基本不可能对所有电影都作出过评分，因此可以将用户没有评过分的项用“？”标记起来</p>
+<p>这个特征仍然抽象，还是需要考虑怎么做进一步的特征提取和变换。由于前面讲到的神经网络有这方面的功能，因此可以用神经网络来解决这个问题。假设网络使用如下结构构建：输入对应使用者，是一个<span class="math inline">\(N\)</span>维独热编码过的向量，中间使用<span class="math inline">\(\tilde{d}\)</span>个神经元做隐藏层，最后输出是一个<span class="math inline">\(M\)</span>维的向量对应电影评分，那么这个网络很像前面的自动编码器，看上去应该是有提取特征的功能。注意为了简单起见，网络里不带常数项<span class="math inline">\({\bf x}_0^{(\ell)}\)</span>。此外，这个应用里隐藏层不需要做非线性变换<span class="math inline">\(\tanh\)</span>，因为输入向量太稀疏了。综合起来，网络的结构可以用下图表示。由于隐藏层都使用的是线性变换，因此该网络也可以称为线性网络</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML31_linear_network.png" alt="求解推荐系统问题的线性网络"><figcaption>求解推荐系统问题的线性网络</figcaption>
+</figure>
+<p>按照上图所示，将两层权重分别矩阵化 <span class="math display">\[
+\begin{align*}
+{\rm V}^\mathsf{T} &amp;= [w_{ni}^{(1)}] \in \mathbb{R}^{N \times \tilde{d}} \\
+{\rm W} &amp;= [w_{im}^{(2)}] \in \mathbb{R}^{\tilde{d} \times M}
+\end{align*}
+\]</span> 则线性网络的假设函数可以写为 <span class="math display">\[
+h({\bf x}) = {\rm W^\mathsf{T}V}{\bf x}
+\]</span> 其中每个用户<span class="math inline">\(n\)</span>的输出为<span class="math inline">\(h({\bf x}_n) = {\rm W}^\mathsf{T}{\bf v}_n\)</span>，这里利用了稀疏向量的性质，<span class="math inline">\({\bf v}_n\)</span>是<span class="math inline">\(\rm V\)</span>的第<span class="math inline">\(n\)</span>列</p>
+<p>这样，用于推荐系统的线性网络，就是要最优化<span class="math inline">\(\rm V\)</span>和<span class="math inline">\(\rm W\)</span></p>
+<h2 id="基本矩阵分解">基本矩阵分解</h2>
+<p>前面给出的假设函数中，<span class="math inline">\({\rm V}{\bf x}\)</span>这一项可以看作是对<span class="math inline">\({\bf x}\)</span>做的特征变换<span class="math inline">\(\boldsymbol{\Phi}({\bf x})\)</span>。这样，如果单独看第<span class="math inline">\(m\)</span>个电影，其对应的实际上就是一个线性模型<span class="math inline">\(h_m({\bf x}) = {\bf w}_{m}^\mathsf{T}\boldsymbol{\Phi}({\bf x})\)</span>，训练的目标就是希望这个模型对每个<span class="math inline">\(\mathcal{D}_m\)</span>都能达到<span class="math inline">\({\bf w}_m^{\mathsf T}{\bf v}_n \approx y_n = r_{nm}\)</span>的效果。因此，可以使用平方误差来做损失函数，即 <span class="math display">\[
+E_{\rm in}(\{ {\bf w}_m\}, \{ {\bf v}_n\}) = \frac{1}{\sum_{m=1}^M |\mathcal{D}_m|} \sum_{ {\rm user\  }n{\rm\  rated\  movie\  }m}(r_{nm} - {\bf w}_m^{\mathsf T}{\bf v}_n)^2
+\]</span> 由于内积的对称性，有<span class="math inline">\(r_{nm} \approx {\bf w}_m^{\mathsf T}{\bf v}_n = {\bf v}_n^\mathsf{T}{\bf w}_m\)</span>。将这个式子矩阵化，有<span class="math inline">\(\rm R\approx V^\mathsf{T}W\)</span>，其中<span class="math inline">\(\rm R\)</span>是评分矩阵，<span class="math inline">\(\rm V\)</span>是所有用户特征组成的矩阵，<span class="math inline">\(\rm W\)</span>是所有电影特征（权重）组成的矩阵。如果能通过已知的一部分<span class="math inline">\(\rm R\)</span>（不需要知道所有的元素）将其分解为<span class="math inline">\(\rm V\)</span>和<span class="math inline">\(\rm W\)</span>的乘积，那么就能得到使用者特征，和每部电影应该怎么做线性组合。也就是说，在这个模型里做的模型是由已知评分反推那些特征影响用户评分，以及每部电影有哪些元素。例如，某个维度可能对应用户是否喜欢喜剧片，以及电影是否是喜剧片，如下图所示</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML31_mat_fact.png" alt="矩阵分解的物理意义"><figcaption>矩阵分解的物理意义</figcaption>
+</figure>
+<p>矩阵分解经常用来从抽象特征中提取具体特征</p>
+<p>矩阵分解的最优化问题可以进一步推演 <span class="math display">\[
+\begin{align*}
+\min_{\rm W, V}E_{\rm in}(\{ {\bf w}_m\}, \{ {\bf v}_n\}) &amp;\propto \sum_{ {\rm user\  }n{\rm\  rated\  movie\  }m}(r_{nm} - {\bf w}_m^{\mathsf T}{\bf v}_n)^2 \\
+&amp;= \sum_{m=1}^M \left(\sum_{( {\bf x}_n, r_{nm}) \in \mathcal{D}_m} (r_{nm} - {\bf w}_m^{\mathsf T}{\bf v}_n)^2 \right)
+\end{align*}
+\]</span> 这里可以看到又出现了两组变量，难以同时优化，但是可以交替优化：先固定<span class="math inline">\({\bf v}_n\)</span>，最小化<span class="math inline">\({\bf w}_m\)</span>，此时就是求解一组线性回归模型，不过不带常数项；然后，固定<span class="math inline">\({\bf w}_m\)</span>，最小化<span class="math inline">\({\bf v}_n\)</span>，也是求解一组线性回归模型，只是此时是求解关于用户的线性回归模型，而且也不带常数项。这种算法称为交替最小二乘法。其完整表述如下</p>
+<blockquote>
+<ol type="1">
+<li>随机初始化<span class="math inline">\(\tilde{d}\)</span>维向量<span class="math inline">\(\{ {\bf w}_m\}, \{ {\bf v}_n\}\)</span></li>
+<li>交替最小化<span class="math inline">\(E_{\rm in}\)</span>：重复如下过程直到收敛
+<ul>
+<li>最优化<span class="math inline">\({\bf w}_1, {\bf w}_2 ,\ldots, {\bf w}_M​\)</span>，对第<span class="math inline">\(m\)</span>个电影，对数据集<span class="math inline">\(\{({\bf v}_n, r_{nm})\}\)</span>求解一个线性回归模型，更新<span class="math inline">\({\bf w}_m​\)</span></li>
+<li>最优化<span class="math inline">\({\bf v}_1, {\bf v}_2 ,\ldots, {\bf v}_N\)</span>，对第<span class="math inline">\(n\)</span>个用户，对数据集<span class="math inline">\(\{({\bf w}_m, r_{nm})\}\)</span>求解一个线性回归模型，更新<span class="math inline">\({\bf v}_n\)</span></li>
+</ul></li>
+</ol>
+</blockquote>
+<p>其实，前面讲的自动编码器也隐含了矩阵分解的思想。类比于矩阵分解的假设函数<span class="math inline">\({\rm R \approx V^\mathsf{T}W}\)</span>，自动编码器的假设函数也可以写为<span class="math inline">\({\rm X \approx W(W^{\mathsf{T}}X)}\)</span>。两者都是一种线性神经网络，在隐含层使用<span class="math inline">\(\tilde{d}\)</span>个节点。只不过自动编码器的误差函数是在所有<span class="math inline">\(x_{ni}\)</span>上做测量，而矩阵分解只在已知<span class="math inline">\(r_{nm}\)</span>上做测量，而且前者能得到全局最优解，后者只能得到局部最优解。总而言之，自动编码器可以看作是矩阵分解的一种特殊形式</p>
+<h2 id="随机梯度下降">随机梯度下降</h2>
+<p>上述问题也可以用随机梯度下降（SGD）来求解：从数据集中选取一条数据，在这条数据上算梯度，做梯度下降。这种算法的效率非常高，而且易于实现，易于扩展到其它误差函数上</p>
+<p>首先，写出对每一条数据的误差函数 <span class="math display">\[
+{\rm err}({\rm user\  }n, {\rm movie\  }m, {\rm rating\  }r_{nm}) = (r_{nm} - {\bf w}_m^{\mathsf T}{\bf v}_n)^2 
+\]</span> 其梯度非常好计算 <span class="math display">\[
+\begin{align*}
+\nabla_{ {\bf v}_n}{\rm err} &amp;= -2(r_{nm} - {\bf w}_m^{\mathsf T}{\bf v}_n){\bf w}_m \\
+\nabla_{ {\bf w}_m}{\rm err} &amp;= -2(r_{nm} - {\bf w}_m^{\mathsf T}{\bf v}_n){\bf v}_n
+\end{align*}
+\]</span> 有趣的是，这两项梯度都正比于残差与另一组变量向量的乘积</p>
+<p>套用前面讲过的SGD算法，使用SGD求解矩阵分解的过程可以写为</p>
+<blockquote>
+<p>随机初始化<span class="math inline">\(\tilde{d}\)</span>维向量<span class="math inline">\(\{ {\bf w}_m\}, \{ {\bf v}_n\}\)</span></p>
+<p>对<span class="math inline">\(t = 0,1,\ldots, T\)</span></p>
+<ul>
+<li><p>在所有已知的<span class="math inline">\(r_{nm}\)</span>里随机选取一个<span class="math inline">\((n, m)\)</span></p></li>
+<li><p>计算残差<span class="math inline">\(\tilde{r}_{nm} = (r_{nm} - {\bf w}_m^\mathsf{T}{\bf v}_n)\)</span></p></li>
+<li><p>SGD更新 <span class="math display">\[
+\begin{align*}
+{\bf v}_n^{\rm new} &amp;\leftarrow {\bf v}_n^{\rm old} + \eta \cdot \tilde{r}_{nm} {\bf w}_m^{\rm old} \\
+{\bf w}_m^{\rm new} &amp;\leftarrow {\bf w}_m^{\rm old} + \eta \cdot \tilde{r}_{nm} {\bf v}_n^{\rm old}
+\end{align*}
+\]</span></p></li>
+</ul>
+</blockquote>
+<p>如果要求解的是大规模矩阵分解问题，SGD非常有效</p>
+<p>台大团队在参加2011年KDD Cup比赛时用到的就是SGD矩阵分解，不过他们根据问题的场景做了一点有针对性的修改。这次比赛是根据用户之前一段时间的打分去预测后面一段时间的打分，也就是说训练数据的时间戳要比测试数据早一些。在运行SGD时，实际上最后<span class="math inline">\(T&#39;\)</span>次迭代里算法会倾向于把它在这段时间里看到的数据效果做好，因此台大队会故意让时间戳较晚的数据在比较靠后的迭代中训练。这意味着，如果了解了模型使用最优化的方式和里面的技巧，那么就能够在实际应用时修改算法以使其更符合问题的需要</p>
+<h2 id="特征提取模型小结">特征提取模型小结</h2>
+<p>从神经网络开始所讲的模型基本都可以称为是<strong>特征提取模型</strong>。所谓特征提取模型，指的是在送入最终模型之前，将特征变换的过程也纳入学习过程，学习如何表示数据才能有更好的结果。例如在神经网络里，对数据的变换是隐藏层的权重<span class="math inline">\(w_{ij}^{(\ell)}\)</span>，在RBF网络里是<span class="math inline">\(\boldsymbol{\mu}_m\)</span>（其中KNN是RBF网络的特例），在矩阵分解里则是<span class="math inline">\({\bf v}_n\)</span>（也可以是<span class="math inline">\({\bf w}_m\)</span>）。从另一个角度看，AdaBoost或者GBDT也有一点特征提取模型的味道，这里对数据的变化是所有基分类器</p>
+<p>不同的模型也有一些提取特征的技巧：Boosting算法里是函数梯度下降，神经网络和深度学习里是反向传播+SGD以及自动编码器，RBF网络里是K均值聚类，矩阵分解里是交替最小二乘，而KNN是“偷懒学习”（在测试时才遍历训练集作比较）</p>
+<p>特征提取模型的优点是容易使用，减轻了人类提取特征的负担，而且如果使用了足够多的隐藏变量，模型的能力通常比较强；缺点是问题通常不是凸优化问题，比较难以优化，难以达到全局最优解，而且容易过拟合，需要合适的正则化方法或者验证方法。因此，这些模型用起来一定要小心</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/10/25/NTUML-31-Matrix-Factorization/" title="NTUML 31. 矩阵分解">txshi-mt.com/2017/10/25/NTUML-31-Matrix-Factorization/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/NTUML/" rel="tag"># NTUML</a>
+          
+            <a href="/tags/矩阵分解/" rel="tag"># 矩阵分解</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/10/22/NTUML-30-RBF-Network/" rel="next" title="NTUML 30. 径向基函数网络">
+                <i class="fa fa-chevron-left"></i> NTUML 30. 径向基函数网络
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/10/28/NTUML-32-Finale/" rel="prev" title="NTUML 32. 结束曲">
+                NTUML 32. 结束曲 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#线性网络假设函数"><span class="nav-number">1.</span> <span class="nav-text">&#x7EBF;&#x6027;&#x7F51;&#x7EDC;&#x5047;&#x8BBE;&#x51FD;&#x6570;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基本矩阵分解"><span class="nav-number">2.</span> <span class="nav-text">&#x57FA;&#x672C;&#x77E9;&#x9635;&#x5206;&#x89E3;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#随机梯度下降"><span class="nav-number">3.</span> <span class="nav-text">&#x968F;&#x673A;&#x68AF;&#x5EA6;&#x4E0B;&#x964D;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#特征提取模型小结"><span class="nav-number">4.</span> <span class="nav-text">&#x7279;&#x5F81;&#x63D0;&#x53D6;&#x6A21;&#x578B;&#x5C0F;&#x7ED3;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

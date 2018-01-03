@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="NTUML,Logistic回归," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Logistic回归问题 二元分类问题，由于误差函数的定义，只关注样本是/否属于某个类别，即\(\mathcal{Y} \in \{-1, +1\}\)，理想的假设函数的形式也是\(f({\bf x}) = {\rm sign}(P(+1|{\bf x}) - \frac{1}{2}) \in \{-1, +1\}\) 我们还会关心一个类似的问题。以医院中的例子为例，给定一个病人，可能不再只关心t">
+<meta name="keywords" content="NTUML,Logistic回归">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NTUML 10. Logistic回归">
+<meta property="og:url" content="txshi-mt.com/2017/08/30/NTUML-10-Logistic-Regression/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="Logistic回归问题 二元分类问题，由于误差函数的定义，只关注样本是/否属于某个类别，即\(\mathcal{Y} \in \{-1, +1\}\)，理想的假设函数的形式也是\(f({\bf x}) = {\rm sign}(P(+1|{\bf x}) - \frac{1}{2}) \in \{-1, +1\}\) 我们还会关心一个类似的问题。以医院中的例子为例，给定一个病人，可能不再只关心t">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML10_three_linear_models.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML10_choice_of_eta.png">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.090Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NTUML 10. Logistic回归">
+<meta name="twitter:description" content="Logistic回归问题 二元分类问题，由于误差函数的定义，只关注样本是/否属于某个类别，即\(\mathcal{Y} \in \{-1, +1\}\)，理想的假设函数的形式也是\(f({\bf x}) = {\rm sign}(P(+1|{\bf x}) - \frac{1}{2}) \in \{-1, +1\}\) 我们还会关心一个类似的问题。以医院中的例子为例，给定一个病人，可能不再只关心t">
+<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML10_three_linear_models.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/08/30/NTUML-10-Logistic-Regression/"/>
+
+
+
+
+
+  <title>NTUML 10. Logistic回归 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/08/30/NTUML-10-Logistic-Regression/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NTUML 10. Logistic回归</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-30T10:51:06+08:00">
+                Aug 30 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/统计机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">统计机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="logistic回归问题">Logistic回归问题</h2>
+<p>二元分类问题，由于误差函数的定义，只关注样本<strong>是/否</strong>属于某个类别，即<span class="math inline">\(\mathcal{Y} \in \{-1, +1\}\)</span>，理想的假设函数的形式也是<span class="math inline">\(f({\bf x}) = {\rm sign}(P(+1|{\bf x}) - \frac{1}{2}) \in \{-1, +1\}\)</span></p>
+<p>我们还会关心一个类似的问题。以医院中的例子为例，给定一个病人，可能不再只关心ta是否会得心脏病，而是还关注ta得心脏病的概率/风险/可能性（例如80%）。对这样的问题，要关心的是一个落在0到1之间的值。因此这个问题与原来的二元分类问题有所差别，被称作“软二元分类”问题。求解此问题得到的值越高，说明越有可能是<span class="math inline">\(\circ\)</span>，否则越有可能是<span class="math inline">\(\times\)</span>。再次强调一下，这里的结果不再是非黑即白的二分法，而是一种可能性。此时目标函数会变化成<span class="math inline">\(f({\bf x}) = P(+1|{\bf x}) \in [0, 1]\)</span>的形式</p>
+<p>理想状况下，要解决这样的问题，我们希望能看到给定<span class="math inline">\({\bf x}\)</span>数据是正例的概率，即类似如下的条目： <span class="math display">\[
+({\bf x}_1, y_1&#39;) = 0.9 = P(+1|{\bf x}_1) \\
+({\bf x}_2, y_2&#39;) = 0.2 = P(+1|{\bf x}_2) \\ 
+\vdots \\
+({\bf x}_N, y_N&#39;) = 0.6 = P(+1|{\bf x}_N) \\
+\]</span> 这样，只需要让<span class="math inline">\(g\)</span>在数据上对概率的预测与实际概率差别越小越好。但是实际上，这样的资料是基本上拿不到的，上帝给的概率并不能看到，我们只能看到“是”或“否”，即真实数据是有噪声的版本，如下（尤其看最后一条） <span class="math display">\[
+({\bf x}_1, y_1&#39;) = 1 = [\![\circ \sim^? P(y|{\bf x}_1)]\!] \\
+({\bf x}_2, y_2&#39;) = 0 = [\![\circ \sim^? P(y|{\bf x}_2)]\!] \\
+\vdots \\
+({\bf x}_N, y_N&#39;) = 0 = [\![\circ \sim^? P(y|{\bf x}_N)]\!] \\
+\]</span> 因此，可以收集到的数据跟之前解二元分类时可以拿到的数据是一样的，只不过目标函数不同。因此，需要考察不同的假设函数集合</p>
+<p>要确定假设函数的形式，第一件事还是要确定输入的形式和特征是什么。和之前一样，输入仍然可以表示为<span class="math inline">\({\bf x} = (x_0, x_1, x_2, \ldots, x_d)\)</span>。一种自然的想法是，仍然计算其加权分数，即 <span class="math display">\[
+s = \sum_{i=0}^d w_ix_i
+\]</span> 但是值得关注的并不是这个加权分数，而是根据“分数越高概率越高，分数越低概率越低”这个设定以及“最后要得到一个概率值”这个要求，关注如何将结果缩放到[0, 1]这个区间。通常使用<strong>Logistic函数</strong>（记为<span class="math inline">\(\theta\)</span> ）来将这个分数映射到<span class="math inline">\([0, 1]\)</span>区间，因此这个问题称为Logistic回归问题，假设也被称为Logistic假设。其形式为 <span class="math display">\[
+h({\bf x}) = \theta({\bf w}^\mathsf{T}{\bf x})
+\]</span> 其中Logistic函数的定义为 <span class="math display">\[
+\theta(s) = \frac{e^s}{1+e^s} = \frac{1}{1+e^{-s}}
+\]</span></p>
+<h2 id="logistic回归误差">Logistic回归误差</h2>
+<p>Logistic回归和之前提到的线性分类算法和线性回归算法有类似的地方，即对得到的特征都会做一个加权打分的操作。只不过三者在打分完以后做的事情有不同。可以参看下图</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML10_three_linear_models.png" alt="三种线性模型的比较"><figcaption>三种线性模型的比较</figcaption>
+</figure>
+<ul>
+<li>对于线性分类问题，算完得分以后，只根据得分的符号来做分类的动作。这里使用的是最简单的误差函数<span class="math inline">\({\rm err}_{0/1}\)</span></li>
+<li>对于线性回归问题，算完得分以后，直接输出得分。误差函数使用平方误差，因为很容易最小化</li>
+<li>对于Logistic回归问题，算完得分以后，再做一个logistic变换得到最后的结果。那么这里很自然需要关心的问题是，Logistic回归所使用的误差函数是什么？</li>
+</ul>
+<p>考虑我们的目标函数为<span class="math inline">\(f({\bf x}) = P(+1|{\bf x})\)</span>，可以稍作变化得到给定<span class="math inline">\(\bf x\)</span>时<span class="math inline">\(y\)</span>的概率，即 <span class="math display">\[
+P(y|{\bf x}) = \begin{cases}f({\bf x}) &amp; {\rm for\  }y=+1 \\ 1-f({\bf x}) &amp; {\rm for\  } y = -1\end{cases}
+\]</span> 假设现在得到的数据集为 <span class="math display">\[
+\mathcal{D} = \{({\bf x}_1, \circ), ({\bf x}_2, \times), \ldots, ({\bf x}_N, \times)\}
+\]</span> 根据前面的设定和贝叶斯定理，可以推出<span class="math inline">\(\mathcal{D}\)</span>由<span class="math inline">\(f\)</span>产生的概率，为 <span class="math display">\[
+P({\bf x}_1)P(\circ | {\bf x}_1) \times P({\bf x}_2)P(\times | {\bf x}_2) \times \ldots \times P({\bf x}_N)P(\times | {\bf x}_N)
+\]</span> 将上式中的<span class="math inline">\(P(y|{\bf x})\)</span>换成<span class="math inline">\(f\)</span>，可以得到下面等价的式子 <span class="math display">\[
+P({\bf x}_1)f({\bf x}_1) \times P({\bf x}_2)(1 - f({\bf x}_2) ) \times \ldots \times P({\bf x}_N)(1 - f({\bf x}_N) )
+\]</span> 我们无法直接得到<span class="math inline">\(f\)</span>，但是可以通过学习得到一个假设<span class="math inline">\(h\)</span>，因此可以计算<span class="math inline">\(h\)</span>生成同样数据集的概率。这个概率一般称之为<strong>似然</strong>。可以立即得到这个似然值为 <span class="math display">\[
+P({\bf x}_1)h({\bf x}_1) \times P({\bf x}_2)(1 - h({\bf x}_2) ) \times \ldots \times P({\bf x}_N)(1 - h({\bf x}_N) )
+\]</span> 如果有<span class="math inline">\(h \approx f\)</span>，则<span class="math inline">\(h\)</span>对<span class="math inline">\(\mathcal{D}\)</span>的似然应该近似于<span class="math inline">\(f\)</span>产生<span class="math inline">\(\mathcal{D}\)</span>的概率。而通常<span class="math inline">\(f\)</span>产生<span class="math inline">\(\mathcal{D}\)</span>的概率应该非常大，就有 <span class="math display">\[
+{\rm likelihood}(h) \approx ({\rm probability\  using\  }f) \approx {\rm large}
+\]</span> 因此可以认为，<span class="math inline">\(\mathcal{H}\)</span>中最好的<span class="math inline">\(g\)</span>应该是似然最大的那一个，即 <span class="math display">\[
+g = \mathop{ {\rm arg}\max}_h {\rm likelihood}(h)
+\]</span> 又因为logistic函数有对称性，即有 <span class="math display">\[
+1 - h({\bf x}) = h(-{\bf x})
+\]</span> 因此 <span class="math display">\[
+{\rm likelihood}( {\rm logistic}\  h) \propto \prod_{n=1}^N h(y_n{\bf x}_n)
+\]</span> Logistic回归算法的目的就是找到一个<span class="math inline">\(h\)</span>使得上式最大化。同样由于每个<span class="math inline">\(h\)</span>都关联一个<span class="math inline">\({\bf w}\)</span>，因此代入<span class="math inline">\(h\)</span>的定义，目标可以写为 <span class="math display">\[
+\max_{\bf w} {\rm likelihood}({\bf w}) \propto \prod_{n=1}^N \theta(y_n{\bf w}^\mathsf{T}{\bf x}_n)
+\]</span> 又因为<span class="math inline">\(\log (ab) = \log a + \log b\)</span>以及对已有函数取对数不会改变函数的单调性，有 <span class="math display">\[
+\begin{align*}
+&amp;\max_{\bf w} \prod_{n=1}^N \theta(y_n{\bf w}^\mathsf{T}{\bf x}_n) \\
+\Leftrightarrow &amp;\max_{\bf w} \ln \prod_{n=1}^N \theta(y_n{\bf w}^\mathsf{T}{\bf x}_n) \\
+\Leftrightarrow &amp; \max_{\bf w} \sum_{n=1}^N \ln \theta(y_n{\bf w}^\mathsf{T}{\bf x}_n) \\
+\Leftrightarrow &amp; \min_{\bf w} \frac{1}{N}  \sum_{n=1}^N -\ln \theta(y_n{\bf w}^\mathsf{T}{\bf x}_n)  \\
+\Leftrightarrow &amp; \min_{\bf w} \frac{1}{N}\sum_{n=1}^N \ln(1 + \exp(-y_n{\bf w}^\mathsf{T}{\bf x}_n))\hspace{3ex}(\rm definition\  of\  logistic\  function)
+\end{align*}
+\]</span> 定义 <span class="math display">\[
+{\rm err}({\bf w}, {\bf x}, y) = \ln(1 + \exp(-y{\bf w}^\mathsf{T}{\bf x}))
+\]</span> 记为交叉熵误差函数，那么<span class="math inline">\(\sum_{n=1}^N {\rm err}({\bf w}, {\bf x}_n , y_n)\)</span>就是Logistic回归问题中的<span class="math inline">\(E_{\rm in}\)</span></p>
+<h2 id="logistic回归误差的梯度">Logistic回归误差的梯度</h2>
+<p>有了误差函数，接下来的问题自然就是怎么求出最优的<span class="math inline">\(\bf w\)</span>。经过分析可以发现，交叉熵误差函数也是连续、可微、二次可微的凸函数，因此第一个想法就是试着推导<span class="math inline">\(\nabla E_{\rm in}(\bf w)\)</span>。求导有如下结果 <span class="math display">\[
+\begin{align*}
+\frac{\partial E_{\rm in}(\bf w)}{\partial {\bf w}} &amp;= \frac{1}{N}\sum_{n=1}^N\frac{1}{1+\exp(-y_n{\bf w}^\mathsf{T}{\bf x}_n)} \cdot \exp(-y_n{\bf w}^\mathsf{T}{\bf x}_n) \cdot (-y_n{\bf x}_n) \\
+&amp;= \frac{1}{N}\sum_{n=1}^N \theta(-y_n{\bf w}^\mathsf{T}{\bf x}_n)(-y_n{\bf x}_n)
+\end{align*}
+\]</span> 接下来试着求解<span class="math inline">\(\nabla E_{\rm in}({\bf w}) = 0\)</span>。注意梯度是用<span class="math inline">\(\theta\)</span>加权<span class="math inline">\(y_n{\bf x}_n\)</span>的，由于梯度是一个求和项，那么如果所有<span class="math inline">\(\theta\)</span>都是0，那么求和项就会为0。而当每个<span class="math inline">\(y_n{\bf w}^\mathsf{T}{\bf x}_n \rightarrow +\infty\)</span>时，<span class="math inline">\(\theta(-y_n{\bf w}^\mathsf{T}{\bf x}_n)\)</span>才会趋近于0。由于此时每个<span class="math inline">\(y_n{\bf w}^\mathsf{T}{\bf x}_n\)</span>都是一个巨大的正数，因此有之前感知机部分的知识可以得知，每条数据都被正确分类，这意味着数据集<span class="math inline">\(\mathcal{D}\)</span>是线性可分的。而大部分情况下，这个条件不能满足，这就要求我们要想办法去解这个方程。而这个式子并不是一个线性的式子。实际上<span class="math inline">\(\nabla E_{\rm in}({\bf w}) = 0\)</span>并没有解析解</p>
+<p>所以如何破？回顾之前的PLA算法，它是迭代的，发现算法犯错的时候会修正<span class="math inline">\(\bf w\)</span>。为了简单起见，可以把“找出使<span class="math inline">\({\bf w}_t\)</span>犯错的数据<span class="math inline">\(({\bf x}_{n(t)}, y_{n(t)})\)</span>”这一步和“改正<span class="math inline">\({\bf w}_t\)</span>这一步合并，连写为 <span class="math display">\[
+{\bf w}_{t+1} \leftarrow {\bf w}_t + [\![{\rm sign}({\bf w}_t^\mathsf{T}{\bf x}_n) \not= y_n]\!]y_n{\bf x}_n
+\]</span> 这里其实有两样东西，其一是更新的方向（这里是<span class="math inline">\([\![{\rm sign}({\bf w}_t^\mathsf{T}{\bf x}_n) \not= y_n]\!]y_n{\bf x}_n\)</span> ），另一是更新的步长（这里就是1，没有在上式写出）。如果在这里要对更新的方向<span class="math inline">\({\bf v}\)</span>和更新的步长<span class="math inline">\(\eta\)</span>做出改变，就会得到不同的机器学习算法。这样的算法一般称为<strong>迭代优化方法</strong>。</p>
+<h2 id="梯度下降">梯度下降</h2>
+<p>迭代优化方法的思想可以如下表示。其中<span class="math inline">\(\bf v\)</span>代表更新的方向，<span class="math inline">\(\eta\)</span>代表步长</p>
+<blockquote>
+<p>对<span class="math inline">\(t = 0, 1, \ldots\)</span> <span class="math display">\[
+{\bf w}_{t+1} \leftarrow {\bf w}_t + \eta{\bf v}
+\]</span> 算法终止时，将最后得到的<span class="math inline">\(\bf w\)</span>返回为<span class="math inline">\(g\)</span></p>
+</blockquote>
+<p>PLA里通过修正错误来得到<span class="math inline">\(\bf v\)</span>。而Logistic回归，前面可以看到，其损失函数是一个光滑的曲线，这能带来什么样的启发？想象将一个球放在山坡的某个地方，它自然会滚下去，到谷底的时候停住，而停住的点就是梯度为0的点。因此，解Logistic回归问题时，所选的<span class="math inline">\(\bf v\)</span>就是这里球滚下去的方向，其中为了推导的方便，假设<span class="math inline">\(\bf v\)</span>的长度是1。比较贪心的想法是，希望小球滚下去时每一步的跨越最大（<span class="math inline">\(E_{\rm in}\)</span>下降最多），往陡的方向滚。假设限制了每一步只能走<span class="math inline">\(\eta\)</span>这么大，那么问题就化为找到满足下式的<span class="math inline">\(\bf v\)</span> <span class="math display">\[
+\min_{|\!|{\bf v}|\!| = 1} E_{\rm in}\underbrace{({\bf w}_t + \eta{\bf v})}_{ {\bf w}_{t+1}}
+\]</span> 也就是如何找到一个最好的方向。然而这个问题仍然是一个不好解的问题：仍然是要优化一个非线性函数，而且更丧心病狂的是居然还加了一个条件。因此，这个问题并不比<span class="math inline">\(\min_{\bf w}E_{\rm in}({\bf w})\)</span>好解。考虑到目前学过的容易的问题都跟线性函数有关，有没有办法把上面的式子变成一个关于<span class="math inline">\(\bf v\)</span>的线性函数？</p>
+<p>答案是可以的。任何曲线如果只观察其非常微小的一段，这一段都可以认为是一条长度很短的直线。因此在<span class="math inline">\(\eta\)</span>特别小时，使用泰勒展开，有 <span class="math display">\[
+E_{\rm in}({\bf w}_t + \eta{\bf v}) \approx E_{\rm in}({\bf w}_t) + \eta {\bf v}^\mathsf{T}\nabla E_{\rm in}({\bf w}_t)
+\]</span> 因此问题转化为，当<span class="math inline">\(\eta\)</span>很小时，求 <span class="math display">\[
+\min_{|\!|{\bf v}|\!| = 1} E_{\rm in}({\bf w}_t) + \eta {\bf v}^\mathsf{T}\nabla E_{\rm in}({\bf w}_t)
+\]</span> 由于<span class="math inline">\(E_{\rm in}\)</span>是常数，因此最好的<span class="math inline">\(\bf v\)</span>与梯度方向相反就可以。又因为<span class="math inline">\(\bf v\)</span>是单位向量，因此 <span class="math display">\[
+{\bf v} = \frac{-\nabla E_{\rm in}({\bf w}_t)}{|\!|\nabla E_{\rm in}({\bf w}_t)|\!|}
+\]</span> 所以理想的更新方法（称为<strong>梯度下降</strong>）为 <span class="math display">\[
+{\bf w}_{t+1} \leftarrow {\bf w}_t - \eta\frac{\nabla E_{\rm in}({\bf w}_t)}{|\!|\nabla E_{\rm in}({\bf w}_t)|\!|}
+\]</span> 注意这里<span class="math inline">\(\eta\)</span>不能太小也不能太大。如果<span class="math inline">\(\eta\)</span>太小，收敛会很慢；如果<span class="math inline">\(\eta\)</span>太大，曲线的这一小段就不能看作是一段很短的直线，逼近不准，因此收敛不稳定。具体示例可见下图</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML10_choice_of_eta.png" alt="eta取不同值时w的收敛状况"><figcaption>eta取不同值时w的收敛状况</figcaption>
+</figure>
+<p>最好的方法是<span class="math inline">\(\eta\)</span>要经常改变。梯度越大，<span class="math inline">\(\eta\)</span>越大；梯度越小，<span class="math inline">\(\eta\)</span>越小，即<span class="math inline">\(\eta \propto {|\!|\nabla E_{\rm in}({\bf w}_t)|\!|}\)</span>。这个关系也可以表示为<span class="math inline">\(\eta = \eta_0 \cdot {|\!|\nabla E_{\rm in}({\bf w}_t)|\!|}\)</span>，而稍作变换就有<span class="math inline">\(\eta_0 = \eta / {|\!|\nabla E_{\rm in}({\bf w}_t)|\!|}\)</span>。如果把<span class="math inline">\(\eta_0\)</span>用一个新的<span class="math inline">\(\eta\)</span>替换，上式就可以写为 <span class="math display">\[
+{\bf w}_{t+1} \leftarrow {\bf w}_t - \eta \nabla E_{\rm in}({\bf w}_t)
+\]</span> 称此时的<span class="math inline">\(\eta\)</span>为<strong>固定的学习率</strong>，上式也被称为固定学习率的梯度下降</p>
+<p>因此，Logistic回归算法可以表示如下：</p>
+<blockquote>
+<p>初始化<span class="math inline">\({\bf w}_0\)</span></p>
+<p>当<span class="math inline">\(t=0,1,\ldots\)</span>时</p>
+<p>​ 计算 <span class="math display">\[
+\nabla E_{\rm in}({\bf w}_t) = \frac{1}{N} \sum_{n=1}^N\theta(-y_n{\bf w}_t^\mathsf{T}{\bf x}_n)(-y_n{\bf x}_n)
+\]</span> ​ 更新权重 <span class="math display">\[
+{\bf w}_{t+1} \leftarrow {\bf w}_t - \eta \nabla E_{\rm in}({\bf w}_t)
+\]</span> 直到<span class="math inline">\(\nabla E_{\rm in}({\bf w}_{t+1}) = 0\)</span>或迭代次数足够多</p>
+<p>将最后得到的<span class="math inline">\({\bf w}_{t+1}\)</span>返回为<span class="math inline">\(g\)</span></p>
+</blockquote>
+<p>可以看到，Logistic回归算法的时间复杂度与口袋算法每次迭代的时间复杂度相似</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/08/30/NTUML-10-Logistic-Regression/" title="NTUML 10. Logistic回归">txshi-mt.com/2017/08/30/NTUML-10-Logistic-Regression/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/NTUML/" rel="tag"># NTUML</a>
+          
+            <a href="/tags/Logistic回归/" rel="tag"># Logistic回归</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/08/28/NTUML-9-Linear-Regression/" rel="next" title="NTUML 9. 线性回归">
+                <i class="fa fa-chevron-left"></i> NTUML 9. 线性回归
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/09/01/NTUML-11-Linear-Models-for-Classification/" rel="prev" title="NTUML 11. 用于分类问题的线性模型">
+                NTUML 11. 用于分类问题的线性模型 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#logistic回归问题"><span class="nav-number">1.</span> <span class="nav-text">Logistic&#x56DE;&#x5F52;&#x95EE;&#x9898;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#logistic回归误差"><span class="nav-number">2.</span> <span class="nav-text">Logistic&#x56DE;&#x5F52;&#x8BEF;&#x5DEE;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#logistic回归误差的梯度"><span class="nav-number">3.</span> <span class="nav-text">Logistic&#x56DE;&#x5F52;&#x8BEF;&#x5DEE;&#x7684;&#x68AF;&#x5EA6;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#梯度下降"><span class="nav-number">4.</span> <span class="nav-text">&#x68AF;&#x5EA6;&#x4E0B;&#x964D;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

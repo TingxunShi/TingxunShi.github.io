@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="核方法,EdX-Columbia,高斯过程," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="特征扩展 当线性模型在原始特征空间内\(x\in \mathbb{R}^d\)效果不好时，可以把特征映射到高维空间\(\phi(x) \in \mathbb{R}^D (D &amp;gt; d)\)，然后在高维空间再进行线性建模。但是应该怎么映射这都是case by case的，通常可以使用“kitchen sink”法，然后用\(\ell_1\)正则化来进行特征筛选 \[ w_{\ell_1} = {">
+<meta name="keywords" content="核方法,EdX-Columbia,高斯过程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="EdX Columbia ML 10. 核方法与高斯过程">
+<meta property="og:url" content="txshi-mt.com/2017/06/28/edx-columbia-10-kernel-methods-gaussian-process/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="特征扩展 当线性模型在原始特征空间内\(x\in \mathbb{R}^d\)效果不好时，可以把特征映射到高维空间\(\phi(x) \in \mathbb{R}^D (D &amp;gt; d)\)，然后在高维空间再进行线性建模。但是应该怎么映射这都是case by case的，通常可以使用“kitchen sink”法，然后用\(\ell_1\)正则化来进行特征筛选 \[ w_{\ell_1} = {">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.098Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="EdX Columbia ML 10. 核方法与高斯过程">
+<meta name="twitter:description" content="特征扩展 当线性模型在原始特征空间内\(x\in \mathbb{R}^d\)效果不好时，可以把特征映射到高维空间\(\phi(x) \in \mathbb{R}^D (D &amp;gt; d)\)，然后在高维空间再进行线性建模。但是应该怎么映射这都是case by case的，通常可以使用“kitchen sink”法，然后用\(\ell_1\)正则化来进行特征筛选 \[ w_{\ell_1} = {">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/06/28/edx-columbia-10-kernel-methods-gaussian-process/"/>
+
+
+
+
+
+  <title>EdX Columbia ML 10. 核方法与高斯过程 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/06/28/edx-columbia-10-kernel-methods-gaussian-process/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">EdX Columbia ML 10. 核方法与高斯过程</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-28T15:53:18+08:00">
+                Jun 28 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/统计机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">统计机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="特征扩展">特征扩展</h2>
+<p>当线性模型在原始特征空间内<span class="math inline">\(x\in \mathbb{R}^d\)</span>效果不好时，可以把特征映射到高维空间<span class="math inline">\(\phi(x) \in \mathbb{R}^D (D &gt; d)\)</span>，然后在高维空间再进行线性建模。但是应该怎么映射这都是case by case的，通常可以使用“kitchen sink”法，然后用<span class="math inline">\(\ell_1\)</span>正则化来进行特征筛选 <span class="math display">\[
+w_{\ell_1} = {\rm arg}\min_w \sum_{i=1}^n f(y_i, \phi(x_i), w) + \lambda |\!|w|\!|_1
+\]</span></p>
+<p>不过更简单地，我们可以只考虑特征展开的内积<span class="math inline">\(\phi(x_i)^\mathsf{T}\phi(x_j)\)</span>，称之为<strong>核</strong>，记作<span class="math inline">\(K(x_i, x_j)\)</span></p>
+<h2 id="核">核</h2>
+<p>以感知机为例，由前面的讲解，可知感知机从数据中构建超平面的方法是将所有错分样本的标签和数据的内积累加起来，即 <span class="math display">\[
+w = \sum_{i \in \mathcal{M}} y_ix_i
+\]</span> 其中<span class="math inline">\(\mathcal{M}\)</span>是所有错分样本的一个顺序集合 有了<span class="math inline">\(w\)</span>以后就可以对新的样本<span class="math inline">\(x_0\)</span>预测其对应的<span class="math inline">\(y_0\)</span> <span class="math display">\[
+y_0 = {\rm sign}(x_0^\mathsf{T}w) = {\rm sign}\left(\sum_{i \in \mathcal{M}}y_ix_0^\mathsf{T}x_i\right)
+\]</span> 如果对所有数据都进行特征扩展，那么上面的预测方法就会被改写。注意<span class="math inline">\(x_0\)</span>会被映射到<span class="math inline">\(\phi(x_0)\)</span>，<span class="math inline">\(x_i\)</span>也会被映射到<span class="math inline">\(\phi(x_i)\)</span> <span class="math display">\[
+y_0 = {\rm sign}\left(\phi(x_0)^\mathsf{T}w\right) = {\rm sign}\left(\sum_{i \in \mathcal{M}}y_i\phi(x_0)^\mathsf{T}\phi(x_i)\right)
+\]</span> 这里就出现了一个核 可以对核做出一个定义：核<span class="math inline">\(K(\cdot, \cdot): \mathbb{R}^d \times \mathbb{R}^d \rightarrow \mathbb{R}\)</span>是一个对称函数 (<span class="math inline">\(K(a,b) = K(b,a)\)</span>)，并且满足对任意<span class="math inline">\(n\)</span>个<span class="math inline">\(\mathbb{R}^d\)</span>中的数据点<span class="math inline">\(x_1, \ldots, x_n \in \mathbb{R}^d\)</span>，其构成的<span class="math inline">\(n\)</span>阶方阵<span class="math inline">\(K\)</span>（<span class="math inline">\(K_{ij} = K(x_i, x_j)\)</span>）是半正定的。从直觉来看，这说明<span class="math inline">\(K\)</span>满足了作为一个协方差矩阵的所有属性</p>
+<blockquote>
+<p>Mercer定理：如果函数<span class="math inline">\(K(\cdot, \cdot)\)</span>满足了上述条件，则肯定存在一个映射<span class="math inline">\(\phi: \mathbb{R}^d \rightarrow \mathbb{R}^D\)</span>使得 <span class="math display">\[
+K(x_i, x_j) = \phi(x_i)^\mathsf{T}\phi(x_j)
+\]</span></p>
+</blockquote>
+<p>如果我们先定义<span class="math inline">\(\phi\)</span>，则肯定能得到<span class="math inline">\(K\)</span>。不过有时我们先定义<span class="math inline">\(K\)</span>，避免定义<span class="math inline">\(\phi\)</span></p>
+<p>最被广泛使用的一种核称为高斯核，也叫作径向基函数 (radial basis function, RBF) <span class="math display">\[
+K(x, x&#39;) = a\exp\left\{-\frac{1}{b}|\!|x-x&#39;|\!|^2\right\}
+\]</span> RBF衡量了两个点之间的距离。当两个点重合时，函数取得最大值<span class="math inline">\(a\)</span>；当两点无限远时，函数取得最小值0。高斯核的映射<span class="math inline">\(\phi(x)\)</span>能把原始数据映射到无限维空间</p>
+<p>另一种核：<span class="math inline">\(K(x, x&#39;) = (1+x^\mathsf{T}x&#39;)^b, b &gt; 0\)</span></p>
+<p>通过以下三种方法，可以从旧核<span class="math inline">\(K_1, K_2\)</span>构建新核 <span class="math display">\[
+\begin{align*}
+K(x,x&#39;) &amp;= K_1(x,x&#39;)K_2(x,x&#39;) \\
+K(x,x&#39;) &amp;= K_1(x,x&#39;)+K_2(x,x&#39;) \\
+K(x,x&#39;) &amp;= \exp\{K_1(x,x&#39;)\}
+\end{align*}
+\]</span></p>
+<h3 id="核感知机">核感知机</h3>
+<p>如果选择径向基函数(<span class="math inline">\(a=1\)</span>)作为核，那么核感知机的决策过程为 <span class="math display">\[
+\begin{align*}
+y_0 &amp;= {\rm sign}\left(\sum_{i \in \mathcal{M}}y_i\phi(x_0)^\mathsf{T}\phi(x_i)\right) \\
+&amp;= {\rm sign}\left(\sum_{i \in \mathcal{M}}y_iK(x_0, x_1)\right) \\
+&amp;= {\rm sign}\left(\sum_{i \in \mathcal{M}}y_i\exp\left\{-\frac{1}{b}|\!|x_0 - x_i|\!|^2\right\}\right)
+\end{align*}
+\]</span> 考虑之前介绍的RBF的性质，上面的决策过程实际就是遍历错分点，判断错分点与新数据之间的距离。如果距离远，函数值趋近于0，说明其标签在最后总和里的权重小；否则则大。即RBF使得决策过程类似一个“软投票” (soft voting)过程。 训练时也是找一个新的<span class="math inline">\(x&#39;\)</span>满足<span class="math inline">\(y&#39; \not= {\rm sign}(\sum_{i\in \mathcal{M}_t}y_i K(x&#39;,x_i))\)</span>，但是这时只需要把<span class="math inline">\(x&#39;\)</span>的索引加入到<span class="math inline">\(\mathcal{M}\)</span>，而不需要计算<span class="math inline">\(w^{(t+1)}\)</span></p>
+<p>核感知机的思想可以进一步推广到核k-NN上。在这里我们不止针对错分的数据集<span class="math inline">\(\mathcal{M}\)</span>，而是对所有数据进行求和，即 <span class="math display">\[
+y_0 = {\rm sign}\left(\sum_{i=1}^n y_i\exp \left\{-\frac{1}{b}|\!|x_0 - x_i|\!|^2\right\}\right)
+\]</span> 由于将各求和项统一除以一个正数不会改变总和的符号（即不会改变最终决策的结果），因此可以统一除以 <span class="math display">\[
+Z = \sum_{j=1}^n \exp \left\{-\frac{1}{b}|\!|x_0 - x_i|\!|^2\right\}
+\]</span> 记 <span class="math display">\[
+p_i(x_0) = \frac{1}{Z}\exp \left\{-\frac{1}{b}|\!|x_0 - x_i|\!|^2\right\}
+\]</span> 则最后的决策<span class="math inline">\(y_0\)</span>为 <span class="math display">\[
+y_0 = {\rm sign}\left(\sum_{i=1}^n y_ip_i(x_0)\right)
+\]</span> 可以看做是让所有数据投票，但是我们为每个数据根据其与新数据的距离分配投票的权重。离新数据近的权重大，远的权重小。这里<span class="math inline">\(p(x_0)\)</span>扮演了置信度的概念，我们可以调整<span class="math inline">\(b\)</span>使得对大部分<span class="math inline">\(x_i\)</span>有<span class="math inline">\(p_i(x_0) \approx 0\)</span>，使得我们只需要注意<span class="math inline">\(x_0\)</span>附近的点</p>
+<h3 id="核回归">核回归</h3>
+<p>也称Nadaraya-Watson模型。其思想与核KNN方法类似。对新的样本<span class="math inline">\((x_0, y_0)\)</span>，预测<span class="math inline">\(y_0\)</span>为 <span class="math display">\[
+y_0 = \sum_{i=1}^n y_i \frac{K(x_0, x_i)}{\sum_{j=1}^n K(x_0, x_j)}
+\]</span> 其意义是找到离<span class="math inline">\(x_0\)</span>比较近的<span class="math inline">\(x_i\)</span>，计算它们对应<span class="math inline">\(y_i\)</span>的加权平均值</p>
+<h2 id="高斯过程">高斯过程</h2>
+<p>假设有<span class="math inline">\(n\)</span>个样本，响应值<span class="math inline">\(y \in \mathbb{R}^n\)</span>，特征矩阵为<span class="math inline">\(X\)</span>，似然和先验分别为 <span class="math display">\[
+y \sim N(Xw, \sigma^2 I),\  \  w \sim N(0, \lambda^{-1}I)
+\]</span> 可知（= =）其边缘分布为 <span class="math display">\[
+p(y|X) = \int p(y|X, w)p(w)dw = N(0, \sigma^2I + \lambda^{-1}XX^\mathsf{T})
+\]</span> 注意有<span class="math inline">\((XX^\mathsf{T})_{ij} = x^\mathsf{T}_ix_j\)</span>，将<span class="math inline">\(x\)</span>用<span class="math inline">\(\phi(x)\)</span>替换，则有<span class="math inline">\((\phi(X)\phi(X)^\mathsf{T})_{ij} = K(x_i, x_j)\)</span>，记为<span class="math inline">\(K\)</span>，所以有 <span class="math display">\[
+p(y|X) = \int p(y|X, w)p(w)dw = N(0, \sigma^2I + \lambda^{-1}K)
+\]</span> 称为<strong>高斯过程</strong></p>
+<p>定义：假设<span class="math inline">\(f(x) \in \mathbb{R}\)</span>，且<span class="math inline">\(x \in \mathbb{R}^d\)</span>，定义<span class="math inline">\(K(x,x&#39;)\)</span>为两个点<span class="math inline">\(x\)</span>和<span class="math inline">\(x&#39;\)</span>之间的核，则<span class="math inline">\(f(x)\)</span>是<strong>高斯过程</strong>，<span class="math inline">\(y(x)\)</span>是对结果附加的噪声过程，如果 <span class="math display">\[
+y|f \sim N(f, \sigma^2 I),\  f \sim N(0, K) \Leftrightarrow y \sim N(0, \sigma^2I + K)
+\]</span> 其中<span class="math inline">\(y = (y_1, \ldots, y_n)^\mathsf{T}\)</span>，<span class="math inline">\(K\)</span>是<span class="math inline">\(n\)</span>阶方阵，且<span class="math inline">\(K_{ij} = K(x_i, x_j)\)</span> 注意高斯过程本身是不带噪声的，但是观测到的值会受到噪声影响（即<span class="math inline">\(f(x)\)</span>）。这里噪声都是服从i.i.d.的，而且是无限维的</p>
+<p>讲义中高斯过程的生成：选取<span class="math inline">\(x\in [0,1]\)</span>，然后将其分成1000份，每个区间抽一个点出来，然后构建<span class="math inline">\(K\)</span>，<span class="math inline">\(K\)</span>是一个<span class="math inline">\(1000 \times 1000\)</span>的矩阵，使用高斯核</p>
+<p>贝叶斯线性回归：假设我们有<span class="math inline">\(n\)</span>个样本对<span class="math inline">\(\mathcal{D} = \{(x_i,y_i)\}_{i=1}^N\)</span>，我们想根据<span class="math inline">\(x_0\)</span>预测<span class="math inline">\(y_0\)</span>，积掉<span class="math inline">\(w\)</span>，联合分布为 <span class="math display">\[
+\left[\begin{array}{c}    y_0 \\  y  \end{array}\right] \sim {\rm Normal}\left(0, \sigma^2I+ \left[\begin{array}{cc}    x_0^\mathsf{T}x_0 &amp; (Xx_0)^\mathsf{T} \\  Xx_0 &amp; XX^\mathsf{T}  \end{array}\right] \right)
+\]</span> 那么有 <span class="math display">\[
+\begin{align*}
+y_0 | \mathcal{D}, x_0 &amp;\sim {\rm Normal}(\mu_0, \sigma_0^2) \\
+\mu_0 &amp;= (Xx_0)^\mathsf{T}(XX^\mathsf{T})^{-1}y \\
+\sigma_0^2 &amp;= \sigma^2 + x_0^\mathsf{T}x_0 - (Xx_0)^\mathsf{T}(XX^\mathsf{T})^{-1}(Xx_0)
+\end{align*}
+\]</span></p>
+<p>类似地，高斯过程可以估计<span class="math inline">\(y(x)\)</span>这一预测的分布：给定样本数据集<span class="math inline">\(\mathcal{D}_n = \{(x_1, y_1), \ldots , (x_n, y_n)\}\)</span>，对任何新的<span class="math inline">\(x\)</span>，都可以计算<span class="math inline">\(y(x)\)</span>的分布来做预测</p>
+<p>令<span class="math inline">\(K(x,\mathcal{D}_n) = [K(x,x_1), \ldots, K(x,x_n)]\)</span>，<span class="math inline">\(K_n\)</span>是<span class="math inline">\(n\times n\)</span>核矩阵，有 <span class="math display">\[
+\begin{align*}
+y(x)|\mathcal{D}_n &amp; \sim N(\mu(x), \Sigma(x)), \\
+\mu(x) &amp;= K(x, \mathcal{D}_n)K_n^{-1}y, \\
+\Sigma(x) &amp;= \sigma^2 + K(x,x) - K(x,\mathcal{D}_n)K_n^{-1}K(x,\mathcal{D}_n)^\mathsf{T}
+\end{align*}
+\]</span></p>
+<p>对<span class="math inline">\(f(x)\)</span>的后验，只需要移去<span class="math inline">\(\sigma^2\)</span></p>
+<p>高斯过程可以拟合任何形状的函数，求回归</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/06/28/edx-columbia-10-kernel-methods-gaussian-process/" title="EdX Columbia ML 10. 核方法与高斯过程">txshi-mt.com/2017/06/28/edx-columbia-10-kernel-methods-gaussian-process/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/核方法/" rel="tag"># 核方法</a>
+          
+            <a href="/tags/EdX-Columbia/" rel="tag"># EdX-Columbia</a>
+          
+            <a href="/tags/高斯过程/" rel="tag"># 高斯过程</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/28/edx-columbia-9-Logistic-Regression-Laplace-Approximation/" rel="next" title="EdX Columbia ML 9. Logistic回归与拉普拉斯近似">
+                <i class="fa fa-chevron-left"></i> EdX Columbia ML 9. Logistic回归与拉普拉斯近似
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/06/29/edx-columbia-11-Maximum-Margin-Classifier-SVM/" rel="prev" title="EdX Columbia ML 11. 最大间隔分类器和支持向量机 (SVM)">
+                EdX Columbia ML 11. 最大间隔分类器和支持向量机 (SVM) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#特征扩展"><span class="nav-number">1.</span> <span class="nav-text">&#x7279;&#x5F81;&#x6269;&#x5C55;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#核"><span class="nav-number">2.</span> <span class="nav-text">&#x6838;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#核感知机"><span class="nav-number">2.1.</span> <span class="nav-text">&#x6838;&#x611F;&#x77E5;&#x673A;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#核回归"><span class="nav-number">2.2.</span> <span class="nav-text">&#x6838;&#x56DE;&#x5F52;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#高斯过程"><span class="nav-number">3.</span> <span class="nav-text">&#x9AD8;&#x65AF;&#x8FC7;&#x7A0B;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

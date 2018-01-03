@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="EdX-Columbia,马尔科夫模型,半监督学习," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="对于某些序列数据，后面的数据依赖于前面的数据，因此独立同分布假设不能成立 马尔科夫链 一阶马尔科夫属性：最简单的类型，\(t+1\)时刻的状态\(s_{t+1}\)仅由\(t\)时刻的状态\(s_t\)决定。可以用一个矩阵来描述一个过程所有状态转换的完整集合，称为转移矩阵\(M\)。其中\(M_{ij}\)是当当前状态为\(i\)时下一个状态为\(j\)的概率。形式化定义如下： 令\(s\in \">
+<meta name="keywords" content="EdX-Columbia,马尔科夫模型,半监督学习">
+<meta property="og:type" content="article">
+<meta property="og:title" content="EdX Columbia ML 20. 马尔科夫模型和半监督学习">
+<meta property="og:url" content="txshi-mt.com/2017/07/09/edx-columbia-20-Markov-Model-Semi-Supervised-Learning/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="对于某些序列数据，后面的数据依赖于前面的数据，因此独立同分布假设不能成立 马尔科夫链 一阶马尔科夫属性：最简单的类型，\(t+1\)时刻的状态\(s_{t+1}\)仅由\(t\)时刻的状态\(s_t\)决定。可以用一个矩阵来描述一个过程所有状态转换的完整集合，称为转移矩阵\(M\)。其中\(M_{ij}\)是当当前状态为\(i\)时下一个状态为\(j\)的概率。形式化定义如下： 令\(s\in \">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.100Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="EdX Columbia ML 20. 马尔科夫模型和半监督学习">
+<meta name="twitter:description" content="对于某些序列数据，后面的数据依赖于前面的数据，因此独立同分布假设不能成立 马尔科夫链 一阶马尔科夫属性：最简单的类型，\(t+1\)时刻的状态\(s_{t+1}\)仅由\(t\)时刻的状态\(s_t\)决定。可以用一个矩阵来描述一个过程所有状态转换的完整集合，称为转移矩阵\(M\)。其中\(M_{ij}\)是当当前状态为\(i\)时下一个状态为\(j\)的概率。形式化定义如下： 令\(s\in \">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/07/09/edx-columbia-20-Markov-Model-Semi-Supervised-Learning/"/>
+
+
+
+
+
+  <title>EdX Columbia ML 20. 马尔科夫模型和半监督学习 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/07/09/edx-columbia-20-Markov-Model-Semi-Supervised-Learning/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">EdX Columbia ML 20. 马尔科夫模型和半监督学习</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-09T09:56:45+08:00">
+                Jul 9 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/统计机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">统计机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>对于某些序列数据，后面的数据依赖于前面的数据，因此独立同分布假设不能成立</p>
+<h2 id="马尔科夫链">马尔科夫链</h2>
+<p><strong>一阶马尔科夫属性</strong>：最简单的类型，<span class="math inline">\(t+1\)</span>时刻的状态<span class="math inline">\(s_{t+1}\)</span>仅由<span class="math inline">\(t\)</span>时刻的状态<span class="math inline">\(s_t\)</span>决定。可以用一个矩阵来描述一个过程所有状态转换的完整集合，称为转移矩阵<span class="math inline">\(M\)</span>。其中<span class="math inline">\(M_{ij}\)</span>是当当前状态为<span class="math inline">\(i\)</span>时下一个状态为<span class="math inline">\(j\)</span>的概率。形式化定义如下：</p>
+<p>令<span class="math inline">\(s\in \{1,\ldots, S\}\)</span>，序列<span class="math inline">\((s_1, \ldots, s_t)\)</span>是<strong>一阶马尔科夫链</strong>，如果 <span class="math display">\[
+p(s_1,\ldots, s_t) \mathop{=}^{(a)} p(s_1)\prod_{u=2}^\mathsf{T} p(s_u|s_1, \ldots, s_{u-1}) \mathop{=}^{(b)} p(s_1)\prod_{u=2}^\mathsf{T} p(s_u|s_{u-1})
+\]</span> 注意上式与独立同分布有本质不同 <span class="math display">\[
+\begin{align*}
+p(s_1, \ldots , s_t)  = 
+\begin{cases}
+p(s_1)\prod_{u=2}^\mathsf{T} p(s_u|s_{u-1}) &amp; {\rm Markov\  assumption} \\
+\prod_{u=1}^\mathsf{T} p(s_u) &amp; {\rm i.i.d.\  assumption}
+\end{cases}
+\end{align*}
+\]</span></p>
+<p>其对应的转移矩阵<span class="math inline">\(M\)</span>满足 <span class="math display">\[
+M_{ij} = p(s_t = j | s_{t-1} = i)
+\]</span> 因此给定初始状态<span class="math inline">\(s_0\)</span>以后，可以通过以下分布生成序列<span class="math inline">\((s_1, \ldots, s_t)\)</span> <span class="math display">\[
+s_t | s_{t-1} \sim {\rm Discrete}(M_{s_{t-1}}, :)
+\]</span> 相反地，给出一个序列，也可以使用最大似然估计去学习转移矩阵 <span class="math display">\[
+M_{\rm ML} = {\rm arg}\max_M p(s_1, \ldots, s_t|M) = {\rm arg}\max_M \sum_{u=1}^{t-1} \sum_{i,j}^s 1(s_u = i, s_{u+1} = j)\ln M_{ij}
+\]</span> 由于<span class="math inline">\(M\)</span>的每行都是一个概率分布，所以有 <span class="math display">\[
+M_{\rm ML}(i,j) = \frac{\sum_{u=1}^{t-1}1(s_u = i, s_{u+1} = j)}{\sum_{u=1}^{t-1}1(s_u = i)}
+\]</span> 即实际观察到<span class="math inline">\(i\rightarrow j\)</span>的转移数除以从<span class="math inline">\(i\)</span>发生的转移总数</p>
+<p>从另外一个角度可以分析出，给定初始状态的情况下，第<span class="math inline">\(t+1\)</span>步会落在什么状态。首先，假设在第<span class="math inline">\(t\)</span>步我们有一个所在状态的概率分布<span class="math inline">\(p(s_t=u)\)</span>，那么<span class="math inline">\(s_{t+1}\)</span>的分布为 <span class="math display">\[
+p(s_{t+1}=j) = \sum_{u=1}^s \underbrace{p(s_{t+1}=j|s_t=u)p(s_t=u)}_{p(s_{t+1}=j, s_t=u)}
+\]</span> 如果用行向量<span class="math inline">\(w_t\)</span>来表示<span class="math inline">\(p(s_t=u)\)</span>（即状态的分布），那么有 <span class="math display">\[
+\underbrace{p(s_{t+1}=j)}_{w_{t+1}(j)} = \sum_{u=1}^s \underbrace{p(s_{t+1}=j|s_t=u)}_{M_{uj}}\underbrace{p(s_t=u)}_{w_t(u)}
+\]</span> 即<span class="math inline">\(w_{t+1} = w_tM = \ldots = w_1M^\mathsf{T}\)</span></p>
+<p>那么，在经历了无穷多次这样的步骤以后，整个系统会落在什么状态上？这就引出了稳定分布的概念，即令<span class="math inline">\(w_\infty = \lim _{t\rightarrow \infty} w_t\)</span>，则<span class="math inline">\(w_\infty\)</span>成为稳定分布。如果以下两个条件都满足，则对所有<span class="math inline">\(w_0\)</span>最后的稳态<span class="math inline">\(w_\infty\)</span>都相同</p>
+<ol type="1">
+<li>从任意一个状态开始，经过转化最后都能到达另一个状态</li>
+<li>序列不会以某个预定好的模式进入死循环</li>
+</ol>
+<p><span class="math inline">\(w_\infty\)</span>可以如下求得 <span class="math display">\[
+M^\mathsf{T}q_1 = \lambda_1q_1 \Longrightarrow \lambda_1 = 1, w_\infty = \frac{q_1}{\sum_{u=1}^S q_1(u)} 
+\]</span></p>
+<h2 id="半监督学习">半监督学习</h2>
+<p>核心思想：使用部分有标记的数据来做分类，即大部分数据都没有标签<span class="math inline">\(y_i\)</span>，但是仍然想学习<span class="math inline">\(x_1,\ldots,x_n\)</span>的内在结构。做法是构建一个随机游走分类器，从一个点随机移动到周围的一个点。其中，周边点越临近，跳到该点的概率越大。如果游走到一个有标记的点，则结束游走。游走终点的标签就是起始点的标记</p>
+<p>考虑到高斯核函数的性质，可以用它来构建转移矩阵，即 <span class="math display">\[
+\hat{M}_{ij} = \exp\left\{-\frac{|\!|x_i-x_j|\!|^2}{b}\right\}
+\]</span> 将这个矩阵逐行归一化，就可以得到真正的转移矩阵<span class="math inline">\(M\)</span>。如果<span class="math inline">\(x_i\)</span>有标签，则将<span class="math inline">\(M_{ii}\)</span>重新设置为1</p>
+<p>假设有<span class="math inline">\(s\)</span>个状态，如果<span class="math inline">\(p(s_t = i|s_{t-1} = i) = 1\)</span>，那么第<span class="math inline">\(i\)</span>个状态称为<strong>吸收态</strong>，因为永远不会从该状态离开。给定<span class="math inline">\(t=0\)</span>时的初始状态<span class="math inline">\(s_0\)</span>和一系列吸收态，可以计算经过随机游走以后落在各个吸收态的概率。由于每个吸收态都对应一个分类标签，因此这个状态也可以看作是样本属于对应标签的概率，对应的也就是计算<span class="math inline">\(w_\infty = w_0M^\infty\)</span>的结果，其中<span class="math inline">\(w_0\)</span>是除了<span class="math inline">\(w_{0j}=1\)</span>以外的全0向量</p>
+<p>不失一般性地，可以将状态进行重组，将转移矩阵重新变化为如下形式的矩阵 <span class="math display">\[
+M = \left[\begin{matrix} A &amp; B \\ 0 &amp; I\end{matrix}\right]
+\]</span> 该矩阵的n次幂有如下形式 <span class="math display">\[
+M^n = \left[\begin{matrix}A^n &amp; (A^{n-1} + \ldots + I)B \\ 0 &amp; I\end{matrix}\right] = \left[\begin{matrix}A^n &amp; \left(\sum_{u=0}^{n-1}A^u\right) \\ 0 &amp; I\end{matrix}\right]
+\]</span></p>
+<p>由于 <span class="math display">\[
+A^\infty = 0, \sum_{u=0}^\infty A^\mathsf{T} = (I-A)^{-1}
+\]</span></p>
+<p>因此从<span class="math inline">\(x_j\)</span>开始的随机游走最终在第<span class="math inline">\(i\)</span>个吸收状态的概率是<span class="math inline">\([(I-A)^{-1}B]_{ji}\)</span></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/07/09/edx-columbia-20-Markov-Model-Semi-Supervised-Learning/" title="EdX Columbia ML 20. 马尔科夫模型和半监督学习">txshi-mt.com/2017/07/09/edx-columbia-20-Markov-Model-Semi-Supervised-Learning/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/EdX-Columbia/" rel="tag"># EdX-Columbia</a>
+          
+            <a href="/tags/马尔科夫模型/" rel="tag"># 马尔科夫模型</a>
+          
+            <a href="/tags/半监督学习/" rel="tag"># 半监督学习</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/07/05/edx-columbia-19-PCA/" rel="next" title="Edx Columbia ML 19. 主成分分析 (PCA)">
+                <i class="fa fa-chevron-left"></i> Edx Columbia ML 19. 主成分分析 (PCA)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/07/09/edx-columbia-21-Hidden-Markov-Model/" rel="prev" title="EdX Columbia ML 21. 隐马尔科夫模型 (HMM)">
+                EdX Columbia ML 21. 隐马尔科夫模型 (HMM) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#马尔科夫链"><span class="nav-number">1.</span> <span class="nav-text">&#x9A6C;&#x5C14;&#x79D1;&#x592B;&#x94FE;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#半监督学习"><span class="nav-number">2.</span> <span class="nav-text">&#x534A;&#x76D1;&#x7763;&#x5B66;&#x4E60;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="神经网络,DLBook,激活函数," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="《深度学习》系列笔记的前言 从这篇博客开始，我将对Goodfellow等人编著的《深度学习》一书做一些笔记。对于每一章，按照现在的构想，笔记大概会分成三个部分  “记”的功能是提取书中的一些关键知识点。由于每一章的学习按照计划都是在对应的Hinton视频课程之后学习，而Hinton一般会讲一些比较基本且重要的知识点，因此再看书的时候感觉没有必要做太多重复劳动。从另一个角度，这本书字字珠玑，如果想记">
+<meta name="keywords" content="神经网络,DLBook,激活函数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《深度学习》ch6. 深度前馈网络 记（上）">
+<meta property="og:url" content="txshi-mt.com/2017/12/05/DLBook-6a-Deep-Feedforward-Networks-summary/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="《深度学习》系列笔记的前言 从这篇博客开始，我将对Goodfellow等人编著的《深度学习》一书做一些笔记。对于每一章，按照现在的构想，笔记大概会分成三个部分  “记”的功能是提取书中的一些关键知识点。由于每一章的学习按照计划都是在对应的Hinton视频课程之后学习，而Hinton一般会讲一些比较基本且重要的知识点，因此再看书的时候感觉没有必要做太多重复劳动。从另一个角度，这本书字字珠玑，如果想记">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.089Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="《深度学习》ch6. 深度前馈网络 记（上）">
+<meta name="twitter:description" content="《深度学习》系列笔记的前言 从这篇博客开始，我将对Goodfellow等人编著的《深度学习》一书做一些笔记。对于每一章，按照现在的构想，笔记大概会分成三个部分  “记”的功能是提取书中的一些关键知识点。由于每一章的学习按照计划都是在对应的Hinton视频课程之后学习，而Hinton一般会讲一些比较基本且重要的知识点，因此再看书的时候感觉没有必要做太多重复劳动。从另一个角度，这本书字字珠玑，如果想记">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/12/05/DLBook-6a-Deep-Feedforward-Networks-summary/"/>
+
+
+
+
+
+  <title>《深度学习》ch6. 深度前馈网络 记（上） | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/12/05/DLBook-6a-Deep-Feedforward-Networks-summary/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">《深度学习》ch6. 深度前馈网络 记（上）</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-05T23:01:20+08:00">
+                Dec 5 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/深度学习/" itemprop="url" rel="index">
+                    <span itemprop="name">深度学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="深度学习系列笔记的前言">《深度学习》系列笔记的前言</h2>
+<p>从这篇博客开始，我将对Goodfellow等人编著的《深度学习》一书做一些笔记。对于每一章，按照现在的构想，笔记大概会分成三个部分</p>
+<ul>
+<li>“记”的功能是提取书中的一些关键知识点。由于每一章的学习按照计划都是在对应的Hinton视频课程之后学习，而Hinton一般会讲一些比较基本且重要的知识点，因此再看书的时候感觉没有必要做太多重复劳动。从另一个角度，这本书字字珠玑，如果想记得巨细靡遗，那么跟抄书没什么区别，也没有这个必要。因此，“记”可以看作是给Hinton课程的一个补漏，也算是一个总结</li>
+<li>“注”的功能是对书中一些没有展开的结论的注解。有些阐述，由于我个人水平有限，理解起来比较困难，或者觉得不够直观，我会试着去深挖一下原因以及背后的道理，可以看做是自己对自己的答疑吧</li>
+<li>“补”的功能是对书中提到的一些知识点的补充。“注”与“补”的界限可能会比较模糊，从直观上来看，前者我倾向于是重原理和推导，后者更倾向于重概念。一些重要方法可能书里没有讲得特别详细，需要看论文，论文里提到而书里没有涵盖到的重要知识，可能也会体现在“补”中</li>
+</ul>
+<p>需要说明的是，由于是个人笔记，因此对什么东西关键、什么东西不理解、什么东西需要补充说明，这些标准可能没有定数，与个人的感觉有关。如有遗漏，或者是啰嗦的，还望海涵。不过一般来讲，由于我一直在做工程师，理论能力有限，因此太理论的知识点，估计不会涵盖，例如6.4.1中的一些内容</p>
+<p>想法通常都是完美的，但是实践起来总是有各种各样的困难，希望我能尽力完成吧</p>
+<hr>
+<p>本部分是对《深度学习》一书6.1-6.4节内容的概要。尽管我购买了此书的印刷版，但是出于对版权的考虑，摘抄部分基本来自于本书在github上公开的电子版本。希望对深度学习有兴趣的同侪都能够购买印刷版以支持作者</p>
+<h2 id="实例学习异或函数xor">实例：学习异或函数XOR</h2>
+<p>对于 <span class="math display">\[
+\boldsymbol{X} = \left[\begin{matrix}0 &amp; 0 \\ 0 &amp; 1 \\ 1 &amp; 0 \\ 1 &amp; 1\end{matrix}\right], \boldsymbol{y} = \left[\begin{matrix}0 \\ 1 \\ 1\\ 0\end{matrix}\right]
+\]</span> 这样的数据，由于其是线性不可分的，因此不能使用线性模型分隔开。要想将其完美地分开，需要通过一些非线性变化将其映射到一个空间<span class="math inline">\(\mathcal{Z}\)</span>里，使样本经过映射以后在新的空间线性可分。神经网络能做到这一点的原因就是在隐藏层的隐藏单元使用了非线性变换（称为激活函数）。书中使用的是整流线性单元（ReLU），变换以后的数据变得线性可分</p>
+<h2 id="基于梯度的学习">基于梯度的学习</h2>
+<p>由于神经网络中的隐藏层基本都使用了非线性变换，因此大多数代价函数都非凸，要优化也只能使用迭代的，基于梯度的优化。代价函数通常使用训练数据和模型预测之间的交叉熵（cross entropy），而输出层的形式决定了交叉熵函数的形式。通常情况下，输出层有如下几种（假设前面已经使用若干隐藏层提供了一组隐藏特征<span class="math inline">\(\boldsymbol{h}\)</span>，输出层是要对这些特征做一些额外变换来完成任务）</p>
+<ul>
+<li><p>用于高斯输出分布的线性单元，即对隐藏特征不做非线性变换，直接产生<span class="math inline">\(\hat{\boldsymbol{y}} = \boldsymbol{W}^\mathsf{T}\boldsymbol{h}+\boldsymbol{b}\)</span>。其用来产生条件高斯分布的均值：<span class="math inline">\(p(\boldsymbol{y}|\boldsymbol{x}) = \mathcal{N}(\boldsymbol{y}; \hat{\boldsymbol{y}}, \boldsymbol{I})\)</span></p></li>
+<li><p>用于伯努利输出分布的sigmoid单元，即对隐藏特征先用线性层求<span class="math inline">\(z = \boldsymbol{w}^\mathsf{T}\boldsymbol{h} + b\)</span>，然后对这个值做一个sigmoid变换<span class="math inline">\(\sigma(z)\)</span>将其映射到<span class="math inline">\([0, 1]\)</span>区间，转化成一个概率值</p></li>
+<li><p>用于多元伯努利输出分布的softmax单元，可以看作是伯努利输出分布 x sigmoid单元在多分类问题上的推广。此时输出标签空间是一个离散的，多类别的集合。假如一共有<span class="math inline">\(K\)</span>个类别，则标签空间<span class="math inline">\(\mathcal{Y} = \{0, 1,2,\ldots, K-1\}\)</span>。对隐藏特征做线性变换<span class="math inline">\(\boldsymbol{z} = \boldsymbol{W}^\mathsf{T}\boldsymbol{h} + \boldsymbol{b}\)</span>后，softmax函数<span class="math inline">\({\rm softmax}(\boldsymbol{z})\)</span>得到一个向量，这个向量的每个维度可以看做是输入样本属于对应类别标签的概率，因此有<span class="math inline">\(\forall i \in \{0, 1, \ldots, K-1\}, z_i \in [0, 1] \land \sum_{i}z_i = 1\)</span>。softmax函数的具体形式为 <span class="math display">\[
+{\rm softmax}(\boldsymbol{z})_i = \frac{\exp(z_i)}{\sum_j \exp(z_j)}
+\]</span></p></li>
+<li><p>其它输出类型，例如混合密度网络（mixture density network）</p></li>
+</ul>
+<h2 id="隐藏单元">隐藏单元</h2>
+<p>选择隐藏单元实际上就是要选择一个合适的激活函数。常见的有如下几种隐藏单元：</p>
+<ul>
+<li>整流线性单元（ReLU）：<span class="math inline">\(g(z) = \max\{0, z\}\)</span>。优点是易于优化，二阶导数几乎处处为0，处于激活状态时一阶导数处处为1，也就是其相比于引入二阶效应的激活函数，梯度方向对学习更有用。如果使用ReLU，第一步做线性变换<span class="math inline">\(\boldsymbol{W}^\mathsf{T}\boldsymbol{x} + \boldsymbol{b}\)</span>时的<span class="math inline">\(\boldsymbol{b}\)</span>一般设置成一个小的正值。缺陷是不能通过基于梯度的方法学习那些使单元激活为0的样本</li>
+<li>sigmoid函数或双曲正切函数<span class="math inline">\(\tanh\)</span>。两者之间有一个联系：<span class="math inline">\(\tanh(z) = 2\sigma(2z) - 1\)</span>。两者都比较容易饱和，仅当<span class="math inline">\(z\)</span>接近0时才对输入强烈敏感，因此使基于梯度的学习变得非常困难，不适合做前馈网络中的隐藏单元。如果必须要使用这两种中的一个，那么<span class="math inline">\(\tanh\)</span>通常表现更好，因为在0附近其类似于单位函数。即，如果网络的激活能一直很小，训练<span class="math inline">\(\hat{y} = \boldsymbol{w}^\mathsf{T}\tanh(\boldsymbol{U}^\mathsf{T}\tanh(\boldsymbol{V}^\mathsf{T}\boldsymbol{x}))\)</span>类似于训练一个线性模型<span class="math inline">\(\hat{y} = \boldsymbol{w}^\mathsf{T}\boldsymbol{U}^\mathsf{T}\boldsymbol{V}^\mathsf{T}\boldsymbol{x}\)</span>。RNN和一些自编码器有一些额外的要求，因此不能使用分段激活函数，此时这种类sigmoid单元更合适</li>
+</ul>
+<p>其它隐藏单元不太常用。也许有的隐藏单元效果更好，但是还没被发现</p>
+<h2 id="架构设计">架构设计</h2>
+<p>神经网络的架构是指其整体结构：具有多少单元，如何连接，以及深度（有多少个隐藏层）和宽度（每个隐藏层有多少个隐藏单元）。大多数前馈神经网络都是链式结构</p>
+<p><strong>万能近似定理</strong>（universal approximation theorem）<em>近似</em>可以理解为，如果至少有一个隐藏层使用了前面所说的激活函数，且输出层使用线性变换，那么在隐藏单元足够的情况下，其可以逼近任意函数。但是实际使用时，使用单个隐藏层可能会导致不能正确学习和泛化，因此需要更深的模型</p>
+<p>其它架构，包括RNN和CNN等，将在之后的章节介绍</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/12/05/DLBook-6a-Deep-Feedforward-Networks-summary/" title="《深度学习》ch6. 深度前馈网络 记（上）">txshi-mt.com/2017/12/05/DLBook-6a-Deep-Feedforward-Networks-summary/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/神经网络/" rel="tag"># 神经网络</a>
+          
+            <a href="/tags/DLBook/" rel="tag"># DLBook</a>
+          
+            <a href="/tags/激活函数/" rel="tag"># 激活函数</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/11/29/CS20SI-3-Linear-and-Logistic-Regression/" rel="next" title="CS20SI 03. 线性与Logistic回归">
+                <i class="fa fa-chevron-left"></i> CS20SI 03. 线性与Logistic回归
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/12/09/DLBook-6a-Deep-Feedforward-Networks-notes/" rel="prev" title="《深度学习》ch6. 深度前馈网络 注（上）">
+                《深度学习》ch6. 深度前馈网络 注（上） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#深度学习系列笔记的前言"><span class="nav-number">1.</span> <span class="nav-text">&#x300A;&#x6DF1;&#x5EA6;&#x5B66;&#x4E60;&#x300B;&#x7CFB;&#x5217;&#x7B14;&#x8BB0;&#x7684;&#x524D;&#x8A00;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实例学习异或函数xor"><span class="nav-number">2.</span> <span class="nav-text">&#x5B9E;&#x4F8B;&#xFF1A;&#x5B66;&#x4E60;&#x5F02;&#x6216;&#x51FD;&#x6570;XOR</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于梯度的学习"><span class="nav-number">3.</span> <span class="nav-text">&#x57FA;&#x4E8E;&#x68AF;&#x5EA6;&#x7684;&#x5B66;&#x4E60;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#隐藏单元"><span class="nav-number">4.</span> <span class="nav-text">&#x9690;&#x85CF;&#x5355;&#x5143;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#架构设计"><span class="nav-number">5.</span> <span class="nav-text">&#x67B6;&#x6784;&#x8BBE;&#x8BA1;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

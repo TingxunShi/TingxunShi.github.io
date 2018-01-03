@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="NTUML,统计学习理论," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="再谈\(E_{\rm in}\)与\(E_{\rm out}\) 上回提到，如果有足够多的根据统计方法生成的数据，而且\(\mathcal{H}\)是有限集，那么问题是可学习的。即如果假设集\(\mathcal{H}\)的基数是有限的，记为\(M\)，而且有样本量\(N\)足够大，那么对任意算法\(\mathcal{A}\)选出来的\(g\)，都会有\(E_{\rm out}(g) \approx">
+<meta name="keywords" content="NTUML,统计学习理论">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NTUML 5. 训练 vs. 测试">
+<meta property="og:url" content="txshi-mt.com/2017/08/14/NTUML-5-Training-versus-Testing/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="再谈\(E_{\rm in}\)与\(E_{\rm out}\) 上回提到，如果有足够多的根据统计方法生成的数据，而且\(\mathcal{H}\)是有限集，那么问题是可学习的。即如果假设集\(\mathcal{H}\)的基数是有限的，记为\(M\)，而且有样本量\(N\)足够大，那么对任意算法\(\mathcal{A}\)选出来的\(g\)，都会有\(E_{\rm out}(g) \approx">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML05_single_point">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML05_two_points">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML05_three_points_worst_case">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML05_growth_function_for_convex_sets">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.096Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NTUML 5. 训练 vs. 测试">
+<meta name="twitter:description" content="再谈\(E_{\rm in}\)与\(E_{\rm out}\) 上回提到，如果有足够多的根据统计方法生成的数据，而且\(\mathcal{H}\)是有限集，那么问题是可学习的。即如果假设集\(\mathcal{H}\)的基数是有限的，记为\(M\)，而且有样本量\(N\)足够大，那么对任意算法\(\mathcal{A}\)选出来的\(g\)，都会有\(E_{\rm out}(g) \approx">
+<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML05_single_point">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/08/14/NTUML-5-Training-versus-Testing/"/>
+
+
+
+
+
+  <title>NTUML 5. 训练 vs. 测试 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/08/14/NTUML-5-Training-versus-Testing/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NTUML 5. 训练 vs. 测试</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-08-14T18:15:03+08:00">
+                Aug 14 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/统计机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">统计机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="再谈e_rm-in与e_rm-out">再谈<span class="math inline">\(E_{\rm in}\)</span>与<span class="math inline">\(E_{\rm out}\)</span></h2>
+<p>上回提到，如果有足够多的根据统计方法生成的数据，而且<span class="math inline">\(\mathcal{H}\)</span>是有限集，那么问题是可学习的。即如果假设集<span class="math inline">\(\mathcal{H}\)</span>的基数是有限的，记为<span class="math inline">\(M\)</span>，而且有样本量<span class="math inline">\(N\)</span>足够大，那么对任意算法<span class="math inline">\(\mathcal{A}\)</span>选出来的<span class="math inline">\(g\)</span>，都会有<span class="math inline">\(E_{\rm out}(g) \approx E_{\rm in}(g)\)</span>。同样的道理，如果<span class="math inline">\(\mathcal{A}\)</span>找到的<span class="math inline">\(g\)</span>满足了<span class="math inline">\(E_{\rm in}(g) \approx 0\)</span>，那么有PAC地<span class="math inline">\(E_{\rm out}(g) \approx 0\)</span>，也就是说此时学习是可能的。需要注意的是，要想单纯地通过训练让<span class="math inline">\(E_{\rm in}(g) \approx 0\)</span>是很容易的，只需要把每条数据对应的标签记住就好。但是研究机器学习算法的目的是在于要让模型在<strong>未知的</strong>数据上一样表现良好，因此才需要有测试的过程来验证是否有<span class="math inline">\(E_{\rm in} \approx E_{\rm out}\)</span>。</p>
+<p>这里再回顾一下之前几讲讲过的东西：</p>
+<ul>
+<li>第一讲主要是强调，我们希望机器学习能够找到一个<span class="math inline">\(g\)</span>使得其接近目标函数<span class="math inline">\(f\)</span>。这个目标可以改写为<span class="math inline">\(E_{\rm out}(g) \approx 0\)</span>。</li>
+<li>第二讲讲的是，如何寻找一个<span class="math inline">\(g\)</span>，使得<span class="math inline">\(E_{\rm in}(g) \approx 0\)</span></li>
+<li>第三讲施加了一个前提条件，即主要讨论批处理、有监督的二元分类问题</li>
+<li>第四讲则证明在假设集有限、样本量足够的情况下，有<span class="math inline">\(E_{\rm out}(g) \approx E_{\rm in}(g)\)</span>。这样第二讲做的工作可以联结到第一讲提出的目标</li>
+</ul>
+<p>实际上核心是两个问题</p>
+<ul>
+<li>到底<span class="math inline">\(E_{\rm out}(g)\)</span>和<span class="math inline">\(E_{\rm in}(g)\)</span>会不会接近。如果答案是否定的，那么第一讲和第二讲的内容就无法连接</li>
+<li>能否让<span class="math inline">\(E_{\rm in}(g)\)</span>尽可能小</li>
+</ul>
+<p>那么<span class="math inline">\(|\mathcal{H}|=M\)</span>跟这两个问题有什么关系呢？可以分两个情况讨论：</p>
+<ul>
+<li><span class="math inline">\(M\)</span>比较小的时候，第一个问题能够满足，因为“坏事情”发生的概率（即<span class="math inline">\(E_{\rm in}\)</span>和<span class="math inline">\(E_{\rm out}\)</span>不接近的概率）有上界<span class="math inline">\(2M\exp(−2\epsilon^2N)\)</span>。<span class="math inline">\(M\)</span>小意味着上界小，即<span class="math inline">\(E_{\rm in}\)</span>和<span class="math inline">\(E_{\rm out}\)</span>大部分情况下会接近。但是此时算法的选择有限，很难找到一个让<span class="math inline">\(E_{\rm in}\)</span>接近0的<span class="math inline">\(g\)</span>。</li>
+<li><span class="math inline">\(M\)</span>比较大的时候，由于有足够的选择，因此可以找到<span class="math inline">\(g\)</span>让<span class="math inline">\(E_{\rm in}\)</span>尽量小，但是“坏事情”发生的概率会大大增加，对两者接近的把握变弱</li>
+</ul>
+<p>如果就这么看，那么<span class="math inline">\(M = \infty\)</span>是不是一件特别不好的事？感知机会不会并不可用？回顾之前<span class="math inline">\(E_{\rm in}\)</span>和<span class="math inline">\(E_{\rm out}\)</span>不接近这一事件概率的上界，有 <span class="math display">\[
+P[|E_{\rm in}(g) - E_{\rm out}(g)| &gt; \epsilon] \le 2M\exp(-2\epsilon^2 N)
+\]</span> 这里可以先把无穷大的数<span class="math inline">\(M\)</span>替换为一个有穷的数<span class="math inline">\(m_{\mathcal{H}}\)</span>看看，即 <span class="math display">\[
+P[|E_{\rm in}(g) - E_{\rm out}(g)| &gt; \epsilon] \le^? 2m_{\mathcal{H}}\exp(-2\epsilon^2 N)
+\]</span> 如果换完以后之前的性质仍然成立，那么就可以用有穷的<span class="math inline">\(m_\mathcal{H}\)</span>来替换无穷的<span class="math inline">\(M\)</span>。这样就可以证明在无限假设集上学习的可行性，并为之后决定如何选择正确的假设集提供支持</p>
+<h2 id="有效线性分类器的数量">有效线性分类器的数量</h2>
+<p>重新回顾一下对假设<span class="math inline">\(h_m\)</span>所谓”坏事情“这一定义的概念。如果对分类器<span class="math inline">\(h_m\)</span>有<span class="math inline">\(|E_{\rm in}(h_m) - E_{\rm out}(h_m)| &gt; \epsilon\)</span>，就称为坏事件<span class="math inline">\(\mathcal{B}_m\)</span>会发生。由于假设集合比较大，为了让算法<span class="math inline">\(\mathcal{A}\)</span>能自由选择，需要计算任一坏事件发生的概率，即求出<span class="math inline">\(P[\mathcal{B}_1{\rm\  or\  }\mathcal{B}_2{\rm\  or\  }\ldots{\rm\  or\  }\mathcal{B}_M]\)</span>的上界。在最坏的情况下，每个<span class="math inline">\(\mathcal{B}_m\)</span>都不互相交叠，所以由事件并的概率上界定理，有 <span class="math display">\[
+P[\mathcal{B}_1{\rm\  or\  }\mathcal{B}_2{\rm\  or\  }\ldots{\rm\  or\  }\mathcal{B}_M] \le P[\mathcal{B}_1] + P[\mathcal{B}_2] + \ldots + P[\mathcal{B}_M]
+\]</span> 当<span class="math inline">\(M = \infty\)</span>时，由于是无限多个概率连加，因此这个上界有可能也是无限大的值，至少会是一个很大的值，会大于1，所以这个上界就没有实际意义了。</p>
+<p>问题出在哪儿呢？回顾上界定理中取到上界的条件，是所有子事件互不交叠。但是这个现象在当前讨论的问题中很难出现。相反地，对于相似的假设<span class="math inline">\(h_1 \approx h_2\)</span>，其<span class="math inline">\(E_{\rm out}\)</span>是相似的，而对大部分<span class="math inline">\(\mathcal{D}\)</span>甚至其<span class="math inline">\(E_{\rm in}\)</span>是相等的。可以通过考虑之前提到的感知机的例子来理解这个结论。对于一个已知的感知机，如果将其稍微旋转或平移一点，就会得到一个新的感知机。这两个感知机只会对那些处于旋转或平移经过的区域中的点给出不同的分类结果，而由于这些区域非常小，<span class="math inline">\(\mathcal{D}\)</span>中数据落在这些区域里的概率也会非常小。因此很显然，之前给出的概率上界是被过分估计了的。那么，接下来，就要找出这些”坏事情“重叠的事情</p>
+<p>一种自然的想法是，能否把<span class="math inline">\(\mathcal{H}\)</span>中所有的<span class="math inline">\(h\)</span>做一个归类，来分析重叠的状况。对<span class="math inline">\(\mathbb{R}^2\)</span>上的所有线<span class="math inline">\(\mathcal{H}\)</span>，尽管有无限多种可能性，但是可以分类讨论</p>
+<h3 id="只有一个数据点">只有一个数据点</h3>
+<p>如果数据点只有一个，即输入向量<span class="math inline">\({\bf x}_1\)</span>只有一个，那么尽管线有无限多条，但是总体来讲只需要分成两类：<span class="math inline">\(h_1\)</span>类的线把<span class="math inline">\({\bf x}_1\)</span>判为正例，<span class="math inline">\(h_2\)</span>类的线把<span class="math inline">\({\bf x}_1\)</span>判为负例，如图所示</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML05_single_point" alt="输入只有一个数据点时，超平面只被分为两类"><figcaption>输入只有一个数据点时，超平面只被分为两类</figcaption>
+</figure>
+<h3 id="有两个数据点">有两个数据点</h3>
+<p>如果输入向量有两个，所有线可以分为四类，这四类线对数据集的分类结果可以如下图所示</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML05_two_points" alt="输入如果有两个数据点，分类器一共有四种"><figcaption>输入如果有两个数据点，分类器一共有四种</figcaption>
+</figure>
+<h3 id="有三个数据点">有三个数据点</h3>
+<p>如果输入向量有三个，大概率情况下，所有线可以分为八类。但是需要注意的是，<strong>这种情况并不总是成立的！</strong>如果输入的向量三点共线，那么所有分类器只能分成六类（其中有两类情况是线性不可分的，如下图所示）</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML05_three_points_worst_case" alt="有三个输入向量时的最坏情况。打叉的两种情况线性不可分"><figcaption>有三个输入向量时的最坏情况。打叉的两种情况线性不可分</figcaption>
+</figure>
+<h3 id="有四个数据点">有四个数据点</h3>
+<p>如果输入向量有四个，所有线最多可以分为14种（当然如果共线或者正负例交叠，分类器的种类就会更少）。</p>
+<p>这里就不再放图占用篇幅了，不过可以参考所谓的”异或分类问题“</p>
+<h3 id="总结">总结</h3>
+<p>之前所枚举的例子，实际上是指出了对<span class="math inline">\(N\)</span>个不同的输入<span class="math inline">\({\bf x}_1, {\bf x}_2 ,\ldots, {\bf x}_N\)</span>，将其分开的线性分类器最多可以分为几类。这称之为<strong>有效线性分类器的数量</strong>（effective number of lines），可以简记为<span class="math inline">\({\rm effective}(N)\)</span>。当<span class="math inline">\(N \in \{1,2,3,4\}\)</span>时，<span class="math inline">\({\rm effective(N)}\)</span>对应为2、4、8、14。可以看出一个很重要的结论：对线性分类器，有 <span class="math display">\[
+{\rm effective}(N) \le 2^N
+\]</span> 这样，可以做如下猜想：尽管<span class="math inline">\(\mathbb{R}^2\)</span>上的直线数量<span class="math inline">\(M\)</span>是无限的，但是对有限的输入<span class="math inline">\(N\)</span>，其有效线性分类器的数量<span class="math inline">\({\rm effective}(N)\)</span>是有限的，那么在之前Hoeffding不等式中就可以用<span class="math inline">\({\rm effective}(N)\)</span>来取代<span class="math inline">\(M\)</span>，这样可以得到一个有限的上界。特别的，如果还能满足<span class="math inline">\({\rm effective}(N) &lt;\!\!&lt; 2^N\)</span>，那么Hoeffding不等式的上界可以再次减小，而且有效线性分类器的数量也会变得很小。这说明即便假设集是无限集，学习也是可能的</p>
+<h2 id="假设集的有效大小与成长函数">假设集的有效大小与成长函数</h2>
+<p>考虑更加宽泛的情况，即分类器不是一个线性分类器时的情况。如果分类器<span class="math inline">\(h\)</span>在数据集<span class="math inline">\({\bf x}_1, {\bf x}_2 , \ldots, {\bf x}_N\)</span>上的结果只可能是<span class="math inline">\(\times\)</span>或<span class="math inline">\(\circ\)</span>，即 <span class="math display">\[
+h({\bf x}_1, {\bf x}_2 , \ldots, {\bf x}_N) = (h({\bf x}_1), h({\bf x}_2) , \ldots, h({\bf x}_N)) \in \{\times, \circ\}^N
+\]</span> 那么称<span class="math inline">\(h\)</span>是一个二分法（dichotomy）分类器。我们要看的是一个假设集<span class="math inline">\(\mathcal{H}\)</span>可以做出多少个不同的二分法分类器，可以将<span class="math inline">\(\mathcal{H}\)</span>用作<span class="math inline">\({\bf x}_1, {\bf x}_2 , \ldots, {\bf x}_N\)</span>上得到的所有不同的二分法分类器组成的集合记做<span class="math inline">\({\mathcal{H}}({\bf x}_1, {\bf x}_2 , \ldots, {\bf x}_N)\)</span>。例如，如果<span class="math inline">\(\mathcal{H}\)</span>是<span class="math inline">\(\mathbb{R}^2\)</span>上所有的直线，那么当<span class="math inline">\(N=4\)</span>时，<span class="math inline">\(\mathcal{H}({\bf x}_1, {\bf x}_2 , \ldots, {\bf x}_N)\)</span>是类似<span class="math inline">\(\{\circ \circ \circ \circ , \circ \circ \circ \times, \circ \circ \times \times, \ldots\}\)</span>这样的集合。接下来要做的是，看能否用<span class="math inline">\(|\mathcal{H}({\bf x}_1, {\bf x}_2 , \ldots, {\bf x}_N)|\)</span>取代之前Hoeffding不等式里的<span class="math inline">\(M\)</span></p>
+<p>然而这里有一点不妥，就是<span class="math inline">\(|\mathcal{H}({\bf x}_1, {\bf x}_2 , \ldots, {\bf x}_N)|\)</span>与输入的形式关系紧密。例如，还是回到前一节中所举的例子，当<span class="math inline">\(N=3\)</span>，<span class="math inline">\(\mathcal{H}\)</span>为<span class="math inline">\(\mathbb{R}^2\)</span>上的所有直线时，如果输入三点共线，则<span class="math inline">\(|\mathcal{H}({\bf x}_1, {\bf x}_2 , \ldots, {\bf x}_N)|=6\)</span>。如果两两共线，三足鼎立，则<span class="math inline">\(|\mathcal{H}({\bf x}_1, {\bf x}_2 , \ldots, {\bf x}_N)|=8\)</span>。为了摆脱其对输入的依赖，可以对所有不同输入进行考虑，选出最大的<span class="math inline">\(|\mathcal{H}({\bf x}_1, {\bf x}_2 , \ldots, {\bf x}_N)|\)</span>值，记其为<span class="math inline">\(m_\mathcal{H}(N)\)</span>，就有 <span class="math display">\[
+m_\mathcal{H}(N) = \max_{ {\bf x}_1, {\bf x}_2 , \ldots, {\bf x}_N \in \mathcal{X}}|\mathcal{H}({\bf x}_1, {\bf x}_2 , \ldots, {\bf x}_N)|
+\]</span> 实际上<span class="math inline">\(m_\mathcal{H}(N)\)</span>是一个关于<span class="math inline">\(N\)</span>的函数，其中<span class="math inline">\(N\)</span>是输入的点的个数。如果回到前一讲的例子，可以看出来在这种情况下<span class="math inline">\(m_\mathcal{H}(N)\)</span>实际上就是前一讲中的<span class="math inline">\({\rm effective}(N)\)</span>。我们把这个函数起一个更通用的名字，叫做<strong>成长函数</strong>（grow function）。成长函数的上限确定存在，其上界为<span class="math inline">\(2^N\)</span>（<span class="math inline">\(N\)</span>个样本每个有两种取值）。</p>
+<p>对不同的假设集，确定其成长函数具体值的难易程度有不同。如果是之前感知机的问题，那么确定成长函数的具体值是很难的。但是接下来可以看一些相对简单的例子：</p>
+<h3 id="正射线positive-rays的成长函数">正射线（Positive Rays）的成长函数</h3>
+<p>如果输入就是一维实数，即<span class="math inline">\(\mathcal{X} = \mathbb{R}\)</span>，假设集集合<span class="math inline">\(\mathcal{H}\)</span>中的每个<span class="math inline">\(h\)</span>都会定义一个阈值<span class="math inline">\(a\)</span>，其分类方法为 <span class="math display">\[
+h(x) = {\rm sign}(x-a)
+\]</span> 所以每个不一样的阈值<span class="math inline">\(a\)</span>就会定义一个不一样的假设函数<span class="math inline">\(h\)</span></p>
+<p>如果给定了<span class="math inline">\(N\)</span>个数据点，那么对该<span class="math inline">\(\mathcal{H}\)</span>，有<span class="math inline">\(m_\mathcal{H}(N) = N+1\)</span>。因为<span class="math inline">\(N\)</span>个点可以把一条直线切成<span class="math inline">\(N+1\)</span>个不同的区间，任何落在同一个区间内的阈值<span class="math inline">\(a\)</span>其决定的<span class="math inline">\(h\)</span>效果都一样。注意当<span class="math inline">\(N\)</span>很大时，会有<span class="math inline">\((N+1) &lt;\!\!&lt; 2^N\)</span></p>
+<h3 id="正区间positive-interval的成长函数">正区间（Positive Interval）的成长函数</h3>
+<p>接下来，输入不变，对<span class="math inline">\(\mathcal{H}\)</span>的定义稍作变化：不再让大于某个阈值<span class="math inline">\(\ell\)</span>的所有<span class="math inline">\(x\)</span>都被分为+1，而是施加一个上限<span class="math inline">\(r\)</span>，将所有<span class="math inline">\(x\in [\ell, r)\)</span>分为+1，即此时对<span class="math inline">\(h \in \mathcal{H}\)</span>有 <span class="math display">\[
+h(x) = +1 {\rm\  iff\  }x \in [\ell, r), -1{\rm\  otherwise}
+\]</span> 此时，<span class="math inline">\(N\)</span>个点还是可以把一条直线切成<span class="math inline">\(N+1\)</span>个不同的区间。如果<span class="math inline">\(\ell\)</span>和<span class="math inline">\(r\)</span>都落在不同的区间，那么一部分<span class="math inline">\(x\)</span>会被标为+1，另一部分被标为-1。这样的<span class="math inline">\(\ell\)</span>和<span class="math inline">\(r\)</span>的选法共有<span class="math inline">\(N+1 \choose 2\)</span>种。还有一种情况，就是<span class="math inline">\(\ell\)</span>和<span class="math inline">\(r\)</span>都落在同一个区间，此时所有<span class="math inline">\(x\)</span>都会被标为-1。因此对于这样的<span class="math inline">\(\mathcal{H}\)</span>，其成长函数为 <span class="math display">\[
+\begin{align*}
+m_\mathcal{H}(N) &amp;= {N+1 \choose 2} + 1 \\
+&amp;= \frac{1}{2}N^2 + \frac{1}{2} N+ 1
+\end{align*}
+\]</span> 注意此时，仍然有<span class="math inline">\(N\)</span>很大时，<span class="math inline">\(m_{\mathcal{H}}(N) &lt;\!\!&lt; 2^N\)</span></p>
+<h3 id="凸集合的成长函数">凸集合的成长函数</h3>
+<p>接下来，考虑一个稍微复杂点的情况，即输入空间<span class="math inline">\(\mathcal{X} \in \mathbb{R}^2\)</span>，对<span class="math inline">\(h\in \mathcal{H}\)</span>，如果<span class="math inline">\(\bf x\)</span>在一个凸集合里（可以看做是二元平面上的凸多边形），则<span class="math inline">\(h({\bf x}) = +1\)</span>，否则<span class="math inline">\(h({\bf x}) = -1\)</span>，计算<span class="math inline">\(\mathcal{H}\)</span>的成长函数</p>
+<p>可以先看最极端的情况，即所有<span class="math inline">\({\bf x}_1, {\bf x}_2 , \ldots, {\bf x}_N\)</span>都放在一个大的圆上。此时，任何可能的二分法分类器都可以通过如下方法得到：找出所有标记为+1的点，所有相邻的点（跳过它们中间的负例点）以线相连，这样会得到一个凸多边形，凸多边形上（及其内部）的点都标记为+1，其外的点都标记为-1。下图给出了一个例子</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML05_growth_function_for_convex_sets" alt="凸集的成长函数"><figcaption>凸集的成长函数</figcaption>
+</figure>
+<p>因此，无论输入的<span class="math inline">\(N\)</span>有多大，总可以做出来<span class="math inline">\(\mathcal{H}\)</span>上的<strong>全部</strong>二分法分类器，即此时<span class="math inline">\(m_\mathcal{H}(N) = 2^N\)</span>。此时称这<span class="math inline">\(N\)</span>个点可以被假设集合<span class="math inline">\(\mathcal{H}\)</span><strong>打散</strong>（shatter）</p>
+<h2 id="停止点break-point">停止点（break point）</h2>
+<p>回到最开始提出<span class="math inline">\(m_\mathcal{H}(N)\)</span>的目的，是为了取代Hoeffding不等式上界中的<span class="math inline">\(M\)</span>值。从前面的讨论可以发现，成长函数有两种复杂度：一种是以正射线为代表的多项式复杂度，一种是以凸集合为代表的指数复杂度。由于原有的不等式上界里有一个指数为负的指数项，因此如果成长函数是多项式的，那么随着<span class="math inline">\(N\)</span>的增大，指数项衰减的速度远快于成长函数增长的速度，可以保证<span class="math inline">\(N\)</span>很大的时候<span class="math inline">\(E_{\rm in}(g)\)</span>与<span class="math inline">\(E_{\rm out}(g)\)</span>之间相差很大的概率趋近0。但如果成长函数是指数的，就没有这样的性质</p>
+<p>那么感知机的成长函数是“好的”（多项式复杂度）还是“不好的”（指数复杂度）呢？正规证明在下讲给出，不过这里给出一个辅助概念。由前面的分析，可以得知，只有在对某个规模的输入，不能做出全部二分法分类器，使得<span class="math inline">\(m_\mathcal{H}(N)\)</span>不能等于<span class="math inline">\(2^N\)</span>时，才有可能避免指数复杂度的成长函数。例如，对线性分类器，当输入的数据大小为4时，不可能找出<span class="math inline">\(2^4=16\)</span>种不同的线性分类器来完全区分所有情况（只能找到14种）。称这样的点叫做<strong>停止点</strong>，即</p>
+<blockquote>
+<p>如果<strong>任意</strong><span class="math inline">\(k\)</span>个输入都不能被<span class="math inline">\(\mathcal{H}\)</span>打散，就称<span class="math inline">\(k\)</span>为<span class="math inline">\(\mathcal{H}\)</span>的<strong>停止点</strong>。即若<span class="math inline">\(k\)</span>是<span class="math inline">\(\mathcal{H}\)</span>的停止点，就有 <span class="math display">\[
+m_\mathcal{H}(k - 1) = 2^{k-1},\hspace{1ex} m_\mathcal{H}(k) &lt; 2^k
+\]</span></p>
+</blockquote>
+<p>这里需要注意停止点的任意性。还是以线性分类器为例，尽管之前例子证明在<span class="math inline">\(N=3\)</span>时，如果三点共线，也无法找到<span class="math inline">\(2^3 = 8\)</span>种线性分类器，但是仍然存在3个输入被<span class="math inline">\(\mathcal{H}\)</span>打散的情况（三点不共线），因此还是有<span class="math inline">\(m_\mathcal{H}(3) = 8\)</span>，即3不是<span class="math inline">\(\mathcal{H}\)</span>的停止点</p>
+<p>停止点有一个很好的性质：如果<span class="math inline">\(k\)</span>是<span class="math inline">\(\mathcal{H}\)</span>的停止点，那么<span class="math inline">\(k+1, k+2, \ldots\)</span>都是停止点。所以我们尤其感兴趣<span class="math inline">\(\mathcal{H}\)</span>的第一个停止点（在不引起混淆的情况下，可以直接简记为“<span class="math inline">\(\mathcal{H}\)</span>的停止点”）。根据之前的介绍有</p>
+<ul>
+<li>正射线的停止点为2</li>
+<li>正区间的停止点为3</li>
+<li>二维平面感知机的停止点为4</li>
+<li>凸集合没有停止点</li>
+</ul>
+<p>从上面的停止点值可知，显然当<span class="math inline">\(\mathcal{H}\)</span>没有停止点时，<span class="math inline">\(m_\mathcal{H}(N) = 2^N\)</span>。但是似乎还有一个性质，就是如果<span class="math inline">\(\mathcal{H}\)</span>的停止点为<span class="math inline">\(k\)</span>，那么是不是有<span class="math inline">\(m_\mathcal{H}(N) = O(N^{k-1})\)</span>？这个问题留待接下来的课程中证明。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/08/14/NTUML-5-Training-versus-Testing/" title="NTUML 5. 训练 vs. 测试">txshi-mt.com/2017/08/14/NTUML-5-Training-versus-Testing/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/NTUML/" rel="tag"># NTUML</a>
+          
+            <a href="/tags/统计学习理论/" rel="tag"># 统计学习理论</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/08/06/NTUML-4-Feasibility-of-Learning/" rel="next" title="NTUML 4. 机器学习的可行性">
+                <i class="fa fa-chevron-left"></i> NTUML 4. 机器学习的可行性
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/08/16/NTUML-6-Theory-of-Generalization/" rel="prev" title="NTUML 6. 一般化理论">
+                NTUML 6. 一般化理论 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#再谈e_rm-in与e_rm-out"><span class="nav-number">1.</span> <span class="nav-text">&#x518D;&#x8C08;<span class="math inline">\(E_{\rm in}\)</span>&#x4E0E;<span class="math inline">\(E_{\rm out}\)</span></span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#有效线性分类器的数量"><span class="nav-number">2.</span> <span class="nav-text">&#x6709;&#x6548;&#x7EBF;&#x6027;&#x5206;&#x7C7B;&#x5668;&#x7684;&#x6570;&#x91CF;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#只有一个数据点"><span class="nav-number">2.1.</span> <span class="nav-text">&#x53EA;&#x6709;&#x4E00;&#x4E2A;&#x6570;&#x636E;&#x70B9;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#有两个数据点"><span class="nav-number">2.2.</span> <span class="nav-text">&#x6709;&#x4E24;&#x4E2A;&#x6570;&#x636E;&#x70B9;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#有三个数据点"><span class="nav-number">2.3.</span> <span class="nav-text">&#x6709;&#x4E09;&#x4E2A;&#x6570;&#x636E;&#x70B9;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#有四个数据点"><span class="nav-number">2.4.</span> <span class="nav-text">&#x6709;&#x56DB;&#x4E2A;&#x6570;&#x636E;&#x70B9;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">2.5.</span> <span class="nav-text">&#x603B;&#x7ED3;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#假设集的有效大小与成长函数"><span class="nav-number">3.</span> <span class="nav-text">&#x5047;&#x8BBE;&#x96C6;&#x7684;&#x6709;&#x6548;&#x5927;&#x5C0F;&#x4E0E;&#x6210;&#x957F;&#x51FD;&#x6570;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#正射线positive-rays的成长函数"><span class="nav-number">3.1.</span> <span class="nav-text">&#x6B63;&#x5C04;&#x7EBF;&#xFF08;Positive Rays&#xFF09;&#x7684;&#x6210;&#x957F;&#x51FD;&#x6570;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#正区间positive-interval的成长函数"><span class="nav-number">3.2.</span> <span class="nav-text">&#x6B63;&#x533A;&#x95F4;&#xFF08;Positive Interval&#xFF09;&#x7684;&#x6210;&#x957F;&#x51FD;&#x6570;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#凸集合的成长函数"><span class="nav-number">3.3.</span> <span class="nav-text">&#x51F8;&#x96C6;&#x5408;&#x7684;&#x6210;&#x957F;&#x51FD;&#x6570;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#停止点break-point"><span class="nav-number">4.</span> <span class="nav-text">&#x505C;&#x6B62;&#x70B9;&#xFF08;break point&#xFF09;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

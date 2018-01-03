@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="线性回归,EdX-Columbia,贝叶斯," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="贝叶斯线性回归 MAP估计和ML估计都是对模型参数的点估计，也就是说它为向量\(w\)找到一个确定的值，这个值可以最大化目标函数。其中ML只考虑数据模型\(p(y|w, X)\)，而MAP还考虑到了模型的先验\(p(y,w|X) = p(y|w, X)p(w)\)。在这个基础上，贝叶斯推断还使用贝叶斯定律进一步地推断\(w\)的不确定性 考虑到后验分布正比于似然与先验分布的乘积，可以得出 \[\b">
+<meta name="keywords" content="线性回归,EdX-Columbia,贝叶斯">
+<meta property="og:type" content="article">
+<meta property="og:title" content="EdX Columbia ML 5. 贝叶斯线性回归">
+<meta property="og:url" content="txshi-mt.com/2017/06/24/edx-columbia-5-Bayes-Linear-Regression/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="贝叶斯线性回归 MAP估计和ML估计都是对模型参数的点估计，也就是说它为向量\(w\)找到一个确定的值，这个值可以最大化目标函数。其中ML只考虑数据模型\(p(y|w, X)\)，而MAP还考虑到了模型的先验\(p(y,w|X) = p(y|w, X)p(w)\)。在这个基础上，贝叶斯推断还使用贝叶斯定律进一步地推断\(w\)的不确定性 考虑到后验分布正比于似然与先验分布的乘积，可以得出 \[\b">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.101Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="EdX Columbia ML 5. 贝叶斯线性回归">
+<meta name="twitter:description" content="贝叶斯线性回归 MAP估计和ML估计都是对模型参数的点估计，也就是说它为向量\(w\)找到一个确定的值，这个值可以最大化目标函数。其中ML只考虑数据模型\(p(y|w, X)\)，而MAP还考虑到了模型的先验\(p(y,w|X) = p(y|w, X)p(w)\)。在这个基础上，贝叶斯推断还使用贝叶斯定律进一步地推断\(w\)的不确定性 考虑到后验分布正比于似然与先验分布的乘积，可以得出 \[\b">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/06/24/edx-columbia-5-Bayes-Linear-Regression/"/>
+
+
+
+
+
+  <title>EdX Columbia ML 5. 贝叶斯线性回归 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/06/24/edx-columbia-5-Bayes-Linear-Regression/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">EdX Columbia ML 5. 贝叶斯线性回归</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-24T23:45:50+08:00">
+                Jun 24 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/统计机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">统计机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="贝叶斯线性回归">贝叶斯线性回归</h2>
+<p>MAP估计和ML估计都是对模型参数的<strong>点估计</strong>，也就是说它为向量<span class="math inline">\(w\)</span>找到一个确定的值，这个值可以最大化目标函数。其中ML只考虑数据模型<span class="math inline">\(p(y|w, X)\)</span>，而MAP还考虑到了模型的先验<span class="math inline">\(p(y,w|X) = p(y|w, X)p(w)\)</span>。在这个基础上，贝叶斯推断还使用贝叶斯定律进一步地推断<span class="math inline">\(w\)</span>的不确定性</p>
+<p>考虑到后验分布正比于似然与先验分布的乘积，可以得出</p>
+<span class="math display">\[\begin{align*}
+p(w|y,X) &amp;\propto p(y|w, X)p(w) \\
+&amp;\propto \left[e^{-\frac{1}{2\sigma^2}(y-Xw)^\mathsf{T}(y-Xw)}\right]\left[e^{-\frac{\lambda}{2}w^\mathsf{T}w}\right] \\
+&amp;\propto e^{-\frac{1}{2}\{w^\mathsf{T}(\lambda I + \sigma^{-2}X^\mathsf{T}X)w - 2\sigma^{-2}w^\mathsf{T}X^\mathsf{T}y\}}
+\end{align*}\]</span>
+<p>可以看出，<span class="math inline">\(p(w|y,X)\)</span>也满足高斯分布。因为高斯分布在指数上有一个<span class="math inline">\((w-\mu)^\mathsf{T}\Sigma^{-1}(w-\mu)\)</span>，如果把概率密度函数展开，则是 <span class="math display">\[\begin{align*}
+p(w|\mu, \Sigma) &amp;= \frac{1}{\sqrt{(2\pi)^d|\Sigma|}}\exp\left(-\frac{1}{2}(w - \mu)^\mathsf{T}\Sigma^{-1}(w - \mu)\right) \\
+&amp;= \frac{1}{(2\pi)^{\frac{d}{2}}|\Sigma|^{\frac{1}{2}}}\exp\left(-\frac{1}{2}(w^\mathsf{T}\Sigma^{-1}w - 2w^\mathsf{T}\Sigma^{-1}\mu + \mu^\mathsf{T}\Sigma^{-1}\mu)\right)
+\end{align*}\]</span> 而由前面的推导，有 <span class="math display">\[
+p(w|y,X) = \frac{1}{Z}\exp\left(-\frac{1}{2}(w^\mathsf{T}(\lambda I + \sigma^{-2}X^\mathsf{T}X)w - 2w^\mathsf{T}X^\mathsf{T}y / \sigma^2)\right)
+\]</span></p>
+<p>因此只需要令 <span class="math display">\[
+\Sigma^{-1} = (\lambda I + \sigma^{-2}X^\mathsf{T}X),\  \  \  \Sigma^{-1}\mu = X^\mathsf{T}y/\sigma^2
+\]</span> <span class="math inline">\(p(w|y,X)\)</span>就可以写成正态分布概率密度函数的形式。此时 <span class="math display">\[
+Z = (2\pi)^{\frac{d}{2}}|\Sigma|^{\frac{1}{2}}e^{\frac{1}{2}\mu^\mathsf{T}\Sigma^{-1}\mu}
+\]</span> 即 <span class="math display">\[\begin{align*}
+p(w|y,X) &amp;= N(w|\mu, \Sigma) \\
+\Sigma &amp;= (\lambda I + \sigma^{-2}X^\mathsf{T}X)^{-1} \\
+\mu &amp;= (\lambda \sigma^2 I + X^\mathsf{T}X)^{-1}X^\mathsf{T}y \Leftarrow w_{\rm MAP}
+\end{align*}\]</span></p>
+<p>这样我们就获得了关于<span class="math inline">\(w\)</span>的完整的概率分布</p>
+<p>类似的，我们对预测值也可以给一个概率解释。给定<span class="math inline">\(X\)</span>和<span class="math inline">\(y\)</span>作为训练集，对新的<span class="math inline">\(x_0\)</span>预测<span class="math inline">\(y_0\)</span>，就是求条件概率<span class="math inline">\(p(y_0|x_0, y, X)\)</span>。根据边缘概率和联合概率密度的定义，是对所有可能的<span class="math inline">\(w\)</span>的积分，即 <span class="math display">\[\begin{align*}
+p(y_0|x_0, y, X) &amp;= \int_{\mathbb{R}^d}p(y_0, w|x_0, y, X)dw \\
+&amp;= \int_{\mathbb{R}^d}p(y_0|w,x_0,y,X)p(w|x_0, y,X)dw
+\end{align*}\]</span></p>
+<p>又根据条件独立性有 <span class="math display">\[\begin{align*}
+p(y_0|w,x_0,y,X) &amp;= p(y_0|w,x_0) \ \ {\rm (似然)} \\
+p(w|x_0,y,X) &amp;= p(w|y,X) \ \ {\rm (后验)}
+\end{align*}
+
+因此\]</span>可以得到预测的分布 <span class="math display">\[
+p(y_0|x_0,y,X) = \int_{\mathbb{R}^d}p(y_0|x_0,w)p(w|y,X)dw
+\]</span></p>
+<p>由于根据模型本身有<span class="math inline">\(p(y_0|x_0,w) = N(y_0|x_0^\mathsf{T}w, \sigma^2)\)</span>，根据贝叶斯定律，有<span class="math inline">\(p(w|y,X)=N(w|\mu,\Sigma)\)</span>（其中<span class="math inline">\(\mu\)</span>和<span class="math inline">\(\Sigma\)</span>前面已有推导），则代入计算（比较复杂没有推），有 <span class="math display">\[\begin{align*}
+p(y_0|x_0,y,X) &amp;= N(y_0|\mu_0, \sigma^2_0) \\
+\mu_0 &amp;= x_0^\mathsf{T}\mu \\
+\sigma^2_0 &amp;= \sigma^2 + x_0^\mathsf{T}\Sigma x_0
+\end{align*}\]</span></p>
+<p>期望值仍然是MAP估计的值，但是现在可以得到方差</p>
+<h2 id="主动学习">主动学习</h2>
+<p>贝叶斯学习实际上可以看作是一个顺序的过程，也就是说，原本的后验，在看到一些数据以后，会变成接下来未知数据的先验。令<span class="math inline">\(y\)</span>和<span class="math inline">\(X\)</span>是“老数据”，<span class="math inline">\(y_0\)</span>和<span class="math inline">\(x_0\)</span>是“新数据”，那么根据贝叶斯定律 <span class="math display">\[
+p(w|y_0, x_0, y, X) \propto p(y_0|w, x_0)p(w|y,X)
+\]</span> 看到<span class="math inline">\((y,X)\)</span>以后的后验又变成了<span class="math inline">\((y_0,x_0)\)</span>的先验。即 <span class="math display">\[\begin{align*}
+p(w|y_0,x_0,y,X) &amp;= N(w|\mu, \Sigma), \\
+\Sigma &amp;= \left(\lambda I + \sigma^{-2}(x_0x_0^\mathsf{T} + \sum_{i=1}^n x_ix_i^\mathsf{T})\right)^{-1} \\
+\mu &amp;= \left(\lambda \sigma^2 I + (x_0x_0^\mathsf{T} + \sum_{i=1}^n x_ix_i^\mathsf{T})\right)^{-1}\left(x_0y_0 + \sum_{i=1}^n x_iy_i\right)
+\end{align*}\]</span></p>
+<p>这里的意思是，在最开始没有看到<span class="math inline">\(x_0, y_0\)</span>，只有<span class="math inline">\(X,y\)</span>的时候，计算出来的<span class="math inline">\(p(w|y,X)\)</span>是后验。但是当计算完了，来了新数据对的时候，计算新的后验是用到的先验<span class="math inline">\(p(w)\)</span>实际上是<span class="math inline">\(p(w|y,X)\)</span>，是上一步的后验。一步一步滚雪球。既然是一个迭代的过程，那么我们的问题是，能否智能地学习<span class="math inline">\(p(w|y,X)\)</span>？也就是，对于<span class="math inline">\(\mathcal{D} = \{x_1, \ldots, x_n\}\)</span>，能否选择一个迭代学习的顺序？</p>
+<p>假设我们已经有了有标签的数据集<span class="math inline">\((y,X)\)</span>和后验<span class="math inline">\(p(w|y,X)\)</span>，则可以对<span class="math inline">\(\mathcal{D}\)</span>中的其他<span class="math inline">\(x_0\)</span>构建预测分布： <span class="math display">\[\begin{align*}
+p(y_0|x_0,y,X) &amp;= N(y_0|\mu_0, \sigma^2_0) \\
+\mu_0 &amp;= x_0^\mathsf{T}\mu \\
+\sigma^2_0 &amp;= \sigma^2 + x_0^\mathsf{T}\Sigma x_0
+\end{align*}\]</span></p>
+<p>对每个<span class="math inline">\(x_0\)</span>，<span class="math inline">\(\sigma^2_0\)</span>反映了我们的置信度，也就是说可以采用以下策略： 1. 对所有没有标签的<span class="math inline">\(x_0 \in \mathcal{D}\)</span>构建<span class="math inline">\(p(y_0|x_0, y, X)\)</span> 2. 找出<span class="math inline">\(\sigma^2_0\)</span>最大的<span class="math inline">\(x_0\)</span>和其对应的<span class="math inline">\(y_0\)</span> 3. 更新后验<span class="math inline">\(p(w|y,X)\)</span>，注意用到的<span class="math inline">\(y \leftarrow (y, y_0), X \leftarrow (X, x_0)\)</span> 4. 使用更新的后验，回到第一步</p>
+<p>这个过程实际上是减少了系统中的熵（也就是不确定性）。令一个<span class="math inline">\(p(z)\)</span>代表一个连续分布，则其熵定义为 <span class="math display">\[
+\mathcal{H}(p) = -\int p(z)\ln p(z)dz
+\]</span> 它量度了分布的延展情况。该值越大说明分布越是一个“不确定”的分布（即方差越大）。多变量高斯分布的熵为 <span class="math display">\[
+\mathcal{H}(N(w|\mu, \Sigma)) = \frac{d}{2}\ln\left(2\pi e|\Sigma|\right)
+\]</span></p>
+<p>也就是高斯分布的熵随着其协方差矩阵的变化而变化。根据前面顺序贝叶斯学习的理论，协方差矩阵从先验变到后验 <span class="math display">\[\begin{align*}
+({\rm Prior}):\ (\lambda I + \sigma^{-2}X^\mathsf{T}X)^{-1}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ &amp;\equiv \Sigma \\
+\Downarrow \\
+({\rm Posterior}):\ (\lambda I + \sigma^{-2}(x_0x_0^\mathsf{T}+X^\mathsf{T}X))^{-1} &amp;\equiv (\Sigma^{-1} + \sigma^{-2}x_0x_0^\mathsf{T})^{-1}
+\end{align*}
+
+根据秩为1矩阵的行列式的更新性质，\]</span>有 <span class="math display">\[
+\mathcal{H}_{\rm post} = \mathcal{H}_{\rm prior} - \frac{d}{2}\ln(1+\sigma^{-2}x_0^\mathsf{T}\Sigma x_0)
+\]</span> 因此最小化<span class="math inline">\(\mathcal{H}_{\rm post}\)</span>的<span class="math inline">\(x_0\)</span>也最大化了<span class="math inline">\(\sigma^2 + x_0^\mathsf{T}\Sigma x_0\)</span></p>
+<h2 id="模型选择">模型选择</h2>
+<p>其实就是如何选择<span class="math inline">\(\lambda\)</span>。贝叶斯学习还可以通过证据最大化（evidence maximization）来表达，即 <span class="math display">\[
+p(w|y,X,\lambda) = p(y|w,X)p(w|\lambda) / p(y|X, \lambda)
+\]</span> 这里分母就是“证据”。证据给出了数据的似然，而且把<span class="math inline">\(w\)</span>积分掉了。最好的<span class="math inline">\(\hat{\lambda}\)</span>满足 <span class="math display">\[
+\hat{\lambda} = {\rm arg}\max_\lambda \ln p(y|X, \lambda)
+\]</span> <span class="math inline">\(p(y|X,\lambda)\)</span>也是正态分布，可以表示成<span class="math inline">\(p(y|X,\lambda) = N(y|0, \sigma^2 I + \lambda^{-1}X^\mathsf{T}X)\)</span>，需要求出<span class="math inline">\(\lambda\)</span>的最大值。这个值只能迭代求出，没有解析解</p>
+<p>之前的最大似然是最大化主参数<span class="math inline">\(w\)</span>的似然，称为I类机器学习。这里是把主参数积分掉，最大化超参数<span class="math inline">\(\lambda\)</span>，是II类机器学习，也称为经验贝叶斯。但是对复杂模型不适用。因此最好的找出<span class="math inline">\(\lambda\)</span>的方法还是交叉验证</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/06/24/edx-columbia-5-Bayes-Linear-Regression/" title="EdX Columbia ML 5. 贝叶斯线性回归">txshi-mt.com/2017/06/24/edx-columbia-5-Bayes-Linear-Regression/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/线性回归/" rel="tag"># 线性回归</a>
+          
+            <a href="/tags/EdX-Columbia/" rel="tag"># EdX-Columbia</a>
+          
+            <a href="/tags/贝叶斯/" rel="tag"># 贝叶斯</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/24/edx-columbia-4-Biases-Variances-Bayes-Rule-MAP-Inference/" rel="next" title="EdX Columbia ML 4. 偏差方差、贝叶斯定律与MAP推断">
+                <i class="fa fa-chevron-left"></i> EdX Columbia ML 4. 偏差方差、贝叶斯定律与MAP推断
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/06/26/edx-columbia-6-Spartial-Linear-Regression/" rel="prev" title="EdX Columbia ML 6. 稀疏线性回归">
+                EdX Columbia ML 6. 稀疏线性回归 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#贝叶斯线性回归"><span class="nav-number">1.</span> <span class="nav-text">&#x8D1D;&#x53F6;&#x65AF;&#x7EBF;&#x6027;&#x56DE;&#x5F52;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#主动学习"><span class="nav-number">2.</span> <span class="nav-text">&#x4E3B;&#x52A8;&#x5B66;&#x4E60;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#模型选择"><span class="nav-number">3.</span> <span class="nav-text">&#x6A21;&#x578B;&#x9009;&#x62E9;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

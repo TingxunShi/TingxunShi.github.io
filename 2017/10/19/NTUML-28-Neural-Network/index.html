@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="NTUML,神经网络入门," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="动机 本课在很早之前就讲过了感知机的概念，前面又讲过了模型聚合的概念，那么有没有一种方法可以将若干个感知机模型通过线性的方式聚合起来？显然是可以的。假设一共有\(t\)个感知机，每个感知机训练出来的系数为\({\bf w}_t\)，返回的模型为\(g_t\)，其在整个模型里的权重为\(\alpha_t\)，则最后得到的聚合模型\(G\)为 \[ G({\bf x}) = {\rm sign}\le">
+<meta name="keywords" content="NTUML,神经网络入门">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NTUML 28. 神经网络">
+<meta property="og:url" content="txshi-mt.com/2017/10/19/NTUML-28-Neural-Network/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="动机 本课在很早之前就讲过了感知机的概念，前面又讲过了模型聚合的概念，那么有没有一种方法可以将若干个感知机模型通过线性的方式聚合起来？显然是可以的。假设一共有\(t\)个感知机，每个感知机训练出来的系数为\({\bf w}_t\)，返回的模型为\(g_t\)，其在整个模型里的权重为\(\alpha_t\)，则最后得到的聚合模型\(G\)为 \[ G({\bf x}) = {\rm sign}\le">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML28_and.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML28_mla.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML28_nn_hypothesis.png">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.094Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NTUML 28. 神经网络">
+<meta name="twitter:description" content="动机 本课在很早之前就讲过了感知机的概念，前面又讲过了模型聚合的概念，那么有没有一种方法可以将若干个感知机模型通过线性的方式聚合起来？显然是可以的。假设一共有\(t\)个感知机，每个感知机训练出来的系数为\({\bf w}_t\)，返回的模型为\(g_t\)，其在整个模型里的权重为\(\alpha_t\)，则最后得到的聚合模型\(G\)为 \[ G({\bf x}) = {\rm sign}\le">
+<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML28_and.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/10/19/NTUML-28-Neural-Network/"/>
+
+
+
+
+
+  <title>NTUML 28. 神经网络 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/10/19/NTUML-28-Neural-Network/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NTUML 28. 神经网络</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-19T21:20:06+08:00">
+                Oct 19 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/深度学习/" itemprop="url" rel="index">
+                    <span itemprop="name">深度学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="动机">动机</h2>
+<p>本课在很早之前就讲过了感知机的概念，前面又讲过了模型聚合的概念，那么有没有一种方法可以将若干个感知机模型通过线性的方式聚合起来？显然是可以的。假设一共有<span class="math inline">\(t\)</span>个感知机，每个感知机训练出来的系数为<span class="math inline">\({\bf w}_t\)</span>，返回的模型为<span class="math inline">\(g_t\)</span>，其在整个模型里的权重为<span class="math inline">\(\alpha_t\)</span>，则最后得到的聚合模型<span class="math inline">\(G\)</span>为 <span class="math display">\[
+G({\bf x}) = {\rm sign}\left(\sum_{t=1}^T \alpha_t \underbrace{ {\rm sign}({\bf w}_t^\mathsf{T}{\bf x})}_{g_t({\bf x})}\right)
+\]</span> 可以看到这个过程里有两组权重：第一组<span class="math inline">\({\bf w}_t\)</span>用来投票，第二组<span class="math inline">\(\alpha_t\)</span>用来让<span class="math inline">\(g_t\)</span>投票。另外，这里有两组阶梯函数的输出，一组由每个<span class="math inline">\(g_t\)</span>产生，一组由最后的<span class="math inline">\(G\)</span>产生</p>
+<p>将感知机聚合以后，可以实现某些布尔函数。下图给出了AND函数的例子</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML28_and.png" alt="布尔函数AND的示意图"><figcaption>布尔函数AND的示意图</figcaption>
+</figure>
+<p>在这种情况下，只有被<span class="math inline">\(g_1\)</span>和<span class="math inline">\(g_2\)</span>全部判断为+1的例子，才会被<span class="math inline">\(G\)</span>判断为+1，否则就会判断为-1。这种分类器不难实现，只需要使得 <span class="math display">\[
+G({\bf x}) = {\rm sign}(-1 + g_1({\bf x}) + g_2({\bf x}))
+\]</span> 就可以学习出上图中由两条直线界定出的边界，达到AND函数的效果。同理，OR和NOT的效果也可以用类似的方法产生。实际上，任意多的感知机聚合得到的模型能力非常强大，它可以逼近凸包集合（注意凸包集合的VC维是<span class="math inline">\(\infty\)</span>，是一种能力很强的模型），也可以逼近一个平滑的边界，例如一个圆形的边界</p>
+<p>但是，感知机的线性组合不能实现XOR函数，这是一个最大的限制。其本质原因是，如果把<span class="math inline">\(g_1\)</span>和<span class="math inline">\(g_2\)</span>看作是特征转换，则在新的空间<span class="math inline">\(\boldsymbol{\phi}(g_1({\bf x}), g_2({\bf x}))\)</span>中，经过转换的数据集仍然不是线性可分的</p>
+<p>那么怎么以感知机为基础去实现XOR函数呢？回顾之前所讲的，非线性可分的数据集可以通过某些变换使其线性可分，这个道理在这里同样适用。将XOR函数转写，有 <span class="math display">\[
+{\rm XOR}(g_1, g_2) = {\rm OR}({\rm AND}(-g_1, g_2), {\rm AND}(g_1, -g_2))
+\]</span> 由于AND函数可以用感知机线性聚合来实现，OR函数也可以用感知机线性聚合来实现，因此通过上面的方法就可以以感知机为基础实现XOR了，只不过此时多了一<strong>层</strong>。这种更强大的模型称为<strong>多层感知机</strong>，它是后面提到的所有神经网络的基础</p>
+<p>多层感知机实际上是对生物钟神经元工作原理的模拟。这里每个感知机就可以看作是一个神经元，神经元的系数可以看做是神经元之间的连接，系数绝对值越大，连接越强。神经元之间通过连接，就形成了一个网络结构，称为<strong>神经网络</strong> 。如下就给出了一个多层感知机结构的示意图</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML28_mla.png" alt="多层感知机结构示意"><figcaption>多层感知机结构示意</figcaption>
+</figure>
+<p>上图中每个圆圈就是一个感知机，圆圈上的的折线表示做一个非线性变换（这里是sign函数，折线也是sign函数的图像），圆圈之间的连线以及圆圈与<span class="math inline">\(x_i\)</span>的连线表示了输入输出关系</p>
+<h2 id="神经网络假设集合">神经网络假设集合</h2>
+<p>如果将每一层感知机做的事情看作是对原始数据的一个变换，记第一层感知机做的变换为<span class="math inline">\(\boldsymbol{\phi}^{(1)}\)</span>，第二层感知机做的变换为<span class="math inline">\(\boldsymbol{\phi}^{(2)}\)</span>，最后大绿色圆对应的感知机实际上就是输出数据结果，记其权重为<span class="math inline">\(\bf w\)</span>，则整个模型可以表示为<span class="math inline">\(s = {\bf w}^\mathsf{T}\boldsymbol{\phi}^{(2)}(\boldsymbol{\phi}^{(1)}({\bf x}))\)</span>。可见，其外核实际上就是一个线性模型，这个线性模型可以根据要解决的问题选择不同的具体实现，例如线性分类模型（感知机）、线性回归或者Logistic回归。这里为了简单起见，将选取线性回归做线性模型而讲解（即最后一步绿圆圈使用线性回归做输出）</p>
+<p>另外，中间的非线性变换是对分数<span class="math inline">\(s\)</span>的变换。如果这个变换是阶梯状函数（例如sign），那么每个神经元就是一个感知机。可不可以将这个变换函数也做一些修改呢？变成线性函数是不太好的，因为这样会使整个网络退化为一个线性变换（线性变换的线性组合还是线性变换），增加了计算复杂度，但是降低了模型复杂度。实际上，由于阶梯状函数是离散函数，难以最优化，因此通常使用s形函数，尤其是双曲正切函数<span class="math inline">\(\tanh(x)\)</span>，其定义为 <span class="math display">\[
+\tanh(x) = \frac{\exp(x) - \exp(-x)}{\exp(x) + \exp(-x)}
+\]</span> 可以把它看作是sign函数的模拟版本，但是更容易最优化，而且更类似于生物中神经元的工作原理</p>
+<p><span class="math inline">\(\tanh\)</span>函数与之前提到的sigmoid函数也有关系： <span class="math display">\[
+\tanh(x) = 2\theta(2x) - 1
+\]</span> 之后的讲解中，中间的非线性变化会使用<span class="math inline">\(\tanh\)</span>函数</p>
+<p>接下来，为了更好地定义神经网络假设集合，需要对网络中出现的各个权重和得分进行定义。总体可见下图</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML28_nn_hypothesis.png" alt="神经网络示意图（带变量）"><figcaption>神经网络示意图（带变量）</figcaption>
+</figure>
+<p>其中，<span class="math inline">\(L\)</span>代表了神经网络总的层数。输入层记为第0层，第一步变换称为第1层，以此类推。<span class="math inline">\(d^{(\ell)}\)</span>为网络中第<span class="math inline">\(\ell\)</span>层所含有的总节点数。神经元之间每个连接其本质是一个权重，可以记为<span class="math inline">\(w_{ij}^{(\ell)}\)</span>，其中<span class="math inline">\(1 \le \ell \le L\)</span>指明该权重连进第<span class="math inline">\(\ell\)</span>层；<span class="math inline">\(0 \le i \le d^{(\ell -1)}\)</span>是第<span class="math inline">\(\ell - 1\)</span>层神经元的序号，从0开始标记（0对应的是常数项，也就是截距），可以看作是输入索引；<span class="math inline">\(1 \le j \le d^{(\ell)}\)</span>是第<span class="math inline">\(\ell\)</span>层神经元的序号，从1开始标记，可以看作是输出索引。换句话说，<span class="math inline">\(w_{ij}^{(\ell)}\)</span>表示第<span class="math inline">\(\ell -1\)</span>层第<span class="math inline">\(i\)</span>个单元指向第<span class="math inline">\(\ell\)</span>层第<span class="math inline">\(j\)</span>个单元的权重</p>
+<p>第<span class="math inline">\(\ell\)</span>层中，第<span class="math inline">\(j\)</span>个节点送进其变换函数之前的值，是上一层所有节点的加权得分总和，记为<span class="math inline">\(s_j^{(\ell)}\)</span>。由上一段的定义，有 <span class="math display">\[
+s_j^{(\ell)} = \sum_{i=0}^{d^{(\ell - 1)}} w_{ij}^{(\ell)}x_i^{(\ell-1)}
+\]</span> 其中<span class="math inline">\(x_j^{(\ell)}\)</span>是得分经过变换后得到的值（如果<span class="math inline">\(\ell = 0\)</span>，则对应原始数据中的一个特征），有 <span class="math display">\[
+x_j^{(\ell)} = \begin{cases} \tanh\left(s_j^{(\ell)}\right) &amp; {\rm if\  }\ell &lt; L \\ s_j^{(\ell)} &amp; {\rm if\  }\ell = L\end{cases}
+\]</span> 称中间使用非线性变换的层为<strong>隐含层</strong>（更确切地说，是输出结果被其它层当做输入的层），则神经网络假设集合做的事情就是将原始<span class="math inline">\(\bf x\)</span>作为输入层<span class="math inline">\({\bf x}^{(0)}\)</span>，经过中间隐含层的一系列计算得到<span class="math inline">\({\bf x}^{(\ell)}\)</span>，最后由输出层做预测得到<span class="math inline">\(x_1^{(L)}\)</span>的过程</p>
+<p>从物理意义上看，中间各层实际就是对数据做各种变换<span class="math inline">\(\boldsymbol{\phi}^{(\ell)}({\bf x})\)</span>， <span class="math display">\[
+\boldsymbol{\phi}^{(\ell)}({\bf x}) = \tanh\left(\left[\begin{array}{c} \sum_{i=0}^{d^{(\ell -1)}} w_{i1}^{(\ell)}x_i^{(\ell - 1)} \\ \vdots\end{array}\right]\right)
+\]</span> 当<span class="math inline">\(x\)</span>与<span class="math inline">\(w\)</span>接近（平行）时，<span class="math inline">\(wx\)</span>的值更大，<span class="math inline">\(\tanh\)</span>的结果越接近+1。换句话说，此时<span class="math inline">\(\bf x\)</span>与权重向量<span class="math inline">\(\bf w\)</span>在模式上更加匹配。即神经网络中的每一层都在做<strong>模式提取</strong>，这种模式是跟各层权重吻合的模式</p>
+<p>具体的变换方式是从数据中学习得到的，下一节就会介绍具体的学习方法</p>
+<h2 id="神经网络学习">神经网络学习</h2>
+<p>前面讲述了神经网络结构中每个权重<span class="math inline">\(w_{ij}^{(\ell)}\)</span>是怎么产生，那么一个很自然的问题就是，如何学习出最优的<span class="math inline">\(\{w_{ij}^{(\ell)}\}\)</span>，使<span class="math inline">\(E_{\rm in}\left(w_{ij}^{(\ell)}\right)\)</span>最小。如果只有一个隐藏层，整个神经网络就会退化为感知机的聚合模型，因此可以使用梯度提升来确定隐藏层的权重。但是如果有多个隐藏层，问题就没有这么简单了。但是换一个角度思考，对于每一条输入<span class="math inline">\({\bf x}_n\)</span>，当神经网络确定以后，它的输出就是确定的，记为<span class="math inline">\({\rm NNet}({\bf x}_n)\)</span>，则预测输出的误差也可以确定。由前面的说明，这里使用平方误差衡量，所以误差函数为<span class="math inline">\(e_n = (y_n - {\rm NNet}({\bf x}_n))^2\)</span>，这个值也被称为残差。由于神经网络的输出跟每个权重之间都存在变化关系，因此可以计算<span class="math inline">\(\frac{\partial e_n}{\partial w_{ij}^{(\ell)}}\)</span>，进而可以使用前面讲过的梯度下降法（GD）或者随机梯度下降法（SGD）做最优化。所以接下来要解决的问题，就是如何计算<span class="math inline">\(\frac{\partial e_n}{\partial w_{ij}^{(\ell)}}\)</span></p>
+<p>首先看一个最简单的情况：对神经网络最后一层中的权重<span class="math inline">\(w_{ij}^{(L)}\)</span>，其与残差之间的关系。注意最后一层只有一个节点，因此<span class="math inline">\(j\)</span>肯定为1。而且最后一层的节点按照前面的约定仅做一个线性变换，因此其输出就是<span class="math inline">\(s_1^{(L)}\)</span>。这样一来，可以将残差项展开，即 <span class="math display">\[
+\begin{align*}
+e_n &amp;= (y_n - {\rm NNet}({\bf x}_n))^2 = \left(y_n - s_1^{(L)}\right)^2 \\
+&amp;= \left(y_n - \sum_{i=0}^{d^{(L-1)}}w_{i1}^{(L)}x_i^{(L-1)}\right)^2
+\end{align*}
+\]</span> 因此，对于神经网络的最外层，要计算<span class="math inline">\(\frac{\partial e_n}{\partial w_{i1}^{(L)}}\  (0 \le i \le d^{(L-1)})\)</span>，可以借助中间变量<span class="math inline">\(s_1^{(L)}\)</span>，使用链式法则 <span class="math display">\[
+\begin{align*}
+\frac{\partial e_n}{\partial w_{i1}^{(L)}} 
+= \frac{\partial e_n}{\partial s_1^{(L)}} \cdot \frac{\partial s_1^{(L)}}{\partial w_{i1}^{(L)}} = -2\left(y_n-s_1^{(L)}\right) \cdot \left(x_i^{(L-1)}\right)
+\end{align*}
+\]</span> 推而广之，对于前面的隐含层<span class="math inline">\(\ell, 1 \le \ell &lt; L\)</span>，<span class="math inline">\(\frac{\partial e_n}{\partial w_{ij}^{(\ell)}}\  (0 \le i \le d^{(\ell-1)}; 1 \le j \le d^{(\ell)})\)</span>可以通过类似的方法计算： <span class="math display">\[
+\frac{\partial e_n}{\partial w_{ij}^{(\ell)}} = \frac{\partial e_n}{\partial s_j^{(\ell)}} \cdot \frac{\partial s_j^{(\ell)}}{\partial w_{ij}^{(\ell)}}
+\]</span> 其中乘数可以很容易地得到为<span class="math inline">\(x_i^{(\ell - 1)}\)</span>，但是被乘数的计算并不直观。暂且将被乘数记为<span class="math inline">\(\delta_{j}^{(\ell)}\)</span>，上面的式子可以写为 <span class="math display">\[
+\frac{\partial e_n}{\partial w_{ij}^{(\ell)}} = \frac{\partial e_n}{\partial s_j^{(\ell)}} \cdot \frac{\partial s_j^{(\ell)}}{\partial w_{ij}^{(\ell)}} = \delta_{j}^{(\ell)} \cdot\left(x_i^{(\ell - 1)}\right)
+\]</span> 当<span class="math inline">\(j = 1, \ell = L\)</span>时，由上面的推导有<span class="math inline">\(\delta_1^{(L)} = -2\left(y_n - s_1^{(L)}\right)\)</span>。接下来的任务就是推出其它的<span class="math inline">\(\delta\)</span></p>
+<p>由于<span class="math inline">\(\delta\)</span>是最终残差对神经网络中隐藏层某个节点给出的得分的偏导数，因此可以思考这个得分是如何影响残差的。某个节点得到得分<span class="math inline">\(s_{j}^{(\ell)}\)</span>以后，会对其做非线性变换<span class="math inline">\(\tanh\)</span>，得到节点的输出<span class="math inline">\(x_j^{(\ell)}\)</span>。这个输出乘以下一层的各个权重<span class="math inline">\(w_{jk}^{(\ell + 1)}\)</span>，得到的是一个向量，向量中的每一维都对应了下一层每个节点的一个输出，即 <span class="math display">\[
+s_j^{(\ell)}{ \overset{\tanh}{\Longrightarrow}} x_j^{(\ell)} \overset{w_{jk}^{(\ell + 1)}}{\Longrightarrow} \left[\begin{array}{c}s_1^{(\ell + 1)} \\ \vdots \\ s_k^{(\ell + 1)} \\ \vdots \end{array}\right] \Longrightarrow \cdots \Longrightarrow e_n
+\]</span> 因此求偏导时使用的链式法则里就需要包含<span class="math inline">\(x_j^{(\ell)}\)</span>和<span class="math inline">\(s_k^{(\ell + 1)}\)</span>这两组中间变量（其中后一组一共有<span class="math inline">\(d^{(\ell + 1)}\)</span>个变量）。具体计算，有 <span class="math display">\[
+\begin{align*}
+\delta_j^{(\ell)} = \frac{\partial e_n}{\partial s_j^{(\ell)}} &amp;= \sum_{k=1}^{d^{(\ell + 1)}} \frac{\partial e_n}{\partial s_k^{(\ell + 1)}}\cdot \frac{\partial s_k^{(\ell + 1)}}{\partial x_j^{(\ell)}} \cdot \frac{\partial x_j^{(\ell)}}{\partial s_j^{(\ell)}} \\
+&amp;= \sum_k \left(\delta_k^{(\ell + 1)}\right)\left(w_{jk}^{(\ell + 1)}\right)\left(\tanh&#39;\left(s_j^{(\ell)}\right)\right)
+\end{align*}
+\]</span> 因此，第<span class="math inline">\(\ell\)</span>层的<span class="math inline">\(\delta_j^{(\ell)}\)</span>可以从第<span class="math inline">\(\ell + 1\)</span>层的<span class="math inline">\(\delta_{k}^{(\ell + 1)}\)</span>推出。将以上推导汇总起来，就可以得到神经网络的学习算法，称为<strong>反向传播算法</strong>，其具体过程为</p>
+<blockquote>
+<p>初始化所有权重<span class="math inline">\(w_{ij}^{(\ell)}\)</span></p>
+<p>在时刻<span class="math inline">\(t=0,1,\ldots ,T\)</span></p>
+<ol type="1">
+<li>随机选取某个<span class="math inline">\(n \in \{1,2,\ldots, N\}\)</span></li>
+<li>正向：计算所有<span class="math inline">\(x_i^{(\ell)}\)</span>，其中<span class="math inline">\({\bf x}^{(0)} = {\bf x}_n\)</span></li>
+<li>反向：计算所有<span class="math inline">\(\delta_j^{(\ell)}\)</span></li>
+<li>梯度下降：<span class="math inline">\(w_{ij}^{(\ell)} = w_{ij}^{(\ell)} - \eta x_i^{(\ell - 1)}\delta_j^{(\ell)}\)</span></li>
+</ol>
+<p>返回<span class="math inline">\(g_{\rm NNET}({\bf x}) = \left(\cdots \tanh\left(\sum_j w_{jk}^{(2)} \cdot \tanh \left(\sum_i w_{ij}^{(1)}x_i\right)\right)\right)\)</span></p>
+</blockquote>
+<p>注意有时第1步到第3步是并行地执行很多次，然后将得到的所有数值求出平均<span class="math inline">\(\left(x_i^{(\ell - 1)} \delta_j^{(\ell)}\right)\)</span>来在第4步更新权重。这种方法介于GD和SGD之间，称为mini-batch GD</p>
+<h2 id="优化与正则化">优化与正则化</h2>
+<p>前面讲解神经网络反向传播算法时，使用的误差函数是平方误差函数。将这种情况推广，可以知道神经网络一般是要最小化如下的<span class="math inline">\(E_{\rm in}\)</span> <span class="math display">\[
+E_{\rm in}({\bf w}) = \frac{1}{N}\sum_{n=1}^N {\rm err} \left(\left(\cdots \tanh\left(\sum_j w_{jk}^{(2)} \cdot \tanh \left(\sum_i w_{ij}^{(1)}x_i\right)\right)\right), y_n\right)
+\]</span> 但是，当有多个隐藏层存在时，这通常不是一个凸优化问题，GD/SGD很难找到全局最优解，只能找到局部最优解。而且，对<span class="math inline">\(w_{ij}^{(\ell)}\)</span>不同的初始化可能会达到不同的局部最优解，而且并不知道如何初始化能让最后得到的解更好。但是，根据经验，大的初始权重会使得<span class="math inline">\(\tanh\)</span>函数的值变得很大，导致梯度（变化量）很小，出现饱和（saturate）现象。因此，一般都是用一些随机的，小的值做初始权重</p>
+<p>神经网络是一种很强大的算法。假设<span class="math inline">\(V\)</span>是神经元的数目，<span class="math inline">\(D\)</span>是神经网络中权重的数目（也就是神经元之间连接的数目），那么整个神经网络的VC维约为<span class="math inline">\(O(VD)\)</span>。当<span class="math inline">\(V\)</span>很大时，神经网络几乎可以模拟任意函数，但是也就更容易过拟合</p>
+<p>神经网络避免过拟合有一种很基本，也可以看作是“老朋友”的方法，就是加入正则化。直观的方法是加入L2正则化项<span class="math inline">\(\Omega({\bf w}) = \sum\left(w_{ij}^{(\ell)}\right)^2\)</span>，但是这种权重缩减方法的结果是，大的权重缩减得大，小的权重缩减得小，最后哪个权重都没有缩减到0。而这里做正则化的目的是希望得到稀疏的<span class="math inline">\(\bf w\)</span>，也就是让尽量多的<span class="math inline">\(w_{ij}^{(\ell)}\)</span>为0，这样才能有效地减小整个神经网络的VC维。提到使权重稀疏的正则化方法，另一个老朋友是L1正则化<span class="math inline">\(\sum \left|w_{ij}^{(\ell)}\right|\)</span>，但是这个正则化项是不可微的，而反向传播是微分导向的算法，因此不能使用L1正则化</p>
+<p>通常情况下，神经网络里使用了一种称为“权重淘汰”（weight-elimination）的方法，其实质是一种加权的L2正则化，它将大的权重和小的权重都缩减相同的大小，这样小的权重就会被缩减到0。权重淘汰正则项的形式为 <span class="math display">\[
+\sum \frac{\left(w_{ij}^{(\ell)}\right)^2}{1+\left(w_{ij}^{(\ell)}\right)^2}
+\]</span> 神经网络里其实还有一种自己独有的正则化机制，称为“提前停止”法。由于神经网络算法的核心还是GD/SGD，而这种算法随着迭代次数的增多，其在各种不同的<span class="math inline">\(w\)</span>里选择得越多。如果降低这种算法的迭代次数，它看过的<span class="math inline">\(w\)</span>就会更少。因此，迭代次数多，有效的VC维就大；反之，迭代次数少，有效的VC维就小。这意味着<strong>比较小的迭代次数可以有效降低VC维</strong>，而合适的迭代次数可以使用前面讲过的验证法做判断。这种方法对所有基于GD/SGD的算法都适用</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/10/19/NTUML-28-Neural-Network/" title="NTUML 28. 神经网络">txshi-mt.com/2017/10/19/NTUML-28-Neural-Network/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/NTUML/" rel="tag"># NTUML</a>
+          
+            <a href="/tags/神经网络入门/" rel="tag"># 神经网络入门</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/10/14/NTUML-27-GBDT/" rel="next" title="NTUML 27. 梯度提升决策树（GBDT）">
+                <i class="fa fa-chevron-left"></i> NTUML 27. 梯度提升决策树（GBDT）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/10/21/NTUML-29-Deep-Learning/" rel="prev" title="NTUML 29. 深度学习">
+                NTUML 29. 深度学习 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#动机"><span class="nav-number">1.</span> <span class="nav-text">&#x52A8;&#x673A;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#神经网络假设集合"><span class="nav-number">2.</span> <span class="nav-text">&#x795E;&#x7ECF;&#x7F51;&#x7EDC;&#x5047;&#x8BBE;&#x96C6;&#x5408;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#神经网络学习"><span class="nav-number">3.</span> <span class="nav-text">&#x795E;&#x7ECF;&#x7F51;&#x7EDC;&#x5B66;&#x4E60;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#优化与正则化"><span class="nav-number">4.</span> <span class="nav-text">&#x4F18;&#x5316;&#x4E0E;&#x6B63;&#x5219;&#x5316;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
