@@ -100,7 +100,7 @@
 
 
 
-  <meta name="keywords" content="优化,梯度下降,动量法," />
+  <meta name="keywords" content="UTNN,优化,梯度下降,动量法," />
 
 
 
@@ -112,7 +112,7 @@
 
 
 <meta name="description" content="Mini-batch梯度下降概论 本章主要介绍一些关于神经网络优化的方法。但是在介绍优化方法之前先回顾一下关于误差函数/代价函数的内容。如第三章所示，给定某个线性神经元，可以画出其误差表面：其纵轴是误差，横轴是权重值。如果使用的是平方误差，则误差表面的横切面应该是一个椭圆，纵切面是一个双曲线。对多层非线性网络来说，其误差表面更加复杂，但是权重不大时，仍然是光滑的，局部也可以用二次曲线逼近。如果使用">
-<meta name="keywords" content="优化,梯度下降,动量法">
+<meta name="keywords" content="UTNN,优化,梯度下降,动量法">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Hinton神经网络与机器学习 6. 神经网络的优化">
 <meta property="og:url" content="txshi-mt.com/2017/12/27/UTNN-6-Optimization-How-to-Make-the-Learning-Go-Faster/index.html">
@@ -123,7 +123,7 @@
 <meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_06_reduce_learning_rate_too_early.png">
 <meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_06_momentum.png">
 <meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_06_nesterov_method.png">
-<meta property="og:updated_time" content="2018-01-03T15:12:30.616Z">
+<meta property="og:updated_time" content="2018-01-07T09:09:22.017Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hinton神经网络与机器学习 6. 神经网络的优化">
 <meta name="twitter:description" content="Mini-batch梯度下降概论 本章主要介绍一些关于神经网络优化的方法。但是在介绍优化方法之前先回顾一下关于误差函数/代价函数的内容。如第三章所示，给定某个线性神经元，可以画出其误差表面：其纵轴是误差，横轴是权重值。如果使用的是平方误差，则误差表面的横切面应该是一个椭圆，纵切面是一个双曲线。对多层非线性网络来说，其误差表面更加复杂，但是权重不大时，仍然是光滑的，局部也可以用二次曲线逼近。如果使用">
@@ -417,7 +417,7 @@
 &amp;\boldsymbol{x}_1 = [101, 101]&amp; y_1 = 2 \\
 &amp;\boldsymbol{x}_2 = [101, 99]&amp;y_2 = 0 \\
 \end{align*}
-\]</span> 假设第一个例子的代表色为绿色，第二个例子的代表色为红色，下图左给出了这种情况下的误差表面。可以大致理解为，当只有第一个例子时，权重<span class="math inline">\(\boldsymbol{w}\)</span>需要满足<span class="math inline">\(\boldsymbol{w}^\mathsf{T}\boldsymbol{x}_1 = 2\)</span>，因此<span class="math inline">\(\boldsymbol{w}\)</span>的两个分量之间呈线性关系，线的斜率是<span class="math inline">\(-101/101 = -1\)</span>。而只有第二个例子时，权重<span class="math inline">\(\boldsymbol{w}\)</span>需要满足<span class="math inline">\(\boldsymbol{w}^\mathsf{T}\boldsymbol{x}_1 = 0\)</span>，因此<span class="math inline">\(\boldsymbol{w}\)</span>的两个分量之间呈线性关系，线的斜率是<span class="math inline">\(-101/99\)</span>。这两条线基本上是平行的，因此当将两者组合起来时，会得到一个被拉长的椭圆</p>
+\]</span> 假设第一个例子的代表色为绿色，第二个例子的代表色为红色，下图左给出了这种情况下的误差表面。可以大致理解为，当只有第一个例子时，权重<span class="math inline">\(\boldsymbol{w}\)</span>需要满足<span class="math inline">\(\boldsymbol{w}^\mathsf{T}\boldsymbol{x}_1 = 2\)</span>，因此<span class="math inline">\(\boldsymbol{w}\)</span>的两个分量之间呈线性关系，线的斜率是<span class="math inline">\(-101/101 = -1\)</span>。而只有第二个例子时，权重<span class="math inline">\(\boldsymbol{w}\)</span>需要满足<span class="math inline">\(\boldsymbol{w}^\mathsf{T}\boldsymbol{x}_2 = 0\)</span>，因此<span class="math inline">\(\boldsymbol{w}\)</span>的两个分量之间呈线性关系，线的斜率是<span class="math inline">\(-101/99\)</span>。这两条线基本上是平行的，因此当将两者组合起来时，会得到一个被拉长的椭圆</p>
 <figure>
 <img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_06_input_shifting.png" alt="移动输入以后对误差表面的影响。左图是移动前的误差表面，非常长的椭圆梯度下降会非常缓慢；而右图是移动后的结果，正圆的误差表面上，梯度下降的方向总是指向圆心"><figcaption>移动输入以后对误差表面的影响。左图是移动前的误差表面，非常长的椭圆梯度下降会非常缓慢；而右图是移动后的结果，正圆的误差表面上，梯度下降的方向总是指向圆心</figcaption>
 </figure>
@@ -571,6 +571,8 @@
       
         <div class="post-tags">
           
+            <a href="/tags/UTNN/" rel="tag"># UTNN</a>
+          
             <a href="/tags/优化/" rel="tag"># 优化</a>
           
             <a href="/tags/梯度下降/" rel="tag"># 梯度下降</a>
@@ -597,6 +599,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/01/07/UTNN-7-Recurrent-Neural-Networks/" rel="prev" title="Hinton神经网络与机器学习 7. 循环神经网络 I">
+                Hinton神经网络与机器学习 7. 循环神经网络 I <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -682,7 +688,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-count">68</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -704,7 +710,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">62</span>
+                  <span class="site-state-item-count">65</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

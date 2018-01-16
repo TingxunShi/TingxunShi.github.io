@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="UTNN,RNN," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="对序列建模 当使用机器学习方法对序列建模时，通常是要把一个序列转化为另一个序列。例如，想把英语单词序列转化为法语单词序列（机器翻译），或者是将声音信号转化为单词的文本序列（语音识别）。有的时候，并没有一个单独的目标序列，在这种情况下，可以通过试着预测输入序列的下一个项（item）来获取一个教学信号，因此此时目标输出序列就是一步之后的输入序列——对于时间序列来说，这种预测是很正常的。不过对于图像则不">
+<meta name="keywords" content="UTNN,RNN">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hinton神经网络与机器学习 7. 循环神经网络 I">
+<meta property="og:url" content="txshi-mt.com/2018/01/07/UTNN-7-Recurrent-Neural-Networks/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="对序列建模 当使用机器学习方法对序列建模时，通常是要把一个序列转化为另一个序列。例如，想把英语单词序列转化为法语单词序列（机器翻译），或者是将声音信号转化为单词的文本序列（语音识别）。有的时候，并没有一个单独的目标序列，在这种情况下，可以通过试着预测输入序列的下一个项（item）来获取一个教学信号，因此此时目标输出序列就是一步之后的输入序列——对于时间序列来说，这种预测是很正常的。不过对于图像则不">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_07_linear_dynamical_systems.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_07_HMM.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_07_providing_input_to_RNN.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_07_RNN_teaching_signals.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_07_Binary_Addition_FSA.png">
+<meta property="og:updated_time" content="2018-01-16T14:12:43.199Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hinton神经网络与机器学习 7. 循环神经网络 I">
+<meta name="twitter:description" content="对序列建模 当使用机器学习方法对序列建模时，通常是要把一个序列转化为另一个序列。例如，想把英语单词序列转化为法语单词序列（机器翻译），或者是将声音信号转化为单词的文本序列（语音识别）。有的时候，并没有一个单独的目标序列，在这种情况下，可以通过试着预测输入序列的下一个项（item）来获取一个教学信号，因此此时目标输出序列就是一步之后的输入序列——对于时间序列来说，这种预测是很正常的。不过对于图像则不">
+<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_07_linear_dynamical_systems.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2018/01/07/UTNN-7-Recurrent-Neural-Networks/"/>
+
+
+
+
+
+  <title>Hinton神经网络与机器学习 7. 循环神经网络 I | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2018/01/07/UTNN-7-Recurrent-Neural-Networks/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Hinton神经网络与机器学习 7. 循环神经网络 I</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-07T17:03:08+08:00">
+                Jan 7 2018
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/深度学习/" itemprop="url" rel="index">
+                    <span itemprop="name">深度学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="对序列建模">对序列建模</h2>
+<p>当使用机器学习方法对序列建模时，通常是要把一个序列转化为另一个序列。例如，想把英语单词序列转化为法语单词序列（机器翻译），或者是将声音信号转化为单词的文本序列（语音识别）。有的时候，并没有一个单独的目标序列，在这种情况下，可以通过试着预测输入序列的下一个项（item）来获取一个教学信号，因此此时目标输出序列就是一步之后的输入序列——对于时间序列来说，这种预测是很正常的。不过对于图像则不然，预测下一个像素点是什么感觉应该是没有什么意义</p>
+<p>当预测序列中的下一个项时，实际上有监督学习和无监督学习的界限已经变得模糊了：预测下一项内容时，使用的方法是有监督学习方法，但是并不需要独立的教学信号，因此这里又存在一些无监督的味道</p>
+<p>在介绍RNN之前，先看一些其它对序列建模的模型。其中一种不需要额外内存的方法叫<strong>自回归模型</strong>，其原理是使用前面一些项的值做一些加权平均，来预测接下来的这一项。对这种算法稍加修改，加入隐藏单元，可以得到一个前馈神经网络，例如Bengio的第一个语言模型就使用了这样的原理</p>
+<p>其他一些模型可以让其隐藏状态有一些内部的动态变化，这样这些隐藏状态可以根据自身内部的动态性演化，并产生观察结果。通过该机制，模型可以在隐藏状态里存储信息，并保留比较长的一段时间。如果隐藏状态的动态性是带有噪声的，而且它通过隐藏状态生成输出的过程也是带有噪声的，那么通过观察这种生成模型的输出是不可能推断其具体的隐藏状态的，只能推测在所有可能隐藏状态向量的概率分布，而这个过程通常比较难。不过对某两种特殊的隐藏状态模型，它们的隐藏状态分布是可计算的</p>
+<p>第一种模型是<strong>线性动态系统</strong>（linear dynamical systems），在工程界得到了广泛应用。下图给出了该模型的示意图</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_07_linear_dynamical_systems.png" alt="线性动态系统示意图"><figcaption>线性动态系统示意图</figcaption>
+</figure>
+<p>这种生成模型的隐藏状态都是实数，有线性动态性（由红色箭头表示），这种动态性带有高斯噪声，所以隐藏状态会按照一定概率演化。模型的底部是驱动输入，可以直接影响隐藏单元，而隐藏单元会决定输出。因此为了预测系统的下一个输出，就需要能推断隐藏状态。这里隐藏状态可以被推断的关键原因是因为假设了动态性是高斯噪声，满足高斯分布，而高斯分布的一个特点就是对高斯分布做线性变换的结果还是一个高斯分布，因此给定观察结果（输出）时隐藏状态的分布也是高斯分布（实际上，是一个完全协方差高斯分布，即协方差矩阵元素都不为0）。对于这类问题，可以用<strong>卡尔曼滤波</strong>（Kalman filtering）来解决</p>
+<p>第二种模型是<strong>隐马尔可夫模型</strong>（hidden Markov model, HMM），它使用的是离散分布，基于离散数学，因此广受计算机科学家喜爱。下图给出了HMM的示意图</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_07_HMM.png" alt="HMM示意图"><figcaption>HMM示意图</figcaption>
+</figure>
+<p>在HMM中，隐藏状态是<span class="math inline">\(N\)</span>个可能值中的一个，状态之间的转移符合某种概率分布，可以组成一个概率矩阵<span class="math inline">\(\rm M\)</span>，称为转移矩阵。例如，从状态1转移到状态2的概率是<span class="math inline">\({\rm M}_{12}\)</span>。而且，输出模型也是随机的，因此系统所在的状态不能完全决定其所产生的输出，也就是说，内部状态“隐藏”在这个概率矩阵的背后。为了预测HMM的下一个输出，需要推测其可能位于哪个隐藏状态，对此可以使用一种动态规划算法，通过观测值可以推出隐藏状态的概率分布矩阵。得到概率分布矩阵以后，就可以得到HMM算法。这种算法在2012年左右是语音识别算法的首选（也是输入法引擎算法的首选）</p>
+<p>HMM有一个非常基本的局限性：它每次产生数据的时候，都会选择从<span class="math inline">\(N\)</span>个隐藏状态中选择一个。所以每个隐藏状态中储存的时间信息最多有<span class="math inline">\(\log N\)</span>位。假设现在要使用HMM生成一句话，已经生成了前一半，要生成后一半，则它对前一半的记忆是通过其在<span class="math inline">\(N\)</span>个隐藏状态中的哪一个来体现，所以只有信息中的<span class="math inline">\(\log N\)</span>位。为了让句子的后一半与前一半相协调，则后面的句子的语法要与前面匹配（性、数、格一致），语义要与前面匹配，语调、口音、音色等等都需要匹配。所以如果需要使用HMM来生成一个句子，那么隐藏状态需要覆盖所有这些信息。假设这些信息一共有100位，那么HMM就需要<span class="math inline">\(2^{100}\)</span>个状态！</p>
+<p>因此就需要循环神经网络（RNN）来解决这个问题了，它可以更有效地“记住”信息。其有两个特点：</p>
+<ul>
+<li>分布式隐藏状态。也就是，同一时刻可以激活多个不同的单元，因此它可以同时记住几件事情</li>
+<li>非线性。隐藏状态不再需要以线性方式演化，因此系统可以更加复杂。在有足够神经元和时间的情况下，它几乎可以计算任何事情</li>
+</ul>
+<p>除此以外，线性动态系统和HMM都是随机模型，有一些噪声。但是模型真的需要这样吗？实际上，这两个随机模型在隐藏状态上的后验分布都是确定函数，概率分布都是一些确定的数字。而在RNN里，可以认为这些数字构成了RNN的隐藏状态，就像这些简单随机模型中的概率分布一样</p>
+<p>RNN的行为可以展现出如下特点：</p>
+<ul>
+<li>震荡性，因此RNN可以适用于动作控制（motion control）。例如可以求出走路时的步幅</li>
+<li>可以停留在某个稳定点（point attractor）上，因此可以适用于从某些“记忆”中获取信息（Hinton没有展开这一块，所以不是很明白。论坛里助教也并不理解这个概念）。可以理解为，你有一些大致的想法，大概知道想要获取什么，然后系统就可以停留在某个稳定点上，这些稳定点就对应于你想要获取的信息</li>
+<li>混沌性（chaotically）。通常混沌性对信息处理来说并不是一件好事，但是在某些环境下，如果你正在与一些更聪明的对手作对，无法智取对方，那么随机出招可能反倒是个好事。达到这种随机性的方法就是让行为体现出混沌性（这又是什么鬼……）</li>
+</ul>
+<p>RNN的关键问题是，计算能力太强，因此难以训练</p>
+<p>## 使用反向传播算法训练RNN</p>
+<p>假设现在有一个简单的RNN，由三个相互连接的神经元构成。连接之间有一个时间单位的延迟，网络的时钟每次走一个时间单位。要理解如何训练一个RNN，关键问题是要看到RNN的本质还是前馈神经网络，只不过是要将网络按照时间展开</p>
+<p>在第0时刻，RNN有一个初始状态，通过同样的权重一点一点得到接下来各个时刻的状态。也就是说，RNN是一个每层权重都限制为相同权重的前向网络。在前面讲解CNN时，我们看到过反向传播如何在存在某些（线性）约束的情况下进行，即先像往常一样计算梯度，然后修改梯度来满足限制条件。对于RNN也是一样的，即先计算<span class="math inline">\(\frac{\partial E}{\partial w_1}\)</span>和<span class="math inline">\(\frac{\partial E}{\partial w_2}\)</span>，然后对<span class="math inline">\(w_1\)</span>和<span class="math inline">\(w_2\)</span>都使用<span class="math inline">\(\frac{\partial E}{\partial w_1} + \frac{\partial E}{\partial w_2}\)</span></p>
+<p>这样，就可以得到RNN的反向传播算法，不过这一算法更常见地是被称作“随时间推移的反向传播算法”（BackPropagation Through Time，BPTT）。因此， 可以从时间的角度来思考这个算法：正向的一趟计算在每个时间步都对所有隐藏单元的行为做一次计算，然后构建起一个栈；反向的一趟计算在每个时间步计算错误的偏导数，然后一步步把这个栈拆解掉（这也是为什么这个算法被称为是“随时间推移的”的原因）。在反向传播以后，就可以把所有不同时间步对各个权重的偏导数加起来，通过一定的比例变换最终让每层权重相同</p>
+<p>对于RNN，还有一个初始状态的问题。尽管可以将所有初始状态都设定成一个默认值，但是这样网络的效果不会特别好。事实上，也可以像学习权重那样学到网络中的状态，即先对所有非输入节点设定一个随机的初始值，然后每次反向传播也计算误差函数对状态的梯度，使用梯度下降来对状态进行修改。RNN中的初始状态有很多种初始化方法</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_07_providing_input_to_RNN.png" alt="RNN的状态初始化"><figcaption>RNN的状态初始化</figcaption>
+</figure>
+<ul>
+<li>上图左给出的方法是先指定所有单元的初始状态。如果把RNN看作权重受限的前向网络，这种做法比较自然</li>
+<li>上图中给出的方法是指定某几个单元的初始状态</li>
+<li>上图右给出的方法是对某几个单元指定它们在各个时间步的初始状态。如果要解决的问题是对顺序数据的建模，那么这种方法更自然</li>
+</ul>
+<p>类似地，RNN的学习目标也有很多种选择方法</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_07_RNN_teaching_signals.png" alt="RNN的学习目标选择"><figcaption>RNN的学习目标选择</figcaption>
+</figure>
+<ul>
+<li>上图左给出的方法是选择所有单元的最后状态。如果把RNN看作权重受限的前向网络，这种做法比较自然</li>
+<li>上图中给出的方法是选择所有单元最后几个时间步的状态。这样做有助于学习到某些“稳定点”（attractor）</li>
+<li>上图右给出的方法是指定某些单元为输出单元，输出这些单元在每个时间步的最后状态。如果要提供连续输出，这种方法比较自然</li>
+</ul>
+<h2 id="示例训练一个简单的rnn">示例：训练一个简单的RNN</h2>
+<p>本节我们来考虑这样一个问题：如何训练一个神经网络，使得其输入为两个二进制数字，输出它们的和（也是二进制表示）。这个问题是可以用普通的前馈神经网络解决的，但是做起来比较麻烦：首先，需要预先确定加数、被加数以及和的最大位数。此外，更重要的是，对两个输入不同位上的做法是不能泛化的。确切说，对于两个输入，前面的处理逻辑和后面的处理逻辑使用不同的权重，因此两者的逻辑不能自动泛化。这意味着，使用前馈神经网络不能优雅地解决二进制加法问题</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_07_Binary_Addition_FSA.png" alt="解决二进制加法的有限状态自动机"><figcaption>解决二进制加法的有限状态自动机</figcaption>
+</figure>
+<p>上图给出了一个解决二进制加法问题的有限状态自动机。系统在每个时刻都会处于图中的某个状态，然后接受下一列的两个数，根据输入决定状态的转移，进入到某个状态时则做相应的动作。假设现在自动机在右上角的状态，它会输出1，同时打开进位器。下一栏的两个数都是1，那么它会进入到相同的状态，输出1。但是如果下一栏的两个数一个是1一个是0，则它还会打开进位器，但是进入到右下角的状态，输出0；如果下一栏的两个数都是0，那么它关闭进位器，进入到左上角的状态，输出1。这意味着解决二进制加法的RNN需要有两个输入单元和一个输出单元，对应于在每个时刻接受两个输入位产生一个输出位</p>
+<p>需要注意的是，网络的输出对应于两个时间步之前的输出。要延迟两个时间步的原因是，网络需要一个时间步来根据输入更新隐藏单元，另一个时间步来从隐藏状态产生输出。因此网络最少只需要三个隐藏单元，这三个单元是双向全连接的，每个方向的权重不同。这样的结构使得网络可以根据时刻<span class="math inline">\(t\)</span>的隐藏状态推断出时刻<span class="math inline">\(t+1\)</span>的隐藏状态。从输入单元到隐藏单元是普通的前馈模式，这样隐藏状态可以获取输入；类似地，从隐藏单元到输出单元也是普通的前馈模式，以产生最终输入</p>
+<p>由于RNN能够完成二进制加法操作，因此其实际上这三个隐藏单元学到了四种不同的模式，对应于前面有限状态自动机的四个节点。注意有限状态机节点对应的不是RNN隐藏节点，而是RNN隐藏节点的活动向量（笔者注：这个名词，对应英文activity vector，似乎很少在其他课程或者文献中见到。但是Hinton前几天发表的Capsule Network也用了这个概念，不知道是不是他自己创造的）——在每个时刻，有限状态自动机只能处于某个确定的状态，而RNN的隐藏单元也只能有一个确定的活动向量。因此RNN可以模拟有限状态自动机，但是表示能力是指数级地增强：有<span class="math inline">\(N\)</span>个隐藏单元的RNN可以有<span class="math inline">\(2^N\)</span>个可能的二进制活动节点（不过只有<span class="math inline">\(N^2\)</span>个权重）。因此如果输入流有两个独立事件并行发生，则有限状态自动机需要将自己的状态数平方，但是RNN只需要将自己的隐藏单元数翻倍</p>
+<h2 id="为什么训练rnn很困难">为什么训练RNN很困难</h2>
+<p>RNN训练的难点在于，其正向传播过程和反向传播过程是有差别的。前向传播的过程中使用的是“挤压”函数（squashing function），例如logistic函数，来防止活动向量爆炸。但是反向传播是线性的，由前向传播时的结果决定，因此会面临线性系统面临的问题：如果权重都很小，那么梯度就会小，连乘以后会变得更小。那么，由于RNN是按时间展开的，所以这意味着经过几个时间步的传递，比较早的节点就得不到什么错误更新的信息了。同样的道理，如果权重都很大，那么梯度就会爆炸。不过，对于传统的前馈神经网络，除非这个网络特别深，否则不会出现这么糟糕的情况</p>
+<p>上面说的这两种情况，分别对应于梯度消失和梯度爆炸两种情况。小心地初始化权重可以有效地解决这个问题，不过即使这样也很难让当前的输入输出利用其很多个时间步之前的信息，也就是说，普通的RNN结构很难处理长距离的依赖关系</p>
+<p>假设系统中有两个稳定点，要通过RNN学出这两个点，那么，如果初始状态在这两个点附近，则最后的结果肯定是停留在对应的稳定点上，最终状态对初始状态改变量的导数接近0，出现了梯度消失。但是如果初始状态在两个点的交界处，那么无论往哪边偏一点，都会陷入到对应的点上，不同的偏差可能会导致截然不同的结果，也就是出现梯度爆炸</p>
+<p>为了解决RNN难以学习长距离依赖的问题，大概有四种解决方法</p>
+<ul>
+<li>使用一种叫做长短期记忆（Long-Short Term Memory, LSTM）的方法。这个方法在下一节介绍，简单来说，原理是修改神经网络的体系结构</li>
+<li>使用更好的，可以处理非常小梯度的优化器。这个方法在下一章介绍</li>
+<li>小心的初始化输入层到隐藏层的权重，非常小心地初始化隐藏层之间，以及隐藏层到输出层的权重，保证隐藏状态是一个弱耦合振子的大资源库。对于这样的网络，送进一个输入序列以后，会产生长时间的“回响”，通过回响来记住在输入序列里发生了什么。这种网络称为回声状态网络（Echo State Network, ESN）。它学到的只是隐藏层到输出层的连接</li>
+<li>使用动量以及ESN里用到的初始化方法，学习网络中的所有连接</li>
+</ul>
+<h2 id="对rnn的改进">对RNN的改进</h2>
+<h3 id="长短期记忆lstm">长短期记忆（LSTM）</h3>
+<p>个人感觉，Hinton这一块讲得不是特别好，所以视频被我跳过了。具体内容可以参考<a href="http://colah.github.io/posts/2015-08-Understanding-LSTMs/" target="_blank" rel="noopener">这篇闻名遐迩的博客</a>。之后的博客里我可能也会再做一些介绍</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2018/01/07/UTNN-7-Recurrent-Neural-Networks/" title="Hinton神经网络与机器学习 7. 循环神经网络 I">txshi-mt.com/2018/01/07/UTNN-7-Recurrent-Neural-Networks/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/UTNN/" rel="tag"># UTNN</a>
+          
+            <a href="/tags/RNN/" rel="tag"># RNN</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/27/UTNN-6-Optimization-How-to-Make-the-Learning-Go-Faster/" rel="next" title="Hinton神经网络与机器学习 6. 神经网络的优化">
+                <i class="fa fa-chevron-left"></i> Hinton神经网络与机器学习 6. 神经网络的优化
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">68</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">65</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#对序列建模"><span class="nav-number">1.</span> <span class="nav-text">&#x5BF9;&#x5E8F;&#x5217;&#x5EFA;&#x6A21;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#示例训练一个简单的rnn"><span class="nav-number">2.</span> <span class="nav-text">&#x793A;&#x4F8B;&#xFF1A;&#x8BAD;&#x7EC3;&#x4E00;&#x4E2A;&#x7B80;&#x5355;&#x7684;RNN</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么训练rnn很困难"><span class="nav-number">3.</span> <span class="nav-text">&#x4E3A;&#x4EC0;&#x4E48;&#x8BAD;&#x7EC3;RNN&#x5F88;&#x56F0;&#x96BE;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对rnn的改进"><span class="nav-number">4.</span> <span class="nav-text">&#x5BF9;RNN&#x7684;&#x6539;&#x8FDB;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#长短期记忆lstm"><span class="nav-number">4.1.</span> <span class="nav-text">&#x957F;&#x77ED;&#x671F;&#x8BB0;&#x5FC6;&#xFF08;LSTM&#xFF09;</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
