@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="UTNN,RNN,ESN,HF优化," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="无Hessian矩阵（Hessian-Free, HF）优化法及其应用 HF优化原理 假设损失函数是一个二次曲线（曲率恒定），确切说，是一个碗口向上的抛物线，那么在这个曲线上选定方向，向前一直前进，误差在重新变大之前会减少多少？这个值取决于梯度和曲率的比值，所以如果选定的方向是好的方向，这个比值应该高。也就是说，梯度小的地方曲率也小 之前在讲神经网络优化的时候，曾经提到过，如果选最陡的方向做梯度下">
+<meta name="keywords" content="UTNN,RNN,ESN,HF优化">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hinton神经网络与机器学习 8. 循环神经网络 II">
+<meta property="og:url" content="txshi-mt.com/2018/01/16/UTNN-8-Recurrent-Neural-Networks-2/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="无Hessian矩阵（Hessian-Free, HF）优化法及其应用 HF优化原理 假设损失函数是一个二次曲线（曲率恒定），确切说，是一个碗口向上的抛物线，那么在这个曲线上选定方向，向前一直前进，误差在重新变大之前会减少多少？这个值取决于梯度和曲率的比值，所以如果选定的方向是好的方向，这个比值应该高。也就是说，梯度小的地方曲率也小 之前在讲神经网络优化的时候，曾经提到过，如果选最陡的方向做梯度下">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_07_vanilla_char_model.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_08_factor.png">
+<meta property="og:updated_time" content="2018-01-17T14:54:03.721Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hinton神经网络与机器学习 8. 循环神经网络 II">
+<meta name="twitter:description" content="无Hessian矩阵（Hessian-Free, HF）优化法及其应用 HF优化原理 假设损失函数是一个二次曲线（曲率恒定），确切说，是一个碗口向上的抛物线，那么在这个曲线上选定方向，向前一直前进，误差在重新变大之前会减少多少？这个值取决于梯度和曲率的比值，所以如果选定的方向是好的方向，这个比值应该高。也就是说，梯度小的地方曲率也小 之前在讲神经网络优化的时候，曾经提到过，如果选最陡的方向做梯度下">
+<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_07_vanilla_char_model.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2018/01/16/UTNN-8-Recurrent-Neural-Networks-2/"/>
+
+
+
+
+
+  <title>Hinton神经网络与机器学习 8. 循环神经网络 II | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2018/01/16/UTNN-8-Recurrent-Neural-Networks-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Hinton神经网络与机器学习 8. 循环神经网络 II</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-16T22:05:53+08:00">
+                Jan 16 2018
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/深度学习/" itemprop="url" rel="index">
+                    <span itemprop="name">深度学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="无hessian矩阵hessian-free-hf优化法及其应用">无Hessian矩阵（Hessian-Free, HF）优化法及其应用</h2>
+<h3 id="hf优化原理">HF优化原理</h3>
+<p>假设损失函数是一个二次曲线（曲率恒定），确切说，是一个碗口向上的抛物线，那么在这个曲线上选定方向，向前一直前进，误差在重新变大之前会减少多少？这个值取决于梯度和曲率的比值，所以如果选定的方向是好的方向，这个比值应该高。也就是说，梯度小的地方曲率也小</p>
+<p>之前在讲神经网络优化的时候，曾经提到过，如果选最陡的方向做梯度下降，那么有可能这个方向并没有指向我们真正想去的方向。不过，如果误差表面的横截面是一个正圆形，那么梯度的方向就可以用了。<strong>牛顿法</strong>的思路就是使用一个线性变换将椭圆形的横截面转变成圆形，即将梯度乘以曲率矩阵（Hessian矩阵）的逆： <span class="math display">\[
+\Delta {\bf w} = -\epsilon {\bf H}({\bf w})^{-1}\frac{dE}{d\bf w}
+\]</span> 如果损失函数的纵截面是二次曲线，<span class="math inline">\(\epsilon\)</span>选择合适，使用牛顿法可以直达靶心！但是这里的问题是，如果权重特别多，达到百万量级，那么Hessian矩阵里面会有万亿个项。因为曲率矩阵里的每一个元素指明的是，当我们沿着某方向移动时，梯度在任一方向的变化量，即 <span class="math display">\[
+{\bf H} = \left[\begin{matrix}\frac{\partial^2E}{\partial w_1^2} &amp; \frac{\partial^2E}{\partial w_1\partial w_2} &amp; \cdots &amp; \frac{\partial^2E}{\partial w_1\partial w_n} \\ \frac{\partial^2E}{\partial w_2\partial w_1} &amp; \frac{\partial^2E}{\partial w_2^2} &amp; \cdots &amp; \frac{\partial^2E}{\partial w_2\partial w_n} \\ \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\ \frac{\partial^2E}{\partial w_n\partial w_1} &amp; \frac{\partial^2E}{\partial w_n\partial w_2} &amp; \cdots &amp; \frac{\partial^2E}{\partial w_n^2}\end{matrix}\right]
+\]</span> 如果损失函数的横截面是正圆，那么Hessian矩阵中非对角线元素都是0，即沿着该方向移动时，梯度在其它方向上不会变化，因此梯度方向就是真正想去的方向。但是如果损失函数的横截面是椭圆，Hessian矩阵中非对角线元素就不是0，沿着该方向变化来修改权重的某个分量，梯度在其它方向上的分量也会改变。因此如果同时修改所有权重，那么其它权重的变化会导致梯度在权重的第一个分量上的变化，使得事情可能会变得更糟（其它权重的变化导致梯度的第一分量符号被逆转，走向相反方向）。权重维度越大，就应该越小心</p>
+<p>由于大的神经网络中Hessian矩阵的项太多，很难求逆，因此需要解决这个问题。LeCun组提出的一个方案是只关注对角线上的前若干个元素，但是这些元素太少了，如果这么做基本上要忽略掉矩阵中其它所有元素。另一种做法是使用各种方法近似Hessian矩阵，降低它的秩，例如HF法、LBFGS法等等。在HF法中，我们对Hessian矩阵做一个近似，然后假设这个近似是对的，使用共轭梯度法（conjugate gradient）来减小误差，接着再做一次近似和优化，如此往复。如果在RNN中使用这种方法，一般要加一个正则化，防止优化方法将隐藏层状态改变太多（因为RNN一般是按时间展开，如果较早时间步中的隐藏状态发生了巨大变化，会连锁影响后面所有的隐藏状态。因此一般可以加状态改变量的平方作为正则项）</p>
+<p>共轭梯度法的核心思想是，先找到某个方向的最小值，一直前进，然后再找新的方向。寻找新的方向时，保证新的方向与前一个方向“共轭”，这样就不会破坏已经取得的前面所有方向的梯度。假设这个二次曲面是在<span class="math inline">\(N\)</span>维空间上的二次曲面，共轭梯度法保证在<span class="math inline">\(N\)</span>步之后可以找到最小点，因为它的原理就是每一步都在一个独立的（尽管不是正交的）方向达到该方向上梯度为0的点。一个更好的性质是，在远小于<span class="math inline">\(N\)</span>步之后，算法就能非常接近最小值点。此外，共轭梯度在非二次曲面上效果也不错，也适用于mini batch的学习</p>
+<p>HF优化器的原理就是，先使用一个二次表面逼近原始表面，然后再在这个近似的二次表面上使用共轭梯度法</p>
+<h2 id="使用hf的字符模型">使用HF的字符模型</h2>
+<h3 id="字符模型">字符模型</h3>
+<p>通常情况下，讲到神经网络语言模型，提到的都是单词级别的语言模型，也就是把一句话看作是由单词组成的字符串。但是，就把这些句子看成是由字母组成的字符串也是有好处的。假设现在想通过“阅读”维基百科的所有文章来构建一个模型，如果需要将wiki里的所有文本都预处理成单词，那么就会比较麻烦，包括以下几个方面</p>
+<ul>
+<li>词素（morpheme）。词素是表达词意的最小单位，但是具体一个单词里哪些部分可以算作是词素，这个是见仁见智的</li>
+<li>sub-word。有的时候，词的一部分可能反映了某种意思。例如，英语里以sn-开头的词都多少与嘴唇和鼻子有关，例如sneeze, snarl等等。这里是否包含了一些规律？</li>
+<li>例如New York这样的词，大多数情况下是希望把它看做是一个词，但是有的时候，例如谈论New York minster roof的时候，应该把它看作是两个词</li>
+<li>最后，对于黏着语，这类语言的单词通常都附着了多个语法成分，因此可以做出来特别长的单词。例如芬兰语的ymmärtämättömyydelläänsäkään对应了英语的“even with his/her/their lack of understanding”。这个词在字典里没有，而且日常生活中也很少用到</li>
+</ul>
+<p>因此设计一个RNN来建立一个字符模型是有必要的，即使用<span class="math inline">\(T\)</span>时刻的隐藏状态和输入来决定<span class="math inline">\(T+1\)</span>时刻的隐藏状态，然后通过一个softmax来产生下一个可能的字符。假设输入字符表有86个， 隐藏层有一层，里面有1500个隐藏单元，那么下面给出了这个RNN的示意图</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_07_vanilla_char_model.png" alt="比较自然的RNN网络用来做字符级语言模型建模"><figcaption>比较自然的RNN网络用来做字符级语言模型建模</figcaption>
+</figure>
+<p>但是一般并不会使用这种体系结构（这里存疑，因为感觉现在常见的用的的确是这种结构）。为什么呢？由于理论上任何前缀后面都可以跟86个字母中的任意一个，因此最后可以组成一个很大的树，如图所示。每当接受一个字符输入时，都会沿着这棵树向下走向一个新的节点。对于长度为<span class="math inline">\(N\)</span>的词，如果用的是统计的方法，那么就需要存储整个的这棵大树，每条边实际上存储了给定前面所有前缀的情况下，接下来的字母的概率。在RNN里，这样的前缀信息被隐藏状态向量来表示，也就是说，每个输入都会把当前的隐藏状态转化为一个新的隐藏状态</p>
+<p>使用神经网络的隐层（隐式地）实现这棵树有一个好处，就是可以共享很多结构。例如当前面的输入为f, i, x时，已经可以判断出来正在输入的可能是一个动词，而这时如果再输入i，后面跟着的很可能会是n和g。这种“前面是动词，输入i，后面可能是ng”的知识可以共享给所有其他动词。需要再着重提一下的是，是当前的隐藏状态和当前的输入<strong>共同</strong>决定了接下里的输出。如果隐藏状态里没有动词信息，那么输入i并不一定期望后面是ng。</p>
+<h3 id="乘性连接multiplicative-connection">乘性连接（multiplicative connection）</h3>
+<p>基于前面的介绍，现在要解决的问题是，如何使用当前的输入字符来确定从当前隐藏状态到下一个隐藏状态的权重矩阵。对于原始的做法，实际上要把所有86个字符都试一遍，来找出一个1500 x 1500的矩阵，这样会有很多参数（86 x 1500 x 1500），容易过拟合。如果非要使用这种方法，也需要数据量很大的时候才行（但是我个人感觉这个条件已经可以很容易地满足了）</p>
+<p>前面提到，对不同的单词，可以有一些通用的“特征”。那么一个思路就是，使用这样的特征来减少参数的数量，同时仍然实现这种“乘性连接”的功能。即，对着86个字符训练不同的转移矩阵，但是让这些矩阵共享参数。在这里，引入“因子”（factor）的概念，并假设因子的输入是两个组a和b，输出是一个组c。如下所示</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_08_factor.png" alt="因子示意图"><figcaption>因子示意图</figcaption>
+</figure>
+<p>因子会先对其两个输入组各自计算加权和<span class="math inline">\({\bf a}^\mathsf{T}{\bf u}_f\)</span>以及<span class="math inline">\({\bf b}^\mathsf{T}{\bf w}_f\)</span>，然后，将这两个积再相乘，可以得到一个标量。用这个标量去缩放输出权重<span class="math inline">\({\bf v}_f\)</span>可以得到组c的输入，即 <span class="math display">\[
+{\bf c}_f = ({\bf b}^\mathsf{T}{\bf w}_f)({\bf a}^\mathsf{T}{\bf u}_f){\bf v}_f
+\]</span> 沿用之前的例子，这时，因子从上一个隐藏状态接收到1500个参数，从字母表接收到86个参数，产生给下一个隐藏状态1500个参数，这样，因子总共只需要3086个参数</p>
+<p>这个过程也可以换一个角度理解，即每个因子实际上定义了一个非常简单的转换矩阵，其秩为1。上面的等式等价于下式 <span class="math display">\[
+{\bf c}_f = ({\bf b}^\mathsf{T}{\bf w}_f)({\bf u}_f{\bf v}_f^\mathsf{T}){\bf a}
+\]</span> 这里外积<span class="math inline">\({\bf u}_f{\bf v}_f^\mathsf{T}\)</span>就是秩为1的矩阵</p>
+<p>最后，将所有因子的<span class="math inline">\({\bf c}_f\)</span>加起来，就得到了送入c的转换矩阵 <span class="math display">\[
+{\bf c} = \left(\sum_f ({\bf b}^\mathsf{T}{\bf w}_f)({\bf u}_f{\bf v}_f^\mathsf{T})\right){\bf a}
+\]</span> 也就是说，每个因子都给出了一个秩为1的矩阵，而字母表<span class="math inline">\({\bf b}\)</span>中的每个字母决定了这些矩阵的权重</p>
+<h3 id="使用hf优化器预测下一个字符">使用HF优化器预测下一个字符</h3>
+<p>Ilya Sutskever从英文维基挑出了500万个长度为100个字符的句子，从第11个字符开始预测。训练在一块GPU上持续进行了大约一个月，最后得到的模型效果还不错，可能是到2012年为止效果最好的单神经网络模型（除非将多个模型组合起来才能击败他）。这个模型的一个显著特点是，可以匹配长距离的括号和引号</p>
+<p>具体生成字符串的做法是，以默认的隐藏状态开始，给出一个句子。模型随着读入这个句子的字符时会更新隐藏状态。读完这个句子以后，开始预测接下来的字符。对于接下来的字符，模型会产生一个概率分布，然后我们随机从这个分布中取一个字符，告诉它这个字符就是我们要的，让它接着预测（也就是说默认它预测的字符总是对的），直到我们想结束这个过程为止</p>
+<p>观察这个模型产生的文本，可以发现有这么一些特点：</p>
+<ul>
+<li>尽管有的词搭配很怪，例如Opus Paul at Rome，但是考虑到Opus, Paul和Rome之间存在关系，还是可以理解的</li>
+<li>不会产生特别长的句法结构，每一个句号后面新的句子都会开始一个新的主题</li>
+<li>很少产生英语单词表里没有的词。即便是产生了，这个词也很像英语单词，例如ephemerable</li>
+<li>尽管有时候会产生不匹配的括号，但是它也会匹配长距离的括号和引号</li>
+</ul>
+<p>另一个有趣的实验是，给一个自造词，看看会有什么结果。Hinton选择了thrunge这个词，它不存在于词典里，但是看着像是一个动词。如果前面给的是Sheila，那么对于Sheila thrunge模型会预测接下来的字母是s，这意味着它能发现主语是单数，前面有点像动词。如果前面给People，那么对于People thrunge模型预测接下来的字符是空格，说明它能掌握people是复数这个特征。如果前面给Shiela, 并将t大写，那么对于“Shiela, Thrunge”它会补成“Shiela, Thrungelini del Rey”，即一个人名——而且这个人名还不错</p>
+<p>经过实验观察，可以肯定的是，模型能够学到以下知识</p>
+<ul>
+<li>能够知道什么是词，长什么样。它产生的词绝大部分都是英语单词，而且知道句首字母大写，产生出的日期格式也没什么问题。即便是产生了虚构的，非英语的单词，也很难看出来。它可以产生专有名词，也知道日期和数字应该出现的语境</li>
+<li>能够产生匹配的括号和引号，而且某种意义上还会对括号和引号记数。例如，如果给出的字符没有括号/引号，它后面基本不会给出右括号/引号。如果给出的字符有左括号/引号，那么在20个字符以内基本就会生成对应的符号</li>
+<li>能够掌握某些语法规则，不过很难说具体的语法规则是什么，看上去像是很多比较弱的句法关联。例如，在产生“柏拉图”这个词以后不久，就会产生“维特根斯坦”。模型大概知道卷心菜和蔬菜之间存在关系，但是并不知道具体是什么关系。当然，这种特点是可以理解的，人类也会存在。假设现在玩一个游戏，提问者问完问题以后回答者必须马上喊出答案，那么在听到问题“奶牛喝什么”以后大部分人的意识都是喊出“牛奶”。实际上奶牛是不喝牛奶的，但是人们听到“奶牛”和“喝”以后都会想到牛奶，即便逻辑上不通</li>
+</ul>
+<p>Mikolov组使用了类似的技术来预测下一个单词会是什么单词。总体而言，RNN不需要太多数据就能达到其他模型能够达到的效果，而且随着数据集的增大，RNN的效果提升得更快</p>
+<h2 id="回声状态网络">回声状态网络</h2>
+<p>回声状态网络（Echo State Network, ESN）使用一种更聪明的技巧来让学习RNN变得更容易。它把网络中的链接初始化为一个大的，耦合的振子（oscillator）库，并将输入转化为这些振子的状态，通过这些状态来预测输出。ESN学到的唯一东西是如何将振子与输出相关联，而不用学习隐藏层之间，以及隐藏层与输出层之间的链接。不过，ESN需要大量的隐藏状态</p>
+<p>更具体地说，ESN随机初始化所有的隐藏状态并将其固定，然后训练这些隐藏状态如何去影响输出。这种做法与感知机的思路有点像，它最后训练的就是从大量随机隐藏状态到输出的线性模型。此外，这种方法与支持向量机SVM也有异曲同工之妙。但是，这些随机的权重必须设置得非常精妙，才会避免出现梯度消失/梯度爆炸的现象。做法是保证隐藏层到隐藏层的权重满足如下性质：在每个迭代之后，活动向量的长度保持不变。即对于某个线性系统而言，其矩阵的谱半径（spectral radius）为1，也就是隐藏层到隐藏层的权重矩阵的最大特征值为1。在非线性系统中，如果权重被设置在一个合适范围之内，则输入能够在循环状态中回响很久</p>
+<p>另一种重要的做法是使用稀疏连通性，即对隐藏层到隐藏层的权重矩阵，不去设置大量中等大小的权重，而是只保留少数几个很大的权重，其它的权重都设为0。这样，可以得到很多松耦合的振子，使得信息可以在网络的一部分中停留一段时间，不会很快被传播到其它部分。对于这种方法，需要小心选择输入层到隐藏层的连接数，要既保证能够得到松耦合的振子，还不会清除掉振子中包含的关于最近历史的信息</p>
+<p>（中间的实验略）</p>
+<p>ESN的好处是训练起来很快，因为只需要拟合一个线性模型，而且对一维时间序列的建模能力非常好，可以预测未来很长一段时间的数据。但是它不适合对高维数据建模（例如声音帧、视频帧等）。为了建模这样的数据，它需要的隐藏层单元数比RNN所需要的多很多。最近（2012年），Ilya Sutskever发现，使用ESN用到的初始化方法来初始化RNN，并使用带有动量的rmsprop优化方法，能很有效地训练RNN</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2018/01/16/UTNN-8-Recurrent-Neural-Networks-2/" title="Hinton神经网络与机器学习 8. 循环神经网络 II">txshi-mt.com/2018/01/16/UTNN-8-Recurrent-Neural-Networks-2/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/UTNN/" rel="tag"># UTNN</a>
+          
+            <a href="/tags/RNN/" rel="tag"># RNN</a>
+          
+            <a href="/tags/ESN/" rel="tag"># ESN</a>
+          
+            <a href="/tags/HF优化/" rel="tag"># HF优化</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/07/UTNN-7-Recurrent-Neural-Networks/" rel="next" title="Hinton神经网络与机器学习 7. 循环神经网络 I">
+                <i class="fa fa-chevron-left"></i> Hinton神经网络与机器学习 7. 循环神经网络 I
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">69</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">65</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#无hessian矩阵hessian-free-hf优化法及其应用"><span class="nav-number">1.</span> <span class="nav-text">&#x65E0;Hessian&#x77E9;&#x9635;&#xFF08;Hessian-Free, HF&#xFF09;&#x4F18;&#x5316;&#x6CD5;&#x53CA;&#x5176;&#x5E94;&#x7528;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#hf优化原理"><span class="nav-number">1.1.</span> <span class="nav-text">HF&#x4F18;&#x5316;&#x539F;&#x7406;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用hf的字符模型"><span class="nav-number">2.</span> <span class="nav-text">&#x4F7F;&#x7528;HF&#x7684;&#x5B57;&#x7B26;&#x6A21;&#x578B;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#字符模型"><span class="nav-number">2.1.</span> <span class="nav-text">&#x5B57;&#x7B26;&#x6A21;&#x578B;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#乘性连接multiplicative-connection"><span class="nav-number">2.2.</span> <span class="nav-text">&#x4E58;&#x6027;&#x8FDE;&#x63A5;&#xFF08;multiplicative connection&#xFF09;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用hf优化器预测下一个字符"><span class="nav-number">2.3.</span> <span class="nav-text">&#x4F7F;&#x7528;HF&#x4F18;&#x5316;&#x5668;&#x9884;&#x6D4B;&#x4E0B;&#x4E00;&#x4E2A;&#x5B57;&#x7B26;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#回声状态网络"><span class="nav-number">3.</span> <span class="nav-text">&#x56DE;&#x58F0;&#x72B6;&#x6001;&#x7F51;&#x7EDC;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
