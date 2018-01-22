@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="正则化,UTNN," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="提高网络泛化能力的若干方法 概论 当训练网络用的数据量比较小，而网络又特别复杂时，就容易发生过拟合现象。其原因是，尽管数据集的输入和输出之间存在着某种规律性的关系，但是任何有限的训练集都会包含采样误差，也就是说，训练集中的某些规律可能是偶然的，只是因为选中了某些特殊的训练样例才会出现。因此，拟合模型时，并不能确定所有规律都是真实的规律，也不能保证如果重新对样本抽样，这些规律是否还能存在。因此，模型">
+<meta name="keywords" content="正则化,UTNN">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hinton神经网络与机器学习 9. 提高神经网络的泛化能力">
+<meta property="og:url" content="txshi-mt.com/2018/01/20/UTNN-9-Ways-to-Make-Neural-Networks-Generalize-Better/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="提高网络泛化能力的若干方法 概论 当训练网络用的数据量比较小，而网络又特别复杂时，就容易发生过拟合现象。其原因是，尽管数据集的输入和输出之间存在着某种规律性的关系，但是任何有限的训练集都会包含采样误差，也就是说，训练集中的某些规律可能是偶然的，只是因为选中了某些特殊的训练样例才会出现。因此，拟合模型时，并不能确定所有规律都是真实的规律，也不能保证如果重新对样本抽样，这些规律是否还能存在。因此，模型">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-01-22T10:51:55.571Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hinton神经网络与机器学习 9. 提高神经网络的泛化能力">
+<meta name="twitter:description" content="提高网络泛化能力的若干方法 概论 当训练网络用的数据量比较小，而网络又特别复杂时，就容易发生过拟合现象。其原因是，尽管数据集的输入和输出之间存在着某种规律性的关系，但是任何有限的训练集都会包含采样误差，也就是说，训练集中的某些规律可能是偶然的，只是因为选中了某些特殊的训练样例才会出现。因此，拟合模型时，并不能确定所有规律都是真实的规律，也不能保证如果重新对样本抽样，这些规律是否还能存在。因此，模型">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2018/01/20/UTNN-9-Ways-to-Make-Neural-Networks-Generalize-Better/"/>
+
+
+
+
+
+  <title>Hinton神经网络与机器学习 9. 提高神经网络的泛化能力 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2018/01/20/UTNN-9-Ways-to-Make-Neural-Networks-Generalize-Better/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Hinton神经网络与机器学习 9. 提高神经网络的泛化能力</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-20T22:05:05+08:00">
+                Jan 20 2018
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/深度学习/" itemprop="url" rel="index">
+                    <span itemprop="name">深度学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="提高网络泛化能力的若干方法">提高网络泛化能力的若干方法</h2>
+<h3 id="概论">概论</h3>
+<p>当训练网络用的数据量比较小，而网络又特别复杂时，就容易发生过拟合现象。其原因是，尽管数据集的输入和输出之间存在着某种规律性的关系，但是任何有限的训练集都会包含采样误差，也就是说，训练集中的某些规律可能是偶然的，只是因为选中了某些特殊的训练样例才会出现。因此，拟合模型时，并不能确定所有规律都是真实的规律，也不能保证如果重新对样本抽样，这些规律是否还能存在。因此，模型同时拟合了必然规律和偶然规律。如果模型参数太多，拟合得“太好”，就会很好地拟合训练集中的偶然误差，不好泛化，因此需要一些正则化方法来防止过拟合</p>
+<p>解决过拟合的最好方法，也是最简单的方法，就是获得更多数据。第二种方法是精巧地去限制网络的能力，使其有足够的能力拟合必然规律，同时难以拟合偶然规律。这种方法比较困难，不过也有若干种做法。第三种方法在下一讲介绍，就是讲多种不同的模型平均起来。如果这些模型形式不同，犯的错误也不同，那么三个臭皮匠赛过诸葛亮，可以用训练数据的不同子集分别训练多个模型，这种方法称为装袋法（bagging）。第四种方法是贝叶斯方法，即只是用一个神经网络结构，但是使用不同组权重来分别预测，最后对预测结果求平均。这三节主要是看第二种方法</p>
+<p>单论限制模型能力，也有若干种做法。其一是从网络结构下手。如果能缩小隐藏层层数和每层的单元数，就能控制网络中连接的个数，即参数数量。其二是使用比较小的权重做初始化，因此它需要非常长的时间才会过拟合，然后提早停止训练使其没有过拟合的机会。这种做法基于的假设是网络先找到必然规律。第三种方法非常常见，即对隐藏层层数和每层单元数不做限制，而是使用惩罚项或者权重的平方/绝对值做约束，来惩罚过大的权重。最后，可以通过往权重中或者激活中加入噪声来控制模型能力。通常情况下，会把以上这些方法组合起来使用</p>
+<h3 id="验证集">验证集</h3>
+<p>上述这些方法通常都会用到一些超参数，例如隐藏层层数、隐藏节点数、权重惩罚项的大小等等。很多人可能会通过在测试集上实验来选取一组最好的超参数，但是这种做法是非常错误的，因为按照某个测试集精细调整过的模型不一定在新的测试集上好用。也就是说，你会被假象蒙蔽。这里举一个极端情况：假设测试数据完全是随机的，答案不依赖于输入，或者不能被输入预测（例如某些金融领域的问题）。如果选择了某个在测试集上表现很好的模型，这个模型比瞎猜的效果好得多，你以为发现了宇宙的真谛，可以走上人生巅峰了，但是实际上用另一个测试集测试，这个模型基本还是会跟瞎猜的效果半斤八两</p>
+<p>正确的做法是将整个数据集分成三个部分：<strong>训练数据</strong>用来训练模型，<strong>验证数据</strong>不用来训练，而是用来决定如何设置超参数。也就是说，使用验证数据来检查模型效果。做完这些以后，使用最好的超参数训练一边模型，然后在<strong>测试数据</strong>上看模型的最终效果。因此，测试数据只能用一次，目的是给出网络效果的无偏估计</p>
+<p>有一种方法能更好地估计模型效果，就是让数据轮流做验证集。具体做法是，还是保留一份测试集来做最终的无偏估计，不过将剩下的数据分成<span class="math inline">\(N\)</span>等份，每次用<span class="math inline">\(N-1\)</span>份数据训练，第<span class="math inline">\(N\)</span>份数据做验证，然后做一个轮转。例如，将数据集分成5份，第一次用第1 2 3 4四组数据训练，第5组数据验证，第二次用2 3 4 5四组数据训练，第1组数据验证，以此类推。这样可以得到<span class="math inline">\(N\)</span>个估计。这种方法叫做<span class="math inline">\(N\)</span>折交叉验证。注意这<span class="math inline">\(N\)</span>个估计彼此并不独立</p>
+<h3 id="提前停止法">提前停止法</h3>
+<p>如果要在一个小电脑上训练一个大模型，没有时间用不同超参数训练好几个模型，那么有一种方法可以有效防止过拟合。首先，用一些小的权重来初始化模型。随着模型的训练，这些权重会增长。此时，观察模型在验证集上的效果，当它的效果变差时，结束训练。注意如果使用的评估指标是错误率而不是平方误差，那么这个指标可能会在验证集上浮动，因此最保险的做法是确定模型效果变差时再回到没有变差的那个点</p>
+<p>这种方法能控制模型能力的原因是权重比较小的模型通常能力不足，而权重没有时间变得特别大。那么为什么权重小会导致网络能力不足呢？考虑一个有若干输入单元、若干隐藏单元和若干输出单元的模型。当权重很小时，如果隐藏单元是logistic单元，输入接近0，那么logistic的值会在线性区域的中间部分，即此时logistic单元的表现跟线性单元很像。也就是说，权重很小的时候，整个网络实际上像是一个线性网络，将输入直接映射为输出。随着网络的学习，权重变大，达到logistic单元的非线性区域，这些参数才真正被用上了。从另一个角度讲，这意味着可用的参数随着权重变大而变多，因此提前停止实际上限制了真正可用的参数数量，让网络在训练集上的表现和在验证集上的表现几乎相等——这种现象可以理解为，网络学习到了必然规律，还没开始学习偶然规律</p>
+<h2 id="限制权重大小">限制权重大小</h2>
+<h3 id="权重惩罚">权重惩罚</h3>
+<p>通过限制权重大小来控制模型的复杂程度，标准做法是引入惩罚项，惩罚大的权重。其隐含的假设是，小权重的网络比大权重的网络简单</p>
+<p>通常使用L2权重惩罚项来限制网络权重，也就是限制权重的平方。这种方法在某些神经网络的文献当中称为权重衰减，因为对惩罚项求导的结果像是把权重强推到零。引入L2惩罚项以后，代价函数变为 <span class="math display">\[
+C= E+ \frac{\lambda}{2}\sum_iw_i^2
+\]</span> 将其对<span class="math inline">\(w_i\)</span>求偏导，有 <span class="math display">\[
+\frac{\partial C}{\partial w_i} = \frac{\partial E}{\partial w_i} + \lambda w_i \\
+{\rm when\  }\frac{\partial C}{\partial w_i} = 0, w_i = -\frac{1}{\lambda}\frac{\partial E}{\partial w_i}
+\]</span> 因此，在达到代价函数的最小值时，只有当该权重有比较大的误差导数时，这个权重才会比较大。因此加入L2惩罚项以后不会有那种值很大又什么都不做的权重存在。这种做法的好处是，首先，极大提高了网络的泛化能力，因为如果出现了大值而无用的权重，网络可能会用它来拟合偶然规律（取样误差）。其次，这样会使模型变得平滑，使输出的变化速度慢于输入的变化速度。假设网络接受两个相似的输入，有L2正则项的那个会倾向让两个输入的权重各为<span class="math inline">\(w/2\)</span>，而没有正则项的会让一个输入的权重为<span class="math inline">\(w\)</span>另一个为0。如果现在将其中某个输入替换为一个完全不同的值，前者的变化会比后者小</p>
+<p>除去L2正则项，L1正则项也是一个常用的方法，它所惩罚的是权重的绝对值。使用L1正则项会使大部分权重变为0（L2正则项会让大部分权重变得很小，但不会完全为0）。或者，可以使用一种更极端的惩罚函数，使得代价函数的梯度在权重很大时反而很小，这样它会把小的权重都淘汰掉，只剩下很少几个大的权重</p>
+<h3 id="权重限制">权重限制</h3>
+<p>要在权重上做文章来避免过拟合，除了对权重加以惩罚以外，还可以对权重施加一些限制条件。也就是说，对隐藏层单元和输出层单元的输入权重，对其范数设置一个封顶的值。如果权重的范数超过了这个限定值，就把每个分量除以限定值，做放缩。这种方法与权重惩罚相比有如下几点好处</p>
+<ul>
+<li>首先，可以人为设置一个比较合理的上限</li>
+<li>其次，可以避免隐藏单元在零点附近震荡，此时它的权重都非常微小，起不到什么效果</li>
+<li>最后，可以防止权重爆炸</li>
+</ul>
+<p>需要注意的是，当某个单元达到了限定值，它所有权重的有效惩罚取决于大的梯度。所以如果某些输入权重有很大的梯度，就会试图增大自己的范数，把其它权重的范数变小。也就是说，如果把权重限制也看做是一种惩罚项，它做的事情是让大权重的值变得合理，而让小权重更小。这种做法比设定一个固定的惩罚值来将不相关权重推到0要有效。实际上，这种做法就像是让某些限制条件满足的拉格朗日乘子</p>
+<h2 id="使用噪声做正则项">使用噪声做正则项</h2>
+<p>假设现在有一个简单的线性神经网络，代价函数是平方误差，网络结构是输入单元直接连接到输出单元。现在，往输入添加高斯噪声，即输入变为<span class="math inline">\(x_i + N(0, \sigma_i^2)\)</span>。经由权重<span class="math inline">\(w_i\)</span>的处理，最后的输出也会带有高斯噪声，即输出变为<span class="math inline">\(y_j + N(0, w_i^2\sigma_i^2)\)</span>。也就是说，额外增加的这个方差实际上使得平方误差项又增加了一个随机项，该随机项满足均值为0，方差为<span class="math inline">\(\sigma_i^2\)</span>的高斯分布。因此最小化新的平方误差时，也会最小化<span class="math inline">\(N(0, w_i^2\sigma_i^2)\)</span>这一项，这一项的作用可以看作是给<span class="math inline">\(w_i\)</span>增加了一个系数为<span class="math inline">\(\sigma_i^2\)</span>的L2惩罚项。具体推导如下 <span class="math display">\[
+\begin{align*}
+y^{\rm noisy} &amp;= \sum_iw_i(x_i + \epsilon_i) = \sum_iw_ix_i + \sum_i w_i\epsilon_i \  \  (\epsilon_i \sim N(0, \sigma_i^2)) \\
+\mathbb{E}\left[(y^{\rm noisy} - t)^2\right] &amp;= \mathbb{E}\left[\left(y+ \sum_{i}w_i\epsilon_i - t\right)^2\right] = \mathbb{E}\left[\left((y - t)+ \sum_{i}w_i\epsilon_i\right)^2\right] \\
+&amp;= (y-t)^2 + \mathbb{E}\left[2(y-t)\sum_iw_i\epsilon_i\right] + \mathbb{E}\left[\left(\sum_iw_i\epsilon_i\right)^2\right] \\
+&amp;= (y-t)^2 + 2(y-t)\sum_iw_i\mathbb{E}[\epsilon_i] + \mathbb{E}\left[\sum_iw_i^2\epsilon_i^2\right] + \mathbb{E}\left[\sum_{i\not= j}w_iw_j\epsilon_i\epsilon_j\right]
+\end{align*}
+\]</span> 由于<span class="math inline">\(\epsilon_i \sim N(0, \sigma_i^2)\)</span>，且对<span class="math inline">\(i\not= j\)</span>，<span class="math inline">\(\epsilon_i\)</span>和<span class="math inline">\(\epsilon_j\)</span>相互独立，因此<span class="math inline">\(\mathbb{E}[\epsilon_i] = 0,\  \mathbb{E}[\epsilon_i\epsilon_j] = \mathbb{E}[\epsilon_i]\mathbb{E}[\epsilon_j] = 0\)</span>。又<span class="math inline">\({\rm Var}[\epsilon_i] = \sigma_i^2 = \mathbb{E}[\epsilon_i^2] - (\mathbb{E}[\epsilon_i])^2 = \mathbb{E}[\epsilon_i^2]\)</span>，因此上式最后可以化简为 <span class="math display">\[
+\mathbb{E}\left[(y^{\rm noisy} - t)^2\right] = (y-t)^2 + \sum_iw_i^2\sigma_i^2
+\]</span> 对于更复杂的网络，可以往权重中加入高斯噪声来限制网络的能力。这种做法不再等价于使用L2惩罚项，但是效果却更好，尤其是对于RNN更是这样</p>
+<p>也可以在激活中使用噪声，将其作为一种正则化手段。假设使用反向传播来训练一个多层神经网络，网络的隐藏单元使用logistic函数做激活函数。在做正向传播时，动一些手脚：让隐藏单元随机输出0或者1（输出1的概率就是sigmoid函数的输出），但是反向传播的时候使用的是通过正常正向传播得出的，确定的实数。这种方法会让网络在训练集上的表现变差，而且训练过程变慢。但是如果用在测试集上，效果会有显著提高</p>
+<h2 id="贝叶斯方法简介">贝叶斯方法简介</h2>
+<p>本节是对贝叶斯方法的一个简介。贝叶斯方法的原理是，不再考虑模型参数最可能的设置，而是先考虑参数的所有可能设置，然后对观察到的数据，判断每种设置的概率。贝叶斯理论的思考框架假设对任何事件都有一个先验概率分布，数据提供一个似然项，将先验分布和似然结合就可以得 到一个后验分布。其中，似然项更倾向使数据更有可能成为观测到的样子的参数设置，可以不符合先验分布。如果能得到足够的数据，不管先验分布与似然有多大的偏离，似然都会“克服”先验分布。如果数据足够，真相必然会水落石出，也就是说，即便先验是错的，最后也能得到正确的假设</p>
+<p>来看一个关于掷硬币的例子。假设有一枚硬币，我们对其内部构造一无所知，只知道投掷它会以概率<span class="math inline">\(p\)</span>得到正面，概率<span class="math inline">\(1-p\)</span>得到反面。现在投掷了100次，得到53个正面，那么参数<span class="math inline">\(p\)</span>应该是多少？频率学派通过最大似然法会说<span class="math inline">\(p=0.53\)</span>。注意这个数计算的过程并不是特别显然。将“扔100次硬币得到53个正面”这个事件记为<span class="math inline">\(D\)</span>，则这个事件发生的概率<span class="math inline">\(P(D) = p^{53}(1-p)^{47}\)</span>。令<span class="math inline">\(dP(D)/dp = 0\)</span>，可以得出<span class="math inline">\(p=0.53\)</span></p>
+<p>不过，用最大似然法决定模型参数存在一些问题。假设我们只投了一次硬币，得到一个正面，那我们并不能说这个硬币掷出正面的概率是1。事实上，更可靠地猜测应该是0.5，但是如何证明呢？或者更重要的是，是否存在一个唯一且合理的答案？</p>
+<p>我们知之不多，没有太多数据，因此难以确保<span class="math inline">\(p\)</span>究竟应该是多少。所以我们应该拒绝给出一个单个的答案，而是给出所有可能答案的整个概率分布。如果先验的“信念”是硬币有一半机会掷出正面，那么<span class="math inline">\(p=0.5\)</span>是很有可能的，<span class="math inline">\(p=1\)</span>是很不可能的。这里，先把先验设为所有不同的<span class="math inline">\(p\)</span>出现的机会都相等，然后，观察到硬币掷出了一个正面，所以对每个可能的先验<span class="math inline">\(p\)</span>，乘以以这个参数为基础，掷出正面的概率。例如，对<span class="math inline">\(p=1\)</span>，那么它预测只会掷出正面，因此对这个参数乘以1。对<span class="math inline">\(p=0\)</span>的先验乘以0，对<span class="math inline">\(p=0.5\)</span>的先验乘以0.5，以此类推。这样可以得到一个未归一化的后验分布。最后，对整个线下面积归一化，可以得到投掷第一次硬币以后参数的概率密度。接下来，再做一次实验，假设投出了反面，重复做上述过程，可以得到一个新的概率密度。经过剩余的98次投递，得到的是一个峰值在0.53左右的一个图像</p>
+<p>所有以上这些过程都可以用贝叶斯定理来描述。令参数<span class="math inline">\(W\)</span>和数据集<span class="math inline">\(D\)</span>的联合概率为<span class="math inline">\(P(D, W)\)</span>（对有监督学习问题，数据集包含了目标值）。这个值可以用两种方式计算 <span class="math display">\[
+P(D)P(W|D) = P(D, W) = P(W)P(D|W)
+\]</span> 将等式两边同时除以<span class="math inline">\(P(D)\)</span>，有 <span class="math display">\[
+P(W|D) = \frac{P(W)P(D|W)}{P(D)}
+\]</span> 贝叶斯定理告诉我们，<span class="math inline">\(W\)</span>给定数据<span class="math inline">\(D\)</span>的后验分布，等于<span class="math inline">\(W\)</span>的先验分布与给定<span class="math inline">\(W\)</span>的值观察到已知数据<span class="math inline">\(D\)</span>的概率的乘积，再使用<span class="math inline">\(P(D)\)</span>归一化。而数据<span class="math inline">\(D\)</span>的概率可以表示为 <span class="math display">\[
+P(D) = \int_WP(W)P(D|W)
+\]</span> 由于<span class="math inline">\(P(D)\)</span>是对所有可能的<span class="math inline">\(W\)</span>求积分，因此<span class="math inline">\(P(D)\)</span>不依赖于具体的<span class="math inline">\(W\)</span>的值。不过<span class="math inline">\(P(W)\)</span>和<span class="math inline">\(P(D|W)\)</span>依赖具体的<span class="math inline">\(W\)</span></p>
+<h2 id="权重衰减的贝叶斯角度解释">权重衰减的贝叶斯角度解释</h2>
+<p>如果要使用完整的贝叶斯方法，就要计算模型每种可能参数组合的后验概率。不过有一种简化方法，就是找到一组参数设置，它既能满足对参数的先验信念，也能符合所观测到的数据。这种方法称为最大后验（Maximum A Posteriori, MAP）学习，它可以很好地解释使用权重衰减法时真正发生了什么</p>
+<p>使用有监督的最大似然学习方法来最小化平方误差的时候，找到的权重向量需要使残差（目标值与网络预测值之差）的平方最小化。这个任务目标等价于要找到一个权重向量，使之最大化正确答案的概率密度的对数值。为了说明这样的等价性，假设正确答案是通过往神经网络的输出中添加高斯噪声来产生，那么在这种情况下得到正确答案的概率是多少？这个问题可以这么描述。假设网络的输出<span class="math inline">\(y_c = f({\rm input}_ c, W)\)</span>，由于真实的目标值是输出添加噪声的结果，因此条件概率密度可以写为 <span class="math display">\[
+P(t_c|y_c) = \frac{1}{\sqrt{2\pi}\sigma}\exp\left\{-\frac{(t_c-y_c)^2}{2\sigma^2}\right\}
+\]</span> 对等式左右两边取对数，有 <span class="math display">\[
+-\log P(t_c|y_c) = k + \frac{(t_c-y_c)^2}{2\sigma^2}, k =\frac{1}{\sqrt{2\pi}\sigma}
+\]</span> 因此，如果代价函数是得到正确答案的概率的负对数，那么代价函数的形式相当于是在最小化两者距离的平方</p>
+<p>接下来来看一下解决这个问题的贝叶斯方法。前面说过，要使用贝叶斯方法，就要找到所有可能权重对应的全部后验分布——对于神经网络来讲，这么做有点难。虽然可以使用蒙特卡罗法来近似这个分布，但是有一种更简单的做法，就是找到可能性最大的权重向量。尽管可以先随机初始化一个<span class="math inline">\(W\)</span>，然后通过让<span class="math inline">\(P(W|D)\)</span>变大来调整<span class="math inline">\(W\)</span>，但是这种做法容易陷入局部最小值。更好的方法是在对数范畴内解决这个问题，即若要最小化代价函数，就计算概率的负对数值。OK，现在的目标是最大化不同训练样例产生目标值的概率的乘积，假设各个样例<span class="math inline">\(c\)</span>的输出误差是独立的，则有 <span class="math display">\[
+P(D|W) = \prod_c P(t_c|W) = \prod_c P(t_c|f({\rm input}_c, W))
+\]</span> 由于对数函数是单调的，不改变原函数的单调性，因此可以两边取对数（计算概率的乘积容易发生下溢） <span class="math display">\[
+\log P(D|W) = \sum_c \log P(t_c|W)
+\]</span> 同样的方法可以用到贝叶斯定理里。定义代价函数为<span class="math inline">\(-\log P(W|D)\)</span>，则有 <span class="math display">\[
+{\rm Cost} = -\log P(W|D) = -\log P(W) - \log P(D|W) + \log P(D)
+\]</span> 由于<span class="math inline">\(\log P(D)\)</span>与<span class="math inline">\(W\)</span>无关，因此优化<span class="math inline">\(W\)</span>时可以不考虑这项。此外，<span class="math inline">\(-\log P(W)\)</span>，也就是权重的负对数先验，只取决于<span class="math inline">\(W\)</span>。由前面的说明，最大化权重的对数概率相当于最小化某个距离的平方，因此如果假设权重的先验满足一个期望为0的高斯分布，那么最小化权重的平方等价于最大化权重的对数概率。这个概率密度可以写为 <span class="math display">\[
+\begin{align*}
+&amp;P(W) = \frac{1}{\sqrt{2\pi}\sigma}\exp\left\{-\frac{w^2}{2\sigma_w^2}\right\} \\
+\Rightarrow &amp; -\log P(W) = \frac{w^2}{2\sigma^2_W} + k
+\end{align*}
+\]</span> 这样，就可以得到一种对权重衰减（或称权重惩罚）的解释。假设真实目标值增加了期望为0，方差为<span class="math inline">\(\sigma_D^2\)</span>的高斯噪声，权重的先验满足一个期望为0，方差为<span class="math inline">\(\sigma_W^2\)</span>的高斯分布，那么记代价函数为<span class="math inline">\(C^\ast\)</span>，有 <span class="math display">\[
+C^\ast = \frac{1}{2\sigma_D^2}\sum_c (y_c - t_c)^2 + \frac{1}{2\sigma_W^2}\sum_i w_i^2
+\]</span> 等式两边同时乘以<span class="math inline">\(2\sigma_D^2\)</span>，有 <span class="math display">\[
+C = E + \frac{\sigma_D^2}{\sigma_W^2}\sum_iw_i^2
+\]</span></p>
+<p>这里<span class="math inline">\(E\)</span>就是通常优化神经网络时用到的平方误差，第二项的<span class="math inline">\(\sigma_D^2/\sigma_W^2\)</span>就是权重的惩罚项。这意味着，如果前面提到的先验概率分布都成立，那么惩罚项就不再是一个超参数，不是一个随意的值</p>
+<h2 id="mackay的权重惩罚项设定法">MacKay的权重惩罚项设定法</h2>
+<p>MacKay在20世纪90年代曾经提出过一种不需要验证集的权重惩罚项设定法。在学到可以最小化平方误差的模型以后，可以通过残差误差的方差来找到输出方差的最佳值。对于权重的先验，由于其满足高斯分布，可以先猜测方差是多少，然后使用一种称作经验贝叶斯的方法来调整，即就使用学到的权重的方差。具体内容可以参考下述论文</p>
+<p>MacKay, D. J. (1995). Probable networks and plausible predictions—a review of practical Bayesian methods for supervised neural networks. <em>Network: Computation in Neural Systems</em>, <em>6</em>(3), 469-505.</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2018/01/20/UTNN-9-Ways-to-Make-Neural-Networks-Generalize-Better/" title="Hinton神经网络与机器学习 9. 提高神经网络的泛化能力">txshi-mt.com/2018/01/20/UTNN-9-Ways-to-Make-Neural-Networks-Generalize-Better/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/正则化/" rel="tag"># 正则化</a>
+          
+            <a href="/tags/UTNN/" rel="tag"># UTNN</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/16/UTNN-8-Recurrent-Neural-Networks-2/" rel="next" title="Hinton神经网络与机器学习 8. 循环神经网络 II">
+                <i class="fa fa-chevron-left"></i> Hinton神经网络与机器学习 8. 循环神经网络 II
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">70</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">65</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#提高网络泛化能力的若干方法"><span class="nav-number">1.</span> <span class="nav-text">&#x63D0;&#x9AD8;&#x7F51;&#x7EDC;&#x6CDB;&#x5316;&#x80FD;&#x529B;&#x7684;&#x82E5;&#x5E72;&#x65B9;&#x6CD5;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#概论"><span class="nav-number">1.1.</span> <span class="nav-text">&#x6982;&#x8BBA;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#验证集"><span class="nav-number">1.2.</span> <span class="nav-text">&#x9A8C;&#x8BC1;&#x96C6;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#提前停止法"><span class="nav-number">1.3.</span> <span class="nav-text">&#x63D0;&#x524D;&#x505C;&#x6B62;&#x6CD5;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#限制权重大小"><span class="nav-number">2.</span> <span class="nav-text">&#x9650;&#x5236;&#x6743;&#x91CD;&#x5927;&#x5C0F;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#权重惩罚"><span class="nav-number">2.1.</span> <span class="nav-text">&#x6743;&#x91CD;&#x60E9;&#x7F5A;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#权重限制"><span class="nav-number">2.2.</span> <span class="nav-text">&#x6743;&#x91CD;&#x9650;&#x5236;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用噪声做正则项"><span class="nav-number">3.</span> <span class="nav-text">&#x4F7F;&#x7528;&#x566A;&#x58F0;&#x505A;&#x6B63;&#x5219;&#x9879;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#贝叶斯方法简介"><span class="nav-number">4.</span> <span class="nav-text">&#x8D1D;&#x53F6;&#x65AF;&#x65B9;&#x6CD5;&#x7B80;&#x4ECB;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#权重衰减的贝叶斯角度解释"><span class="nav-number">5.</span> <span class="nav-text">&#x6743;&#x91CD;&#x8870;&#x51CF;&#x7684;&#x8D1D;&#x53F6;&#x65AF;&#x89D2;&#x5EA6;&#x89E3;&#x91CA;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mackay的权重惩罚项设定法"><span class="nav-number">6.</span> <span class="nav-text">MacKay&#x7684;&#x6743;&#x91CD;&#x60E9;&#x7F5A;&#x9879;&#x8BBE;&#x5B9A;&#x6CD5;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
