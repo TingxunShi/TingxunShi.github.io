@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="TensorFlow,CS20SI," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="本系列笔记来自于2017年斯坦福大学Chip Huyen老师所开设的课程CS20SI: TensorFlow for Deep Learning Research。内容基本上来自于课程官网提供的幻灯片和课堂讲义（lecture notes）。一些其它补充内容可能来自于TF官网、知乎相关问答或专栏以及其它网友博客，其中涉及到知乎和其它网友博客的内容我会注明转载来源（尽管可能并不是逐字逐句的） 所有代">
+<meta name="keywords" content="TensorFlow,CS20SI">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CS20SI 01. TensorFlow基本概念：张量、图和会话">
+<meta property="og:url" content="txshi-mt.com/2017/11/25/CS20-1-Introduction/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="本系列笔记来自于2017年斯坦福大学Chip Huyen老师所开设的课程CS20SI: TensorFlow for Deep Learning Research。内容基本上来自于课程官网提供的幻灯片和课堂讲义（lecture notes）。一些其它补充内容可能来自于TF官网、知乎相关问答或专栏以及其它网友博客，其中涉及到知乎和其它网友博客的内容我会注明转载来源（尽管可能并不是逐字逐句的） 所有代">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/CS20SI/CS20SI_01_simple_graph.png">
+<meta property="og:updated_time" content="2017-12-19T12:35:39.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CS20SI 01. TensorFlow基本概念：张量、图和会话">
+<meta name="twitter:description" content="本系列笔记来自于2017年斯坦福大学Chip Huyen老师所开设的课程CS20SI: TensorFlow for Deep Learning Research。内容基本上来自于课程官网提供的幻灯片和课堂讲义（lecture notes）。一些其它补充内容可能来自于TF官网、知乎相关问答或专栏以及其它网友博客，其中涉及到知乎和其它网友博客的内容我会注明转载来源（尽管可能并不是逐字逐句的） 所有代">
+<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/CS20SI/CS20SI_01_simple_graph.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2017/11/25/CS20-1-Introduction/"/>
+
+
+
+
+
+  <title>CS20SI 01. TensorFlow基本概念：张量、图和会话 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/11/25/CS20-1-Introduction/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">CS20SI 01. TensorFlow基本概念：张量、图和会话</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-25T22:27:07+08:00">
+                Nov 25 2017
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/深度学习实践/" itemprop="url" rel="index">
+                    <span itemprop="name">深度学习实践</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本系列笔记来自于2017年斯坦福大学Chip Huyen老师所开设的课程CS20SI: TensorFlow for Deep Learning Research。内容基本上来自于<a href="https://web.stanford.edu/class/cs20si/syllabus.html" target="_blank" rel="noopener">课程官网</a>提供的幻灯片和课堂讲义（lecture notes）。一些其它补充内容可能来自于<a href="https://www.tensorflow.org/" target="_blank" rel="noopener">TF官网</a>、知乎相关问答或专栏以及其它网友博客，其中涉及到知乎和其它网友博客的内容我会注明转载来源（尽管可能并不是逐字逐句的）</p>
+<p>所有代码片段都隐含了如下两行Python的import语句。笔记制作时使用Python 3.6和TF 1.4</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br></pre></td></tr></table></figure>
+<p>以上声明适用于本站中所有以“CS20SI”为标题开头的文章</p>
+<hr>
+<p>本课第一讲是绪论性质：前面大概讲解了一些TensorFlow（在不引起歧义的情况下，在本文及后续文章中简称为TF）的背景和发展现状，之后，本课主要讲授了TF中的三个基本概念：张量（tensor）、图（graph）和会话（session）</p>
+<h2 id="张量">张量</h2>
+<p>按照官网的定义，TensorFlow是一种框架，使用它可以定义和运行由张量组成的计算。其中<strong>张量</strong>是对向量和矩阵的更一般化表示，因为通常情况下，向量是一维的，矩阵是二维的，而计算可能会在更高维空间中进行。TF在内部把张量表示成一个n维数组</p>
+<p>这里有一点可能比较容易混淆，就是张量的维数和矩阵的维数实际上是不同的两个概念。所有矩阵，不管其有多少列，有多少行，秩为多少，都是二维张量。不严格地说，如果将一个张量使用<code>print</code>函数打印出来，最左边有多少个连续的左中括号，这个张量就有多少维。例如<code>[[[1, 2], [3, 4]], [[2, 1], [3, 4]]]</code>就是一个三维张量（为了证明这一点，笔者试着使用<code>a = tf.constant([1, [2, 3], [[3, 4], [5, 6]], 7], dtype=np.float32)</code>来声明一个不规则的张量，结果会抛出异常：ValueError: setting an array element with a sequence.）。就像所有二维张量都被称为矩阵一样，一维张量和零维张量也有为人熟知的另一个名字：前者为向量，后者为标量</p>
+<h2 id="图与会话">图与会话</h2>
+<h3 id="基本操作">基本操作</h3>
+<p>前面说到，TF会<em>定义</em>和<em>运行</em>计算，这里其实隐含了TF的一个很核心的设计思想：计算的定义和运行实际上是分开进行的，其“定义”通过<strong>图</strong>来进行，其“运行”通过<strong>会话</strong>来进行。图并不做任何计算，也不保存任何值，只定义代码中指明的操作和操作之间的依赖关系。而会话用来执行图所定义的计算（或者执行图中一部分定义的计算），分配资源，保存变量的实际值</p>
+<p>TF的所有图都是<code>tf.Graph</code>类的实例。图中的每个顶点都是一个操作（<code>tf.Operation</code>），每条边都是一个张量（<code>tf.Tensor</code>）。尽管如前面所述，TF中所有计算都需要事先定义一个图，但是TF程序自己会维护一个默认的图（default graph），因此在很多情况下不需要开发人员自己手动定义图</p>
+<p>下面这段程序虽然简单，但是其也有图与之对应</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">a = tf.add(<span class="number">3</span>, <span class="number">5</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Here the output is not what you desired</span></span><br><span class="line">print(a)</span><br></pre></td></tr></table></figure>
+<p>其对应的图为</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/CS20SI/CS20SI_01_simple_graph.png" alt="一个简单的计算图"><figcaption>一个简单的计算图</figcaption>
+</figure>
+<p>需要注意的是，对于上面这段程序，其输出并不是8，而是</p>
+<blockquote>
+<p>Tensor(“Add:0”, shape=(), dtype=int32)</p>
+</blockquote>
+<p>这是因为，此时计算图刚刚被定义，而计算是通过会话<code>Session</code>来执行。只有在会话里，才能拿到<code>a</code>的值。更严格地说，<code>Session</code>对象封装了一个环境，在这个环境里执行<code>Operation</code>对象，并计算<code>Tensor</code>对象的值。既然是封装了一个环境，那么它就可能会拥有自己的资源，所以最佳实践是像操作文件那样，也使用上下文管理器（context manager），即一个<code>with</code>语句块来保证在退出语句块时会话所拥有的资源被自动释放（当然也可以不用<code>with</code>，但是代价是需要使用<code>tf.Session.close</code>来显式手动释放资源）</p>
+<p>接下来的问题是如何将一个<code>Graph</code>对象和一个<code>Session</code>对象绑定。<code>Session</code>对象初始化时，可以接收一个<code>Graph</code>对象作为参数。但是如果不传递这个参数，则该对象与当前系统默认的图绑定，也只能运行系统默认图中的操作。对于上面定义的计算图，由于使用的是系统默认图，因此可以直接使用如下的方式来运行会话</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">a = tf.add(<span class="number">3</span>, <span class="number">5</span>)</span><br><span class="line"><span class="keyword">with</span> tf.Session() <span class="keyword">as</span> sess:</span><br><span class="line">    print(sess.run(a))</span><br></pre></td></tr></table></figure>
+<p>这样，就能输出结果8了</p>
+<h3 id="指定设备">指定设备</h3>
+<p>默认情况下，开发人员创建的操作会以“最佳匹配”的方式分配到某个物理设备上。比如，假如机器中既有CPU也有GPU，而某个操作有GPU实现，那么TF会让GPU去执行这个操作。当然，也可以手动指定设备，例如</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">weights = tf.random_normal(...)</span><br><span class="line">img = tf.decode_jpeg(tf.read_file(<span class="string">'img.jpg'</span>))</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> tf.device(<span class="string">'/device:GPU:0'</span>):</span><br><span class="line">    result = tf.matmul(weights, img)</span><br></pre></td></tr></table></figure>
+<p><code>with</code>语句块中的语句就会在第一块GPU上执行。有时，开发人员对任务的手工分配可能并不合理，例如强制指定某个只有CPU实现的操作在GPU上执行，这时可以在初始化<code>tf.Session</code>时指定参数<code>allow_soft_placement</code>为<code>True</code>来矫正这种分配方式。此外，还可以指定参数<code>gpu_options.allow_growth</code>为<code>True</code>来让占用的显存随需增长，避免一上来就把所有可用显存都用完</p>
+<h3 id="定义多个计算图">定义多个计算图</h3>
+<p>在某些情况下，当需要创建多个计算图时，可以使用如下语法</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">g = tf.Graph()</span><br></pre></td></tr></table></figure>
+<p>要向自定义的图中加入操作符，需要先把它设置成默认图</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">g = tf.Graph()</span><br><span class="line"><span class="keyword">with</span> g.as_default():</span><br><span class="line">    x = tf.add(<span class="number">3</span>, <span class="number">5</span>)</span><br><span class="line">    </span><br><span class="line"><span class="keyword">with</span> tf.Session(graph=g) <span class="keyword">as</span> sess:</span><br><span class="line">    print(sess.run(x))</span><br></pre></td></tr></table></figure>
+<p>可以通过如下操作获取当前的默认图</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">g = tf.get_default_graph()</span><br></pre></td></tr></table></figure>
+<p>需要注意的是，多个计算图一般需要多个会话，而每个会话默认情况下都会试图用尽所有可用资源。另外，如果不使用numpy或者python本身的变量，则不能在两个图之间传递数据。而这种做法在分布式环境下不可用。例如，下面的代码片段会报错：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">g = tf.Graph()</span><br><span class="line">a = tf.constant(<span class="number">3</span>)</span><br><span class="line"><span class="keyword">with</span> g.as_default():</span><br><span class="line">    b = tf.constant(<span class="number">5</span>)</span><br><span class="line">    x = tf.add(a, b)</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> tf.Session(graph=g) <span class="keyword">as</span> sess:</span><br><span class="line">    print(sess.run(x))</span><br></pre></td></tr></table></figure>
+<p>其原因是，变量<code>a</code>是在最开始的默认图中定义，而<code>b</code>是在用户的自定义图中定义，两者分属不同的计算图</p>
+<p><strong>课件中始终建议尽量只维护不多于一个计算图。如果需要定义多个图，也尽量先考虑定义成一个图里的两个不相交子图</strong>。这里“不多于一个”我个人理解为是默认图+至多一个自定义图。但是在<a href="https://github.com/tensorflow/nmt#building-training-eval-and-inference-graphs" target="_blank" rel="noopener">Google给出的NMT例子中</a>，却鼓励定义多个图。究竟哪个才是最佳实践可能还是要依赖于场合</p>
+<p>参考资料：</p>
+<p>TF文档</p>
+<p>https://danijar.com/what-is-a-tensorflow-session/</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2017/11/25/CS20-1-Introduction/" title="CS20SI 01. TensorFlow基本概念：张量、图和会话">txshi-mt.com/2017/11/25/CS20-1-Introduction/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/TensorFlow/" rel="tag"># TensorFlow</a>
+          
+            <a href="/tags/CS20SI/" rel="tag"># CS20SI</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/11/21/UTNN-3-the-Backpropagation-Learning-Procedure/" rel="next" title="Hinton神经网络与机器学习 3. 反向传播">
+                <i class="fa fa-chevron-left"></i> Hinton神经网络与机器学习 3. 反向传播
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/11/26/CS20-2-Operations/" rel="prev" title="CS20SI 02. 操作">
+                CS20SI 02. 操作 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">72</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#张量"><span class="nav-number">1.</span> <span class="nav-text">&#x5F20;&#x91CF;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#图与会话"><span class="nav-number">2.</span> <span class="nav-text">&#x56FE;&#x4E0E;&#x4F1A;&#x8BDD;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基本操作"><span class="nav-number">2.1.</span> <span class="nav-text">&#x57FA;&#x672C;&#x64CD;&#x4F5C;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#指定设备"><span class="nav-number">2.2.</span> <span class="nav-text">&#x6307;&#x5B9A;&#x8BBE;&#x5907;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#定义多个计算图"><span class="nav-number">2.3.</span> <span class="nav-text">&#x5B9A;&#x4E49;&#x591A;&#x4E2A;&#x8BA1;&#x7B97;&#x56FE;</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

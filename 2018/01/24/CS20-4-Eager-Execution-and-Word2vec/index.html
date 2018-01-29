@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="TensorFlow,CS20SI,词向量," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Eager Execution TensorFlow本身被设计为声明式的编程框架。开发人员先定义好的是一个计算图，然后这个图在某个会话里被解释执行。这样的设计方式使得TF代码易于优化、部署和重写，但是也引入了一些问题  难以调试。TF都是在图构成好以后很久才报错，而且不能使用pdb或其它打印语句来调试 不pythonic。TF的控制流甚至都没用Python自己的关键字（例如用tf.while_lo">
+<meta name="keywords" content="TensorFlow,CS20SI,词向量">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CS20 04. Eager Execution与word2vec">
+<meta property="og:url" content="txshi-mt.com/2018/01/24/CS20-4-Eager-Execution-and-Word2vec/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="Eager Execution TensorFlow本身被设计为声明式的编程框架。开发人员先定义好的是一个计算图，然后这个图在某个会话里被解释执行。这样的设计方式使得TF代码易于优化、部署和重写，但是也引入了一些问题  难以调试。TF都是在图构成好以后很久才报错，而且不能使用pdb或其它打印语句来调试 不pythonic。TF的控制流甚至都没用Python自己的关键字（例如用tf.while_lo">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-01-25T09:28:04.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CS20 04. Eager Execution与word2vec">
+<meta name="twitter:description" content="Eager Execution TensorFlow本身被设计为声明式的编程框架。开发人员先定义好的是一个计算图，然后这个图在某个会话里被解释执行。这样的设计方式使得TF代码易于优化、部署和重写，但是也引入了一些问题  难以调试。TF都是在图构成好以后很久才报错，而且不能使用pdb或其它打印语句来调试 不pythonic。TF的控制流甚至都没用Python自己的关键字（例如用tf.while_lo">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2018/01/24/CS20-4-Eager-Execution-and-Word2vec/"/>
+
+
+
+
+
+  <title>CS20 04. Eager Execution与word2vec | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2018/01/24/CS20-4-Eager-Execution-and-Word2vec/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">CS20 04. Eager Execution与word2vec</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-24T15:30:18+08:00">
+                Jan 24 2018
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/深度学习实践/" itemprop="url" rel="index">
+                    <span itemprop="name">深度学习实践</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/深度学习实践/NLP/" itemprop="url" rel="index">
+                    <span itemprop="name">NLP</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="eager-execution">Eager Execution</h2>
+<p>TensorFlow本身被设计为<strong>声明式</strong>的编程框架。开发人员先定义好的是一个计算图，然后这个图在某个会话里被解释执行。这样的设计方式使得TF代码易于优化、部署和重写，但是也引入了一些问题</p>
+<ul>
+<li>难以调试。TF都是在图构成好以后很久才报错，而且不能使用pdb或其它打印语句来调试</li>
+<li>不pythonic。TF的控制流甚至都没用Python自己的关键字（例如用<code>tf.while_loop</code>而不是Python的<code>while</code>），而且很难将自定义的数据结构用来构建图</li>
+</ul>
+<p>针对这样的问题，TF从1.5版本开始引入了一种称为“Eager Execution”的库，这个库使开发人员可以像numpy那样编写TF程序，同时支持GPU加速、自动微分、pdb断点调试。Eager execution允许用户使用python的数据结构和控制流，可以提供即时的错误报告。例如</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="comment"># version &gt;= 1.50</span></span><br><span class="line"><span class="keyword">import</span> tensorflow.contrib.eager <span class="keyword">as</span> tfe</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">tfe.enable_eager_execution</span><br><span class="line"></span><br><span class="line">i = tf.constant(<span class="number">0</span>)</span><br><span class="line"><span class="keyword">while</span> i &lt; <span class="number">1000</span>:</span><br><span class="line">    i = tf.add(i, <span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<p>有了eager execution以后，就不用再绞尽脑汁如何使用占位符、会话、延迟加载等问题</p>
+<p>大部分TF API在eager execution下都可用，但是如果启用了这种模式，建议使用<code>tfe.Variable</code>来声明和定义变量，使用<code>tfe.Iterator</code>来迭代数据集，使用面向对象的层定义（例如<code>tf.layers.Dense</code>）</p>
+<p>更多内容可参考<a href="https://github.com/tensorflow/tensorflow/blob/master/tensorflow/contrib/eager/python/g3doc/guide.md" target="_blank" rel="noopener">官方Readme</a></p>
+<h2 id="使用tensorflow实现词嵌入">使用TensorFlow实现词嵌入</h2>
+<h3 id="理论简介">理论简介</h3>
+<p>在<a href="http://txshi-mt.com/2017/12/22/UTNN-4-Learning-Feature-Vectors-for-Words/">Hinton的课程里</a>曾经提到过，可以使用神经网络学习到词语的分布式表示（向量表示），学到的称为词向量（word vector）或词嵌入（word embedding）。词向量现在是语言模型、机器翻译、情感分析等任务的核心。Tomas Mikolov在2013年发表了两篇论文，提出了一组称为word2vec的模型来产生词向量。算法的具体细节将在之后的笔记中介绍，其核心算法有两种模型实现，分别称为skip-gram和CBOW（Continuous Bag-of-Words，连续词袋模型）。算法上两者思想类似，CBOW是通过上下文来预测中间单词，skip-gram是根据单词预测上下文。CBOW适用于小数据集，而skip-gram适用于大数据集。本课将试图使用TF来实现skip-gram模型，即训练一个有一个隐藏层的神经网络，提取隐藏层的权重，将其作为要学习的“词向量”或“嵌入矩阵”</p>
+<p>word2vec的模型会使用softmax函数来得到中间单词（或周围单词）的概率分布。但是当单词数很多的时候，softmax会造成性能上的瓶颈。解决这个问题有两种主流的方法：分层softmax和基于采样的softmax。Mikolov等人在论文<em>Distributed Representations of Words and Phrases and their Compositionality</em>中给出了一种称为负采样的算法，使用该算法可以更快地训练，还可以得出常见单词的更好的向量表示。这种算法可以看作是噪声对比估计（Noise Contrastive Estimation, NCE）的一种简化形式，但是负采样法并不能在理论上保证其导数能趋向于softmax函数的梯度，但是NCE能够保证这一点。因此在本讲使用NCE。需要注意的是，基于采样的方法仅在训练时有用，在预测时仍然需要使用全softmax函数来得到归一化的概率分布</p>
+<h3 id="实现">实现</h3>
+<h4 id="组装计算图">组装计算图</h4>
+<p>由于eager execution是TF的新特性，还不成熟，因此这里还是用传统的计算图方式来做。首先要做的是创建数据集和生成采样数据，这里使用的是单词的ID而不是单词本身，因此对BATCH_SIZE条数据，输入的形状是<code>[BATCH_SIZE]</code>，而输出的形状是<code>[BATCH_SIZE, 1]</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">dataset = tf.data.Dataset.from_generator(gen, </span><br><span class="line">                            (tf.int32, tf.int32), </span><br><span class="line">                            (tf.TensorShape([BATCH_SIZE]), tf.TensorShape([BATCH_SIZE, <span class="number">1</span>])))</span><br><span class="line">iterator = dataset.make_initializable_iterator()</span><br><span class="line">center_words, target_words = iterator.get_next()</span><br></pre></td></tr></table></figure>
+<p>接下来定义权重（这里也就是词嵌入矩阵）。矩阵中的每一行都是一个单词的表示向量。如果向量的维度是EMBED_SIZE，那么嵌入矩阵的维度应该是<span class="math inline">\(\rm VOCAB\_SIZE \times EMBED\_SIZE\)</span>。矩阵通常是随机初始化，这里使用均匀分布</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">embed_matrix = tf.get_variable(<span class="string">'embed_matrix'</span>, </span><br><span class="line">                                shape=[VOCAB_SIZE, EMBED_SIZE],</span><br><span class="line">                                initializer=tf.random_uniform_initializer())</span><br></pre></td></tr></table></figure>
+<p>然后，定义正向传播的计算过程。为了得到batch中中心词的向量表示，需要从嵌入矩阵中找到具体的那一行。可以使用TF提供的方法<code>tf.nn.embedding_lookup</code>便捷地完成这项任务。当需要做独热向量（one-hot vector）与其它矩阵的乘法时，使用这个方法可以避免很多不必要的计算。具体用法为</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">embed = tf.nn.embedding_lookup(embed_matrix, center_words, name=<span class="string">'embed'</span>)</span><br></pre></td></tr></table></figure>
+<p>再接下来是损失函数。TF已经为NCE提供了一个封装好的实现<code>tf.nn.nce_loss</code>。要使用这个函数，需要先定义隐藏层的权重和偏置，它们在训练中会被优化器更新</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">nce_weight = tf.get_variable(<span class="string">'nce_weight'</span>, </span><br><span class="line">       shape=[VOCAB_SIZE, EMBED_SIZE],</span><br><span class="line">       initializer=tf.truncated_normal_initializer(stddev=<span class="number">1.0</span> / (EMBED_SIZE ** <span class="number">0.5</span>)))</span><br><span class="line">nce_bias = tf.get_variable(<span class="string">'nce_bias'</span>, initializer=tf.zeros([VOCAB_SIZE]))</span><br></pre></td></tr></table></figure>
+<p>最终的输出得分定义为</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tf.matmul(embed, tf.transpose(nce_weight)) + nce_bias</span><br></pre></td></tr></table></figure>
+<p>损失计算定义为</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">loss = tf.reduce_mean(tf.nn.nce_loss(weights=nce_weight, </span><br><span class="line">truetruetruetruetrue                 biases=nce_bias, </span><br><span class="line">truetruetruetruetrue                 labels=target_words, </span><br><span class="line">truetruetruetruetrue                 inputs=embed, </span><br><span class="line">truetruetruetruetrue                 num_sampled=NUM_SAMPLED, </span><br><span class="line">truetruetruetruetrue                 num_classes=VOCAB_SIZE))</span><br></pre></td></tr></table></figure>
+<p>最后，优化器直接使用梯度下降优化器</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">optimizer = tf.train.GradientDescentOptimizer(LEARNING_RATE).minimize(loss)</span><br></pre></td></tr></table></figure>
+<h3 id="执行计算图">执行计算图</h3>
+<p>执行计算图的代码与前面非eager execution版本的线性回归/logistic回归大同小异。完整的代码可以参考github</p>
+<h2 id="如何组织你的tf模型">如何组织你的TF模型</h2>
+<p>到目前为止，我们设计的模型多少都是相同的，包括两个阶段：</p>
+<p><strong>第一阶段是组装计算图</strong>，包含五步</p>
+<ul>
+<li>通过<code>tf.data</code>或者占位符导入数据</li>
+<li>定义权重</li>
+<li>定义模型如何做推断</li>
+<li>定义损失函数</li>
+<li>定义优化器</li>
+</ul>
+<p><strong>第二阶段是执行计算图</strong>，这是实际上训练模型的过程，也包含五步</p>
+<ul>
+<li>初始化所有模型变量</li>
+<li>初始化迭代器/向占位符送入（feed in）训练数据</li>
+<li>在训练数据上执行模型推断的过程</li>
+<li>计算损失函数值</li>
+<li>调整模型参数，进行优化</li>
+</ul>
+<p>既然整个过程大同小异，那么如何让模型易于复用呢？可以利用Python的面向对象特性，创建一个类，如下所示</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SkipGramModel</span>:</span></span><br><span class="line">    <span class="string">""" Build the graph for word2vec model """</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, params)</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_import_data</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="string">""" Step 1: import data """</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_create_embedding</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="string">""" Step 2: in word2vec, it's actually the weights that we care about """</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_create_loss</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="string">""" Step 3 + 4: define the inference + the loss function """</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_create_optimizer</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="string">""" Step 5: define optimizer """</span></span><br><span class="line">        <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2018/01/24/CS20-4-Eager-Execution-and-Word2vec/" title="CS20 04. Eager Execution与word2vec">txshi-mt.com/2018/01/24/CS20-4-Eager-Execution-and-Word2vec/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/TensorFlow/" rel="tag"># TensorFlow</a>
+          
+            <a href="/tags/CS20SI/" rel="tag"># CS20SI</a>
+          
+            <a href="/tags/词向量/" rel="tag"># 词向量</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/20/UTNN-9-Ways-to-Make-Neural-Networks-Generalize-Better/" rel="next" title="Hinton神经网络与机器学习 9. 提高神经网络的泛化能力">
+                <i class="fa fa-chevron-left"></i> Hinton神经网络与机器学习 9. 提高神经网络的泛化能力
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/01/29/CS20-5-Variable-Sharing-and-Experiments-Management/" rel="prev" title="CS20 05. 变量共享与实验管理">
+                CS20 05. 变量共享与实验管理 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">72</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#eager-execution"><span class="nav-number">1.</span> <span class="nav-text">Eager Execution</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用tensorflow实现词嵌入"><span class="nav-number">2.</span> <span class="nav-text">&#x4F7F;&#x7528;TensorFlow&#x5B9E;&#x73B0;&#x8BCD;&#x5D4C;&#x5165;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#理论简介"><span class="nav-number">2.1.</span> <span class="nav-text">&#x7406;&#x8BBA;&#x7B80;&#x4ECB;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现"><span class="nav-number">2.2.</span> <span class="nav-text">&#x5B9E;&#x73B0;</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#组装计算图"><span class="nav-number">2.2.1.</span> <span class="nav-text">&#x7EC4;&#x88C5;&#x8BA1;&#x7B97;&#x56FE;</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#执行计算图"><span class="nav-number">2.3.</span> <span class="nav-text">&#x6267;&#x884C;&#x8BA1;&#x7B97;&#x56FE;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何组织你的tf模型"><span class="nav-number">3.</span> <span class="nav-text">&#x5982;&#x4F55;&#x7EC4;&#x7EC7;&#x4F60;&#x7684;TF&#x6A21;&#x578B;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="TensorFlow,CS20,变量共享," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="本章内容英文版参见CS20 2018Winter 第五章讲义 。大部分材料翻译自讲义内容，已得到老师授权。类似的声明适用于已经发布的CS20/CS20SI下的所有文章 变量共享 命名域 （Name scope） 之前的代码在运行时可以使用TensorBoard查看计算图。但是图里节点零零散散的，比较乱，因为TensorBoard不知道哪些节点之间比较相似，哪些节点应该被汇集到一起。这样会使代码调试">
+<meta name="keywords" content="TensorFlow,CS20,变量共享">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CS20 05. 变量共享与实验管理">
+<meta property="og:url" content="txshi-mt.com/2018/01/29/CS20-5-Variable-Sharing-and-Experiments-Management/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="本章内容英文版参见CS20 2018Winter 第五章讲义 。大部分材料翻译自讲义内容，已得到老师授权。类似的声明适用于已经发布的CS20/CS20SI下的所有文章 变量共享 命名域 （Name scope） 之前的代码在运行时可以使用TensorBoard查看计算图。但是图里节点零零散散的，比较乱，因为TensorBoard不知道哪些节点之间比较相似，哪些节点应该被汇集到一起。这样会使代码调试">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-01-29T15:08:55.622Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CS20 05. 变量共享与实验管理">
+<meta name="twitter:description" content="本章内容英文版参见CS20 2018Winter 第五章讲义 。大部分材料翻译自讲义内容，已得到老师授权。类似的声明适用于已经发布的CS20/CS20SI下的所有文章 变量共享 命名域 （Name scope） 之前的代码在运行时可以使用TensorBoard查看计算图。但是图里节点零零散散的，比较乱，因为TensorBoard不知道哪些节点之间比较相似，哪些节点应该被汇集到一起。这样会使代码调试">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2018/01/29/CS20-5-Variable-Sharing-and-Experiments-Management/"/>
+
+
+
+
+
+  <title>CS20 05. 变量共享与实验管理 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2018/01/29/CS20-5-Variable-Sharing-and-Experiments-Management/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">CS20 05. 变量共享与实验管理</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-29T20:24:36+08:00">
+                Jan 29 2018
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/深度学习实践/" itemprop="url" rel="index">
+                    <span itemprop="name">深度学习实践</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本章内容英文版参见<a href="https://docs.google.com/document/d/1wqp8_-H06oE4zB9CHDwzTx5BfAOMM_6nnNJMSfkazkU/edit#" target="_blank" rel="noopener">CS20 2018Winter 第五章讲义</a> 。大部分材料翻译自讲义内容，已得到老师授权。类似的声明适用于已经发布的CS20/CS20SI下的所有文章</p>
+<h2 id="变量共享">变量共享</h2>
+<h3 id="命名域-name-scope">命名域 （Name scope）</h3>
+<p>之前的代码在运行时可以使用TensorBoard查看计算图。但是图里节点零零散散的，比较乱，因为TensorBoard不知道哪些节点之间比较相似，哪些节点应该被汇集到一起。这样会使代码调试起来比较麻烦，尤其是如果模型比较复杂，包含上百个操作符的时候更是这样。解决办法是通过<code>tf.name_scope</code>声明一个代码块，将相关操作都定义在这个代码块中，例如 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> tf.name_scope(<span class="string">'embed'</span>):</span><br><span class="line">    embed_matrix = tf.get_variable(<span class="string">'embed_matrix'</span>, </span><br><span class="line">                                    shape=[VOCAB_SIZE, EMBED_SIZE],</span><br><span class="line">                                    initializer=tf.random_uniform_initializer())</span><br><span class="line">    embed = tf.nn.embedding_lookup(embed_matrix, center_words, name=<span class="string">'embedding'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> tf.name_scope(<span class="string">'loss'</span>):</span><br><span class="line">    nce_weight = tf.get_variable(<span class="string">'nce_weight'</span>, shape=[VOCAB_SIZE, EMBED_SIZE],</span><br><span class="line">                                initializer=tf.truncated_normal_initializer())</span><br><span class="line">    nce_bias = tf.get_variable(<span class="string">'nce_bias'</span>, initializer=tf.zeros([VOCAB_SIZE]))</span><br><span class="line"></span><br><span class="line">    loss = tf.reduce_mean(tf.nn.nce_loss(weights=nce_weight, </span><br><span class="line">                                        biases=nce_bias, </span><br><span class="line">                                        labels=target_words, </span><br><span class="line">                                        inputs=embed, </span><br><span class="line">                                        num_sampled=NUM_SAMPLED, </span><br><span class="line">                                        num_classes=VOCAB_SIZE), name=<span class="string">'loss'</span>)</span><br></pre></td></tr></table></figure></p>
+<p>TensorBoard中有三种边</p>
+<ul>
+<li>灰色实箭头，表示数据流，例如<code>tf.add(x + y)</code>取<code>x</code>和<code>y</code>的值</li>
+<li>橙色实箭头，是引用边，表示操作符A会和操作符B交互</li>
+<li>虚线箭头，表示控制依赖。具体的控制依赖可以使用<code>tf.Graph.control_dependencies(control_inputs)</code>来设定</li>
+</ul>
+<h3 id="变量域">变量域</h3>
+<p>与<code>tf.name_scope</code>相比，<code>tf.variable_scope</code>除了可以创造一个命名空间以外，还可以方便进行变量共享。举个例子：假设现在要创建一个包含两个隐藏层的神经网络， 然后用两个不同的输入<code>x1</code>和<code>x2</code>调用</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">x1 = tf.truncated_normal([<span class="number">200</span>, <span class="number">100</span>], name=<span class="string">'x1'</span>)</span><br><span class="line">x2 = tf.truncated_normal([<span class="number">200</span>, <span class="number">100</span>], name=<span class="string">'x2'</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">two_hidden_layers</span><span class="params">(x)</span>:</span></span><br><span class="line">    <span class="keyword">assert</span> x.shape.as_list() == [<span class="number">200</span>, <span class="number">100</span>]</span><br><span class="line">    w1 = tf.Variable(tf.random_normal([<span class="number">100</span>, <span class="number">50</span>]), name=<span class="string">"h1_weights"</span>)</span><br><span class="line">    b1 = tf.Variable(tf.zeros([<span class="number">50</span>]), name=<span class="string">"h1_biases"</span>)</span><br><span class="line">    h1 = tf.matmul(x, w1) + b1</span><br><span class="line">    <span class="keyword">assert</span> h1.shape.as_list() == [<span class="number">200</span>, <span class="number">50</span>]  </span><br><span class="line">    w2 = tf.Variable(tf.random_normal([<span class="number">50</span>, <span class="number">10</span>]), name=<span class="string">"h2_weights"</span>)</span><br><span class="line">    b2 = tf.Variable(tf.zeros([<span class="number">10</span>]), name=<span class="string">"2_biases"</span>)</span><br><span class="line">    logits = tf.matmul(h1, w2) + b2</span><br><span class="line">    <span class="keyword">return</span> logits</span><br><span class="line"></span><br><span class="line">logits1 = two_hidden_layers(x1)</span><br><span class="line">logits2 = two_hidden_layers(x2)</span><br></pre></td></tr></table></figure>
+<p>这样，对每个输入（这里是<code>x1</code>和<code>x2</code>），TensorFlow都会创建整个一套变量，包括h1_weights、h2_weights等等。但是实际上，我们希望网络对所有输入共享某些相同的变量。因此不应该使用<code>tf.Variable</code>，而应该使用<code>tf.get_variable</code>。这样，TF会先检查变量是否已经存在。如果已经存在了，就复用它；如果不存在，就新建一个。但是如果直接改写上述代码，会得到报错信息：</p>
+<blockquote>
+<p><code>ValueError: Variable h1_weights already exists, disallowed. Did you mean to set reuse=True or reuse=tf.AUTO_REUSE in VarScope?</code></p>
+</blockquote>
+<p>为了避免这种现象的发生，需要把所有要使用的变量放在一个<strong>变量域</strong>里，并将该域设置为可复用</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fully_connected</span><span class="params">(x, output_dim, scope)</span>:</span></span><br><span class="line">    <span class="keyword">with</span> tf.variable_scope(scope) <span class="keyword">as</span> scope:</span><br><span class="line">        w = tf.get_variable(<span class="string">"weights"</span>, [x.shape[<span class="number">1</span>], output_dim], initializer=tf.random_normal_initializer())</span><br><span class="line">        b = tf.get_variable(<span class="string">"biases"</span>, [output_dim], initializer=tf.constant_initializer(<span class="number">0.0</span>))</span><br><span class="line">        <span class="keyword">return</span> tf.matmul(x, w) + b</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">two_hidden_layers</span><span class="params">(x)</span>:</span></span><br><span class="line">    h1 = fully_connected(x, <span class="number">50</span>, <span class="string">'h1'</span>)</span><br><span class="line">    h2 = fully_connected(h1, <span class="number">10</span>, <span class="string">'h2'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> tf.variable_scope(<span class="string">'two_layers'</span>) <span class="keyword">as</span> scope:</span><br><span class="line">    logits1 = two_hidden_layers(x1)</span><br><span class="line">    scope.reuse_variables()</span><br><span class="line">    logits2 = two_hidden_layers(x2)</span><br></pre></td></tr></table></figure>
+<p>这里是为每一层都编写一段代码。如果网络结构有很多层，而且每层逻辑相近，可以让代码变得更加可复用</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fully_connected</span><span class="params">(x, output_dim, scope)</span>:</span></span><br><span class="line">    <span class="keyword">with</span> tf.variable_scope(scope) <span class="keyword">as</span> scope:</span><br><span class="line">        w = tf.get_variable(<span class="string">'weights'</span>, [x.shape[<span class="number">1</span>], output_dim], initializer=tf.random_normal_initializer())</span><br><span class="line">        b = tf.get_variable(<span class="string">'biases'</span>, [output_dim], initializer=tf.constant_initializer(<span class="number">0.0</span>))</span><br><span class="line">        <span class="keyword">return</span> tf.matmul(x, w) + b</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">two_hidden_layers</span><span class="params">(x)</span>:</span></span><br><span class="line">    h1 = fully_connected(x, <span class="number">50</span>, <span class="string">'h1'</span>)</span><br><span class="line">    h2 = fully_connected(h1, <span class="number">10</span>, <span class="string">'h2'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> tf.variable_scope(<span class="string">'two_layers'</span>) <span class="keyword">as</span> scope:</span><br><span class="line">    logits1 = two_hidden_layers(x1)</span><br><span class="line">    scope.reuse_variables()</span><br><span class="line">    logits2 = two_hidden_layers(x2)</span><br></pre></td></tr></table></figure>
+<p>创建变量时一般会把变量放在图的不同部分，但有时可能需要一种更方便的方法来访问它们。通过调用<code>tf.collection</code>可以访问某一特定集合的变量</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tf.get_collection(key, scope=<span class="keyword">None</span>)</span><br></pre></td></tr></table></figure>
+<p>其中<code>key</code>是变量集合名称，<code>scope</code>是变量域。默认情况下，所有变量都存放在<code>tf.GraphKeys.GLOBAL_VARIABLES</code>里，如果要获取<code>my_scope</code>域中的所有变量，就传参给参数<code>scope</code>。对于所有可训练变量，变量存放在<code>tf.GraphKeys.TRAINABLE_VARIABLES</code>里。也可以通过<code>tf.add_to_collection</code>创建自己的集合（集合中的内容甚至可以不是变量而是其他操作符）。这个场景最典型的应用是，<code>tf.train.Optimizer</code>下的子类默认优化<code>tf.GraphKeys.TRAINABLE_VARIABLES</code>中的变量</p>
+<h2 id="管理实验">管理实验</h2>
+<p>深度学习实验的运行时间通常会非常长，例如如果在单显卡的机器上训练一个神经翻译模型即便不用一个月也得需要好几天。如果运行过程中代码突然崩了，把代码从头跑一遍实在是很残忍。鲁棒的框架应该可以在任意时间点因为任何原因暂停并继续训练</p>
+<h3 id="tf.train.saver"><code>tf.train.Saver</code></h3>
+<p>比较好的做法是在经过若干step或者epoch后周期性地保存模型参数，这样如果需要的话可以从该时间点恢复模型。具体做法是调用<code>tf.train.Saver</code>对象的<code>save</code>方法。在TensorFlow的术语表里，保存图变量的这一步称为检查点（checkpoint），因此要保存多个模型，就要创建多个检查点。通常使用<code>global_step</code>这一变量来跟踪训练总共执行了多少步，这样可以保存多个模型。首先，使用如下语句定义<code>global_step</code>变量</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">global_step = tf.Variable(<span class="number">0</span>, dtype=tf.int32, trainable=<span class="keyword">False</span>, name=<span class="string">'global_step'</span>)</span><br></pre></td></tr></table></figure>
+<p>然后要将这个变量传递给优化器，这样才会在每一步之后将它加一</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">optimizer = tf.train.GradientDescentOptimizer(lr).minimize(loss,global_step=global_step)</span><br></pre></td></tr></table></figure>
+<p>最后通过如下代码周期性保存模型</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># define model</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># create a saver object</span></span><br><span class="line">saver = tf.train.Saver()</span><br><span class="line"></span><br><span class="line"><span class="comment"># launch a session to execute the computation</span></span><br><span class="line"><span class="keyword">with</span> tf.Session() <span class="keyword">as</span> sess:</span><br><span class="line">    <span class="comment"># actual training loop</span></span><br><span class="line">    <span class="keyword">for</span> step <span class="keyword">in</span> range(training_steps): </span><br><span class="line">truesess.run([optimizer])</span><br><span class="line">true<span class="keyword">if</span> (step + <span class="number">1</span>) % <span class="number">1000</span> == <span class="number">0</span>:</span><br><span class="line">true   saver.save(sess, <span class="string">'checkpoint_directory/model_name'</span>, global_step=global_step)</span><br></pre></td></tr></table></figure>
+<p>使用如下代码恢复模型。如果目标目录没有检查点文件，就从头开始训练</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ckpt = tf.train.get_checkpoint_state(os.path.dirname(<span class="string">'checkpoints/checkpoint'</span>))</span><br><span class="line"><span class="keyword">if</span> ckpt <span class="keyword">and</span> ckpt.model_checkpoint_path:</span><br><span class="line">     saver.restore(sess, ckpt.model_checkpoint_path)</span><br></pre></td></tr></table></figure>
+<p>如果只想保存若干指定变量而不是整个图，可以在初始化<code>Saver</code>对象时指定</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 以字典形式传入</span></span><br><span class="line">saver = tf.train.Saver(&#123;<span class="string">'v1'</span>: v1, <span class="string">'v2'</span>: v2&#125;) </span><br><span class="line"></span><br><span class="line"><span class="comment"># 以列表形式传入</span></span><br><span class="line">saver = tf.train.Saver([v1, v2]) </span><br><span class="line"></span><br><span class="line"><span class="comment"># 传入列表相当于是传入以变量操作名为键的字典</span></span><br><span class="line">saver = tf.train.Saver(&#123;v.op.name: v <span class="keyword">for</span> v <span class="keyword">in</span> [v1, v2]&#125;)</span><br></pre></td></tr></table></figure>
+<h3 id="获取训练过程的统计摘要">获取训练过程的统计摘要</h3>
+<p>在训练的过程中，可以使用TensorBoard提供的工具将统计信息摘要并可视化，这些信息包括当前损失函数值、平均损失函数值和准确率等等。一般会将这些操作定义在一个命名域中</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_create_summaries</span><span class="params">(self)</span>:</span></span><br><span class="line">     <span class="keyword">with</span> tf.name_scope(<span class="string">"summaries"</span>):</span><br><span class="line">            tf.summary.scalar(<span class="string">"loss"</span>, self.loss)</span><br><span class="line">            tf.summary.scalar(<span class="string">"accuracy"</span>, self.accuracy)            </span><br><span class="line">            tf.summary.histogram(<span class="string">"histogram loss"</span>, self.loss)</span><br><span class="line">            <span class="comment"># because you have several summaries, we should merge them all</span></span><br><span class="line">            <span class="comment"># into one op to make it easier to manage</span></span><br><span class="line">            self.summary_op = tf.summary.merge_all()</span><br></pre></td></tr></table></figure>
+<p>由于得到的是一个操作符，因此需要运行它</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">loss_batch, _, summary = sess.run([model.loss, model.optimizer, model.summary_op], feed_dict=feed_dict)</span><br></pre></td></tr></table></figure>
+<p>然后将结果通过<code>FileWriter</code>对象写出，就可以在TensorBoard的Scalars页面看到结果</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">writer.add_summary(summary, global_step=step)</span><br></pre></td></tr></table></figure>
+<h3 id="控制代码的随机性">控制代码的随机性</h3>
+<p>为了复现他人论文的结果，有时候需要对有随机性的函数施加一些控制。通常来讲，有两种做法：</p>
+<ul>
+<li><p>在操作级别设定随机数种子。例如所有随机张量允许在初始化时传入种子值：<code>my_var = tf.Variable(tf.truncated_normal((-1., 1.), stddev=0.1, seed=0))</code></p></li>
+<li><p>在图级别设置随机种子：<code>tf.set_random_seed(seed)</code>。这样可以使同样的结果在另一个图上复现。例如下列代码分别保存为a.py和b.py，执行得到的输出相同</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line">tf.set_random_seed(<span class="number">2</span>)</span><br><span class="line">c = tf.random_uniform([], <span class="number">-10</span>, <span class="number">10</span>)</span><br><span class="line">d = tf.random_uniform([], <span class="number">-10</span>, <span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> tf.Session() <span class="keyword">as</span> sess:</span><br><span class="line">true<span class="keyword">print</span> sess.run(c)</span><br><span class="line">true<span class="keyword">print</span> sess.run(d)</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="自动微分">自动微分</h2>
+<p>目前所编写的代码里，我们并没有手动求过梯度，而只是构建出一个正向传播的计算图，TensorFlow会处理反向的路径。其使用的具体方法称为反向模式自动微分（reverse mode automatic differentiation），该方法可以使计算函数<span class="math inline">\(t\)</span>的导数所花的时间大致等同于计算原函数值的时间。原理是在图中加入额外的计算节点和边。例如，假设要计算<span class="math inline">\(C\)</span>对<span class="math inline">\(I\)</span>的梯度，TensorFlow先会寻找连接这两个节点的路径，找到以后，TF会从<span class="math inline">\(C\)</span>开始，反向向<span class="math inline">\(I\)</span>移动，并针对反向遍历路径时遇到的所有操作新增一个节点，这个节点包含<span class="math inline">\(C\)</span>对该节点的部分梯度，使用链式法则求出。部分梯度使用<code>tf.gradients</code>来计算</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2018/01/29/CS20-5-Variable-Sharing-and-Experiments-Management/" title="CS20 05. 变量共享与实验管理">txshi-mt.com/2018/01/29/CS20-5-Variable-Sharing-and-Experiments-Management/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/TensorFlow/" rel="tag"># TensorFlow</a>
+          
+            <a href="/tags/CS20/" rel="tag"># CS20</a>
+          
+            <a href="/tags/变量共享/" rel="tag"># 变量共享</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/24/CS20-4-Eager-Execution-and-Word2vec/" rel="next" title="CS20 04. Eager Execution与word2vec">
+                <i class="fa fa-chevron-left"></i> CS20 04. Eager Execution与word2vec
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">72</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">67</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#变量共享"><span class="nav-number">1.</span> <span class="nav-text">&#x53D8;&#x91CF;&#x5171;&#x4EAB;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#命名域-name-scope"><span class="nav-number">1.1.</span> <span class="nav-text">&#x547D;&#x540D;&#x57DF; &#xFF08;Name scope&#xFF09;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#变量域"><span class="nav-number">1.2.</span> <span class="nav-text">&#x53D8;&#x91CF;&#x57DF;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#管理实验"><span class="nav-number">2.</span> <span class="nav-text">&#x7BA1;&#x7406;&#x5B9E;&#x9A8C;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#tf.train.saver"><span class="nav-number">2.1.</span> <span class="nav-text"><code>tf.train.Saver</code></span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#获取训练过程的统计摘要"><span class="nav-number">2.2.</span> <span class="nav-text">&#x83B7;&#x53D6;&#x8BAD;&#x7EC3;&#x8FC7;&#x7A0B;&#x7684;&#x7EDF;&#x8BA1;&#x6458;&#x8981;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#控制代码的随机性"><span class="nav-number">2.3.</span> <span class="nav-text">&#x63A7;&#x5236;&#x4EE3;&#x7801;&#x7684;&#x968F;&#x673A;&#x6027;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自动微分"><span class="nav-number">3.</span> <span class="nav-text">&#x81EA;&#x52A8;&#x5FAE;&#x5206;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
