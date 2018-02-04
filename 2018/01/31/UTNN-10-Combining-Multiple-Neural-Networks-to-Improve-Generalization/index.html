@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="UTNN,dropout,模型组合," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="为什么模型组合效果更好 模型组合是一种在拟合必然规律和过拟合采样误差间取得平衡的方法。当训练数据比较有限时，就容易造成过拟合，如果将不同模型的预测结果做平均，则可以降低过拟合风险。对于回归问题，平方误差可以分解为偏差项和方差项。如果模型能力有限，偏差项就会比较大，它表示模型逼近真是函数的能力有多差。如果模型对训练集里的采样误差的把握能力比较强，方差项就比较大——之所以叫“方差”，是因为如果用同样大">
+<meta name="keywords" content="UTNN,dropout,模型组合">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hinton神经网络与机器学习 10. 组合多个神经网络以提高泛化能力">
+<meta property="og:url" content="txshi-mt.com/2018/01/31/UTNN-10-Combining-Multiple-Neural-Networks-to-Improve-Generalization/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="为什么模型组合效果更好 模型组合是一种在拟合必然规律和过拟合采样误差间取得平衡的方法。当训练数据比较有限时，就容易造成过拟合，如果将不同模型的预测结果做平均，则可以降低过拟合风险。对于回归问题，平方误差可以分解为偏差项和方差项。如果模型能力有限，偏差项就会比较大，它表示模型逼近真是函数的能力有多差。如果模型对训练集里的采样误差的把握能力比较强，方差项就比较大——之所以叫“方差”，是因为如果用同样大">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_10_Cluster_by_relationship.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_10_mixture_of_experts.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_10_posterior_probas.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_10_weight_vectors_sampling.png">
+<meta property="og:updated_time" content="2018-02-04T10:06:57.909Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hinton神经网络与机器学习 10. 组合多个神经网络以提高泛化能力">
+<meta name="twitter:description" content="为什么模型组合效果更好 模型组合是一种在拟合必然规律和过拟合采样误差间取得平衡的方法。当训练数据比较有限时，就容易造成过拟合，如果将不同模型的预测结果做平均，则可以降低过拟合风险。对于回归问题，平方误差可以分解为偏差项和方差项。如果模型能力有限，偏差项就会比较大，它表示模型逼近真是函数的能力有多差。如果模型对训练集里的采样误差的把握能力比较强，方差项就比较大——之所以叫“方差”，是因为如果用同样大">
+<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_10_Cluster_by_relationship.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2018/01/31/UTNN-10-Combining-Multiple-Neural-Networks-to-Improve-Generalization/"/>
+
+
+
+
+
+  <title>Hinton神经网络与机器学习 10. 组合多个神经网络以提高泛化能力 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2018/01/31/UTNN-10-Combining-Multiple-Neural-Networks-to-Improve-Generalization/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Hinton神经网络与机器学习 10. 组合多个神经网络以提高泛化能力</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-31T19:53:01+08:00">
+                Jan 31 2018
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/深度学习/" itemprop="url" rel="index">
+                    <span itemprop="name">深度学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="为什么模型组合效果更好">为什么模型组合效果更好</h2>
+<p>模型组合是一种在拟合必然规律和过拟合采样误差间取得平衡的方法。当训练数据比较有限时，就容易造成过拟合，如果将不同模型的预测结果做平均，则可以降低过拟合风险。对于回归问题，平方误差可以分解为偏差项和方差项。如果模型能力有限，偏差项就会比较大，它表示模型逼近真是函数的能力有多差。如果模型对训练集里的采样误差的把握能力比较强，方差项就比较大——之所以叫“方差”，是因为如果用同样大小、来自同样分布的另一个训练集来训练模型，拟合出来的新模型会完全不一样。<strong>模型平均实际上在做的事情是把方差平均掉</strong>。这样，就可以把那些能力强而方差大的模型利用起来，而这些模型通常都是低偏差的</p>
+<p>接下来来分析一下为什么可以得到这个结论：对测试集中的任意一条数据，都可能会存在一个模型，其在该数据上的效果比众多模型的平均效果要好，而不同的模型可能在不同的数据上取得很好的效果。如果对任意一条数据，都有一个模型的效果表现非常突出，那么将所有模型预测结果组合平均以后，这个平均模型在大部分数据上的效果就会比任意一个单体模型强。因此，目标是如何获得一些既有不低准确度，而且还能在预测时产生非常不同结果的小模型</p>
+<p>“将网络进行组合可以降低方差”这个结论，也可以从数学角度给出证明。这里要比较的是两种期望平方误差：其一是随机选择一个模型，对所有数据进行预测得到的平方误差，另一是将所有模型平均起来对数据预测得到的误差。假设一共有<span class="math inline">\(N\)</span>个模型，对任一样本，平均模型的预测为 <span class="math display">\[
+\bar{y} = \langle y_i \rangle_i = \frac{1}{N}\sum_{i=1}^Ny_i
+\]</span> 其中尖括号<span class="math inline">\(\langle \rangle\)</span>表示求期望。假设现在随机选择一个模型做预测，那么得到的平方误差的期望可以写为（这里将讲义里的尖括号展开了） <span class="math display">\[
+\begin{align*}
+\frac{1}{N}\sum_{i=1}^N(t-y_i)^2 &amp;= \frac{1}{N}\sum_{i=1}^N\left((t-\bar{y}) - (y_i - \bar{y})\right)^2 \\
+&amp;= \frac{1}{N}\sum_{i=1}^N\left((t-\bar{y})^2 + (y_i - \bar{y})^2 - 2(t-\bar{y})(y_i-\bar{y})\right) \\
+&amp;= (t-\bar{y})^2 + \frac{1}{N}\sum_{i=1}^N(y_i-\bar{y})^2 - 2(t-\bar{y})\frac{1}{N}\sum_{i=1}^N(y_i - \bar{y})
+\end{align*}
+\]</span> 上面等式右边，第二项是模型方差的期望，第三项中，由于各个模型是独立的，其预测结果期望为<span class="math inline">\(\bar{y}\)</span>，因此<span class="math inline">\(1/N\sum y_i = \bar{y}\)</span>，即第三项为0。第一项则是平均模型的平方误差。这意味着，随机选择模型做预测，平方误差的期望比平均模型的平方误差多，多出来的值等于各模型方差的期望。可以用一个更直观的例子来说明这个事情。假设对某条数据，有两个模型预测，一个预测结果是<span class="math inline">\(\bar{y}-\epsilon\)</span>，一个预测结果是<span class="math inline">\(\bar{y}+\epsilon\)</span>，那么方差的期望是<span class="math inline">\(\epsilon^2\)</span>。出现这样状况的原因是，离目标<span class="math inline">\(t\)</span>越远的预测值会贡献更大的误差，这个误差经过平方计算会被放大。需要注意的是，当噪声不符合高斯分布时，不应该采用平均模型的方法。如果模型预测的是输入属于各个类别的概率（求解分类问题），简单求平均也是一种好的做法。假设有两个模型，一个对正确标签给出的概率是<span class="math inline">\(p_i\)</span>，另一个给出<span class="math inline">\(p_j\)</span>，测量指标是得到正确标签概率的对数值，那么一般会有 <span class="math display">\[
+\log\left(\frac{p_i + p_j}{2}\right) \ge \frac{\log p_i + \log p_j}{2}
+\]</span> 这是由对数函数的性质决定的</p>
+<p>因此，综上所述，现在的问题是怎么让众多模型得到不同的预测结果。可以仅使用某单个学习算法，如果这种算法每次都会陷入到不同的局部极小值，就可以达到期望的效果。也可以训练不同类型的模型，例如决策树、高斯过程模型、SVM等等。对于神经网络，如果想获得不同的结果，可以设置不同的隐藏层数、设置不同的隐藏单元数、设置不同的隐藏单元类型（不同模型使用不同激活函数）、使用不同的正则化方法（例如一些使用提早停止法、另一些使用L2正则化），以及使用不同的学习算法（例如一些使用full batch梯度下降，另一些使用mini-batch 梯度下降）</p>
+<p>使用不同的数据训练模型也可以达到同样的效果。<strong>装袋法</strong>（bagging）使用数据的不同子集来训练不同模型，其中这些子集是使用有放回抽样构造的。这种方法的典型应用是随机森林法（可以参考林轩田老师关于<a href="http://txshi-mt.com/2017/10/05/NTUML-23-Blending-Bagging/">装袋法</a>和<a href="http://txshi-mt.com/2017/10/07/NTUML-26-Random-Forest/">随机森林</a>的讲解），不过神经网络用装袋法效率比较堪忧。另一种方法是<strong>boosting</strong>算法，这种算法串行训练一批能力比较差的模型，对每个模型单独设置各个样本的权重（对前一个模型判断对的样本降低权重，对前一个模型判断错的样本提高权重）。这个算法的细节也可以参考<a href="http://txshi-mt.com/2017/10/05/NTUML-24-Adaptive-Boosting/">林轩田老师的讲义</a></p>
+<h2 id="专家组mixture-of-experts">专家组（Mixture of Experts）</h2>
+<p>专家组方法的核心思想是，把数据集看作是来自不同领域信息的组合，训练的时候，训练多个神经网络，每个网络只专精某一个领域（称为专业化, specialization）。具体说来，每个模型只专注于训练数据的某个子集，不去学习其它数据。这种做法对小数据集不太可行，但是如果数据集非常大，效果会很好</p>
+<p>这引入了“局部模型”（local model）和“全局模型”（global model）两个概念。最近邻法是局部模型的一个典型特例，而使用所有数据训练出的多项式模型是全局模型的代表。局部模型训练起来很快，而且对得到的结果做一些拒不平滑可以显著改善模型效果。全局模型一般训练起来很慢，而且可能会不太稳定，因为数据的微小变动可能会导致训练出模型很大的改变，因为所有模型参数都会依赖于全部数据</p>
+<p>在这两者中间，有一种概念叫做“多局部模型”（multiple local model），这种模型适用于数据集可以划分为若干区域（regime），每个区域的输入输出关系还不一样的情况。例如，对于金融数据，不同的经济状况可能会是输入输出的映射关系不同，但是你可能并不知道如何划分这些经济状况，这种划分方法本身也在学习内容之列。那么接下来的问题就是，如何将数据进行划分</p>
+<p>一种自然的想法将训练数据聚类，每一类对应一个区域。方向是对的，但是此时不能根据输入向量的相似度聚类，而是要根据输入输出的关系聚类。以下图为例，如果将数据按输入输出关系（橙色的线）划分，那么两组数据可以容易地用两条抛物线拟合；如果只按输入（蓝色的线）划分，那么拟合难度就大了</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_10_Cluster_by_relationship.png" alt="按照不同方法聚类的效果对比"><figcaption>按照不同方法聚类的效果对比</figcaption>
+</figure>
+<p>接下来是如何设计代价函数。假设一共有<span class="math inline">\(N\)</span>个模型，每个模型的预测结果为<span class="math inline">\(y_i\)</span>。如果将代价函数设计为 <span class="math display">\[
+E = \left(t - \frac{1}{N}\sum_{i=1}^Ny_i\right)^2
+\]</span> 那么这样会鼓励模型之间的协作，因为模型会学着弥补某些模型犯的错误。需要注意的是，这种方法是<em>在训练时</em>就去对模型的结果进行平均。假设对某个模型<span class="math inline">\(i\)</span>，没有包含它时，其余模型的平均预测值<span class="math inline">\(\bar{y}_{-i}\)</span>离目标<span class="math inline">\(t\)</span>特别远，那么这种方法会使得<span class="math inline">\(y_i\)</span>离<span class="math inline">\(t\)</span>也很远，只不过是反方向的远。例如，假设一共有3个模型，其中两个模型的预测平均值是20，目标值为0，那么第三个模型如果预测是-40的话，所有模型的平均预测值就跟目标值吻合了。但是，可以换一种思路：假设另外两个模型都挂了，第三个模型如果离目标值很近，那么真正预测的时候，对于这样的数据，直接撇开另外两个模型，只用第三个模型预测不是挺好么？这就催生了另一种目标函数的核心思想，即鼓励模型的专家化。其具体形式为 <span class="math display">\[
+E = \frac{1}{N}\sum_{i=1}^N p_i(t-y_i)^2
+\]</span> 此时实际上是把每个模型单独与目标值比较，然后用另外一个“管理器”来管理每个模型的权重。这个权重可以看作是一种概率，如果只选择第<span class="math inline">\(i\)</span>个模型，那么它的权重/概率就是1，其它都是0。这样最后就会得到若干专家，每个专家都只专精于处理训练集的一小部分，对其它部分一无所知</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_10_mixture_of_experts.png" alt="专家组体系结构"><figcaption>专家组体系结构</figcaption>
+</figure>
+<p>上图给出了专家组体系结构的示意图。对于每个输入，每个专家会给出预测值，每个专家的概率由管理器来控制。管理器可能有多层，但是最后一层肯定是一个softmax层，这样管理器就可以应对任意多个专家。将管理器的输出和专家的输出相结合，就可以得到代价函数的值。具体说来，有 <span class="math display">\[
+\begin{align*}
+E &amp;= \sum_i p_i(t-y_i)^2 \\
+p_i &amp;= \frac{e^{x_i}}{\sum_j e^{x_j}}
+\end{align*}
+\]</span> 将误差对专家的输出<span class="math inline">\(y_i\)</span>求偏导，可以得到训练每个专家的信号，即 <span class="math display">\[
+\frac{\partial E}{\partial y_i} = p_i(t-y_i)
+\]</span> 如果该专家对该数据一无所知，那么对应的<span class="math inline">\(p_i\)</span>就会很小，因此这个专家接收到的梯度就会非常小，其内部的权重基本不会受到修改</p>
+<p>将误差对管理器的输出求偏导，可以得到训练管理器的信号。实际上，这是在求误差对softmax输入量<span class="math inline">\(x_i\)</span>的偏导数，有 <span class="math display">\[
+\frac{\partial E}{\partial x_i} = p_i((t-y_i)^2 - E)
+\]</span> 这样，如果专家<span class="math inline">\(i\)</span>的预测里目标值不远，那么<span class="math inline">\(p_i\)</span>就会上升；反之则会下降</p>
+<p>一个更好的代价函数会用到关于混合模型的一些概念，这里不做展开讲解，只做大致介绍。前面提到过最大似然的一种解释，就是做回归时其实网络是在做高斯预测。也就是说，假设每个专家的输出实际上是一个随机值，满足均值为<span class="math inline">\(y_i\)</span>，方差为1的高斯分布，而管理器实际上是对每个高斯分布设定一个缩放比率（称为混合比mixing proportion），要求所有模型的缩放比率加和为1。所有专家的输出经过缩放再加和，得到的预测分布就不是高斯分布了，现在的问题是要最大化目标值在该分布下的对数概率值。记<span class="math inline">\(p(t^c|{\rm MoE})\)</span>为给定混合模型时样例<span class="math inline">\(c\)</span>的目标值的概率，则有 <span class="math display">\[
+p(t^c|{\rm MoE}) = \sum_i p_i^c\frac{1}{\sqrt{2\pi}}\exp\left\{-\frac{1}{2}(t^c-y_i^c)^2\right\}
+\]</span> 目标函数就是要最小化 <span class="math display">\[
+-\log p(t^c|{\rm MoE})
+\]</span></p>
+<h2 id="全贝叶斯学习">全贝叶斯学习</h2>
+<h3 id="思想简介">思想简介</h3>
+<p>在全贝叶斯学习中，要做的不是寻找一组最好的参数，而是在所有可能的参数上都去尝试，寻找一个完全的后验分布。也就是对每组可能的参数都期望计算一个后验概率密度。这种做法的问题是对于复杂的模型计算量太大，以至于寻找一个完整的后验分布是不太可能的。而且，得到完整的后验分布以后，还要使由各种参数组合得到的模型得出预测结果，然后将结果用后验分布概率做加权平均，这个计算量就更大了。但是全贝叶斯方法的一个诱惑点在于，即便是没有太多数据，复杂模型也可用</p>
+<p>前面提到过过拟合的概念。使用比较小的数据集合训练一个复杂模型时，通常会出现这种现象。但是对这种现象发生的原因也可以解释为，是因为没有拿到参数上完整的后验分布。频率学派的观点是数据不够就应该使用简单的模型，这种说法只有当人们假设“拟合模型”就是“找到一组最好的参数”时才适用。如果能找到完整的后验分布，是可以避免过拟合的。当数据比较少的时候，完整的后验分布会给出比较模糊的结果，因为不同参数会给出非常不同的预测结果，所以后验分布也会显著不同。如果数据量变大，那么后验概率就可以只关注少数几组参数设置，预测结果可能会更集中</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_10_posterior_probas.png" alt="多组复杂模型的按后验概率加权平均的结果，可以达到更好的效果"><figcaption>多组复杂模型的按后验概率加权平均的结果，可以达到更好的效果</figcaption>
+</figure>
+<p>上图中给出了一个例子。图中给出了六个点，红线是训练出的五次多项式，而绿线是训练出的一条直线。一般人都会认为是简单模型效果更好，例如蓝色箭头所指的位置红色模型的预测看着就很离谱。但是如果在五次多项式所形成的空间上有一个合理的先验分布，进而得到所有可能的后验分布（例如上图下部红色细线表明了其它可能的五次多项式，但是它们的后验概率值比较低），可以发现如果对蓝色的箭头部分取一个均值，那么预测结果就跟绿色模型的预测结果接近了。从贝叶斯学派的角度解释，采样到多少数据不应该影响你对模型的复杂度的先验信念。或者说，没收集到足够多的数据不应该让你认为事情应该更加简单</p>
+<p>要使用神经网络做全贝叶斯学习，一个先决条件是神经网络的参数非常少，而且每个参数的取值也是有限的几个。这样，就可以在参数集上做一个网格搜索，得到所有参数组合对应模型的测试结果（似然）。这样，对每个参数组合，可以通过将它的似然和先验相乘再归一化，得到其后验概率。这种计算过程代价比较大，但是不需要梯度下降，也不需要担心局部最优解。在得到完整的后验分布以后，就可以在测试数据上做测试，此时有 <span class="math display">\[
+p(t_{\rm test}|{\rm input_{test} }) = \sum_{g \in {\rm grid}} p(W_g|D)p(t_{\rm test}|{\rm input_{test}}, W_g)
+\]</span></p>
+<h3 id="贝叶斯学习的实际应用">贝叶斯学习的实际应用</h3>
+<p>然而，神经网络里一般都有上百万个权重，因此理论上可行的网格法在实际中是不太可行的。但是，在有足够数据时，大部分参数向量都是不太可能适用的，所以只需要考察少部分的权重即可</p>
+<p>尽管完全考察权重空间是不太可能的，但是可以退而求其次，根据权重向量的后验概率来对该空间进行抽样。对于下面的等式 <span class="math display">\[
+p(y_{\rm test}|{\rm input_{test} }, D) = \sum_{i} p(W_i|D)p(t_{\rm test}|{\rm input_{test}}, W_i)
+\]</span> 我们不再考虑所有的<span class="math inline">\(W_i\)</span>，而是根据<span class="math inline">\(p(W_i|D)\)</span>，即<span class="math inline">\(W_i\)</span>的后验分布来对<span class="math inline">\(W\)</span>做抽样</p>
+<p>在传统的梯度下降算法中，一般是随机将权重初始化为一些比较小的值，然后在损失函数上沿着梯度方向下降，最后的结果无论是到达某个局部最小值点，还是陷入平原，还是因为跑得太慢导致我们没有耐心让它跑下去，其过程都是从某个初始点沿着某条确定路径到达某个终点。现在，引入采样的方法：初始化方法不变，只不过在每次更新权重以后，都随机加入一些高斯噪声，这样，权重向量不再会下降，而是开始随机游走，不过更倾向于损失函数值比较小的区域。下图给出了随机游走10000步以后的权重分布示意图</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_10_weight_vectors_sampling.png" alt="权重随机游走的分布示意图。最小值比较小的区域被访问的次数最多，其它局部最小点也会有一些访问。高损失值的区域由于比较大，也会被访问几次"><figcaption>权重随机游走的分布示意图。最小值比较小的区域被访问的次数最多，其它局部最小点也会有一些访问。高损失值的区域由于比较大，也会被访问几次</figcaption>
+</figure>
+<p>如果加入高斯噪声的方法是正确的，并且让权重向量游走足够长时间，那么就可以得到权重空间后验分布的无偏抽样（结合上图，就是红点越多的地方后验分布越高）。这种方法称为<strong>马尔科夫链蒙特卡洛</strong>（Markov Chain Monte Carlo, MCMC）。事实上，有更有效的方法可以得到类似的无偏抽样，也就是说这种方法不需要权重向量游走时间太长</p>
+<p>全贝叶斯学习可以用在mini batch SGD中。当在某个随机的mini batch上计算损失函数的梯度时，可以得到一个带有取样噪声的无偏估计。这个取样噪声可以提供给MCMC方法使用</p>
+<h2 id="dropout">Dropout</h2>
+<p>Dropout是一种<del>新兴的</del>防止过拟合的手段（论文发表于2012年，考虑此课也是2012年发布，因此这么说没有问题）。其核心思想是对每条测试用例都训练一个模型，然后在测试时候求这些模型的平均</p>
+<p>首先来看一下，当有很多模型时，怎么将它们的输出组合起来。一种方法是将输出的概率求平均，例如模型A对三个类别的概率判断为0.3、0.2和0.5，模型B判断为0.1、0.8、0.1，那么平均以后这三个类别的概率分别为0.2、0.5和0.3。另一种方法是求几何平均值然后做归一化。保持前面两个模型做出的判断不变，此时平均以后未归一化的集合平均值分别为<span class="math inline">\(\sqrt{0.03}, \sqrt{0.16}\)</span>和<span class="math inline">\(\sqrt{0.05}\)</span>，这三个数的和为0.7968，因此归一化以后组合模型输出的概率为21.74%、50.2%和28.06%。这里有一点值得玩味：对于求几何平均值的过程，如果某个模型输出的概率比较小，那么相当于它给其它模型的结果投了一张反对票</p>
+<p>OK，现在来看一下怎么将输出平均的思想运用起来。假设现在要训练一个只有一个隐藏层的神经网络，它每次接受一个训练数据时，对每个隐藏层神经元以50%的概率将其抛弃掉，然后用剩下的神经元组成的隐藏层来训练这条数据。如果隐藏层有<span class="math inline">\(H\)</span>个神经元，这意味着每次训练时都是从<span class="math inline">\(2^H\)</span>个不同的结构里选择一个训练，而且所有这些结构都共享权重——也就是说，对每个隐藏单元，无论它是否被启用，在不同的结构里都是用相同的权重。这种方法称为<strong>dropout</strong>，可以看做是某种模型平均的方法。由于每个抽样到的模型都是用一个测试用例来训练，因此dropout也可以看做是baggings算法的一种极端情况。此外，所有模型共享权重，意味着每个模型都是被其它模型强烈地正则化。这种正则化方法比L1惩罚项或L2惩罚项强很多：后者是把权重推向0，而前者是把权重推向“正确的权重”</p>
+<p>前面大概说明了dropout如何在训练时起作用，那么测试时应该怎么使用呢？取样多个模型然后对其输出求几何平均值太耗时间了，更有效的做法是在训练时保留所有隐藏单元，但是将输出权重减半。这实际上等价于计算所有<span class="math inline">\(2^H\)</span>个模型的输出的几何平均值</p>
+<p>（笔者注：讲义里和<a href="http://arxiv.org/abs/1207.0580" target="_blank" rel="noopener">原始论文</a>里并没有给出这一等价性的证明。在<a href="https://papers.nips.cc/paper/4878-understanding-dropout.pdf" target="_blank" rel="noopener">另一篇论文</a>里给出了一些理论证明，但是过程比较复杂，这里不直接引用了）</p>
+<p>如果网络中有多个隐藏层，那么可以把每层的dropout率设为0.5，然后在测试时将所有隐藏单元的输出权重减半。这种方法得到的网络称为<strong>均值网络</strong>（mean net）。或者，也可以仍然使用dropout随机丢弃一些节点，生成多个随机模型，然后对这些模型的结果做平均。这种做法的优势是可以在预测结果中引入不确定性。此外，输入层也可以使用dropout，不过要把保留率调高一些（丢弃率调低）。这种做法在Bengio组提出的降噪自动编码器（denoising autoencoder）中得到了应用，成效不错</p>
+<p>Dropout机制在AlexNet中得到了应用，而且效果非常好。如果你的深度神经网络出现了明显的过拟合现象，使用dropout可以显著地降低错误率。实际上，任何需要提早结束机制来防止过拟合的网络，如果使用dropout来做过拟合，效果都会更好。如果网络没有过拟合，则应该把它变复杂然后引入dropout</p>
+<p>对于dropout，有另一种解释方法，这种方法也是给Hinton以最原始灵感的方法。假设某个隐藏单元“知道”哪些隐藏单元在网络中，它就可以和它们在训练数据上协作。因此，训练时一个隐藏单元学会的更多是如何修正同伙的错误，而这种机制会导致由隐藏单元之间复杂的协作关系。如果数据发生了一些改动，这种协作可能不能很好处理。就好像是如果组织很多人去完成一项庞大、复杂的刺杀计划，这项计划就很有可能会失败，因为总会有一些意想不到的情况出现，也总会有人做出出人意料的举动，导致大家无法配合完成任务。好的做法是把整个计划分解成若干简单的 ，小的计划。这样如果意外发生，很多计划都会失败，但是总有一些团队仍然能成功。Dropout的原理类似，实际上是迫使隐藏单元和其它若干不同单元组成多种组合。这样，一方面每个隐藏单元自己要保证有足够的能力，另一方面，若干协作者一起也可以完成一些比较复杂的任务</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2018/01/31/UTNN-10-Combining-Multiple-Neural-Networks-to-Improve-Generalization/" title="Hinton神经网络与机器学习 10. 组合多个神经网络以提高泛化能力">txshi-mt.com/2018/01/31/UTNN-10-Combining-Multiple-Neural-Networks-to-Improve-Generalization/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/UTNN/" rel="tag"># UTNN</a>
+          
+            <a href="/tags/dropout/" rel="tag"># dropout</a>
+          
+            <a href="/tags/模型组合/" rel="tag"># 模型组合</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/29/CS20-5-Variable-Sharing-and-Experiments-Management/" rel="next" title="CS20 05. 变量共享与实验管理">
+                <i class="fa fa-chevron-left"></i> CS20 05. 变量共享与实验管理
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">73</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">69</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么模型组合效果更好"><span class="nav-number">1.</span> <span class="nav-text">&#x4E3A;&#x4EC0;&#x4E48;&#x6A21;&#x578B;&#x7EC4;&#x5408;&#x6548;&#x679C;&#x66F4;&#x597D;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#专家组mixture-of-experts"><span class="nav-number">2.</span> <span class="nav-text">&#x4E13;&#x5BB6;&#x7EC4;&#xFF08;Mixture of Experts&#xFF09;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#全贝叶斯学习"><span class="nav-number">3.</span> <span class="nav-text">&#x5168;&#x8D1D;&#x53F6;&#x65AF;&#x5B66;&#x4E60;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#思想简介"><span class="nav-number">3.1.</span> <span class="nav-text">&#x601D;&#x60F3;&#x7B80;&#x4ECB;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#贝叶斯学习的实际应用"><span class="nav-number">3.2.</span> <span class="nav-text">&#x8D1D;&#x53F6;&#x65AF;&#x5B66;&#x4E60;&#x7684;&#x5B9E;&#x9645;&#x5E94;&#x7528;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dropout"><span class="nav-number">4.</span> <span class="nav-text">Dropout</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
