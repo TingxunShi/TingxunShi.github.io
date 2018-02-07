@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="UTNN,Hopfield网,玻尔兹曼机,模拟退火," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Hopfield网 本讲开始介绍的神经网络和传统的前馈神经网络不同，它们的性质都是由某个全局的能量函数推演而来，因此称为基于能量的模型。Hopfield网络是其中最简单的一种，由二元阈值的单元组成，单元之间有循环连接。通常来讲，带有循环连接和非线性神经元的网络不太好分析，因为其行为比较难以捉摸：它们可以陷入稳态，可以振荡，甚至可以陷入混沌（除非你知道无限精度的初始状态，否则无法预测不远的将来的状态">
+<meta name="keywords" content="UTNN,Hopfield网,玻尔兹曼机,模拟退火">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hinton神经网络与机器学习 11. Hopfield网和玻尔兹曼机">
+<meta property="og:url" content="txshi-mt.com/2018/02/04/UTNN-11-Hopfield-Nets-and-Boltzmann-Machines/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="Hopfield网 本讲开始介绍的神经网络和传统的前馈神经网络不同，它们的性质都是由某个全局的能量函数推演而来，因此称为基于能量的模型。Hopfield网络是其中最简单的一种，由二元阈值的单元组成，单元之间有循环连接。通常来讲，带有循环连接和非线性神经元的网络不太好分析，因为其行为比较难以捉摸：它们可以陷入稳态，可以振荡，甚至可以陷入混沌（除非你知道无限精度的初始状态，否则无法预测不远的将来的状态">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-02-07T01:24:36.055Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hinton神经网络与机器学习 11. Hopfield网和玻尔兹曼机">
+<meta name="twitter:description" content="Hopfield网 本讲开始介绍的神经网络和传统的前馈神经网络不同，它们的性质都是由某个全局的能量函数推演而来，因此称为基于能量的模型。Hopfield网络是其中最简单的一种，由二元阈值的单元组成，单元之间有循环连接。通常来讲，带有循环连接和非线性神经元的网络不太好分析，因为其行为比较难以捉摸：它们可以陷入稳态，可以振荡，甚至可以陷入混沌（除非你知道无限精度的初始状态，否则无法预测不远的将来的状态">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2018/02/04/UTNN-11-Hopfield-Nets-and-Boltzmann-Machines/"/>
+
+
+
+
+
+  <title>Hinton神经网络与机器学习 11. Hopfield网和玻尔兹曼机 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2018/02/04/UTNN-11-Hopfield-Nets-and-Boltzmann-Machines/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Hinton神经网络与机器学习 11. Hopfield网和玻尔兹曼机</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-04T18:25:31+08:00">
+                Feb 4 2018
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/深度学习/" itemprop="url" rel="index">
+                    <span itemprop="name">深度学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="hopfield网">Hopfield网</h2>
+<p>本讲开始介绍的神经网络和传统的前馈神经网络不同，它们的性质都是由某个全局的能量函数推演而来，因此称为基于能量的模型。Hopfield网络是其中最简单的一种，由二元阈值的单元组成，单元之间有循环连接。通常来讲，带有循环连接和非线性神经元的网络不太好分析，因为其行为比较难以捉摸：它们可以陷入稳态，可以振荡，甚至可以陷入混沌（除非你知道无限精度的初始状态，否则无法预测不远的将来的状态）。不过，研究发现如果连接是对称的，那么就存在一个全局的能量函数。整个网络的每个二元配置有一个能量。所谓二元配置指的是，网络中的神经元的可能取值有两种，为每个神经元设置其中一个值。如果为阈值的决策规则设置了正确的能量函数，网络的能量会一直下降。如果持续使用该规则，最后会达到一个能量最小值</p>
+<p>因此，能量函数的设置非常重要。某个配置的全局能量是若干局部贡献量的总和，而每个“贡献量”由连接权重和两个神经元的二元状态来决定。也就是说，能量函数的定义为 <span class="math display">\[
+E = -\sum_is_ib_i - \sum_{i&lt;j}s_is_jw_{ij}
+\]</span> 注意能量越小越好，所以这里加了负号来做限制。<span class="math inline">\(s_i\)</span>的取值是0或者1（或者在另一种Hopfield网里是-1或1）。有了二次能量函数的定义，每个单元就可以计算改变自身状态会改变多少能量。为此，需要定义<strong>能量差</strong>（energy gap）的概念，该值实际上就是关闭神经元<span class="math inline">\(i\)</span>和打开神经元<span class="math inline">\(i\)</span>两种情况下能量的变化量，即 <span class="math display">\[
+{\rm Energy\  gap} = \Delta E_i = E(s_i=0) - E(s_i = 1) = b_i + \sum_js_jw_{ij}
+\]</span> 在Hopfield网中，寻找最小能量通常使用一种顺序迭代的方法：从某个随机状态开始，以随机次序每次更新某一个神经元：看它取哪个状态能量能变小，就让它处于哪个状态。注意这里不能使用节点同时决策的方法，因为如果同时并行更新状态，会导致周期为2的振荡出现。如果在并行更新状态的同时还加入随机的等待时间，也就是说，某个节点更新完状态以后不通知其它节点，而是等待随机长度的时间以后再进行下一次更新，那么这种振荡一般就不会出现</p>
+<p>Hopfield认为，这种基于能量，能稳定在某个能量最小值点的模型适用于存储记忆力。使用上述的状态决策规则，可以把部分正确的记忆内容扩散到所有节点，清除掉一些错误的或者不全面的记忆。因此，可以在只知道一部分内容的情况下访问某一项内容。Hopfield网的鲁棒性很强，在硬件出现损坏的时候也可以正常工作，而阈值决策规则的作用此时就像是古生物学家从几根骨骼化石复原出一只恐龙一样</p>
+<p>Hopfield网的记忆存储规则也比较简单。如果激活值使用1或者-1，那么将连接两单元的权重加上两神经元状态的乘积就可以，即 <span class="math display">\[
+\Delta w_{ij} = s_is_j
+\]</span> 这种更新方法的好处是完全是在线更新，遍历过数据一遍就能得到结果，因为它并不是由误差驱动的，不需要将预测值与真实值比较，然后根据比较结果做微调。但是，这是一把双刃剑，带来的弊端是这种存储方法效率不高。如果状态是0-1值，更新方法略为复杂，但是计算起来还算简单，为 <span class="math display">\[
+\Delta w_{ij} = 4\left(s_i - \frac{1}{2}\right)\left(s_j - \frac{1}{2}\right)
+\]</span></p>
+<h2 id="处理伪极小值">处理伪极小值</h2>
+<p>Hopfield网的存储能力是一个问题。对一个有<span class="math inline">\(N\)</span>个节点，全连接的网使用前面的存储规则，网络的容量大概是<span class="math inline">\(0.15N\)</span>的记忆内容。也就是说，如果有<span class="math inline">\(N\)</span>个单元，每个单元有两种取值，在有两个单元的记忆开始出现混淆之前，可以存储的记忆数量大概是<span class="math inline">\(0.15N\)</span>。每个记忆都是<span class="math inline">\(N\)</span>个单元的一个随机配置，所以有<span class="math inline">\(N\)</span>比特信息，因此Hopfield网能存储的信息总量是<span class="math inline">\(0.15N^2\)</span>比特。也就是说，计算机使用了<span class="math inline">\(0.15N^2\)</span>个比特来存储权重，因此这种分布式记忆+局部特征最小化的方法难以使计算机有效利用其存储能力：网络中一共有<span class="math inline">\(N^2\)</span>个权重和偏置，存储<span class="math inline">\(M\)</span>个记忆以后，每个连接权重的取值是<span class="math inline">\([-M, M]\)</span>之间的一个整数（因为假设初始状态是-1或1，每存入一个记忆以后权重增1/减1），因此存储所有权重和偏置理论上需要的比特数是<span class="math inline">\(N^2\log (2M+1)\)</span></p>
+<p>所以是什么限制了Hopfield网的能力呢？每次要记住的配置时，都希望可以创造一个新的能量最小值。如下图所示，对某两个二元配置，理想状态是学到两个最小值点，一个是蓝色的，一个是绿色的。不过实际上，由于两者很近，因此最后会发生混淆，两者合并成一个红色的，更小的最小值点，但是不能对这两个二元配置作区分（这部分参考了<a href="https://www.zhihu.com/question/56994540/answer/191053894" target="_blank" rel="noopener">知乎问答：关于Hopfield神经网络</a> ）。这种相邻最小值点的融合现象称为“伪最小值点”（spurious minima）</p>
+<p>Hopfield、Feinstein和Palmer等人提出了一种应对策略：让网络从一个随机初始状态开始，做一些“忘却”（unlearning）操作。也就是说，不管它处于什么状态，反着用前面提到的存储规则。以前面的图为例，假设现在处于红色的峰值点，经过一些“忘却”以后，就可以脱离这个点，得到了两个独立的最小值，进而增大记忆量。这种方法实践中管用，但是发明者没有做出比较好的原理分析。Francis Crick和Graham Micherson认为忘却法与快速眼球移动睡眠（REM睡眠）的过程很像（具体解释略去）。不过，关于忘却法的另一个问题是，应该忘掉多少东西？实际上，忘却的内容也是使用数据拟合模型这一过程的一部分。如果使用最大似然法拟合这个模型，忘却的过程会自然而然地出现，因此关键问题是提出一个合适的代价函数</p>
+<p>在具体介绍忘却法的代价函数之前，先看一看物理学家是如何增强Hopfield网能力的。Elizabeth Gardner提出了一种方法，就是不像之前那样只遍历一遍数据集就存一个向量，而是循环遍历多次训练集。这样，牺牲的是在线学习能力，得到的是更有效的存储。整个训练过程有点像感知机的收敛过程：让整个网络先进入到某个记忆状态，然后单独来看每个单元，判断给定所有其它单元状态的情况下，该单元是否展现了想要的状态。如果结果为“是”，那么让其输入的权重不变；否则按照收敛过程指定的权重更新规则更新权重。这种方法被统计学家称为“伪似然法”。不过Hopfield网中的权重都是对称的，因此对每个权重需要获得两组梯度然后求均值</p>
+<h2 id="带有隐藏单元的hopfield网">带有隐藏单元的Hopfield网</h2>
+<p>Hopfield网包含了两个核心想法：首先，如果网络中的神经元只有两个可能取值，而且连接是对称的，那么就可以找到一个局部的能量最小值；其次，局部的能量最小值可能对应于某些记忆。不过，有另外一种寻找局部最小值的方法，就是不再让网络存储记忆，而是让它对输入构造一些解释。此时，输入由一些可见单元表示，解释由隐藏单元构成。也就是说，此时对输入的解释是隐藏单元上的一个二元配置，整个系统的能量表示这个解释有多差，因此目标是让隐藏单元进入比较低能量的状态</p>
+<p>举个例子，当你看到图片里的一条二维的线，它应该是由什么样的三维物体的边缘所投影出来的？实际上，它可能对应了很多不同的三维物体，因为投影时边缘两端的深度信息都已经丢失了。而且，如果若干物体都放在一起，它们之间存在相互遮挡，那么你能看到的其实也只是一条线</p>
+<p>假设现在有若干张图片，每张图片里面有若干条线。可以建立一组神经元，每个神经元对应图中的一条线。由于对任意一张图片，很难包含所有的线，因此对给定的一张图片，只有若干几个神经元能够被激活。这些神经元是输入神经元。然后，对所有三维物体的线或边缘，也对应建立神经元。由于一条二维线可以对应若干三维物体，因此对某个被激活的输入神经元，可以与其所有对应的隐藏神经元建立联系</p>
+<figure>
+<img src="" alt="使用带隐藏单元的Hopfield网学习二维线段与三维物体边缘联系的示意图"><figcaption>使用带隐藏单元的Hopfield网学习二维线段与三维物体边缘联系的示意图</figcaption>
+</figure>
+<p>上图给出了一个示意图。这里，输入神经元与隐藏神经元之间的绿色连线表示两者存在可能的对应关系，每个连接都共享相同的权重。由于一条二维线段只对应于一种可能的三维物体，因此这些隐藏神经元之间彼此还存在竞争关系，以红线表示</p>
+<p>接下来，要建模的是不同输入单元对应的两组隐藏单元之间的关系：图片中两条二维直线相交，通常意味着两个对应的三维物体在交点处有同样的深度，因此可以建立两个隐藏单元之间的联系（上图中连接两隐藏神经元的细绿色箭头）。除此以外，如果三维物体之间不仅相交还相互垂直，那么就给一个比较强的连接。这样，在建立了隐藏单元与输入单元的连接，以及隐藏单元之间的连接以后，就可以对某个输入图像做出解释</p>
+<p>如果决定使用低能量的状态来对输入做出解释，相对应的会带来两个问题：首先，如何避免隐藏单元陷入比较差的能量函数的局部最小值？第二个更难的问题是，如何学习出这些权重，尤其是体系结构中没有监督器的情况下？</p>
+<h2 id="使用随机单元以改进搜索">使用随机单元以改进搜索</h2>
+<p>Hopfield网做出的决策总是向着降低网络能量这一目标前进（如果不改变单元状态，那么能量保持不变），因此，很难脱离局部最小值。解决方法是加入随机噪声，这样就可以从比较差的极值点离开，尤其是极值点比较浅的时候效果更明显。这里要加入的不是某个固定数量的噪声，更有效的策略是先加入很多噪声，然后对空间做一个粗略探索，找到总体来讲不错的区域，然后减少噪声。这样一来，噪声很大的时候，就可以翻过比较大的壁垒；减小噪声的时候，网络就开始聚焦于附近的最小值。如果噪声降低得很慢，系统就会陷入一个比较深的最小值，这种方法称为<strong>模拟退火法</strong></p>
+<p>模拟退火法背后的原理是，在物理系统或者使用能量函数的模拟系统中，温度会影响转移的概率：</p>
+<ul>
+<li>当系统的温度比较高时，粒子向上上升的概率低于向下降的概率，但是低得不多。这样，更容易翻过壁垒，但是即便达到比较深的极小值也不太容易待得住</li>
+<li>当系统的温度比较低时，粒子移动的概率总体都不大，但是上升的概率远远低于下降的概率。理论上讲，所有粒子最后都会陷入比较深的最小值，但是如果持续在低温环境下运行，粒子也难以从局部最小值走出来</li>
+</ul>
+<p>综合以上两种状况，比较好的组合策略是从高温开始，慢慢降低温度</p>
+<p>因此，在Hopfield网中引入噪声的做法是将二元阈值单元转化为二元随机单元，让其做出有偏的随机决策，而噪声的数量由“温度”来控制。提高噪声的数量等价于降低所有配置之间的能量差。具体的形式为 <span class="math display">\[
+p(s_i = 1) = \frac{1}{1+e^{-\Delta E_i/T}}
+\]</span> 这个式子与logistic回归中用到的等式类似，只不过能量差<span class="math inline">\(\Delta E_i\)</span>缩小了温度数量那么大的倍数。如果温度很高，那么指数项接近于0，分母接近于2，单元被激活的概率大概为0.5。温度下降时，取决于<span class="math inline">\(\Delta E_i\)</span>的符号，单元或者是稳定地保持在开的状态，或者是稳定在关的状态。当温度降低到0时，退化为Hopfield网，单元是否被激活由<span class="math inline">\(\Delta E_i\)</span>的符号决定，此时随机性褪去，单元退化为原始的二元阈值单元。能量差的定义仍然为 <span class="math display">\[
+\Delta E_i = E(s_i=0) - E(s_i = 1) = b_i + \sum_js_jw_{ij}
+\]</span> 模拟退火是一种有效避免陷入局部最优，以改善搜索效果的方法，对玻尔兹曼机的提出也产生了影响。但是深入了解它会分散对玻尔兹曼机的注意力，因此这里不再详述。从这里开始，每个单元都是温度为1的二元随机单元，是能量差的标准logistic函数</p>
+<p>要了解玻尔兹曼机的学习过程，就要理解热平衡的概念。大多数人都认为，到达热平衡时，系统稳定下来，不再发生任何变化。热平衡大概是这个意思，但是这不意味着每个单元的状态都稳定了。实际上，每个单元的状态还会变化，稳定下来的是配置上的概率分布。我们称稳定在某个特定分布上的概率分布为<strong>稳态分布</strong>（stationary distribution），稳态分布由系统的能量函数决定。在稳态分布中，任何配置的概率正比于其负能量。理解热平衡的一种直观方法是，假设很多相同的系统构成了一个巨大的混合体，每个系统都有完全相同的能量函数，比如，有一个巨大的随机Hopfield网组成的集合，每个Hopfield网的权重都相等。在这个混合体中，可以定义某个配置的概率为系统中处于这个配置的系统的比例。然后，可以以任何分布作为初始情况，例如可以让所有节点的配置都相同，或者对每种可能的配置，都有相同数量的网络以该配置为初始配置（这样就是均匀分布），然后使用随机更新规则（选择一个单元，检查能量差，根据能量差随机决定是打开还是关闭，然后选择下一个单元，以此类推），最后会达到一个稳态，即系统中每种配置的比例是固定的（如果连接是对称的，最后肯定会达到这个状态）</p>
+<p>对此，可以有一个类比。假设在拉斯维加斯有个巨大的赌场，里面有多于<span class="math inline">\(52!\)</span>个发牌者，每个发牌者拿到的牌都是未开封的，由同一家厂商制造，初始顺序按照标准顺序排好。然后，所有发牌者开始随机洗牌，而且不玩那种把牌变回原来顺序的那种把戏。经过少数几次洗牌以后，可能黑桃K还在黑桃Q上面，也就是说，任意牌堆里还会有一些牌没有忘记自己的初始位置。不过，在经过长时间洗牌以后，所有牌堆的所有牌都会被打乱顺序，此时牌的<span class="math inline">\(52!\)</span>种排列出现的数量相等，并且每种排列的数量不会随着洗牌的过程而变化</p>
+<p>（简而言之，热平衡不是系统内的粒子不动，而是粒子还在动，但是整个系统呈现稳定状态）</p>
+<h2 id="玻尔兹曼机如何对数据建模">玻尔兹曼机如何对数据建模</h2>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2018/02/04/UTNN-11-Hopfield-Nets-and-Boltzmann-Machines/" title="Hinton神经网络与机器学习 11. Hopfield网和玻尔兹曼机">txshi-mt.com/2018/02/04/UTNN-11-Hopfield-Nets-and-Boltzmann-Machines/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/UTNN/" rel="tag"># UTNN</a>
+          
+            <a href="/tags/Hopfield网/" rel="tag"># Hopfield网</a>
+          
+            <a href="/tags/玻尔兹曼机/" rel="tag"># 玻尔兹曼机</a>
+          
+            <a href="/tags/模拟退火/" rel="tag"># 模拟退火</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/31/UTNN-10-Combining-Multiple-Neural-Networks-to-Improve-Generalization/" rel="next" title="Hinton神经网络与机器学习 10. 组合多个神经网络以提高泛化能力">
+                <i class="fa fa-chevron-left"></i> Hinton神经网络与机器学习 10. 组合多个神经网络以提高泛化能力
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/02/04/CS20-6-Introduction-to-CNN/" rel="prev" title="CS20 06. 卷积神经网络简介">
+                CS20 06. 卷积神经网络简介 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">75</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">72</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#hopfield网"><span class="nav-number">1.</span> <span class="nav-text">Hopfield&#x7F51;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#处理伪极小值"><span class="nav-number">2.</span> <span class="nav-text">&#x5904;&#x7406;&#x4F2A;&#x6781;&#x5C0F;&#x503C;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#带有隐藏单元的hopfield网"><span class="nav-number">3.</span> <span class="nav-text">&#x5E26;&#x6709;&#x9690;&#x85CF;&#x5355;&#x5143;&#x7684;Hopfield&#x7F51;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用随机单元以改进搜索"><span class="nav-number">4.</span> <span class="nav-text">&#x4F7F;&#x7528;&#x968F;&#x673A;&#x5355;&#x5143;&#x4EE5;&#x6539;&#x8FDB;&#x641C;&#x7D22;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#玻尔兹曼机如何对数据建模"><span class="nav-number">5.</span> <span class="nav-text">&#x73BB;&#x5C14;&#x5179;&#x66FC;&#x673A;&#x5982;&#x4F55;&#x5BF9;&#x6570;&#x636E;&#x5EFA;&#x6A21;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

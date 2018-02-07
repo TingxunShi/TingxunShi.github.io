@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="CS20,CNN," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="本讲使用了CS231n的讲义，而这份讲义非常详细，这里只做一个简单的笔记。所有插图的链接都链到了原始讲义的图片地址 卷积神经网络，又被称为CNN或者ConvNet。这种体系结构直接假设输入是图片（原文如此，实际上某些文本问题也可以用CNN处理），并直接将一些性质编码在了体系结构中。而且，CNN可以显著减少参数数量，因此计算更高效 体系结构概览 常规神经网络的所有隐藏层神经元都与前面一层的所有神经元">
+<meta name="keywords" content="CS20,CNN">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CS20 06. 卷积神经网络简介">
+<meta property="og:url" content="txshi-mt.com/2018/02/04/CS20-6-Introduction-to-CNN/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="本讲使用了CS231n的讲义，而这份讲义非常详细，这里只做一个简单的笔记。所有插图的链接都链到了原始讲义的图片地址 卷积神经网络，又被称为CNN或者ConvNet。这种体系结构直接假设输入是图片（原文如此，实际上某些文本问题也可以用CNN处理），并直接将一些性质编码在了体系结构中。而且，CNN可以显著减少参数数量，因此计算更高效 体系结构概览 常规神经网络的所有隐藏层神经元都与前面一层的所有神经元">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://cs231n.github.io/assets/cnn/stride.jpeg">
+<meta property="og:image" content="http://cs231n.github.io/assets/cnn/maxpool.jpeg">
+<meta property="og:updated_time" content="2018-02-07T05:05:27.977Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CS20 06. 卷积神经网络简介">
+<meta name="twitter:description" content="本讲使用了CS231n的讲义，而这份讲义非常详细，这里只做一个简单的笔记。所有插图的链接都链到了原始讲义的图片地址 卷积神经网络，又被称为CNN或者ConvNet。这种体系结构直接假设输入是图片（原文如此，实际上某些文本问题也可以用CNN处理），并直接将一些性质编码在了体系结构中。而且，CNN可以显著减少参数数量，因此计算更高效 体系结构概览 常规神经网络的所有隐藏层神经元都与前面一层的所有神经元">
+<meta name="twitter:image" content="http://cs231n.github.io/assets/cnn/stride.jpeg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2018/02/04/CS20-6-Introduction-to-CNN/"/>
+
+
+
+
+
+  <title>CS20 06. 卷积神经网络简介 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2018/02/04/CS20-6-Introduction-to-CNN/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">CS20 06. 卷积神经网络简介</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-04T21:41:41+08:00">
+                Feb 4 2018
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/深度学习/" itemprop="url" rel="index">
+                    <span itemprop="name">深度学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本讲使用了<a href="http://cs231n.github.io/convolutional-networks/" target="_blank" rel="noopener">CS231n的讲义</a>，而这份讲义<strong>非常</strong>详细，这里只做一个简单的笔记。所有插图的链接都链到了原始讲义的图片地址</p>
+<p>卷积神经网络，又被称为CNN或者ConvNet。这种体系结构直接假设输入是图片（原文如此，实际上某些文本问题也可以用CNN处理），并直接将一些性质编码在了体系结构中。而且，CNN可以显著减少参数数量，因此计算更高效</p>
+<h2 id="体系结构概览">体系结构概览</h2>
+<p>常规神经网络的所有隐藏层神经元都与前面一层的所有神经元全连接，这种做法不是很适合处理图像。假设输入图像宽200像素、高200像素，有3个颜色通道，那么第一个隐藏层就有<span class="math inline">\(200 \times 200 \times 3 = 120,000\)</span>个权重需要训练，权重太多容易过拟合</p>
+<p>一般来说，CNN会分成若干层，这些层可能属于不同类型，完成不同功能。CNN中常见的层大致可以属于以下类型：卷积层、池化层、ReLU层和全连接层。成熟的CNN体系结构（例如AlexNet、VGGNet等）都是将这些层组合起来的产物。每一层接受一个三维的输入，通过一个可微函数将其转化成一个三维的输出。其中卷积层和全连接层有参数（可以理解为权重，会随反向传播而更新）而ReLU和池化层没有，卷积层、全连接层和池化层都有额外超参数可以调节，ReLU层没有</p>
+<h3 id="卷积层conv">卷积层（CONV)</h3>
+<p>卷积层是CNN的核心组成部分，是减少计算量的关键所在</p>
+<h4 id="基本概念">基本概念</h4>
+<p>卷积层的参数由一组可学习的过滤器组合，每个过滤器的宽度和高度都比较小，不过与输入有相同的深度。例如，CNN的第一层所用的过滤器通常大小为<span class="math inline">\(5 \times 5\times 3\)</span>，也就是5像素宽，5像素高，3通道。在正向传播时，把每个过滤器沿着输入的宽和高滑动，计算过滤器和输入对应区域的点积（实际上更准确地说，是做了一个卷积操作）。在这个滑动的过程中，可以生成一个二维的激活映射，给出这个过滤器在每个点上的回应。直觉上来看，网络学习到的过滤器会在看到某种视觉特征的时候被激活</p>
+<p>网络在每个卷积层都会学习若干个过滤器，然后沿着深度的维度将它们堆叠起来。如果从神经科学的角度看，输出的每个元素都可以理解为是某个神经元的输出。该神经元只观察输入的一个很小的区域，然后将参数共享给“左边”和“右边”的神经元。神经元看的区域的大小，也就是之前提到的过滤器的尺寸。这个尺寸是一个超参数，也被称作是神经元的<strong>感受野</strong>。注意过滤器的深度通常与输入的深度相同</p>
+<p>前面讲述的是卷积层与输入的连通性，接下来说一下其与输出的连通性。这里一共有三个超参数来控制：深度、步幅（stride）和补零（zero-padding）</p>
+<ul>
+<li>“深度”定义了要使用多少过滤器。每个过滤器对同一输入内容（就是前面说的那个“很小的区域”）的关注点可能不一样</li>
+<li>“步幅”定义每次将过滤器滑动多少像素</li>
+<li>有时，需要在图像周围补0，这样可以控制输出的空间大小（就是宽和高的乘积）</li>
+</ul>
+<p>这样，输出的空间大小可以看作是一个关于输入大小<span class="math inline">\(W\)</span>、神经元感受野大小<span class="math inline">\(F\)</span>、步幅大小<span class="math inline">\(S\)</span>和补零数量<span class="math inline">\(P\)</span>的函数。具体值为 <span class="math display">\[
+{\rm output\_size} = \frac{W-F+2P}{S} + 1
+\]</span> <img src="http://cs231n.github.io/assets/cnn/stride.jpeg" alt="例子：对一维输入的卷积"></p>
+<p>上图给出了对一维数据的卷积结果。灰色代表输入，<span class="math inline">\(W=5, P=1, F=3\)</span>。左边给出的是<span class="math inline">\(S=1\)</span>的情况，中间给出的是<span class="math inline">\(S=2\)</span>的情况。注意<span class="math inline">\(S\)</span>不能设为3，因为此时<span class="math inline">\(W-F+2P = 4\)</span>不能被3整除（所以补零很大程度上是为了解决这种问题）。右边给出了神经元的权重（<span class="math inline">\(1 \times 0 + 0\times 1+2\times(-1) = -2\)</span>，以此类推）</p>
+<p>通常情况下，<span class="math inline">\(S=1\)</span>时，<span class="math inline">\(P\)</span>被设置为<span class="math inline">\((F-1)/2\)</span>，这样可以使得输出大小和输入大小相等。具体原因后面解释</p>
+<h4 id="参数共享">参数共享</h4>
+<p>CNN崭露头角的第一年，2012年问世的AlexNet接受的图片大小为<span class="math inline">\(227 \times 227 \times 3\)</span>，第一层卷积层的感受野大小<span class="math inline">\(F=11\)</span>，步幅<span class="math inline">\(S=4\)</span>，深度<span class="math inline">\(K=96\)</span>。由上面的计算可知卷积层输出的大小是<span class="math inline">\(55 \times 55 \times 96\)</span>，每个神经元都连接到一块<span class="math inline">\(11 \times 11 \times 3\)</span>的输入。如果没有参数共享的话，那么这意味着<span class="math inline">\(55 \times 55 \times 96 = 290,400\)</span>个神经元每一个都有<span class="math inline">\(11 \times 11 \times 3 = 363\)</span>个权重和1个偏置，因此第一个卷积层就会有<span class="math inline">\(290,400 \times 364 = 105,705,600\)</span>个参数，实在是太大了</p>
+<p>对于这样的问题，可以做一个合理假设来显著减少参数数量：如果某个特征对计算某个空间位置<span class="math inline">\((x,y)\)</span>有效果，那么它计算另一位位置<span class="math inline">\((x_2,y_2)\)</span>应该也有效果。也就是说，对关注同一层深度的神经元，可以让它们享有同样的权重和偏置。这样，第一个卷积层的参数个数会降低到<span class="math inline">\(96 \times (11 \times 11 \times 3 + 1) = 34,944\)</span>。不过，如果输入的图像有某些特殊的结构，例如要做脸部识别时，需要学出关于眼睛或者头发的特征，那么这种参数共享的方法就会出现问题。应对方案是放松限制，将这一层转化为<strong>局部连接层</strong></p>
+<p>总而言之，卷积层</p>
+<ul>
+<li>接受的输入大小为<span class="math inline">\(W_1 \times H_1 \times D_1\)</span></li>
+<li>由4个超参数配置
+<ul>
+<li>过滤器数量<span class="math inline">\(K\)</span></li>
+<li>感知野大小<span class="math inline">\(F\)</span></li>
+<li>步幅<span class="math inline">\(S\)</span></li>
+<li>补零数量<span class="math inline">\(P\)</span></li>
+</ul></li>
+<li>产生的输出大小为<span class="math inline">\(W_2 \times H_2 \times D_2\)</span>，其中
+<ul>
+<li><span class="math inline">\(W_2 = (W_1 - F + 2P) / S+1\)</span></li>
+<li><span class="math inline">\(H_2 = (H_1 - F + 2P)/S+1\)</span></li>
+<li><span class="math inline">\(D_2 = K\)</span></li>
+</ul></li>
+<li>每个过滤器有<span class="math inline">\(F \times F \times D_1\)</span>个权重</li>
+<li>输出的第<span class="math inline">\(d\)</span>个切片是使用第<span class="math inline">\(d\)</span>个过滤器在输入上以步幅<span class="math inline">\(S\)</span>做合法卷积，然后以第<span class="math inline">\(d\)</span>个偏置的大小做出偏移的结果</li>
+</ul>
+<h4 id="实现">实现</h4>
+<p>由于卷积的核心就是过滤器和输入某块区域的点乘，因此卷积层的正向传播操作通常实现为大矩阵的乘积。具体做法为</p>
+<ol type="1">
+<li>将输入图像的各个局部区域拉伸成若干列。例如假设输入大小是<span class="math inline">\(227 \times 227 \times 3\)</span>，过滤器大小为<span class="math inline">\(11 \times 11 \times 3 = 363\)</span>，步幅为4，那么输出的大小为<span class="math inline">\((227 - 11) / 4 + 1 = 55\)</span>。整个图像就会被拉伸成一个<span class="math inline">\(363 \times 3025\  (55 \times 55 = 3025)\)</span>的矩阵<code>X_col</code>，每一列都是一个感受野</li>
+<li>卷积层的权重被拉伸为行。假设有96个过滤器，那么得到的权重矩阵<code>W_row</code>的大小为<span class="math inline">\(96 \times 363\)</span></li>
+<li>卷积操作实际上就是<code>np.dot(W_row, X_col)</code></li>
+<li>得到的矩阵大小为<span class="math inline">\(96 \times 3025\)</span>，需要再被调整到正确的维度<span class="math inline">\(55 \times 55 \times 96\)</span></li>
+</ol>
+<h4 id="其它细节">其它细节</h4>
+<p><strong>1x1 卷积</strong>：一些论文使用的是<span class="math inline">\(1\times 1\)</span>的卷积核，这种做法由<a href="https://arxiv.org/abs/1312.4400" target="_blank" rel="noopener"><em>Network in Network</em></a>这篇论文率先引入。如果输入的深度为<span class="math inline">\(d\)</span>，这相当于做一个<span class="math inline">\(d\)</span>维的点乘（笔者注：看知乎上的相关讨论，这种做法一般会伴随着深度的改变，从而也达到一些降维的效果。可参考 <a href="https://zhuanlan.zhihu.com/p/30458963" target="_blank" rel="noopener">这篇导览型的文章</a> ）</p>
+<p><strong>空洞卷积</strong>（dilated convolution）：<a href="https://arxiv.org/abs/1511.07122" target="_blank" rel="noopener"><em>Multi-Scale Context Aggregation by Dilated Convolutions</em></a>为卷积层引入了一个新的超参数，称为空洞（dilation，或译为膨胀）。具体的讨论可以参考<a href="https://www.zhihu.com/question/54149221" target="_blank" rel="noopener">这篇知乎回答</a></p>
+<h3 id="池化层pool">池化层（POOL)</h3>
+<p>通常会在两个卷积层之间插入一个池化（pooling）层，来减小表示的空间大小，这样可以减少参数数量和计算量，控制过拟合。最常见的操作是在深度这个维度上，对每个切片使用大小为<span class="math inline">\(2\times 2\)</span>的过滤器，以跨度2来求最大值，这样可以将75%的激活值都砍掉（<span class="math inline">\(2\times 2\)</span>的区域上只保留一个值）。下图右边给出了一个例子</p>
+<figure>
+<img src="http://cs231n.github.io/assets/cnn/maxpool.jpeg" alt="最大池示例"><figcaption>最大池示例</figcaption>
+</figure>
+<p>总体来讲，池化层</p>
+<ul>
+<li>接受的输入大小为<span class="math inline">\(W_1 \times H_1 \times D_1\)</span></li>
+<li>由两个超参数配置
+<ul>
+<li>过滤器大小<span class="math inline">\(F\)</span></li>
+<li>步幅<span class="math inline">\(S\)</span></li>
+</ul></li>
+<li>产生的输出大小为<span class="math inline">\(W_2 \times H_2 \times D_2\)</span>
+<ul>
+<li><span class="math inline">\(W_2 = (W_1 - F) / S+1\)</span></li>
+<li><span class="math inline">\(W_2 = (H_1 - F) / S + 1\)</span></li>
+<li><span class="math inline">\(D_2 = D_1\)</span></li>
+</ul></li>
+<li>由于池化操作是一个固定函数，因此不引入参数。此外，池化通常不需要补零</li>
+</ul>
+<p>实践中通常只有两种配置：<span class="math inline">\(F=3, S=2\)</span>或<span class="math inline">\(F=2, S=2\)</span>。不建议使用太大的过滤器。除了最大池化，还可以使用平均池化和L2-范数池化，不过最大池化的效果实践显示最好。一些研究人员不喜欢池化操作，建议在卷积层使用更大的步幅来替代之。此外，训练生成模型（例如VAE、GAN等）时通常为了达到更好的效果而舍弃池化层</p>
+<h3 id="归一化层">归一化层</h3>
+<p>由于实践中没什么贡献，归一化层已经基本不太被人使用。详细内容参考Alex Krizhevsky的<a href="http://code.google.com/p/cuda-convnet/wiki/LayerParams#Local_response_normalization_layer_(same_map)" target="_blank" rel="noopener">cuda-convnet library API</a></p>
+<h3 id="全连接层fc">全连接层（FC)</h3>
+<p>与普通的前馈神经网络中的层无异</p>
+<h3 id="将全连接层转化为卷积层">将全连接层转化为卷积层</h3>
+<p>这部分内容笔记暂时略去了</p>
+<h2 id="卷积神经网络体系结构">卷积神经网络体系结构</h2>
+<p>以上介绍了三种层：CONV、POOL和FC。此外，我们会把激活函数RELU也单独写作一层，该层对输入的每个值做一个非线性变换。下面讨论如何将这些部件组装起来，形成一个完整的卷积神经网络</p>
+<h3 id="层的模式">层的模式</h3>
+<p>最常见的卷积神经网络体系结构是将若干个CONV-RELU层堆叠起来， 后面跟一个POOL层，然后将这种模式重复若干遍，直到图像的大小被合并到足够小为止。然后，通过若干个FC层，最后得到输出，例如每个类别的得分。也就是说，最常见的卷积神经网络体系结构满足如下模式</p>
+<p><code>INPUT -&gt; [[CONV -&gt; RELU]*N -&gt; POOL?]*M -&gt; [FC -&gt; RELU]*K -&gt; FC</code></p>
+<p>这里<code>*</code>表示重复，<code>POOL?</code>表示有一个可选的池化层。通常情况下有</p>
+<ul>
+<li><span class="math inline">\(N \ge 0\)</span>（且通常<span class="math inline">\(N \le 3\)</span>）</li>
+<li><span class="math inline">\(M \ge 0\)</span></li>
+<li><span class="math inline">\(K \ge 0\)</span>（且通常<span class="math inline">\(K &lt; 3\)</span>）</li>
+</ul>
+<p><strong>通常将若干使用小尺寸过滤器的CONV堆叠在一起，而不是使用一个大感受野的CONV</strong>。假设堆起3个<span class="math inline">\(3 \times 3\)</span>的CONV（层与层之间做一个非线性变换），这样，第一个CONV的神经元关注原始输入中<span class="math inline">\(3 \times 3\)</span>的数据，第二个CONV的神经元关注第一层中<span class="math inline">\(3 \times 3\)</span>的数据，相当于关注原始输入中<span class="math inline">\(5 \times 5\)</span>的数据。那么，第三个CONV的神经元以此类推是关注原始输入中<span class="math inline">\(7 \times 7\)</span>的数据。那么为什么不直接使用一个感受野为<span class="math inline">\(7 \times 7\)</span>的CONV层呢？这样做有以下几个缺点</p>
+<ul>
+<li>这样神经元计算的是输入的线性函数，而分三个CONV可以做两次非线性变换</li>
+<li>假设所有输入有<span class="math inline">\(C\)</span>个信道，感受野大小为<span class="math inline">\(7 \times 7\)</span>的CONV层有<span class="math inline">\(C \times (7 \times 7 \times C) = 49C^2\)</span>个参数，而堆叠的CONV层有<span class="math inline">\(3 \times (C \times (3 \times 3 \times C))\)</span>个参数，参数数量更少，而且可以表示输入中更强力的特征</li>
+</ul>
+<p>堆叠小感受野CONV的唯一缺点是，在做反向传播时，需要更多内存来存储中间CONV的结果</p>
+<p>需要注意的是，从Google的Inception架构开始，CNN的联通结构变得更加复杂</p>
+<h3 id="层的大小">层的大小</h3>
+<p>输入层的大小通常应该能被2整除很多次，常见的设置如32、64、96、224、384、512</p>
+<p>卷积层通常使用小的过滤器（<span class="math inline">\(3 \times 3\)</span>或最多<span class="math inline">\(5 \times 5\)</span>），使用步幅<span class="math inline">\(S=1\)</span>。当补零数<span class="math inline">\(P=(F-1)/2\)</span>时，卷积层会保留原始输入大小。一般不使用更大的过滤器，即便要如此做，也把它放在第一个卷积层，直接接受原始输入。一般来讲，小的步幅（<span class="math inline">\(S=1\)</span>）在实践中效果更好，而且可以把所有空间降采样的任务都交给池化层，让卷积层专注于转换输入。补零也可以改善模型效果，因为如果不补零，输入的尺寸在每个卷积层处理后都会变小，图片边界上的信息消失太快</p>
+<p>池化层用来对输入的空间维度降采样，通常使用<span class="math inline">\(F=2\)</span>的最大池化层，步幅<span class="math inline">\(S=2\)</span>。另一种做法是设<span class="math inline">\(F=3\)</span>。一般情况下不要把池化层的感受野大小设成大于3的数，因为这样会损失太多信息，效果不好</p>
+<p>如果网络难以拟合，一种比较好的办法是降低batch大小。CONV比较吃显存，要注意</p>
+<h3 id="成熟的体系结构">成熟的体系结构</h3>
+<p>包括了LeNet、AlexNet、ZFNet、GoogLeNet、VGGNet和ResNet</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2018/02/04/CS20-6-Introduction-to-CNN/" title="CS20 06. 卷积神经网络简介">txshi-mt.com/2018/02/04/CS20-6-Introduction-to-CNN/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/CS20/" rel="tag"># CS20</a>
+          
+            <a href="/tags/CNN/" rel="tag"># CNN</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/02/04/UTNN-11-Hopfield-Nets-and-Boltzmann-Machines/" rel="next" title="Hinton神经网络与机器学习 11. Hopfield网和玻尔兹曼机">
+                <i class="fa fa-chevron-left"></i> Hinton神经网络与机器学习 11. Hopfield网和玻尔兹曼机
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">75</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">72</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#体系结构概览"><span class="nav-number">1.</span> <span class="nav-text">&#x4F53;&#x7CFB;&#x7ED3;&#x6784;&#x6982;&#x89C8;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#卷积层conv"><span class="nav-number">1.1.</span> <span class="nav-text">&#x5377;&#x79EF;&#x5C42;&#xFF08;CONV)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#基本概念"><span class="nav-number">1.1.1.</span> <span class="nav-text">&#x57FA;&#x672C;&#x6982;&#x5FF5;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#参数共享"><span class="nav-number">1.1.2.</span> <span class="nav-text">&#x53C2;&#x6570;&#x5171;&#x4EAB;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#实现"><span class="nav-number">1.1.3.</span> <span class="nav-text">&#x5B9E;&#x73B0;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#其它细节"><span class="nav-number">1.1.4.</span> <span class="nav-text">&#x5176;&#x5B83;&#x7EC6;&#x8282;</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#池化层pool"><span class="nav-number">1.2.</span> <span class="nav-text">&#x6C60;&#x5316;&#x5C42;&#xFF08;POOL)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#归一化层"><span class="nav-number">1.3.</span> <span class="nav-text">&#x5F52;&#x4E00;&#x5316;&#x5C42;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#全连接层fc"><span class="nav-number">1.4.</span> <span class="nav-text">&#x5168;&#x8FDE;&#x63A5;&#x5C42;&#xFF08;FC)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#将全连接层转化为卷积层"><span class="nav-number">1.5.</span> <span class="nav-text">&#x5C06;&#x5168;&#x8FDE;&#x63A5;&#x5C42;&#x8F6C;&#x5316;&#x4E3A;&#x5377;&#x79EF;&#x5C42;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#卷积神经网络体系结构"><span class="nav-number">2.</span> <span class="nav-text">&#x5377;&#x79EF;&#x795E;&#x7ECF;&#x7F51;&#x7EDC;&#x4F53;&#x7CFB;&#x7ED3;&#x6784;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#层的模式"><span class="nav-number">2.1.</span> <span class="nav-text">&#x5C42;&#x7684;&#x6A21;&#x5F0F;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#层的大小"><span class="nav-number">2.2.</span> <span class="nav-text">&#x5C42;&#x7684;&#x5927;&#x5C0F;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#成熟的体系结构"><span class="nav-number">2.3.</span> <span class="nav-text">&#x6210;&#x719F;&#x7684;&#x4F53;&#x7CFB;&#x7ED3;&#x6784;</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
