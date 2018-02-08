@@ -119,10 +119,13 @@
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="Hopfield网 本讲开始介绍的神经网络和传统的前馈神经网络不同，它们的性质都是由某个全局的能量函数推演而来，因此称为基于能量的模型。Hopfield网络是其中最简单的一种，由二元阈值的单元组成，单元之间有循环连接。通常来讲，带有循环连接和非线性神经元的网络不太好分析，因为其行为比较难以捉摸：它们可以陷入稳态，可以振荡，甚至可以陷入混沌（除非你知道无限精度的初始状态，否则无法预测不远的将来的状态">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-02-07T01:24:36.055Z">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_11_example_of_spurious_minima.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_11_hopfield_net_with_hidden_units_example.png">
+<meta property="og:updated_time" content="2018-02-08T12:29:33.744Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hinton神经网络与机器学习 11. Hopfield网和玻尔兹曼机">
 <meta name="twitter:description" content="Hopfield网 本讲开始介绍的神经网络和传统的前馈神经网络不同，它们的性质都是由某个全局的能量函数推演而来，因此称为基于能量的模型。Hopfield网络是其中最简单的一种，由二元阈值的单元组成，单元之间有循环连接。通常来讲，带有循环连接和非线性神经元的网络不太好分析，因为其行为比较难以捉摸：它们可以陷入稳态，可以振荡，甚至可以陷入混沌（除非你知道无限精度的初始状态，否则无法预测不远的将来的状态">
+<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_11_example_of_spurious_minima.png">
 
 
 
@@ -405,6 +408,9 @@ E = -\sum_is_ib_i - \sum_{i&lt;j}s_is_jw_{ij}
 <h2 id="处理伪极小值">处理伪极小值</h2>
 <p>Hopfield网的存储能力是一个问题。对一个有<span class="math inline">\(N\)</span>个节点，全连接的网使用前面的存储规则，网络的容量大概是<span class="math inline">\(0.15N\)</span>的记忆内容。也就是说，如果有<span class="math inline">\(N\)</span>个单元，每个单元有两种取值，在有两个单元的记忆开始出现混淆之前，可以存储的记忆数量大概是<span class="math inline">\(0.15N\)</span>。每个记忆都是<span class="math inline">\(N\)</span>个单元的一个随机配置，所以有<span class="math inline">\(N\)</span>比特信息，因此Hopfield网能存储的信息总量是<span class="math inline">\(0.15N^2\)</span>比特。也就是说，计算机使用了<span class="math inline">\(0.15N^2\)</span>个比特来存储权重，因此这种分布式记忆+局部特征最小化的方法难以使计算机有效利用其存储能力：网络中一共有<span class="math inline">\(N^2\)</span>个权重和偏置，存储<span class="math inline">\(M\)</span>个记忆以后，每个连接权重的取值是<span class="math inline">\([-M, M]\)</span>之间的一个整数（因为假设初始状态是-1或1，每存入一个记忆以后权重增1/减1），因此存储所有权重和偏置理论上需要的比特数是<span class="math inline">\(N^2\log (2M+1)\)</span></p>
 <p>所以是什么限制了Hopfield网的能力呢？每次要记住的配置时，都希望可以创造一个新的能量最小值。如下图所示，对某两个二元配置，理想状态是学到两个最小值点，一个是蓝色的，一个是绿色的。不过实际上，由于两者很近，因此最后会发生混淆，两者合并成一个红色的，更小的最小值点，但是不能对这两个二元配置作区分（这部分参考了<a href="https://www.zhihu.com/question/56994540/answer/191053894" target="_blank" rel="noopener">知乎问答：关于Hopfield神经网络</a> ）。这种相邻最小值点的融合现象称为“伪最小值点”（spurious minima）</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_11_example_of_spurious_minima.png" alt="伪最小值点的示意"><figcaption>伪最小值点的示意</figcaption>
+</figure>
 <p>Hopfield、Feinstein和Palmer等人提出了一种应对策略：让网络从一个随机初始状态开始，做一些“忘却”（unlearning）操作。也就是说，不管它处于什么状态，反着用前面提到的存储规则。以前面的图为例，假设现在处于红色的峰值点，经过一些“忘却”以后，就可以脱离这个点，得到了两个独立的最小值，进而增大记忆量。这种方法实践中管用，但是发明者没有做出比较好的原理分析。Francis Crick和Graham Micherson认为忘却法与快速眼球移动睡眠（REM睡眠）的过程很像（具体解释略去）。不过，关于忘却法的另一个问题是，应该忘掉多少东西？实际上，忘却的内容也是使用数据拟合模型这一过程的一部分。如果使用最大似然法拟合这个模型，忘却的过程会自然而然地出现，因此关键问题是提出一个合适的代价函数</p>
 <p>在具体介绍忘却法的代价函数之前，先看一看物理学家是如何增强Hopfield网能力的。Elizabeth Gardner提出了一种方法，就是不像之前那样只遍历一遍数据集就存一个向量，而是循环遍历多次训练集。这样，牺牲的是在线学习能力，得到的是更有效的存储。整个训练过程有点像感知机的收敛过程：让整个网络先进入到某个记忆状态，然后单独来看每个单元，判断给定所有其它单元状态的情况下，该单元是否展现了想要的状态。如果结果为“是”，那么让其输入的权重不变；否则按照收敛过程指定的权重更新规则更新权重。这种方法被统计学家称为“伪似然法”。不过Hopfield网中的权重都是对称的，因此对每个权重需要获得两组梯度然后求均值</p>
 <h2 id="带有隐藏单元的hopfield网">带有隐藏单元的Hopfield网</h2>
@@ -412,7 +418,7 @@ E = -\sum_is_ib_i - \sum_{i&lt;j}s_is_jw_{ij}
 <p>举个例子，当你看到图片里的一条二维的线，它应该是由什么样的三维物体的边缘所投影出来的？实际上，它可能对应了很多不同的三维物体，因为投影时边缘两端的深度信息都已经丢失了。而且，如果若干物体都放在一起，它们之间存在相互遮挡，那么你能看到的其实也只是一条线</p>
 <p>假设现在有若干张图片，每张图片里面有若干条线。可以建立一组神经元，每个神经元对应图中的一条线。由于对任意一张图片，很难包含所有的线，因此对给定的一张图片，只有若干几个神经元能够被激活。这些神经元是输入神经元。然后，对所有三维物体的线或边缘，也对应建立神经元。由于一条二维线可以对应若干三维物体，因此对某个被激活的输入神经元，可以与其所有对应的隐藏神经元建立联系</p>
 <figure>
-<img src="" alt="使用带隐藏单元的Hopfield网学习二维线段与三维物体边缘联系的示意图"><figcaption>使用带隐藏单元的Hopfield网学习二维线段与三维物体边缘联系的示意图</figcaption>
+<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_11_hopfield_net_with_hidden_units_example.png" alt="使用带隐藏单元的Hopfield网学习二维线段与三维物体边缘联系的示意图"><figcaption>使用带隐藏单元的Hopfield网学习二维线段与三维物体边缘联系的示意图</figcaption>
 </figure>
 <p>上图给出了一个示意图。这里，输入神经元与隐藏神经元之间的绿色连线表示两者存在可能的对应关系，每个连接都共享相同的权重。由于一条二维线段只对应于一种可能的三维物体，因此这些隐藏神经元之间彼此还存在竞争关系，以红线表示</p>
 <p>接下来，要建模的是不同输入单元对应的两组隐藏单元之间的关系：图片中两条二维直线相交，通常意味着两个对应的三维物体在交点处有同样的深度，因此可以建立两个隐藏单元之间的联系（上图中连接两隐藏神经元的细绿色箭头）。除此以外，如果三维物体之间不仅相交还相互垂直，那么就给一个比较强的连接。这样，在建立了隐藏单元与输入单元的连接，以及隐藏单元之间的连接以后，就可以对某个输入图像做出解释</p>
@@ -434,6 +440,21 @@ p(s_i = 1) = \frac{1}{1+e^{-\Delta E_i/T}}
 <p>对此，可以有一个类比。假设在拉斯维加斯有个巨大的赌场，里面有多于<span class="math inline">\(52!\)</span>个发牌者，每个发牌者拿到的牌都是未开封的，由同一家厂商制造，初始顺序按照标准顺序排好。然后，所有发牌者开始随机洗牌，而且不玩那种把牌变回原来顺序的那种把戏。经过少数几次洗牌以后，可能黑桃K还在黑桃Q上面，也就是说，任意牌堆里还会有一些牌没有忘记自己的初始位置。不过，在经过长时间洗牌以后，所有牌堆的所有牌都会被打乱顺序，此时牌的<span class="math inline">\(52!\)</span>种排列出现的数量相等，并且每种排列的数量不会随着洗牌的过程而变化</p>
 <p>（简而言之，热平衡不是系统内的粒子不动，而是粒子还在动，但是整个系统呈现稳定状态）</p>
 <h2 id="玻尔兹曼机如何对数据建模">玻尔兹曼机如何对数据建模</h2>
+<p>带有隐藏单元的随机Hopfield网也称为<strong>玻尔兹曼机</strong>，这种模型擅长对二进制数据建模。也就是说，给定一组二进制的训练向量，可以使用隐藏单元来训练一个模型，这个模型可以对任意二进制向量计算一个概率。这样，可以判定其它二进制向量是否来自于相同分布。一个实际的例子是，假设有一个很大的词表，那么每个类型的文档可以使用二进制向量表示（每一位代表该单词是否出现），进而判断测试数据应该属于哪个类别。也可以使用玻尔兹曼机监测复杂系统，检测异常行为。所有这些应用的背后都是贝叶斯定理：假设有若干模型，每个模型对应一个分布，那么可以使用贝叶斯定理计算给定观察数据对应模型的概率，即 <span class="math display">\[
+p({\rm Model}_i|{\rm data}) = \frac{p({\rm data}|{\rm Model}_i)}{\sum_jp({\rm data}|{\rm Model}_j)}
+\]</span> 使用贝叶斯定理时，需要计算模型产生数据的概率。这种做法有两种，一种是先根据隐藏单元的先验分布生成某些隐变量的状态，然后用隐变量生成二进制数组。这种模型称为因果模型（causal model）。在这种模型里，隐藏单元的先验分布一般是独立的，因此每个单元被激活的概率（如果是二元状态）只取决于各自的偏置量。得到隐藏单元以后，就可以使用隐藏层到输出层的权重和偏置，加上logistic非线性变换得到输出层每个单元被激活的概率。因此，对于因果模型，得到某个向量<span class="math inline">\(\bf v\)</span>的概率是 <span class="math display">\[
+p({\bf v}) = \sum_{\bf h}p({\bf h})p({\bf v}|{\bf h})
+\]</span> 其中<span class="math inline">\(\bf h\)</span>是任意隐藏单元</p>
+<p>不过，玻尔兹曼机不是因果模型，而是基于能量的模型（……），一切真理都定义为可见单元和隐藏单元联合配置的能量，而将能量与概率相联系又有两种方法：其一是让<span class="math inline">\(p({\bf v}, {\bf h}) \propto \exp{-E({\bf v}, {\bf h})}\)</span>，其二是定义为在多次更新所有随机二元单元，达到热平衡以后，网络得到该联合配置的概率。这两种方法本质是一样的。记<span class="math inline">\(E({\bf v}, {\bf h})\)</span>为可见单元配置为<span class="math inline">\(\bf v\)</span>，隐藏单元配置为<span class="math inline">\(\bf h\)</span>时网络的能量，有 <span class="math display">\[
+-E({\bf v},{\bf h}) = \sum_{i \in {\bf v}}v_ib_i + \sum_{k \in {\bf h}}h_kb_k + \sum_{i&lt; j}v_iv_jw_{ij} + \sum_{i,k}v_ih_kw_{ik} + \sum_{k&lt;l}h_kh_lw_{kl}
+\]</span> 这里<span class="math inline">\(b_i\)</span>是单元（无论是隐藏单元还是可见单元）<span class="math inline">\(i\)</span>的偏置值，<span class="math inline">\(w_{ij}\)</span>是单元<span class="math inline">\(i\)</span>和<span class="math inline">\(j\)</span>之间的权重。对同在隐藏层/可见层的单元，需要避免重复计数</p>
+<p>由于可见层任一配置的概率<span class="math inline">\(p({\bf v}, {\bf h}) \propto \exp{-E({\bf v}, {\bf h})}\)</span>，因此通过上述方法得到<span class="math inline">\(-E({\bf v},{\bf h})\)</span>以后可以使用类似softmax的方法算出概率值 <span class="math display">\[
+p({\bf v}, {\bf h}) = \frac{e^{-E({\bf v}, {\bf h})}}{\sum_{ {\bf u}, {\bf g}}e^{-E({\bf u}, {\bf g})}}
+\]</span> 其中分母也被物理学家称为“划分函数”（partition function）</p>
+<p>类似地，可以求出可见单元某个配置的概率 <span class="math display">\[
+p({\bf v}) = \frac{ \sum_{ {\bf h}}e^{-E({\bf v}, {\bf h})}}{\sum_{ {\bf u}, {\bf g}}e^{-E({\bf u}, {\bf g  })}}
+\]</span> 如果玻尔兹曼机对应的网络太大，那么隐藏层+可见层所有单元可能的配置数会非常多，因此计算完整的划分函数值不太现实。此时可以使用MCMC方法来抽样，即从某个随机的全局配置开始，随机选取某个单元，根据能量差随机改变状态。这样持续下去，等到马尔可夫链达到稳定分布，就得到了模型的一个抽样，这个抽样的概率<span class="math inline">\(p({\bf v}, {\bf h})\)</span>正比于<span class="math inline">\(\exp \{ -E({\bf v}, {\bf h})\}\)</span></p>
+<p>另一个问题是，给定一个数据向量，怎么从隐藏配置的后验分布上获得一个样本？由于隐藏配置的集合也是指数量级的，因此仍然使用MCMC方法。与前述过程唯一不同的是，这是要保证可见单元不变，对应于给定的数据向量，只改变隐藏节点的状态。这时，可以理解为每个隐藏配置都是对观察数据的可见配置的一个解释，更好的解释能量更低</p>
 
       
     </div>
