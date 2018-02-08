@@ -121,7 +121,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://cs231n.github.io/assets/cnn/stride.jpeg">
 <meta property="og:image" content="http://cs231n.github.io/assets/cnn/maxpool.jpeg">
-<meta property="og:updated_time" content="2018-02-07T05:05:27.977Z">
+<meta property="og:updated_time" content="2018-02-08T13:27:35.851Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CS20 06. 卷积神经网络简介">
 <meta name="twitter:description" content="本讲使用了CS231n的讲义，而这份讲义非常详细，这里只做一个简单的笔记。所有插图的链接都链到了原始讲义的图片地址 卷积神经网络，又被称为CNN或者ConvNet。这种体系结构直接假设输入是图片（原文如此，实际上某些文本问题也可以用CNN处理），并直接将一些性质编码在了体系结构中。而且，CNN可以显著减少参数数量，因此计算更高效 体系结构概览 常规神经网络的所有隐藏层神经元都与前面一层的所有神经元">
@@ -400,12 +400,12 @@
 <h3 id="卷积层conv">卷积层（CONV)</h3>
 <p>卷积层是CNN的核心组成部分，是减少计算量的关键所在</p>
 <h4 id="基本概念">基本概念</h4>
-<p>卷积层的参数由一组可学习的过滤器组合，每个过滤器的宽度和高度都比较小，不过与输入有相同的深度。例如，CNN的第一层所用的过滤器通常大小为<span class="math inline">\(5 \times 5\times 3\)</span>，也就是5像素宽，5像素高，3通道。在正向传播时，把每个过滤器沿着输入的宽和高滑动，计算过滤器和输入对应区域的点积（实际上更准确地说，是做了一个卷积操作）。在这个滑动的过程中，可以生成一个二维的激活映射，给出这个过滤器在每个点上的回应。直觉上来看，网络学习到的过滤器会在看到某种视觉特征的时候被激活</p>
-<p>网络在每个卷积层都会学习若干个过滤器，然后沿着深度的维度将它们堆叠起来。如果从神经科学的角度看，输出的每个元素都可以理解为是某个神经元的输出。该神经元只观察输入的一个很小的区域，然后将参数共享给“左边”和“右边”的神经元。神经元看的区域的大小，也就是之前提到的过滤器的尺寸。这个尺寸是一个超参数，也被称作是神经元的<strong>感受野</strong>。注意过滤器的深度通常与输入的深度相同</p>
+<p>卷积层的参数由一组可学习的滤波器组合，每个滤波器的宽度和高度都比较小，不过与输入有相同的深度。例如，CNN的第一层所用的滤波器通常大小为<span class="math inline">\(5 \times 5\times 3\)</span>，也就是5像素宽，5像素高，3通道。在正向传播时，把每个滤波器沿着输入的宽和高滑动，计算滤波器和输入对应区域的点积（实际上更准确地说，是做了一个卷积操作）。在这个滑动的过程中，可以生成一个二维的激活映射，给出这个滤波器在每个点上的回应。直觉上来看，网络学习到的滤波器会在看到某种视觉特征的时候被激活</p>
+<p>网络在每个卷积层都会学习若干个滤波器，然后沿着深度的维度将它们堆叠起来。如果从神经科学的角度看，输出的每个元素都可以理解为是某个神经元的输出。该神经元只观察输入的一个很小的区域，然后将参数共享给“左边”和“右边”的神经元。神经元看的区域的大小，也就是之前提到的滤波器的尺寸。这个尺寸是一个超参数，也被称作是神经元的<strong>感受野</strong>。注意滤波器的深度通常与输入的深度相同</p>
 <p>前面讲述的是卷积层与输入的连通性，接下来说一下其与输出的连通性。这里一共有三个超参数来控制：深度、步幅（stride）和补零（zero-padding）</p>
 <ul>
-<li>“深度”定义了要使用多少过滤器。每个过滤器对同一输入内容（就是前面说的那个“很小的区域”）的关注点可能不一样</li>
-<li>“步幅”定义每次将过滤器滑动多少像素</li>
+<li>“深度”定义了要使用多少滤波器。每个滤波器对同一输入内容（就是前面说的那个“很小的区域”）的关注点可能不一样</li>
+<li>“步幅”定义每次将滤波器滑动多少像素</li>
 <li>有时，需要在图像周围补0，这样可以控制输出的空间大小（就是宽和高的乘积）</li>
 </ul>
 <p>这样，输出的空间大小可以看作是一个关于输入大小<span class="math inline">\(W\)</span>、神经元感受野大小<span class="math inline">\(F\)</span>、步幅大小<span class="math inline">\(S\)</span>和补零数量<span class="math inline">\(P\)</span>的函数。具体值为 <span class="math display">\[
@@ -421,7 +421,7 @@
 <li>接受的输入大小为<span class="math inline">\(W_1 \times H_1 \times D_1\)</span></li>
 <li>由4个超参数配置
 <ul>
-<li>过滤器数量<span class="math inline">\(K\)</span></li>
+<li>滤波器数量<span class="math inline">\(K\)</span></li>
 <li>感知野大小<span class="math inline">\(F\)</span></li>
 <li>步幅<span class="math inline">\(S\)</span></li>
 <li>补零数量<span class="math inline">\(P\)</span></li>
@@ -432,14 +432,14 @@
 <li><span class="math inline">\(H_2 = (H_1 - F + 2P)/S+1\)</span></li>
 <li><span class="math inline">\(D_2 = K\)</span></li>
 </ul></li>
-<li>每个过滤器有<span class="math inline">\(F \times F \times D_1\)</span>个权重</li>
-<li>输出的第<span class="math inline">\(d\)</span>个切片是使用第<span class="math inline">\(d\)</span>个过滤器在输入上以步幅<span class="math inline">\(S\)</span>做合法卷积，然后以第<span class="math inline">\(d\)</span>个偏置的大小做出偏移的结果</li>
+<li>每个滤波器有<span class="math inline">\(F \times F \times D_1\)</span>个权重</li>
+<li>输出的第<span class="math inline">\(d\)</span>个切片是使用第<span class="math inline">\(d\)</span>个滤波器在输入上以步幅<span class="math inline">\(S\)</span>做合法卷积，然后以第<span class="math inline">\(d\)</span>个偏置的大小做出偏移的结果</li>
 </ul>
 <h4 id="实现">实现</h4>
-<p>由于卷积的核心就是过滤器和输入某块区域的点乘，因此卷积层的正向传播操作通常实现为大矩阵的乘积。具体做法为</p>
+<p>由于卷积的核心就是滤波器和输入某块区域的点乘，因此卷积层的正向传播操作通常实现为大矩阵的乘积。具体做法为</p>
 <ol type="1">
-<li>将输入图像的各个局部区域拉伸成若干列。例如假设输入大小是<span class="math inline">\(227 \times 227 \times 3\)</span>，过滤器大小为<span class="math inline">\(11 \times 11 \times 3 = 363\)</span>，步幅为4，那么输出的大小为<span class="math inline">\((227 - 11) / 4 + 1 = 55\)</span>。整个图像就会被拉伸成一个<span class="math inline">\(363 \times 3025\  (55 \times 55 = 3025)\)</span>的矩阵<code>X_col</code>，每一列都是一个感受野</li>
-<li>卷积层的权重被拉伸为行。假设有96个过滤器，那么得到的权重矩阵<code>W_row</code>的大小为<span class="math inline">\(96 \times 363\)</span></li>
+<li>将输入图像的各个局部区域拉伸成若干列。例如假设输入大小是<span class="math inline">\(227 \times 227 \times 3\)</span>，滤波器大小为<span class="math inline">\(11 \times 11 \times 3 = 363\)</span>，步幅为4，那么输出的大小为<span class="math inline">\((227 - 11) / 4 + 1 = 55\)</span>。整个图像就会被拉伸成一个<span class="math inline">\(363 \times 3025\  (55 \times 55 = 3025)\)</span>的矩阵<code>X_col</code>，每一列都是一个感受野</li>
+<li>卷积层的权重被拉伸为行。假设有96个滤波器，那么得到的权重矩阵<code>W_row</code>的大小为<span class="math inline">\(96 \times 363\)</span></li>
 <li>卷积操作实际上就是<code>np.dot(W_row, X_col)</code></li>
 <li>得到的矩阵大小为<span class="math inline">\(96 \times 3025\)</span>，需要再被调整到正确的维度<span class="math inline">\(55 \times 55 \times 96\)</span></li>
 </ol>
@@ -447,7 +447,7 @@
 <p><strong>1x1 卷积</strong>：一些论文使用的是<span class="math inline">\(1\times 1\)</span>的卷积核，这种做法由<a href="https://arxiv.org/abs/1312.4400" target="_blank" rel="noopener"><em>Network in Network</em></a>这篇论文率先引入。如果输入的深度为<span class="math inline">\(d\)</span>，这相当于做一个<span class="math inline">\(d\)</span>维的点乘（笔者注：看知乎上的相关讨论，这种做法一般会伴随着深度的改变，从而也达到一些降维的效果。可参考 <a href="https://zhuanlan.zhihu.com/p/30458963" target="_blank" rel="noopener">这篇导览型的文章</a> ）</p>
 <p><strong>空洞卷积</strong>（dilated convolution）：<a href="https://arxiv.org/abs/1511.07122" target="_blank" rel="noopener"><em>Multi-Scale Context Aggregation by Dilated Convolutions</em></a>为卷积层引入了一个新的超参数，称为空洞（dilation，或译为膨胀）。具体的讨论可以参考<a href="https://www.zhihu.com/question/54149221" target="_blank" rel="noopener">这篇知乎回答</a></p>
 <h3 id="池化层pool">池化层（POOL)</h3>
-<p>通常会在两个卷积层之间插入一个池化（pooling）层，来减小表示的空间大小，这样可以减少参数数量和计算量，控制过拟合。最常见的操作是在深度这个维度上，对每个切片使用大小为<span class="math inline">\(2\times 2\)</span>的过滤器，以跨度2来求最大值，这样可以将75%的激活值都砍掉（<span class="math inline">\(2\times 2\)</span>的区域上只保留一个值）。下图右边给出了一个例子</p>
+<p>通常会在两个卷积层之间插入一个池化（pooling）层，来减小表示的空间大小，这样可以减少参数数量和计算量，控制过拟合。最常见的操作是在深度这个维度上，对每个切片使用大小为<span class="math inline">\(2\times 2\)</span>的滤波器，以跨度2来求最大值，这样可以将75%的激活值都砍掉（<span class="math inline">\(2\times 2\)</span>的区域上只保留一个值）。下图右边给出了一个例子</p>
 <figure>
 <img src="http://cs231n.github.io/assets/cnn/maxpool.jpeg" alt="最大池示例"><figcaption>最大池示例</figcaption>
 </figure>
@@ -456,7 +456,7 @@
 <li>接受的输入大小为<span class="math inline">\(W_1 \times H_1 \times D_1\)</span></li>
 <li>由两个超参数配置
 <ul>
-<li>过滤器大小<span class="math inline">\(F\)</span></li>
+<li>滤波器大小<span class="math inline">\(F\)</span></li>
 <li>步幅<span class="math inline">\(S\)</span></li>
 </ul></li>
 <li>产生的输出大小为<span class="math inline">\(W_2 \times H_2 \times D_2\)</span>
@@ -467,7 +467,7 @@
 </ul></li>
 <li>由于池化操作是一个固定函数，因此不引入参数。此外，池化通常不需要补零</li>
 </ul>
-<p>实践中通常只有两种配置：<span class="math inline">\(F=3, S=2\)</span>或<span class="math inline">\(F=2, S=2\)</span>。不建议使用太大的过滤器。除了最大池化，还可以使用平均池化和L2-范数池化，不过最大池化的效果实践显示最好。一些研究人员不喜欢池化操作，建议在卷积层使用更大的步幅来替代之。此外，训练生成模型（例如VAE、GAN等）时通常为了达到更好的效果而舍弃池化层</p>
+<p>实践中通常只有两种配置：<span class="math inline">\(F=3, S=2\)</span>或<span class="math inline">\(F=2, S=2\)</span>。不建议使用太大的滤波器。除了最大池化，还可以使用平均池化和L2-范数池化，不过最大池化的效果实践显示最好。一些研究人员不喜欢池化操作，建议在卷积层使用更大的步幅来替代之。此外，训练生成模型（例如VAE、GAN等）时通常为了达到更好的效果而舍弃池化层</p>
 <h3 id="归一化层">归一化层</h3>
 <p>由于实践中没什么贡献，归一化层已经基本不太被人使用。详细内容参考Alex Krizhevsky的<a href="http://code.google.com/p/cuda-convnet/wiki/LayerParams#Local_response_normalization_layer_(same_map)" target="_blank" rel="noopener">cuda-convnet library API</a></p>
 <h3 id="全连接层fc">全连接层（FC)</h3>
@@ -485,7 +485,7 @@
 <li><span class="math inline">\(M \ge 0\)</span></li>
 <li><span class="math inline">\(K \ge 0\)</span>（且通常<span class="math inline">\(K &lt; 3\)</span>）</li>
 </ul>
-<p><strong>通常将若干使用小尺寸过滤器的CONV堆叠在一起，而不是使用一个大感受野的CONV</strong>。假设堆起3个<span class="math inline">\(3 \times 3\)</span>的CONV（层与层之间做一个非线性变换），这样，第一个CONV的神经元关注原始输入中<span class="math inline">\(3 \times 3\)</span>的数据，第二个CONV的神经元关注第一层中<span class="math inline">\(3 \times 3\)</span>的数据，相当于关注原始输入中<span class="math inline">\(5 \times 5\)</span>的数据。那么，第三个CONV的神经元以此类推是关注原始输入中<span class="math inline">\(7 \times 7\)</span>的数据。那么为什么不直接使用一个感受野为<span class="math inline">\(7 \times 7\)</span>的CONV层呢？这样做有以下几个缺点</p>
+<p><strong>通常将若干使用小尺寸滤波器的CONV堆叠在一起，而不是使用一个大感受野的CONV</strong>。假设堆起3个<span class="math inline">\(3 \times 3\)</span>的CONV（层与层之间做一个非线性变换），这样，第一个CONV的神经元关注原始输入中<span class="math inline">\(3 \times 3\)</span>的数据，第二个CONV的神经元关注第一层中<span class="math inline">\(3 \times 3\)</span>的数据，相当于关注原始输入中<span class="math inline">\(5 \times 5\)</span>的数据。那么，第三个CONV的神经元以此类推是关注原始输入中<span class="math inline">\(7 \times 7\)</span>的数据。那么为什么不直接使用一个感受野为<span class="math inline">\(7 \times 7\)</span>的CONV层呢？这样做有以下几个缺点</p>
 <ul>
 <li>这样神经元计算的是输入的线性函数，而分三个CONV可以做两次非线性变换</li>
 <li>假设所有输入有<span class="math inline">\(C\)</span>个信道，感受野大小为<span class="math inline">\(7 \times 7\)</span>的CONV层有<span class="math inline">\(C \times (7 \times 7 \times C) = 49C^2\)</span>个参数，而堆叠的CONV层有<span class="math inline">\(3 \times (C \times (3 \times 3 \times C))\)</span>个参数，参数数量更少，而且可以表示输入中更强力的特征</li>
@@ -494,7 +494,7 @@
 <p>需要注意的是，从Google的Inception架构开始，CNN的联通结构变得更加复杂</p>
 <h3 id="层的大小">层的大小</h3>
 <p>输入层的大小通常应该能被2整除很多次，常见的设置如32、64、96、224、384、512</p>
-<p>卷积层通常使用小的过滤器（<span class="math inline">\(3 \times 3\)</span>或最多<span class="math inline">\(5 \times 5\)</span>），使用步幅<span class="math inline">\(S=1\)</span>。当补零数<span class="math inline">\(P=(F-1)/2\)</span>时，卷积层会保留原始输入大小。一般不使用更大的过滤器，即便要如此做，也把它放在第一个卷积层，直接接受原始输入。一般来讲，小的步幅（<span class="math inline">\(S=1\)</span>）在实践中效果更好，而且可以把所有空间降采样的任务都交给池化层，让卷积层专注于转换输入。补零也可以改善模型效果，因为如果不补零，输入的尺寸在每个卷积层处理后都会变小，图片边界上的信息消失太快</p>
+<p>卷积层通常使用小的滤波器（<span class="math inline">\(3 \times 3\)</span>或最多<span class="math inline">\(5 \times 5\)</span>），使用步幅<span class="math inline">\(S=1\)</span>。当补零数<span class="math inline">\(P=(F-1)/2\)</span>时，卷积层会保留原始输入大小。一般不使用更大的滤波器，即便要如此做，也把它放在第一个卷积层，直接接受原始输入。一般来讲，小的步幅（<span class="math inline">\(S=1\)</span>）在实践中效果更好，而且可以把所有空间降采样的任务都交给池化层，让卷积层专注于转换输入。补零也可以改善模型效果，因为如果不补零，输入的尺寸在每个卷积层处理后都会变小，图片边界上的信息消失太快</p>
 <p>池化层用来对输入的空间维度降采样，通常使用<span class="math inline">\(F=2\)</span>的最大池化层，步幅<span class="math inline">\(S=2\)</span>。另一种做法是设<span class="math inline">\(F=3\)</span>。一般情况下不要把池化层的感受野大小设成大于3的数，因为这样会损失太多信息，效果不好</p>
 <p>如果网络难以拟合，一种比较好的办法是降低batch大小。CONV比较吃显存，要注意</p>
 <h3 id="成熟的体系结构">成熟的体系结构</h3>
