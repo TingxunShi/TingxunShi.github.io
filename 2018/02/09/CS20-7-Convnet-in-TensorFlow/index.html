@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="TensorFlow,CS20,CNN," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="原始课程讲义地址 原始课程胶片地址 无特殊说明，笔记内容均来自老师提供的讲义和胶片 在MNIST上使用TensorFlow TensorFlow使用tf.nn.conv2d来做二维的卷积操作（此时需要输入是三维）。不同维度输入的卷积操作可以参考Runhani的StackOverflow回答。函数签名为 12345678910tf.nn.conv2d(    input,    filter,">
+<meta name="keywords" content="TensorFlow,CS20,CNN">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CS20 07. 使用TensorFlow实现卷积神经网络">
+<meta property="og:url" content="txshi-mt.com/2018/02/09/CS20-7-Convnet-in-TensorFlow/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="原始课程讲义地址 原始课程胶片地址 无特殊说明，笔记内容均来自老师提供的讲义和胶片 在MNIST上使用TensorFlow TensorFlow使用tf.nn.conv2d来做二维的卷积操作（此时需要输入是三维）。不同维度输入的卷积操作可以参考Runhani的StackOverflow回答。函数签名为 12345678910tf.nn.conv2d(    input,    filter,">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://lh4.googleusercontent.com/tz2qOIrMeiM0BbgVtDkMZbODCO1b6UUhJB0VkxpZwJ7-0URXf4DNRYYjlp0eiizGZse1pVwnWU9qvINxfvZzotXEmGteVVIAnsSaoXWD4zUYYZZCzWj2oqjiGxnV9cp559Cbrnr3">
+<meta property="og:updated_time" content="2018-02-09T09:32:30.664Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CS20 07. 使用TensorFlow实现卷积神经网络">
+<meta name="twitter:description" content="原始课程讲义地址 原始课程胶片地址 无特殊说明，笔记内容均来自老师提供的讲义和胶片 在MNIST上使用TensorFlow TensorFlow使用tf.nn.conv2d来做二维的卷积操作（此时需要输入是三维）。不同维度输入的卷积操作可以参考Runhani的StackOverflow回答。函数签名为 12345678910tf.nn.conv2d(    input,    filter,">
+<meta name="twitter:image" content="https://lh4.googleusercontent.com/tz2qOIrMeiM0BbgVtDkMZbODCO1b6UUhJB0VkxpZwJ7-0URXf4DNRYYjlp0eiizGZse1pVwnWU9qvINxfvZzotXEmGteVVIAnsSaoXWD4zUYYZZCzWj2oqjiGxnV9cp559Cbrnr3">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2018/02/09/CS20-7-Convnet-in-TensorFlow/"/>
+
+
+
+
+
+  <title>CS20 07. 使用TensorFlow实现卷积神经网络 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2018/02/09/CS20-7-Convnet-in-TensorFlow/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">CS20 07. 使用TensorFlow实现卷积神经网络</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-09T11:44:02+08:00">
+                Feb 9 2018
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/深度学习实践/" itemprop="url" rel="index">
+                    <span itemprop="name">深度学习实践</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><a href="https://docs.google.com/document/d/1ph43FB5fZ_iarPTjIXhdtDvHJOpk4ncI2vDyxnOWcqM/edit#" target="_blank" rel="noopener">原始课程讲义地址</a></p>
+<p><a href="https://docs.google.com/presentation/d/17VTArfQVtapBqfYecyvp3Kp9HKy8Pw2WI12acYME2nI/edit#slide=id.g1c60f09bdb_0_0" target="_blank" rel="noopener">原始课程胶片地址</a></p>
+<p>无特殊说明，笔记内容均来自老师提供的讲义和胶片</p>
+<h2 id="在mnist上使用tensorflow">在MNIST上使用TensorFlow</h2>
+<p>TensorFlow使用<code>tf.nn.conv2d</code>来做二维的卷积操作（此时需要输入是三维）。不同维度输入的卷积操作可以参考<a href="https://stackoverflow.com/a/44628011/5029595" target="_blank" rel="noopener">Runhani的StackOverflow回答</a>。函数签名为</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">tf.nn.conv2d(</span><br><span class="line">    input,</span><br><span class="line">    filter,</span><br><span class="line">    strides,</span><br><span class="line">    padding,</span><br><span class="line">    use_cudnn_on_gpu=<span class="keyword">True</span>,</span><br><span class="line">    data_format=<span class="string">'NHWC'</span>,</span><br><span class="line">    dilations=[<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>],</span><br><span class="line">    name=<span class="keyword">None</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>其中</p>
+<ul>
+<li><code>input</code>是输入，默认是四维，每个维度按顺序是batch大小(N)、高度(H)、宽度(W)、信道数(C)，即<code>shape(input) = (N, H, W, C)</code> （对应于<code>data_format</code>参数值<code>'NHWC'</code>）</li>
+<li><code>filter</code>对应CNN的卷积核（也就是前面理论部分所讲的滤波器），其维度也是四维，不过是高度 x 宽度 x 输入信道数 x 输出信道数</li>
+<li><code>stride</code>是长度为4的一维数组，代表在<code>input</code>四个维度上的步长。通常设为<code>[1, 1, 1, 1]</code>或<code>[1, 2, 2, 1]</code>。一般情况下，<code>stride[0] == stride[-1] == 1</code>，因为不想跳过任何样本和任何信道</li>
+<li><code>padding</code>是补零的方式而非个数，有两个选项。
+<ul>
+<li>如果设置为<code>VALID</code>，那么当卷积核和步幅的设置使得卷积过程不能完整覆盖输入时，舍弃输入最右侧（或最下侧）的内容。根据<a href="https://stackoverflow.com/questions/37674306/what-is-the-difference-between-same-and-valid-padding-in-tf-nn-max-pool-of-t" target="_blank" rel="noopener">相关StackOverflow问题的讲解</a>，考虑最简单的1维卷积的情况，假设输入长度为13，卷积核大小为6，步幅为5，那么第一次卷积操作所“看”的范围是1-6，第二次是6-11，此时再移动卷积核不能覆盖剩下的数据，到此为止，输入的最后两个元素被丢弃</li>
+<li>如果设置为<code>SAME</code>，那么会对输入补0，使得输入可以被卷积核按照设定的步幅完整覆盖。补0的原则是左边和右边补的0尽量一样——如果要补的0是奇数个0，在右侧多补一个</li>
+</ul></li>
+<li><code>dilations</code>是理论讲义里提到的膨胀系数。1.4版本里尚未引入这个参数</li>
+</ul>
+<p>其它卷积函数，例如<code>depthwise_conv2d</code>和<code>separable_conv2d</code>，可以参考文档</p>
+<p>课程讲义中给出了一个使用预定义卷积核做计算的例子，不过这种场景在实际应用中估计很难遇到，大部分卷积核都是训练得出来的（不要忘记卷积核的本质，它就是一组权重）</p>
+<p>因此，为了让例子更加贴近实际，这里讲解对MNIST数据集使用TF构建CNN的方法。这里使用的体系结构是两个（卷积+ReLU+最大池）的组合，然后跟两个全连接。具体的体系结构如下图所示</p>
+<figure>
+<img src="https://lh4.googleusercontent.com/tz2qOIrMeiM0BbgVtDkMZbODCO1b6UUhJB0VkxpZwJ7-0URXf4DNRYYjlp0eiizGZse1pVwnWU9qvINxfvZzotXEmGteVVIAnsSaoXWD4zUYYZZCzWj2oqjiGxnV9cp559Cbrnr3" alt="解决MNIST问题的示例ConvNet体系结构"><figcaption>解决MNIST问题的示例ConvNet体系结构</figcaption>
+</figure>
+<p>由于很多事情（例如最大池、conv）都要做多次，因此需要设计可复用的代码，而且需要使用变量域来让我们可以在不同的层使用名字相同的变量。通常是每层都创建自己的变量域</p>
+<p><strong>定义卷积层</strong></p>
+<p>具体实现时，通常把conv和随后的非线性变化ReLU实现在一起</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">conv_relu</span><span class="params">(inputs, filters, k_size, stride, padding, scope_name)</span>:</span></span><br><span class="line">    <span class="keyword">with</span> tf.variable_scope(scope_name, reuse=tf.AUTO_REUSE) <span class="keyword">as</span> scope:</span><br><span class="line">        in_channels = inputs.shape[<span class="number">-1</span>]</span><br><span class="line">        kernel = tf.get_variable(<span class="string">'kernel'</span>, [k_size, k_size, in_channels, filters], </span><br><span class="line">                                initializer=tf.truncated_normal_initializer())</span><br><span class="line">        biases = tf.get_variable(<span class="string">'biases'</span>, [filters],</span><br><span class="line">                            initializer=tf.random_normal_initializer())</span><br><span class="line">        conv = tf.nn.conv2d(inputs, kernel, strides=[<span class="number">1</span>, stride, stride, <span class="number">1</span>], padding=padding)</span><br><span class="line">    <span class="keyword">return</span> tf.nn.relu(conv + biases, name=scope.name)</span><br></pre></td></tr></table></figure>
+<p>个中维度计算可以参考前面的理论讲解</p>
+<p><strong>定义池化层</strong></p>
+<p>可以直接使用TF中的<code>tf.nn.max_pool</code>来完成</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">maxpool</span><span class="params">(inputs, ksize, stride, padding=<span class="string">'VALID'</span>, scope_name=<span class="string">'pool'</span>)</span>:</span></span><br><span class="line">    <span class="keyword">with</span> tf.variable_scope(scope_name, reuse=tf.AUTO_REUSE) <span class="keyword">as</span> scope:</span><br><span class="line">        pool = tf.nn.max_pool(inputs, </span><br><span class="line">                              ksize=[<span class="number">1</span>, ksize, ksize, <span class="number">1</span>], </span><br><span class="line">                              strides=[<span class="number">1</span>, stride, stride, <span class="number">1</span>],</span><br><span class="line">                              padding=padding)</span><br><span class="line">    <span class="keyword">return</span> pool</span><br></pre></td></tr></table></figure>
+<p><strong>定义全连接</strong></p>
+<p>与前面介绍的基本前馈神经网络定义方法无异</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fully_connected</span><span class="params">(inputs, out_dim, scope_name=<span class="string">'fc'</span>)</span>:</span></span><br><span class="line">    <span class="keyword">with</span> tf.variable_scope(scope_name, reuse=tf.AUTO_REUSE) <span class="keyword">as</span> scope:</span><br><span class="line">        in_dim = inputs.shape[<span class="number">-1</span>]</span><br><span class="line">        w = tf.get_variable(<span class="string">'weights'</span>, [in_dim, out_dim],</span><br><span class="line">                            initializer=tf.truncated_normal_initializer())</span><br><span class="line">        b = tf.get_variable(<span class="string">'biases'</span>, [out_dim],</span><br><span class="line">                            initializer=tf.constant_initializer(<span class="number">0.0</span>))</span><br><span class="line">        out = tf.matmul(inputs, w) + b</span><br><span class="line">    <span class="keyword">return</span> out</span><br></pre></td></tr></table></figure>
+<p><strong>构成最终代码</strong></p>
+<p>将上面的各个函数组合起来可以得到完整的代码。讲义里给出的是预测的图，训练的图应该是类似的，只不过加了定义loss和优化器的部分（然而GitHub上的代码并没有像上面一样良好地组织）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">inference</span><span class="params">(self)</span>:</span></span><br><span class="line">    conv1 = conv_relu(inputs=self.img,</span><br><span class="line">                      filters=<span class="number">32</span>,</span><br><span class="line">                      k_size=<span class="number">5</span>,</span><br><span class="line">                      stride=<span class="number">1</span>,</span><br><span class="line">                      padding=<span class="string">'SAME'</span>,</span><br><span class="line">                      scope_name=<span class="string">'conv1'</span>)</span><br><span class="line">    pool1 = maxpool(conv1, <span class="number">2</span>, <span class="number">2</span>, <span class="string">'VALID'</span>, <span class="string">'pool1'</span>)</span><br><span class="line">    conv2 = conv_relu(inputs=pool1,</span><br><span class="line">                      filters=<span class="number">64</span>,</span><br><span class="line">                      k_size=<span class="number">5</span>,</span><br><span class="line">                      stride=<span class="number">1</span>,</span><br><span class="line">                      padding=<span class="string">'SAME'</span>,</span><br><span class="line">                      scope_name=<span class="string">'conv2'</span>)</span><br><span class="line">    pool2 = maxpool(conv2, <span class="number">2</span>, <span class="number">2</span>, <span class="string">'VALID'</span>, <span class="string">'pool2'</span>)</span><br><span class="line">    feature_dim = pool2.shape[<span class="number">1</span>] * pool2.shape[<span class="number">2</span>] * pool2.shape[<span class="number">3</span>]</span><br><span class="line">    pool2 = tf.reshape(pool2, [<span class="number">-1</span>, feature_dim])</span><br><span class="line">    fc = tf.nn.relu(fully_connected(pool2, <span class="number">1024</span>, <span class="string">'fc'</span>))</span><br><span class="line">    dropout = tf.layers.dropout(fc, self.keep_prob, training=self.training, name=<span class="string">'dropout'</span>)</span><br><span class="line">        </span><br><span class="line">    self.logits = fully_connected(dropout, self.n_classes, <span class="string">'logits'</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">eval</span><span class="params">(self)</span>:</span></span><br><span class="line">    <span class="string">'''</span></span><br><span class="line"><span class="string">    Count the number of right predictions in a batch</span></span><br><span class="line"><span class="string">    '''</span></span><br><span class="line">    <span class="keyword">with</span> tf.name_scope(<span class="string">'predict'</span>):</span><br><span class="line">        preds = tf.nn.softmax(self.logits)</span><br><span class="line">        correct_preds = tf.equal(tf.argmax(preds, <span class="number">1</span>), tf.argmax(self.label, <span class="number">1</span>))</span><br><span class="line">        self.accuracy = tf.reduce_sum(tf.cast(correct_preds, tf.float32))</span><br></pre></td></tr></table></figure>
+<h2 id="tf.layers"><code>tf.layers</code></h2>
+<p>前面的各层定义还是有些麻烦，实际上，TensorFlow提供了一种更简单的手段，就是直接使用在<code>tf.layers</code>里定义的各种层</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">conv1 = tf.layers.conv2d(inputs=self.img,</span><br><span class="line">                         filters=<span class="number">32</span>,</span><br><span class="line">                         kernel_size=[<span class="number">5</span>, <span class="number">5</span>],</span><br><span class="line">                         padding=<span class="string">'SAME'</span>,</span><br><span class="line">                         activation=tf.nn.relu,</span><br><span class="line">                         name=<span class="string">'conv1'</span>)</span><br><span class="line"></span><br><span class="line">pool1 = tf.layers.max_pooling2d(inputs=conv1,</span><br><span class="line">                                pool_size=[<span class="number">2</span>, <span class="number">2</span>],</span><br><span class="line">                                strides=<span class="number">2</span>,</span><br><span class="line">                                name=<span class="string">'pool1'</span>)</span><br><span class="line"></span><br><span class="line">fc = tf.layers.dense(pool2, <span class="number">1024</span>, activation=tf.nn.relu, name=<span class="string">'fc'</span>)</span><br></pre></td></tr></table></figure>
+<p>注意在使用<code>tf.layers.dropout</code>做dropout时，需要指明现在是在训练还是预测。回忆dropout的核心思想，其仅在训练时会随机丢弃一部分神经元，而预测时不会</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">dropout = tf.layers.dropout(fc,</span><br><span class="line">                            self.keep_prob,</span><br><span class="line">                            training=self.training,</span><br><span class="line">                            name=<span class="string">'dropout'</span>)</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2018/02/09/CS20-7-Convnet-in-TensorFlow/" title="CS20 07. 使用TensorFlow实现卷积神经网络">txshi-mt.com/2018/02/09/CS20-7-Convnet-in-TensorFlow/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/TensorFlow/" rel="tag"># TensorFlow</a>
+          
+            <a href="/tags/CS20/" rel="tag"># CS20</a>
+          
+            <a href="/tags/CNN/" rel="tag"># CNN</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/02/04/CS20-6-Introduction-to-CNN/" rel="next" title="CS20 06. 卷积神经网络简介">
+                <i class="fa fa-chevron-left"></i> CS20 06. 卷积神经网络简介
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">76</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">72</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#在mnist上使用tensorflow"><span class="nav-number">1.</span> <span class="nav-text">&#x5728;MNIST&#x4E0A;&#x4F7F;&#x7528;TensorFlow</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tf.layers"><span class="nav-number">2.</span> <span class="nav-text"><code>tf.layers</code></span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
