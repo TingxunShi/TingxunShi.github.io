@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="RBM,玻尔兹曼机,UTNN," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="（视频和讲义中的第二节“More efficient ways to get the statistics”由于是可选章节，被略去了） 玻尔兹曼机学习 玻尔兹曼机学习算法不是一个有监督学习算法，没有期望输出。给定一个输入向量（实际上更应该是看做输出向量），算法试图构造一个模型，模型会为训练集中每个二进制向量计算一个概率，而学习的目标是让这些概率的乘积最大化，也就是让概率的对数和最大化。此外，这个概">
+<meta name="keywords" content="RBM,玻尔兹曼机,UTNN">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hinton神经网络与机器学习 12. 受限玻尔兹曼机">
+<meta property="og:url" content="txshi-mt.com/2018/02/10/UTNN-12-Restricted-Boltzmann-Machines/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="（视频和讲义中的第二节“More efficient ways to get the statistics”由于是可选章节，被略去了） 玻尔兹曼机学习 玻尔兹曼机学习算法不是一个有监督学习算法，没有期望输出。给定一个输入向量（实际上更应该是看做输出向量），算法试图构造一个模型，模型会为训练集中每个二进制向量计算一个概率，而学习的目标是让这些概率的乘积最大化，也就是让概率的对数和最大化。此外，这个概">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_12_a_simple_rbm.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_12_contrastive_divergence_learning.png">
+<meta property="og:updated_time" content="2018-02-13T06:59:37.705Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hinton神经网络与机器学习 12. 受限玻尔兹曼机">
+<meta name="twitter:description" content="（视频和讲义中的第二节“More efficient ways to get the statistics”由于是可选章节，被略去了） 玻尔兹曼机学习 玻尔兹曼机学习算法不是一个有监督学习算法，没有期望输出。给定一个输入向量（实际上更应该是看做输出向量），算法试图构造一个模型，模型会为训练集中每个二进制向量计算一个概率，而学习的目标是让这些概率的乘积最大化，也就是让概率的对数和最大化。此外，这个概">
+<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_12_a_simple_rbm.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2018/02/10/UTNN-12-Restricted-Boltzmann-Machines/"/>
+
+
+
+
+
+  <title>Hinton神经网络与机器学习 12. 受限玻尔兹曼机 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2018/02/10/UTNN-12-Restricted-Boltzmann-Machines/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Hinton神经网络与机器学习 12. 受限玻尔兹曼机</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-10T21:51:17+08:00">
+                Feb 10 2018
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/深度学习/" itemprop="url" rel="index">
+                    <span itemprop="name">深度学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>（视频和讲义中的第二节“More efficient ways to get the statistics”由于是可选章节，被略去了）</p>
+<h2 id="玻尔兹曼机学习">玻尔兹曼机学习</h2>
+<p>玻尔兹曼机学习算法不是一个有监督学习算法，没有期望输出。给定一个输入向量（实际上更应该是看做输出向量），算法试图构造一个模型，模型会为训练集中每个二进制向量计算一个概率，而学习的目标是让这些概率的乘积最大化，也就是让概率的对数和最大化。此外，这个概率也是通过如下方式得到训练集里所有<span class="math inline">\(N\)</span>条训练数据的概率：令网络在没有外部输入的情况下进入稳定状态，对可见向量做一次抽样，如此重复<span class="math inline">\(N\)</span>次</p>
+<p>玻尔兹曼机的学习过程是比较难的，这里以一个简单模型来做一个示例。模型结构如下图所示</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_12_a_simple_rbm.png" alt="一个简单的玻尔兹曼机示意图"><figcaption>一个简单的玻尔兹曼机示意图</figcaption>
+</figure>
+<p>这里，四个隐藏单元链式相连，两端各自接一个可见单元。给这个网络的训练集是(0, 1)和(1, 0)，也就是说，我们希望两个可见单元处于各自相反的状态——这就要求所有权重的乘积为负。因为，比如说所有权重都是正的，让<span class="math inline">\(w_1\)</span>为正就会让第一个隐藏单元为正，这会使第二个隐藏单元也为正，以此类推，因此第四个隐藏单元会让另一个可见单元也为正</p>
+<p>（这里我试图展开一点来讲这个事情。由于前面学得不是太扎实，因此可能存在偏差。如果我的想法的确有问题，请及时纠正我！</p>
+<p>在前一讲，有一个给定可见单元配置<span class="math inline">\(\bf v\)</span>和隐藏单元配置<span class="math inline">\(\bf h\)</span>时整个网络能量的计算公式，为 <span class="math display">\[
+-E({\bf v},{\bf h}) = \sum_{i \in {\bf v}}v_ib_i + \sum_{k \in {\bf h}}h_kb_k + \sum_{i&lt; j}v_iv_jw_{ij} + \sum_{i,k}v_ih_kw_{ik} + \sum_{k&lt;l}h_kh_lw_{kl}
+\]</span> 这里没有截距，可见单元之间也没有权重连接，因此可以简写为 <span class="math display">\[
+-E({\bf v}, {\bf h}) = \sum_{i,k}v_ih_kw_{ik} + \sum_{k&lt;l}h_kh_lw_{kl}
+\]</span> 为了让这个式子尽可能大，给定<span class="math inline">\(v_1\)</span>和<span class="math inline">\(w_{11}\)</span>都为正，那么<span class="math inline">\(h_1\)</span>应该为正。由于<span class="math inline">\(w_{12}\)</span>也为正，那么<span class="math inline">\(h_2\)</span>为正才能使<span class="math inline">\(h_1h_2w_{12}\)</span>为正。这样推导下去，在<span class="math inline">\(v_1\)</span>为正且所有<span class="math inline">\(w_{ij}\)</span>都为正的情况下，<span class="math inline">\(v_2\)</span>也应该为正才能是能量最大化）</p>
+<p>如果把其中某个权重变为负数，那么就可以得到两个隐藏单元之间的反相关关系。这意味着学习<span class="math inline">\(w_1\)</span>的时候要知道其他权重，例如要想知道如何修改<span class="math inline">\(w_1\)</span>就要知道<span class="math inline">\(w_3\)</span>的值，因为<span class="math inline">\(w_3\)</span>为正的时候对<span class="math inline">\(w_1\)</span>的修改和<span class="math inline">\(w_3\)</span>为负的时候对<span class="math inline">\(w_1\)</span>的修改是不一样的。不过这种看似复杂的情形实际有一种很简单的学习算法，而且这种算法只需要局部信息。实际上，任意权重对其它所有权重和数据要了解的内容都包含在两个相关性的差里。或者换种方式说，如果将玻尔兹曼机给某个可见向量<span class="math inline">\(\bf v\)</span>的概率的对数值<span class="math inline">\(\log p({\bf v})\)</span>，对权重<span class="math inline">\(w_{ij}\)</span>求偏导数，其等于如下两者的差 <span class="math display">\[
+\frac{\partial \log p({\bf v})}{\partial w_{ij}} = \langle s_is_j\rangle_{\bf v} - \langle s_is_j \rangle_{\rm model}
+\]</span> 其中</p>
+<ul>
+<li><span class="math inline">\(\langle s_is_j \rangle_{\bf v}\)</span>是将可见单元限制为<span class="math inline">\(\bf v\)</span>，当系统进入热平衡状态时，状态乘积的期望值</li>
+<li><span class="math inline">\(\langle s_is_j \rangle_{\rm model}\)</span>是不对可见单元做限制，当系统进入热平衡状态时，状态乘积的期望值</li>
+</ul>
+<p>将第一项命名为<span class="math inline">\(\langle s_is_j \rangle_{\rm data}\)</span>，可以得到 <span class="math display">\[
+\Delta w_{ij} \propto \langle s_is_j \rangle_{\rm data} - \langle s_is_j \rangle_{\rm model}
+\]</span> 第一项说明表示数据时，增加权重的量等比于活动单元状态的乘积；而第二项则用来加以控制，当你对模型分布做采样时，它降低权重的量等比于两个单元一起被激活的频率。可以如此理解：第一项对应于Hopfield网的记忆存储，第二项对应于避免陷入伪最小值点——这条规则其实是在说明“忘却”（unlearning）过程是如何进行的</p>
+<p>那么为什么这个偏导数的形式如此简单呢？热平衡是全局配置的概率是能量的指数函数，即<span class="math inline">\(p \propto e^{-E}\)</span>。所以当达到热平衡时，可以得到概率对数与能量函数的一个线性关系。由于能量函数与权重也是线性关系，因此权重和概率对数是线性关系，所以有 <span class="math display">\[
+-\frac{\partial E}{\partial w_{ij}} = s_is_j
+\]</span> 实际上，系统最后稳定到热平衡的过程就是传播权重信息的过程。这里不需要一个显式的反向传播，而是要分成两个阶段：有数据情况下的稳定阶段和无数据情况下的稳定阶段。不过网络在这两个阶段的行为基本类似，只是边界条件不一样（如果用反向传播算法，正向传播的计算过程和反向传播的计算过程完全不同）</p>
+<p>为什么要有一个无数据情况下的稳定阶段（这里称为负向阶段）？前面提到这就像Hopfield网避免陷入伪最小值点的忘却过程，不过这里稍作进一步解释：对于某个可见向量，其概率可以写为 <span class="math display">\[
+p({\bf v}) = \frac{\sum_{\bf h}e^{-E({\bf v}, {\bf h})}}{\sum_{\bf u}\sum_{\bf g}e^{-E({\bf u}, {\bf g})}}
+\]</span> 看分子（正向阶段，注意这里“正向”对应的是英文的“positive”），其实是降低求和项里能量大的项，使得系统在可见单元已经为<span class="math inline">\(\bf v\)</span>的情况下，到达热平衡时可以找到适合<span class="math inline">\(\bf v\)</span>的隐藏向量<span class="math inline">\(\bf h\)</span>，从而使<span class="math inline">\(\bf v\)</span>的能量足够小。调整权重的过程实际上是让分子变大，能量变小的过程。学习的第二个阶段是对分母（划分函数）做同样事情的过程。对于其它能让系统能量比较低的全局配置（其实是可见状态和隐藏状态的组合），算法试图提升它们的能量。也就是说，正向阶段是增大分子，负向阶段是减小分母</p>
+<p>为了将这些学习规则跑起来，需要收集统计信息，包括正向统计信息和负向统计信息两种。一种比较基本、效率低下的方法是：</p>
+<ul>
+<li>在正向阶段，将可见单元设置为数据向量，然后将隐藏单元设为随机的二元状态。每次更新网络中的一个隐藏单元，直到网络达到温度为1的热平衡。然后，对每对相连的单元，抽样求<span class="math inline">\(s_is_j\)</span>的期望。将这个过程应用于训练集里的每条数据，然后求均值</li>
+<li>在反向阶段，不做任何限制，将所有单元设为随机二元状态，然后每次更新一个单元，直到网络达到温度为1的热平衡。然后，对每对相连的单元，抽样求<span class="math inline">\(s_is_j\)</span>的期望。重复以上过程很多次</li>
+</ul>
+<p>现在的问题是，在反向阶段，究竟要重复前述操作多少次（后面大概说了一下，但是最后也没说清需要采样多少次……）</p>
+<p>以上介绍的是一种比较低效的收集统计信息的方法。更高效的方法是可选内容，这里不做介绍</p>
+<h2 id="受限玻尔兹曼机rbm">受限玻尔兹曼机（RBM）</h2>
+<p>受限玻尔兹曼机（RBM）对普通玻尔兹曼机施加的限制有两点：一是隐藏层只有一层，二是隐藏单元之间没有连接（所以画出来的图是一个二部图），因此给定可见单元的情况下，可以很容易得到平衡分布（原因是隐藏节点相互独立）。这使得RBM的学习过程和推断过程都很容易——给定可见单元的向量以后，一步就可以达到热平衡。即给定可见单元向量以后，可以计算出每个隐藏节点<span class="math inline">\(h_j\)</span>被激活的概率，进而计算<span class="math inline">\(v_ih_j\)</span>的期望值（其中<span class="math inline">\(v_i\)</span>是某个可见节点）。其中<span class="math inline">\(h_j\)</span>被激活的概率为 <span class="math display">\[
+p(h_j = 1) = \frac{1}{1+\exp\{-\left(b_j + \sum_{i \in {\rm vis}}v_iw_{ij}\right)\}}
+\]</span> 由于该值独立于其他所有隐藏节点，因此可以把这个概率并行求出。如果训练集里有多条数据，可以使用Tieleman在2008年给出的PCD算法。算法仍然分为两个阶段</p>
+<ul>
+<li>正向阶段：对每条数据，将可见单元设置为给定的向量，计算所有隐藏节点和可见节点对的<span class="math inline">\(v_ih_j\)</span>。对所有相连的节点对，<span class="math inline">\(\langle v_ih_j \rangle\)</span>是mini-batch上所有数据的平均值</li>
+<li>负向阶段：准备一些“幻想粒子”（fantasy particle），这些幻想粒子实际上是一些全局的配置。然后，对每个幻想粒子，做几次如下的“交替并行更新”：每次更新权重以后，对幻想粒子也做一点更新，把它们往平衡态拉一点。对每对连接的单元对，求所有幻想粒子的平均<span class="math inline">\(v_ih_j\)</span>，得到负统计数据</li>
+</ul>
+<p>这个算法能达到不错的效果，而且允许RBM构建密度比较好的模型。不过，还有一种更快的学习算法。在此之前，先看一种效率比较低的学习算法：在最开始的时候，将可见单元设为一条训练数据，称此时为<span class="math inline">\(t_0\)</span>时刻。给定可见单元以后，更新隐藏单元，可以算出<span class="math inline">\(t_0\)</span>时刻状态乘积的期望值，记为<span class="math inline">\(\langle v_ih_j \rangle^0\)</span>，与<span class="math inline">\(t_0\)</span>对应。得到新的隐藏单元以后，返回来并行更新所有可见单元，得到<span class="math inline">\(t_1\)</span>时刻的可见单元，再并行更新所有隐藏单元，得到<span class="math inline">\(\langle v_ih_j \rangle^1\)</span>，从而完成一次重构过程。在漫长的往复更新以后，在第<span class="math inline">\(\infty\)</span>时刻，系统达到热平衡，按照上面的记法，可以得到<span class="math inline">\(\langle v_ih_j \rangle^\infty\)</span>。此时得到了幻想粒子。接下来学习规则就比较简单了，为 <span class="math display">\[
+\Delta w_{ij} = \epsilon(\langle v_ih_j \rangle^0 - \langle v_ih_j \rangle^\infty)
+\]</span> 这个算法的问题是要运行太久的时间才能达到热平衡，得到幻想粒子。令人惊愕的是，实际上只需要走一步（更新两次隐藏单元和一次可见单元），就可以获得需要的统计值，然后使用如下方法更新权重 <span class="math display">\[
+\Delta w_{ij} = \epsilon(\langle v_ih_j \rangle^0 - \langle v_ih_j \rangle^1)
+\]</span> 这种做法肯定不是最大似然法，因为负统计数据是错的，不过这种方法在实践中可用。这是为什么呢？马尔可夫链会以给定数据为起点开始向着平衡分布游走，因此经过少数几步以后就可以看到游走的方向。如果初始权重不好，走到平衡态实际就是浪费时间。我们不用等系统进入平衡态就能知道如何修改权重来防止它走到错误的方向，要做的就是降低在完整一步之后生成“虚构（confabulation）”的概率，提升数据的概率，这样模型就不会走错了。一旦数据和模型走了完整一步以后达到的区域有相同的分布，学习过程就会停止</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_12_contrastive_divergence_learning.png" alt="对比差异学习算法示意图"><figcaption>对比差异学习算法示意图</figcaption>
+</figure>
+<p>这里给出了一个全局配置空间中的能量表面示意图，用以解释前面介绍的“对比差异学习算法”（contrastive divergence learning，又称为对比散度学习）。绿色的点是一个数据点，也就是可见向量和通过随机更新隐藏单元得到的隐藏向量。从这个点开始，让马尔可夫链经过一个完整的更新步骤，可以得到新的可见向量和相对应的隐藏向量，也就是红色的重构点。然后，修改权重会降低数据点的能量，增大重构点的能量，得到一个经过局部拉伸的新表面。可以看到这样实际上是在数据点创建一个能量最小值，同时让远离数据点的部分保持不变</p>
+<p>因此，这种取巧做法对远离数据点的部分会失效，我们需要小心那些里数据空间很远，但是模型很喜欢的区域。这些低能量的孔洞可以导致正则项变得很大，而且如果使用上述取巧法无法感知到。如果使用持久粒子（即它们的状态会被记忆，而且在每次更新以后会被多次更新），这些粒子会找到这些孔洞，掉进去，学习过程变成补洞的过程。所以，更平衡的方法是先使用一些小的权重，然后以CD1算法开始（在一次完整的步骤之后就获取负统计数据），过一段时间，变成使用CD3，再过一段时间，使用CD5……以此类推</p>
+<h2 id="rbm学习示例">RBM学习示例</h2>
+<p>本讲介绍如何使用RBM学习一系列特征，以重构手写数字2的图像。输入图像是16像素 x 16像素的，有50个二值的隐藏单元来学习特征。接收到数据的时候，先使用权重和节点之间的连接激活特征（也就是对每个隐藏神经元，使用随机决策来看它是否应该被激活），然后使用这些特征重构数据（对每个像素，判断是否应该为1），最后使用重构数据重新激活特征。当网络观察原始数据时，增加活跃像素和活跃特征探测器（隐藏单元）之间的权重，降低原始数据的全局配置的能量；当网络观察重构数据时，减小活跃像素和活跃特征探测器之间的权重，增加重构数据的能量。在学习刚刚开始，权重都随机（使用随机权重来打破网络的对称性）的时候，重构的能量几乎肯定比原始数据的要低，因为重构数据是网络在给定隐藏单元激活状态时倾向在可见单元上产生的值，而它肯定会根据能量函数产生低能量的数据。学习的过程就是降低原始数据能量，提高重构数据能量的过程 （后面学习过程和效果略。大致来说，对没见到的图像，网络可以给出一个不错的重构数据。由于网络把什么都看作是数字2，如果给进一个3，它也会试图重构出一个像2的图像，保持顶部形状不变，但是中间弯折的部分会处理出比较模糊的效果）</p>
+<h2 id="使用rbm做协同过滤">使用RBM做协同过滤</h2>
+<p>（协同过滤的背景略）</p>
+<p>可以训练一个“语言模型”，也就是把每条数据写成一个三元组组成的字符串，形式为<code>&lt;用户名 电影名 评分&gt;</code>。这样一来，推荐系统就是要根据元组的第一、二个元素猜测第三个元素是什么。因此可以将每个用户编码成一个向量特征，每个电影也编码成一个向量特征。将这两个向量特征求内积，就可以得到预测的评分（甚至都不用做softmax）。这种模型实际上称作矩阵分解模型，因为如果把用户向量按行排列，电影向量按列排列，就会得到两个矩阵。如果将这两个矩阵相乘，就会得到所有的得分</p>
+<p>另一种方法是使用RBM来解决这个问题，但是看上去不那么直观，需要绕一下。假设把每个用户看成是一条训练数据，表现为由电影评分组成的向量，而对每部电影建立一个可见单元，每个单元有五种可能取值（因此可见单元不再是二元的，而是五路softmax得到的结果）。因此网络里有约18000个可见单元，此外还有约100个隐藏单元，每个单元只有0或1两种取值，还带有一个偏置项。由于用户不可能看过所有电影，因此模型要做的事情是预测缺失值（对用户没看过的电影，猜测用户会打多少分）</p>
+<p>这里面的隐忧是，网络里如果有18000个可见单元，又要求每个可见单元都与所有隐藏单元全连接，网络的权重数太多了。但是，由于每个用户点评过的电影都只有少数若干个，因此实际可以对每个用户维护一个不同的RBM。这些不同的RBM的可见单元不同（对应于用户评过分的电影），但是隐藏单元都共享，而且从每个隐藏单元到每部电影的权重也被所有为这部电影打过分的用户共享。训练的时候，先使用前面的CD1，过一段时间改为CD3，然后是CD5和CD9。使用RBM解决协同过滤取得的效果跟矩阵分解的总体效果差不多，但是两者犯的错误很不一样。因此同时训练两个模型，然后对模型求平均可能会收效很大</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2018/02/10/UTNN-12-Restricted-Boltzmann-Machines/" title="Hinton神经网络与机器学习 12. 受限玻尔兹曼机">txshi-mt.com/2018/02/10/UTNN-12-Restricted-Boltzmann-Machines/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/RBM/" rel="tag"># RBM</a>
+          
+            <a href="/tags/玻尔兹曼机/" rel="tag"># 玻尔兹曼机</a>
+          
+            <a href="/tags/UTNN/" rel="tag"># UTNN</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/02/09/CS20-7-Convnet-in-TensorFlow/" rel="next" title="CS20 07. 使用TensorFlow实现卷积神经网络">
+                <i class="fa fa-chevron-left"></i> CS20 07. 使用TensorFlow实现卷积神经网络
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">73</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#玻尔兹曼机学习"><span class="nav-number">1.</span> <span class="nav-text">&#x73BB;&#x5C14;&#x5179;&#x66FC;&#x673A;&#x5B66;&#x4E60;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#受限玻尔兹曼机rbm"><span class="nav-number">2.</span> <span class="nav-text">&#x53D7;&#x9650;&#x73BB;&#x5C14;&#x5179;&#x66FC;&#x673A;&#xFF08;RBM&#xFF09;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#rbm学习示例"><span class="nav-number">3.</span> <span class="nav-text">RBM&#x5B66;&#x4E60;&#x793A;&#x4F8B;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用rbm做协同过滤"><span class="nav-number">4.</span> <span class="nav-text">&#x4F7F;&#x7528;RBM&#x505A;&#x534F;&#x540C;&#x8FC7;&#x6EE4;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

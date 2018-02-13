@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>txshi-mt.com/2018/02/10/UTNN-12-Restricted-Boltzmann-Machines/</loc>
+    
+    <lastmod>2018-02-13T06:59:37.705Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>txshi-mt.com/2018/02/09/CS20-7-Convnet-in-TensorFlow/</loc>
     
     <lastmod>2018-02-09T09:32:30.664Z</lastmod>
@@ -100,14 +107,7 @@
   </url>
   
   <url>
-    <loc>txshi-mt.com/2017/08/14/NTUML-5-Training-versus-Testing/</loc>
-    
-    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>txshi-mt.com/2017/09/14/NTUML-16-Three-Learning-Principles/</loc>
+    <loc>txshi-mt.com/2017/09/18/NTUML-17-Linear-SVM/</loc>
     
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     
@@ -121,14 +121,14 @@
   </url>
   
   <url>
-    <loc>txshi-mt.com/2017/09/23/NTUML-19-Kernel-SVM/</loc>
+    <loc>txshi-mt.com/2017/11/25/CS20-1-Introduction/</loc>
     
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     
   </url>
   
   <url>
-    <loc>txshi-mt.com/2017/09/18/NTUML-17-Linear-SVM/</loc>
+    <loc>txshi-mt.com/2017/09/23/NTUML-19-Kernel-SVM/</loc>
     
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     
@@ -149,21 +149,7 @@
   </url>
   
   <url>
-    <loc>txshi-mt.com/2017/10/03/NTUML-22-SVR/</loc>
-    
-    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>txshi-mt.com/2017/10/02/NTUML-21-Kernel-Logistic-Regression/</loc>
-    
-    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>txshi-mt.com/2017/10/05/NTUML-23-Blending-Bagging/</loc>
     
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     
@@ -177,14 +163,21 @@
   </url>
   
   <url>
-    <loc>txshi-mt.com/2017/10/05/NTUML-24-Adaptive-Boosting/</loc>
+    <loc>txshi-mt.com/2017/10/03/NTUML-22-SVR/</loc>
     
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     
   </url>
   
   <url>
-    <loc>txshi-mt.com/2017/10/07/NTUML-25-Decision-Tree/</loc>
+    <loc>txshi-mt.com/2017/10/05/NTUML-23-Blending-Bagging/</loc>
+    
+    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>txshi-mt.com/2017/10/05/NTUML-24-Adaptive-Boosting/</loc>
     
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     
@@ -198,13 +191,6 @@
   </url>
   
   <url>
-    <loc>txshi-mt.com/2017/10/14/NTUML-27-GBDT/</loc>
-    
-    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>txshi-mt.com/2017/10/19/NTUML-28-Neural-Network/</loc>
     
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
@@ -212,21 +198,14 @@
   </url>
   
   <url>
-    <loc>txshi-mt.com/2017/10/21/NTUML-29-Deep-Learning/</loc>
+    <loc>txshi-mt.com/2017/10/07/NTUML-25-Decision-Tree/</loc>
     
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     
   </url>
   
   <url>
-    <loc>txshi-mt.com/2017/08/05/NTUML-3-Types-of-Learning/</loc>
-    
-    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>txshi-mt.com/2017/10/22/NTUML-30-RBF-Network/</loc>
+    <loc>txshi-mt.com/2017/10/14/NTUML-27-GBDT/</loc>
     
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     
@@ -240,6 +219,20 @@
   </url>
   
   <url>
+    <loc>txshi-mt.com/2017/10/22/NTUML-30-RBF-Network/</loc>
+    
+    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>txshi-mt.com/2017/10/21/NTUML-29-Deep-Learning/</loc>
+    
+    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>txshi-mt.com/2017/10/28/NTUML-32-Finale/</loc>
     
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
@@ -247,7 +240,7 @@
   </url>
   
   <url>
-    <loc>txshi-mt.com/2017/08/06/NTUML-4-Feasibility-of-Learning/</loc>
+    <loc>txshi-mt.com/2017/08/05/NTUML-3-Types-of-Learning/</loc>
     
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     
@@ -261,6 +254,13 @@
   </url>
   
   <url>
+    <loc>txshi-mt.com/2017/08/06/NTUML-4-Feasibility-of-Learning/</loc>
+    
+    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>txshi-mt.com/2017/08/20/NTUML-7-the-VC-Dimension/</loc>
     
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
@@ -268,7 +268,14 @@
   </url>
   
   <url>
-    <loc>txshi-mt.com/2017/08/16/NTUML-6-Theory-of-Generalization/</loc>
+    <loc>txshi-mt.com/2017/08/14/NTUML-5-Training-versus-Testing/</loc>
+    
+    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>txshi-mt.com/tags/index.html</loc>
     
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     
@@ -282,21 +289,7 @@
   </url>
   
   <url>
-    <loc>txshi-mt.com/2017/08/28/NTUML-9-Linear-Regression/</loc>
-    
-    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>txshi-mt.com/2017/11/12/UTNN-1-Introduction/</loc>
-    
-    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>txshi-mt.com/2017/11/18/UTNN-2-the-Perceptron-Learning-Procedure/</loc>
+    <loc>txshi-mt.com/2017/12/05/DLBook-6a-Deep-Feedforward-Networks-summary/</loc>
     
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     
@@ -310,20 +303,6 @@
   </url>
   
   <url>
-    <loc>txshi-mt.com/2017/12/05/DLBook-6a-Deep-Feedforward-Networks-summary/</loc>
-    
-    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>txshi-mt.com/2017/11/25/CS20-1-Introduction/</loc>
-    
-    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>txshi-mt.com/2017/08/01/NTUML-1-the-Learning-Problem/</loc>
     
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
@@ -331,14 +310,14 @@
   </url>
   
   <url>
-    <loc>txshi-mt.com/2017/08/30/NTUML-10-Logistic-Regression/</loc>
+    <loc>txshi-mt.com/2017/09/01/NTUML-11-Linear-Models-for-Classification/</loc>
     
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     
   </url>
   
   <url>
-    <loc>txshi-mt.com/2017/09/01/NTUML-11-Linear-Models-for-Classification/</loc>
+    <loc>txshi-mt.com/2017/08/30/NTUML-10-Logistic-Regression/</loc>
     
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     
@@ -353,6 +332,13 @@
   
   <url>
     <loc>txshi-mt.com/2017/09/09/NTUML-13-Hazard-of-Overfitting/</loc>
+    
+    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>txshi-mt.com/2017/09/14/NTUML-16-Three-Learning-Principles/</loc>
     
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     
@@ -401,21 +387,7 @@
   </url>
   
   <url>
-    <loc>txshi-mt.com/2017/07/03/edx-columbia-14-Clustering-K-Means/</loc>
-    
-    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>txshi-mt.com/2017/07/03/edx-columbia-16-Gaussian-Mixture-Model/</loc>
-    
-    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>txshi-mt.com/2017/07/03/edx-columbia-15-Maximum-Likelihood-EM-Algorithm/</loc>
     
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     
@@ -429,7 +401,14 @@
   </url>
   
   <url>
-    <loc>txshi-mt.com/2017/07/05/edx-columbia-18-Topic-Modeling-Non-negative-Matrix-Factorization/</loc>
+    <loc>txshi-mt.com/2017/07/03/edx-columbia-14-Clustering-K-Means/</loc>
+    
+    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>txshi-mt.com/2017/07/03/edx-columbia-15-Maximum-Likelihood-EM-Algorithm/</loc>
     
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     
@@ -443,7 +422,21 @@
   </url>
   
   <url>
+    <loc>txshi-mt.com/2017/07/05/edx-columbia-18-Topic-Modeling-Non-negative-Matrix-Factorization/</loc>
+    
+    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>txshi-mt.com/2017/06/24/edx-columbia-2-Linear-Regression-Least-Squares/</loc>
+    
+    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>txshi-mt.com/2017/07/09/edx-columbia-22-Continuous-Status-Space-Model/</loc>
     
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     
@@ -471,13 +464,6 @@
   </url>
   
   <url>
-    <loc>txshi-mt.com/2017/07/09/edx-columbia-22-Continuous-Status-Space-Model/</loc>
-    
-    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>txshi-mt.com/2017/07/24/edx-columbia-24-Model-Selection/</loc>
     
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
@@ -485,7 +471,14 @@
   </url>
   
   <url>
-    <loc>txshi-mt.com/2017/06/24/edx-columbia-3-Least-Squares-II-Ridge-Regression/</loc>
+    <loc>txshi-mt.com/2017/08/28/NTUML-9-Linear-Regression/</loc>
+    
+    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>txshi-mt.com/2017/11/18/UTNN-2-the-Perceptron-Learning-Procedure/</loc>
     
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     
@@ -534,6 +527,20 @@
   </url>
   
   <url>
+    <loc>txshi-mt.com/2017/11/12/UTNN-1-Introduction/</loc>
+    
+    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>txshi-mt.com/2017/06/24/edx-columbia-3-Least-Squares-II-Ridge-Regression/</loc>
+    
+    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>txshi-mt.com/categories/index.html</loc>
     
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
@@ -541,7 +548,7 @@
   </url>
   
   <url>
-    <loc>txshi-mt.com/tags/index.html</loc>
+    <loc>txshi-mt.com/2017/08/16/NTUML-6-Theory-of-Generalization/</loc>
     
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     
