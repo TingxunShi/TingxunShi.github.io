@@ -100,7 +100,7 @@
 
 
 
-  <meta name="keywords" content="NTUML," />
+  <meta name="keywords" content="TensorFlow,CNN,CS20," />
 
 
 
@@ -111,18 +111,18 @@
 
 
 
-<meta name="description" content="特征变换技术 关于特征变换，最开始讲的是核技巧。核技巧将可能非常多的特征变换都埋藏在了一个核操作中，包含了多项式核、高斯核和决策树桩核等。核需要满足Mercer条件，所有满足该条件的函数都可以做核函数，值得一提的是，两个核的和/积都还是核。核的应用非常广泛，无论是常见的方法诸如SVM、SVR还是概率SVM，或者是少见的模型例如核岭回归和核Logistic回归，其核心都是核方法的应用。它们都延伸了原">
-<meta name="keywords" content="NTUML">
+<meta name="description" content="CS20的第二次作业是使用TensorFlow实现风格迁移（style transfer）。对于这个名词，了解深度学习的人应该不会太陌生：简单来说，神经网络接收两张图片，其中一个称为“风格图片”，主要学习其中的画风；另一个称为“内容图片”，网络将其渲染为学习到的风格。本次课的大部分内容是在讨论作业，没有讲义，所以笔记可能会简单一些 原始胶片参看 https://docs.google.com/pr">
+<meta name="keywords" content="TensorFlow,CNN,CS20">
 <meta property="og:type" content="article">
-<meta property="og:title" content="NTUML 32. 结束曲">
-<meta property="og:url" content="txshi-mt.com/2017/10/28/NTUML-32-Finale/index.html">
+<meta property="og:title" content="CS20 08. 风格迁移">
+<meta property="og:url" content="txshi-mt.com/2018/02/15/CS20-8-Style-Transfer/index.html">
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
-<meta property="og:description" content="特征变换技术 关于特征变换，最开始讲的是核技巧。核技巧将可能非常多的特征变换都埋藏在了一个核操作中，包含了多项式核、高斯核和决策树桩核等。核需要满足Mercer条件，所有满足该条件的函数都可以做核函数，值得一提的是，两个核的和/积都还是核。核的应用非常广泛，无论是常见的方法诸如SVM、SVR还是概率SVM，或者是少见的模型例如核岭回归和核Logistic回归，其核心都是核方法的应用。它们都延伸了原">
+<meta property="og:description" content="CS20的第二次作业是使用TensorFlow实现风格迁移（style transfer）。对于这个名词，了解深度学习的人应该不会太陌生：简单来说，神经网络接收两张图片，其中一个称为“风格图片”，主要学习其中的画风；另一个称为“内容图片”，网络将其渲染为学习到的风格。本次课的大部分内容是在讨论作业，没有讲义，所以笔记可能会简单一些 原始胶片参看 https://docs.google.com/pr">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2017-12-19T12:35:39.000Z">
+<meta property="og:updated_time" content="2018-02-15T04:04:04.935Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="NTUML 32. 结束曲">
-<meta name="twitter:description" content="特征变换技术 关于特征变换，最开始讲的是核技巧。核技巧将可能非常多的特征变换都埋藏在了一个核操作中，包含了多项式核、高斯核和决策树桩核等。核需要满足Mercer条件，所有满足该条件的函数都可以做核函数，值得一提的是，两个核的和/积都还是核。核的应用非常广泛，无论是常见的方法诸如SVM、SVR还是概率SVM，或者是少见的模型例如核岭回归和核Logistic回归，其核心都是核方法的应用。它们都延伸了原">
+<meta name="twitter:title" content="CS20 08. 风格迁移">
+<meta name="twitter:description" content="CS20的第二次作业是使用TensorFlow实现风格迁移（style transfer）。对于这个名词，了解深度学习的人应该不会太陌生：简单来说，神经网络接收两张图片，其中一个称为“风格图片”，主要学习其中的画风；另一个称为“内容图片”，网络将其渲染为学习到的风格。本次课的大部分内容是在讨论作业，没有讲义，所以笔记可能会简单一些 原始胶片参看 https://docs.google.com/pr">
 
 
 
@@ -152,13 +152,13 @@
 
 
 
-  <link rel="canonical" href="txshi-mt.com/2017/10/28/NTUML-32-Finale/"/>
+  <link rel="canonical" href="txshi-mt.com/2018/02/15/CS20-8-Style-Transfer/"/>
 
 
 
 
 
-  <title>NTUML 32. 结束曲 | Tingxun's Blog</title>
+  <title>CS20 08. 风格迁移 | Tingxun's Blog</title>
   
 
 
@@ -295,7 +295,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2017/10/28/NTUML-32-Finale/">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2018/02/15/CS20-8-Style-Transfer/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Tingxun Shi">
@@ -312,7 +312,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">NTUML 32. 结束曲</h1>
+          <h1 class="post-title" itemprop="name headline">CS20 08. 风格迁移</h1>
         
 
         <div class="post-meta">
@@ -324,8 +324,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-28T17:28:59+08:00">
-                Oct 28 2017
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-15T10:35:31+08:00">
+                Feb 15 2018
               </time>
             
 
@@ -347,8 +347,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/统计机器学习/" itemprop="url" rel="index">
-                    <span itemprop="name">统计机器学习</span>
+                  <a href="/categories/深度学习实践/" itemprop="url" rel="index">
+                    <span itemprop="name">深度学习实践</span>
                   </a>
                 </span>
 
@@ -389,43 +389,42 @@
       
 
       
-        <h2 id="特征变换技术">特征变换技术</h2>
-<p>关于特征变换，最开始讲的是<strong>核技巧</strong>。核技巧将可能非常多的特征变换都埋藏在了一个核操作中，包含了多项式核、高斯核和决策树桩核等。核需要满足Mercer条件，所有满足该条件的函数都可以做核函数，值得一提的是，两个核的和/积都还是核。核的应用非常广泛，无论是常见的方法诸如SVM、SVR还是概率SVM，或者是少见的模型例如核岭回归和核Logistic回归，其核心都是核方法的应用。它们都延伸了原有的线性模型，通过核得到复杂的特征</p>
-<p>运用特征变换的第二种方法是<strong>模型聚合</strong>，这种方法的基本思想是将一些比较基础的预测模型<span class="math inline">\(g\)</span>都看作是一种特征变换，将预测得到的结果聚合起来，使用一些聚合技术，得到一个更大的模型<span class="math inline">\(G\)</span>。常见的<span class="math inline">\(g\)</span>包括决策树桩、决策树、（高斯）RBF等等。如果已经有了若干个<span class="math inline">\(g\)</span>，就可以做模型混合，比如公平投票法（均匀混合）、带权重的投票法（非均匀混合）和有条件的混合等等。如果没有<span class="math inline">\(g\)</span>，可以使用诸如bagging的方法得到不一样的<span class="math inline">\(g\)</span>让它们投票，例如随机森林；也可以一步步找到非常不一样的<span class="math inline">\(g\)</span>，这样就是使用AdaBoost或者梯度Boost；而决策树和KNN有点类似于有条件混合的策略。从另一个角度，概率SVM也有一点模型混合的味道，只不过是先学到SVM，然后将其与一个常数模型做线性聚合</p>
-<p>第三种方法是<strong>找出潜藏特征</strong>，把特征看作是一些隐藏的变量，然后使用传统的权重法将其组合起来。优化时，寻找特征和最后组合特征的过程是一起优化的，而特征的寻找有时还要借助一些无监督学习的方法。这部分常见的方法包括神经网络（神经元的权重）、RBF网络（找到中心点）和矩阵分解（例如找到用户/电影的隐藏特征）。其中RBF网络会使用k均值聚类方法，神经网络会使用自动编码器或PCA等方法</p>
-<p>这些模型里还有一个共同的特点，但是容易被人所忽略，即它们都做了一些“特征降维”的方法，例如将特征从高维度到低维度的投影。例如决策树桩是把特征投影到<span class="math inline">\(\mathbb{R}\)</span>上，PCA或者自动编码器是在最大程度保留信息的基础上做特征压缩，矩阵分解是把特征从抽象特征（用户ID）变换到具体特征上。而随机森林不仅做了一些随机的低维投影，还通过一些特征选择的方法选出最有用的若干特征</p>
-<h2 id="误差优化技术">误差优化技术</h2>
-<p>接着，从最优化的角度来对前面学过的知识做一总结。最基本的最优化方法是<strong>梯度下降</strong>，即如果能够（大致）知道某个梯度的方向，就能把这个方向作为误差函数的一次逼近：往负梯度方向走一小步就可以。梯度下降及其变种随机梯度下降在很多模型中都有应用，例如Logistic回归、神经网络等。梯度下降的延伸方法，函数梯度下降+最陡下降（steepest descent）则是在AdaBoost和梯度Boost中使用</p>
-<p>一些更困难的最优化问题需要经过一些数学推导，变型成已知的最优化问题。例如在对偶SVM中，是通过对偶方法推出对偶问题，并说明其等价于凸二次规划问题。而在核Logistic回归和核岭回归中，使用的是表示定理。PCA则是使用了特征值与特征向量方面的知识</p>
-<p>另外一些比较困难的方法则是将其分解为一些子问题，分别求解。例如模型混合法，通常是先求解<span class="math inline">\(g\)</span>，再求解<span class="math inline">\(G\)</span>。自动编码器则是一层一层地推进。K均值聚类和矩阵分解使用的是交替求解法，而决策树则是使用了“分而治之”的思想</p>
-<h2 id="过拟合的避免">过拟合的避免</h2>
-<p>最后，再来看一个很重要的问题，就是如何消除或减小过拟合的影响。当模型很复杂时，这个步骤就更加重要。避免过拟合的一种方法是使用正则化，这种方法在很多算法中都有使用。例如SVM和AdaBoost是使用大边界的分类器（AdaBoost是隐含了这方面的思想），SVR、核模型等使用的是L2正则项，模型混合法加入了模型投票的机制，自动编码器使用的是降噪机制（类似于人类接种疫苗），决策树的剪枝，神经网络的dropout或提早停止（其中后者可以应用到任何基于梯度下降的算法），以及对模型做一些预设的限制，例如限制RBF网络的中心点数量</p>
-<p>避免过拟合的另一种方法是验证法。例如随机森林使用OOB来做类似的检查，SVM和SVR可以检查支持向量的数量</p>
-<h2 id="机器学习实战">机器学习实战</h2>
-<p>首先来看一下台大队在过去几次KDD Cup中使用的方法</p>
+        <p>CS20的第二次作业是使用TensorFlow实现风格迁移（style transfer）。对于这个名词，了解深度学习的人应该不会太陌生：简单来说，神经网络接收两张图片，其中一个称为“风格图片”，主要学习其中的画风；另一个称为“内容图片”，网络将其渲染为学习到的风格。本次课的大部分内容是在讨论作业，没有讲义，所以笔记可能会简单一些</p>
+<p>原始胶片参看 https://docs.google.com/presentation/d/1ftgals7pXNOoNoWe0E9PO27miOpXbHrQIXyBm0YOiyc/edit 。无特别说明，笔记中所有代码来自胶片</p>
+<h2 id="tfrecord">TFRecord</h2>
+<p>本讲首先介绍了一些关于TFRecord的内容。它是一种TensorFlow推荐的数据格式，是<code>tf.train.Example</code>protobuf对象序列化之后的二进制结果（这里所谓的<code>tf.train.Example</code>个人感觉并不简单的是一个例子，而是以例子的形式，以protobuf为载体，规定了一种针对输入数据的数据格式。在<a href="https://www.tensorflow.org/api_docs/python/tf/train/Example" target="_blank" rel="noopener">官网</a>上它直接被指向了一个protobuf文件）。使用二进制文件的好处是可以更好利用磁盘缓存，数据流动起来比较快，而且可以处理不同类型的文件</p>
+<p>要将数据转换为TFRecord格式，需要一个<code>tf.python_io.TFRecordWriter</code>对象。示例代码如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Step 1: create a writer to write tfrecord to that file</span></span><br><span class="line">writer = tf.python_io.TFRecordWriter(out_file)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Step 2: get serialized shape and values of the image</span></span><br><span class="line">shape, binary_image = get_image_binary(image_file)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Step 3: create a tf.train.Features object</span></span><br><span class="line">features = tf.train.Features(feature=&#123;<span class="string">'label'</span>: _int64_feature(label),</span><br><span class="line">                                      <span class="string">'shape'</span>: _bytes_feature(shape),</span><br><span class="line">                                      <span class="string">'image'</span>: _bytes_feature(binary_image)&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Step 4: create a sample containing of features defined above</span></span><br><span class="line">sample = tf.train.Example(features=features)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Step 5: write the sample to the tfrecord file</span></span><br><span class="line">writer.write(sample.SerializeToString())</span><br><span class="line">writer.close()</span><br></pre></td></tr></table></figure>
+<p>从第8到10行代码可以看出，其核心思想是将所有不同的数据类型都转换成byte string。具体实现为</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_int64_feature</span><span class="params">(value)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_bytes_feature</span><span class="params">(value)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))</span><br></pre></td></tr></table></figure>
+<p>读取TFRecord文件需要使用<code>tf.data.TFRecordDataset</code>对象，并且自己定义一个解析函数，将其解析（还原）为各个特征，例如</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_parse_function</span><span class="params">(tfrecord_serialized)</span>:</span></span><br><span class="line">    features=&#123;<span class="string">'label'</span>: tf.FixedLenFeature([], tf.int64),</span><br><span class="line">              <span class="string">'shape'</span>: tf.FixedLenFeature([], tf.string),</span><br><span class="line">              <span class="string">'image'</span>: tf.FixedLenFeature([], tf.string)&#125;</span><br><span class="line"></span><br><span class="line">    parsed_features = tf.parse_single_example(tfrecord_serialized, features)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> parsed_features[<span class="string">'label'</span>], parsed_features[<span class="string">'shape'</span>], parsed_features[<span class="string">'image'</span>]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">dataset = tf.data.TFRecordDataset(tfrecord_files)</span><br><span class="line">dataset = dataset.map(_parse_function)</span><br></pre></td></tr></table></figure>
+<h2 id="风格迁移">风格迁移</h2>
+<h3 id="理论">理论</h3>
+<p>风格迁移的目标可以简单说为，要生成一张新的图片，使得其内容接近“内容图片”的内容，风格接近“风格图片”的风格。既然有两种图片，那么就会有相应的两种损失函数（这也就是问题的关键点）：“内容损失”和“风格损失”。从直观上来讲，“内容损失”衡量生成图片的内容和“内容图片”的内容之间的差距，而“风格损失”定义类似</p>
+<p>接下来的问题就是，对于一张图片，怎么提取内容，又怎么提取风格？前面提到的卷积神经网络CNN一般都有很多层，实际上，每一层都是一个提取特定特征的函数，只不过我们不知道具体能学到什么特征。但是从宏观来看，底层（靠近输入的层）倾向提取和内容相关的特征，高层（靠近输出的层）倾向提取和风格相关的特征。因此，损失函数可以进一步理解为，“内容损失”衡量的是生成图片“内容层”特征映射与“内容图片”之间的差别，“风格损失”定义类似，不过比较的是生成图片“风格层”特征映射的Gram矩阵和“风格图片”的Gram矩阵之间的差别。其中Gram矩阵是某个矩阵与其转置的乘积。按照<a href="https://medium.com/artists-and-machine-intelligence/neural-artistic-style-transfer-a-comprehensive-look-f54d8649c199" target="_blank" rel="noopener">一篇博客</a>的讲解，由于矩阵中每一列都有每一行做内积，可以把这个过程看做是将原始图片的空间信息分布化，因此得到的矩阵会得到图片的非局部特征，包括纹理、形状等等，这些就是图片的风格</p>
+<p>特征提取可以使用预训练好的网络来做，例如VGG、AlexNet、GoogleNet等等。按照<a href="https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Gatys_Image_Style_Transfer_CVPR_2016_paper.pdf" target="_blank" rel="noopener">原始论文</a>(Image Style Transfer Using Convolutional Neural Networks, Gatys et al., CVPR 2016, pp. 2414-2423)的定义，输入图像<span class="math inline">\(\vec{x}\)</span>在CNN的每一层都会被对应的滤波器（卷积核）编码，假设在第<span class="math inline">\(l\)</span>层有<span class="math inline">\(N_l\)</span>个卷积核，每个卷积核大小都是<span class="math inline">\(M_l \times M_l\)</span>的，那么第<span class="math inline">\(l\)</span>层编码的信息会存在矩阵<span class="math inline">\(F^l \in \mathcal{R}^{N_l \times M_l}\)</span>中，其中<span class="math inline">\(F_{ij}^l\)</span>是层<span class="math inline">\(l\)</span>位置<span class="math inline">\(j\)</span>被第<span class="math inline">\(i\)</span>个卷积核激活的值。令<span class="math inline">\(\vec{p}\)</span>为原始内容图像，<span class="math inline">\(\vec{x}\)</span>为生成图像，<span class="math inline">\(P^l\)</span>和<span class="math inline">\(F^l\)</span>为各自在第<span class="math inline">\(l\)</span>层得到的特征表示，则“内容损失”可以定义为 <span class="math display">\[
+\mathcal{L}_{\rm content}(\vec{p}, \vec{x}, l) = \frac{1}{2}\sum_{i, j}(F_{ij}^l - P_{ij}^l)^2
+\]</span> “内容损失”对层<span class="math inline">\(l\)</span>的激活值的偏导数为 <span class="math display">\[
+\frac{\partial \mathcal{L}_{\rm content}}{\partial F_{ij}^l} = \begin{cases}(F^l-P^l)_{ij} &amp; {\rm if\  }F_{ij}^l &gt; 0 \\ 0 &amp; {\rm if\  }F_{ij}^l &lt; 0 \end{cases}
+\]</span> 因此<span class="math inline">\(\vec{x}\)</span>的梯度可以使用反向传播得出，经过反向传播可以将原始随机生成的图像一点一点调整为和<span class="math inline">\(\vec{p}\)</span>内容相近的图像。<strong>所以这里要优化的是生成的图像，而不是网络的权重！</strong></p>
+<p>为了获得图像的风格表示，原始论文使用前面提到的Gram矩阵，通过特征相关性来达到目的。更形式化地，对第<span class="math inline">\(l\)</span>层，假设有<span class="math inline">\(N_l\)</span>个卷积核，那么对应的Gram矩阵<span class="math inline">\(G^l \in \mathcal{R}^{N_l \times N_l}\)</span>的每个元素是特征映射向量化后的内积 <span class="math display">\[
+G_{ij}^l = \sum_kF_{ik}^lF_{jk}^l
+\]</span> 令<span class="math inline">\(\vec{a}\)</span>为原始风格图像，<span class="math inline">\(\vec{x}\)</span>为生成图像，<span class="math inline">\(A^l\)</span>和<span class="math inline">\(G^l\)</span>为各自在第<span class="math inline">\(l\)</span>层得到的风格表示，则层<span class="math inline">\(l\)</span>的”风格损失“可以定义为 <span class="math display">\[
+E_l = \frac{1}{4N_l^2M_l^2}\sum_{i,j}(G_{ij}^l - A_{ij}^l)^2
+\]</span> 总的风格损失为 <span class="math display">\[
+\mathcal{L}_{\rm style}(\vec{a}, \vec{x}) = \sum_{l=0}^Lw_lE_l
+\]</span> 其中<span class="math inline">\(w_l\)</span>是每层对总损失值贡献的权重。相应的，也可以计算该损失值对第<span class="math inline">\(l\)</span>层激活值的偏导 <span class="math display">\[
+\frac{\partial E_l}{\partial F_{ij}^l} = \begin{cases}\frac{1}{N_l^2M_l^2}((F^l)^\mathsf{T}(G^l-A^l))_{ji} &amp; {\rm if\  }F_{ij}^l &gt; 0 \\ 0 &amp; {\rm if\  }F_{ij}^l &lt; 0\end{cases}
+\]</span> 为了将画<span class="math inline">\(\vec{a}\)</span>的风格迁移到照片<span class="math inline">\(\vec{p}\)</span>上，需要综合考虑上述两种损失值，因此要最小化的总损失函数为 <span class="math display">\[
+\mathcal{L}_{\rm total}(\vec{p}, \vec{a}, \vec{x}) = \alpha \mathcal{L}_{\rm content}(\vec{p}, \vec{x}) + \beta \mathcal{L}_{\rm style}(\vec{a}, \vec{x})
+\]</span></p>
+<h3 id="对作业的一点贴士">对作业的一点贴士</h3>
 <ul>
-<li>2010年KDD Cup，使用了模型混合的方法。混合的基模型一部分是Logistic回归，其输入为大量经过编码的原始特征；另一部分是随机森林，其输入为人类运用领域知识设计出来的特征</li>
-<li>2011年KDD Cup Track 1，基模型为矩阵分解模型（包括概率PCA）、受限玻尔兹曼机（自动编码器的一种扩展）、KNN、概率LSA、线性回归、神经网络、GBDT。对这些基模型，先使用非线性模型混合（例如神经网络和决策树），最后使用一次线性混合</li>
-<li>2012年KDD Cup Track 2，基模型为线性回归及其变种（例如SVR）、Logistic回归及其变种、矩阵分解及其变种。对这些基模型，先使用非线性模型混合（例如神经网络和GBDT），最后使用一次线性混合</li>
-<li>2013年KDD Cup Track 1，基模型为随机森林（使用了很多树）、GBDT变种，使用线性混合。对这次比赛，还投入了大量的精力来设计特征</li>
+<li>训练的是输入而非权重</li>
+<li>使用共享变量避免创建很多相同的子图</li>
+<li>使用预训练的网络（这里给的是VGG-19）。不过numpy的权重和偏置必须转化成TF的张量。以及，一定要设成不可训练的！</li>
 </ul>
-<p><strong>总之，台大队经常获胜的秘诀就是精心设计领域知识+使用模型混合防止过拟合</strong></p>
-<p>ICDM在2006年给出过十大数据挖掘算法</p>
-<ul>
-<li>C4.5（决策树的另一种方法）</li>
-<li>K均值聚类</li>
-<li>SVM</li>
-<li>Apriori（一种典型数据挖掘的算法，找出频繁出现项）</li>
-<li>EM算法（可以看作是交替优化法的一种特例）</li>
-<li>PageRank（Google最原始分析网站重要性的方法，类似与矩阵分解）</li>
-<li>AdaBoost</li>
-<li>KNN</li>
-<li>朴素贝叶斯（一种简单的线性模型，权重通过数据的统计特性决定）</li>
-<li>C&amp;RT</li>
-</ul>
-<p>（当然现在最火的就是深度学习了:-P）</p>
-<hr>
-<p>到此为止，台大林轩田老师的机器学习课笔记全部连载完毕，感谢您的阅读。当然，更感谢林轩田老师的精彩授课。在我看来，这是一门不可多得的中文机器学习课程，无论是深度和广度都是恰到好处。另外，这门课的作业设计也非常出色，如果能把这些作业做完，无疑能进一步地加深对这些知识点的理解，不管是从理论的角度，还是实现的角度，都是如此。本系列课程的永久网址可见 <a href="https://www.csie.ntu.edu.tw/~htlin/course/ml15fall/" class="uri" target="_blank" rel="noopener">https://www.csie.ntu.edu.tw/~htlin/course/ml15fall/</a></p>
 
       
     </div>
@@ -470,7 +469,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="txshi-mt.com/2017/10/28/NTUML-32-Finale/" title="NTUML 32. 结束曲">txshi-mt.com/2017/10/28/NTUML-32-Finale/</a>
+    <a href="txshi-mt.com/2018/02/15/CS20-8-Style-Transfer/" title="CS20 08. 风格迁移">txshi-mt.com/2018/02/15/CS20-8-Style-Transfer/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>
@@ -485,7 +484,11 @@
       
         <div class="post-tags">
           
-            <a href="/tags/NTUML/" rel="tag"># NTUML</a>
+            <a href="/tags/TensorFlow/" rel="tag"># TensorFlow</a>
+          
+            <a href="/tags/CNN/" rel="tag"># CNN</a>
+          
+            <a href="/tags/CS20/" rel="tag"># CS20</a>
           
         </div>
       
@@ -498,8 +501,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/10/25/NTUML-31-Matrix-Factorization/" rel="next" title="NTUML 31. 矩阵分解">
-                <i class="fa fa-chevron-left"></i> NTUML 31. 矩阵分解
+              <a href="/2018/02/10/UTNN-12-Restricted-Boltzmann-Machines/" rel="next" title="Hinton神经网络与机器学习 12. 受限玻尔兹曼机">
+                <i class="fa fa-chevron-left"></i> Hinton神经网络与机器学习 12. 受限玻尔兹曼机
               </a>
             
           </div>
@@ -507,10 +510,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/11/12/UTNN-1-Introduction/" rel="prev" title="Hinton神经网络与机器学习 1. 绪论">
-                Hinton神经网络与机器学习 1. 绪论 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -675,7 +674,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#特征变换技术"><span class="nav-number">1.</span> <span class="nav-text">&#x7279;&#x5F81;&#x53D8;&#x6362;&#x6280;&#x672F;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#误差优化技术"><span class="nav-number">2.</span> <span class="nav-text">&#x8BEF;&#x5DEE;&#x4F18;&#x5316;&#x6280;&#x672F;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#过拟合的避免"><span class="nav-number">3.</span> <span class="nav-text">&#x8FC7;&#x62DF;&#x5408;&#x7684;&#x907F;&#x514D;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#机器学习实战"><span class="nav-number">4.</span> <span class="nav-text">&#x673A;&#x5668;&#x5B66;&#x4E60;&#x5B9E;&#x6218;</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#tfrecord"><span class="nav-number">1.</span> <span class="nav-text">TFRecord</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#风格迁移"><span class="nav-number">2.</span> <span class="nav-text">&#x98CE;&#x683C;&#x8FC1;&#x79FB;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#理论"><span class="nav-number">2.1.</span> <span class="nav-text">&#x7406;&#x8BBA;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对作业的一点贴士"><span class="nav-number">2.2.</span> <span class="nav-text">&#x5BF9;&#x4F5C;&#x4E1A;&#x7684;&#x4E00;&#x70B9;&#x8D34;&#x58EB;</span></a></li></ol></li></ol></div>
             
 
           </div>
