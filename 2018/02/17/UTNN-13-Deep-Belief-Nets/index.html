@@ -111,21 +111,21 @@
 
 
 
-<meta name="description" content="反向传播优劣论 反向传播算法在70年代闹80年代被不同的研究组独立发现了几次，不过追根溯源可以到60年代。在1969年，Bryson和Ho在控制论领域发明了反向传播算法的线性版本。Paul Werbos意识到可以将这种算法推广到非线性范畴，并在1974年发表的论文中提出了可能是反向传播的第一个正式版本。1981年，Rumelhart、Williams和Hinton在不知道Werbos的工作的情况下">
+<meta name="description" content="反向传播优劣论 反向传播算法在70年代到80年代被不同的研究组独立发现了几次，不过追根溯源可以到60年代。在1969年，Bryson和Ho在控制论领域发明了反向传播算法的线性版本。Paul Werbos意识到可以将这种算法推广到非线性范畴，并在1974年发表的论文中提出了可能是反向传播的第一个正式版本。1981年，Rumelhart、Williams和Hinton在不知道Werbos的工作的情况下">
 <meta name="keywords" content="UTNN,深度信念网络">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Hinton神经网络与机器学习 13. 深度信念网络">
 <meta property="og:url" content="txshi-mt.com/2018/02/17/UTNN-13-Deep-Belief-Nets/index.html">
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
-<meta property="og:description" content="反向传播优劣论 反向传播算法在70年代闹80年代被不同的研究组独立发现了几次，不过追根溯源可以到60年代。在1969年，Bryson和Ho在控制论领域发明了反向传播算法的线性版本。Paul Werbos意识到可以将这种算法推广到非线性范畴，并在1974年发表的论文中提出了可能是反向传播的第一个正式版本。1981年，Rumelhart、Williams和Hinton在不知道Werbos的工作的情况下">
+<meta property="og:description" content="反向传播优劣论 反向传播算法在70年代到80年代被不同的研究组独立发现了几次，不过追根溯源可以到60年代。在1969年，Bryson和Ho在控制论领域发明了反向传播算法的线性版本。Paul Werbos意识到可以将这种算法推广到非线性范畴，并在1974年发表的论文中提出了可能是反向传播的第一个正式版本。1981年，Rumelhart、Williams和Hinton在不知道Werbos的工作的情况下">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_13_belief_net.png">
 <meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_13_wake-sleep_algorithm.png">
 <meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_13_House_jumps_belief_net.png">
-<meta property="og:updated_time" content="2018-02-18T07:02:43.467Z">
+<meta property="og:updated_time" content="2018-02-22T16:04:43.168Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hinton神经网络与机器学习 13. 深度信念网络">
-<meta name="twitter:description" content="反向传播优劣论 反向传播算法在70年代闹80年代被不同的研究组独立发现了几次，不过追根溯源可以到60年代。在1969年，Bryson和Ho在控制论领域发明了反向传播算法的线性版本。Paul Werbos意识到可以将这种算法推广到非线性范畴，并在1974年发表的论文中提出了可能是反向传播的第一个正式版本。1981年，Rumelhart、Williams和Hinton在不知道Werbos的工作的情况下">
+<meta name="twitter:description" content="反向传播优劣论 反向传播算法在70年代到80年代被不同的研究组独立发现了几次，不过追根溯源可以到60年代。在1969年，Bryson和Ho在控制论领域发明了反向传播算法的线性版本。Paul Werbos意识到可以将这种算法推广到非线性范畴，并在1974年发表的论文中提出了可能是反向传播的第一个正式版本。1981年，Rumelhart、Williams和Hinton在不知道Werbos的工作的情况下">
 <meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_13_belief_net.png">
 
 
@@ -394,7 +394,7 @@
 
       
         <h2 id="反向传播优劣论">反向传播优劣论</h2>
-<p>反向传播算法在70年代闹80年代被不同的研究组独立发现了几次，不过追根溯源可以到60年代。在1969年，Bryson和Ho在控制论领域发明了反向传播算法的线性版本。Paul Werbos意识到可以将这种算法推广到非线性范畴，并在1974年发表的论文中提出了可能是反向传播的第一个正式版本。1981年，Rumelhart、Williams和Hinton在不知道Werbos的工作的情况下也发明了反向传播算法，但是经过实验没有达到预想的效果，所以就先放弃了。1985年，David Parker和Yann LeCun分别又各自发现了这种算法，Hinton也重新进行了尝试，发现效果不错。1986年，Hinton等人发表了一篇论文，并在文中提出了一个令人信服的例子以说明算法的能力</p>
+<p>反向传播算法在70年代到80年代被不同的研究组独立发现了几次，不过追根溯源可以到60年代。在1969年，Bryson和Ho在控制论领域发明了反向传播算法的线性版本。Paul Werbos意识到可以将这种算法推广到非线性范畴，并在1974年发表的论文中提出了可能是反向传播的第一个正式版本。1981年，Rumelhart、Williams和Hinton在不知道Werbos的工作的情况下也发明了反向传播算法，但是经过实验没有达到预想的效果，所以就先放弃了。1985年，David Parker和Yann LeCun分别又各自发现了这种算法，Hinton也重新进行了尝试，发现效果不错。1986年，Hinton等人发表了一篇论文，并在文中提出了一个令人信服的例子以说明算法的能力</p>
 <p>尽管反向传播算法让人们看到了学习多层非线性特征探测器的希望，但是在90年代末，大部分机器学习界的研究人员都放弃了这种算法。尽管它仍然还受心理学家和实际应用（例如构建信用卡欺诈检测模型）的青睐，但是在机器学习领域，大部分人都认为SVM要更好一些。对此有一些比较流行的解释，比如神经网络不能很好地利用多层非线性特征（CNN是个例外）、RNN和深度自动编码器效果不好，等等。而SVM不需要使用者有太多经验，能产生可复现的结果，还有更好的理论支持，因此当红一时</p>
 <p>现在来看，90年代末反向传播不受重视的原因有如下几点：当时的计算机太慢，计算能力太弱，有标签的数据集太少。神经网络太小，也没有得到合适的初始化（一般会初始化太小），因此梯度在反向传播的过程中很容易消失。不过为什么对视觉和语音这样的问题神经网络能获得成功呢？关键问题是，机器学习的任务可以分为两种类型，一种更像统计学界人们研究的问题，另一种是人工智能界人们研究的问题：</p>
 <table>
@@ -452,12 +452,12 @@
 <h2 id="唤醒-睡眠算法">唤醒-睡眠算法</h2>
 <p>唤醒-睡眠算法（wake-sleep algorithm）是一种有效学习sigmoid信念网的算法，它背后的思想属于一个比较新的机器学习领域——变分学习（variational learning）。这种想法听上去比较疯狂：如果计算正确的后验分布比较难，那么可以算出一些简单的近似值，然后做最大似然学习</p>
 <p>给定数据向量的情况下，学习诸如sigmoid信念网这类的复杂模型是比较难的，因为很难从隐藏配置的真是后验分布上取样，不好获得无偏的取样样本。所以一种疯狂的想法是，从某些其它分布取样，然后希望学习过程能正常进行。我们假设隐藏配置上的后验分布能被分解为每个独立隐藏单元分布的连乘，也就是说，假设数据已经给定，每个隐藏层单元都相互独立。这种假设在RBM中是正确的，但是在sigmoid信念网中是错误的</p>
-<p>来快速看一下这种“分解分布”的例子。假设我们有三个隐藏单元，各自被激活的概率是0.3、0.6和0.8，那么隐藏状态为(1, 0, 1)的概率就是<span class="math inline">\(0.3 \times (1-0.6) \times 0.8 = 0.096\)</span>。通常情况下，长度为<span class="math inline">\(N\)</span>的二值向量的自由度是<span class="math inline">\(2^N\)</span>（实际上是<span class="math inline">\(2^{N-1}\)</span>，因为概率值相加必须为1），但是分解分布的自由度只有<span class="math inline">\(N\)</span></p>
+<p>来快速看一下这种“阶乘分布”的例子。假设我们有三个隐藏单元，各自被激活的概率是0.3、0.6和0.8，那么隐藏状态为(1, 0, 1)的概率就是<span class="math inline">\(0.3 \times (1-0.6) \times 0.8 = 0.096\)</span>。通常情况下，长度为<span class="math inline">\(N\)</span>的二值向量的自由度是<span class="math inline">\(2^N\)</span>（实际上是<span class="math inline">\(2^{N-1}\)</span>，因为概率值相加必须为1），但是阶乘分布的自由度只有<span class="math inline">\(N\)</span></p>
 <p>接下来来看一下分解-睡眠算法。在该算法里，神经网络有两套权重，如图所示</p>
 <figure>
 <img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_13_wake-sleep_algorithm.png" alt="唤醒-睡眠算法示意图"><figcaption>唤醒-睡眠算法示意图</figcaption>
 </figure>
-<p>模型本身是一个生成模型，因此绿色箭头是模型本来的权重，称为<strong>生成权重</strong>（generative weights），用来定义数据向量上的概率分布。此外，还有一些额外的权重，称为<strong>识别权重</strong>（recognition weights），以红色箭头表示。这些权重用来获得后验分布的近似值，即用来获得每个隐藏层的分解分布以（不是很好地）逼近后验分布。如算法名称所示，算法分成两个阶段：</p>
+<p>模型本身是一个生成模型，因此绿色箭头是模型本来的权重，称为<strong>生成权重</strong>（generative weights），用来定义数据向量上的概率分布。此外，还有一些额外的权重，称为<strong>识别权重</strong>（recognition weights），以红色箭头表示。这些权重用来获得后验分布的近似值，即用来获得每个隐藏层的阶乘分布以（不是很好地）逼近后验分布。如算法名称所示，算法分成两个阶段：</p>
 <ul>
 <li>唤醒阶段。在这个阶段，把数据放在可见层（最底层），然后使用识别权重做一个前向传播。在每个隐藏层，独立为每个隐藏单元做一个随机的二项决策，决策是应该打开还是关闭。所以，前向过程可以得到所有隐藏单元的随机二元状态，我们将它看作是从给定数据的情况下真实后验分布中的一个取样，并用它来做最大似然学习，不过学习的是生成权重</li>
 <li>睡眠阶段。在这个阶段，做的事情都反了过来：在顶层，生成一个随机向量，根据隐藏单元的先验分布独立生成状态，然后一路走下来，每次生成一层的状态，最后生成模型的一个无偏抽样。拿到这个抽样以后，就可以看是否可以从数据恢复隐藏状态，也就是说，在这个阶段，使用生成权重做传播计算，学习识别权重</li>
@@ -465,7 +465,7 @@
 <p>尽管实践上看，如果权重是随机初始化的，那么经历过几次唤醒-睡眠阶段的切换，能学习到一个很好的模型，但是算法仍然有瑕疵</p>
 <ol type="1">
 <li>识别权重学的是把生成模型“反过来”。但是在学习的开始阶段，它们是在没有任何数据的空间里学着吧生成模型反过来。因为最开始使用模型生成数据时，权重不好，生成的数据与真实数据相比差别很大。所以这是一种浪费——当然咯，这是个小问题</li>
-<li>识别权重并不遵循数据对数概率的梯度，甚至也不遵循该概率差分界（variational bound）上的权重。由于没有遵循正确的梯度，因此会得到错误的模式平均（mode averaging）——这是个严重的问题。模型平均的概念下文会解释</li>
+<li>识别权重并不遵循数据对数概率的梯度，甚至也不遵循该概率变分界（variational bound）上的权重。由于没有遵循正确的梯度，因此会得到错误的模式平均（mode averaging）——这是个严重的问题。模型平均的概念下文会解释</li>
 <li>我们知道，由于<a href="http://blog.csdn.net/huangbo10/article/details/23091083" target="_blank" rel="noopener">相消解释作用</a>（explaining away effect），最上面的隐藏层上的真实后验分布远非独立的，但是为了简单起见，我们假设分布独立。不过这种近似估计对中间的隐藏层可能不是一个很差的选择</li>
 </ol>
 <p>尽管如此，Karl Friston认为这就是大脑工作的原理，但是Hinton认为应该还有更好的算法</p>
@@ -473,7 +473,7 @@
 <figure>
 <img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_13_House_jumps_belief_net.png" alt="关于房屋抖动的信念网络。隐藏节点一个是发生地震，一个是卡车撞击"><figcaption>关于房屋抖动的信念网络。隐藏节点一个是发生地震，一个是卡车撞击</figcaption>
 </figure>
-<p>假设首先运行睡眠阶段的算法，通过模型产生数据，大多数情况下，顶部的两个单元都是关闭的，因为按照先验分布两件事发生的概率不大。因为它俩是关闭的，而且可见单元的偏置是-20，因此可见单元也是被关闭的。假设在很偶然的情况下（大概十亿分之一）两个隐藏单元中的一个被打开（两者被打开的概率相等），那么可见单元有一半的可能性会被打开。换句话说，如果看到可见单元被打开，那么有一半概率是左边的隐藏单元被打开，另一半是右边的被打开，但几乎不可能是两个都被打开或被关闭。那么来看看识别权重会学到什么：一半情况下，可见单元被置为1，两个隐藏单元被激活的概率相等，因此两者的概率都是0.5。最后，识别单元会在隐藏层上学习生成一个对(0.5, 0.5)的分解分布，最后会是有1/4的概率得到配置(1, 1)，另有1/4的概率得到配置(0, 0)，但是这两者在可见单元被激活时都是很不可能的配置。实际上，最好的识别模型是只选择一个模式，例如只打开左边或只打开右边</p>
+<p>假设首先运行睡眠阶段的算法，通过模型产生数据，大多数情况下，顶部的两个单元都是关闭的，因为按照先验分布两件事发生的概率不大。因为它俩是关闭的，而且可见单元的偏置是-20，因此可见单元也是被关闭的。假设在很偶然的情况下（大概十亿分之一）两个隐藏单元中的一个被打开（两者被打开的概率相等），那么可见单元有一半的可能性会被打开。换句话说，如果看到可见单元被打开，那么有一半概率是左边的隐藏单元被打开，另一半是右边的被打开，但几乎不可能是两个都被打开或被关闭。那么来看看识别权重会学到什么：一半情况下，可见单元被置为1，两个隐藏单元被激活的概率相等，因此两者的概率都是0.5。最后，识别单元会在隐藏层上学习生成一个对(0.5, 0.5)的阶乘分布，最后会是有1/4的概率得到配置(1, 1)，另有1/4的概率得到配置(0, 0)，但是这两者在可见单元被激活时都是很不可能的配置。实际上，最好的识别模型是只选择一个模式，例如只打开左边或只打开右边</p>
 
       
     </div>
@@ -557,6 +557,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/02/22/UTNN-14-Deep-Neural-Nets-with-Generative-Pre-Training/" rel="prev" title="Hinton神经网络与机器学习 14. 深度信念网络与判别微调">
+                Hinton神经网络与机器学习 14. 深度信念网络与判别微调 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -642,7 +646,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">79</span>
+                  <span class="site-state-item-count">80</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -664,7 +668,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">74</span>
+                  <span class="site-state-item-count">75</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

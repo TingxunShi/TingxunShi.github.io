@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="UTNN,深度信念网络," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="通过堆叠RBM学习特征层 本讲开始，先不提sigmoid信念网（SBN），回过头看看受限玻尔兹曼机RBM。前面提到，学习RBM有一种相对来讲比较简单的方法，可以学出一层非线性特征（隐藏状态）。受此启发，可以将这层特征作为新的输入，再学出一个RBM的非线性特征，如此持续下去，最后可以得到一个由若干RBM堆叠起来的深度网络。但是，这实际上不只是一个简单的多层玻尔兹曼机，Hinton的学生G. Y. T">
+<meta name="keywords" content="UTNN,深度信念网络">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hinton神经网络与机器学习 14. 深度信念网络与判别微调">
+<meta property="og:url" content="txshi-mt.com/2018/02/22/UTNN-14-Deep-Neural-Nets-with-Generative-Pre-Training/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="通过堆叠RBM学习特征层 本讲开始，先不提sigmoid信念网（SBN），回过头看看受限玻尔兹曼机RBM。前面提到，学习RBM有一种相对来讲比较简单的方法，可以学出一层非线性特征（隐藏状态）。受此启发，可以将这层特征作为新的输入，再学出一个RBM的非线性特征，如此持续下去，最后可以得到一个由若干RBM堆叠起来的深度网络。但是，这实际上不只是一个简单的多层玻尔兹曼机，Hinton的学生G. Y. T">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_14_generative_model.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_14_DBN_for_MNIST.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_14_Gaussian_binary_RBM.png">
+<meta property="og:updated_time" content="2018-02-23T16:05:06.971Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hinton神经网络与机器学习 14. 深度信念网络与判别微调">
+<meta name="twitter:description" content="通过堆叠RBM学习特征层 本讲开始，先不提sigmoid信念网（SBN），回过头看看受限玻尔兹曼机RBM。前面提到，学习RBM有一种相对来讲比较简单的方法，可以学出一层非线性特征（隐藏状态）。受此启发，可以将这层特征作为新的输入，再学出一个RBM的非线性特征，如此持续下去，最后可以得到一个由若干RBM堆叠起来的深度网络。但是，这实际上不只是一个简单的多层玻尔兹曼机，Hinton的学生G. Y. T">
+<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_14_generative_model.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2018/02/22/UTNN-14-Deep-Neural-Nets-with-Generative-Pre-Training/"/>
+
+
+
+
+
+  <title>Hinton神经网络与机器学习 14. 深度信念网络与判别微调 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2018/02/22/UTNN-14-Deep-Neural-Nets-with-Generative-Pre-Training/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Hinton神经网络与机器学习 14. 深度信念网络与判别微调</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-02-22T22:58:53+08:00">
+                Feb 22 2018
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/深度学习/" itemprop="url" rel="index">
+                    <span itemprop="name">深度学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="通过堆叠rbm学习特征层">通过堆叠RBM学习特征层</h2>
+<p>本讲开始，先不提sigmoid信念网（SBN），回过头看看受限玻尔兹曼机RBM。前面提到，学习RBM有一种相对来讲比较简单的方法，可以学出一层非线性特征（隐藏状态）。受此启发，可以将这层特征作为新的输入，再学出一个RBM的非线性特征，如此持续下去，最后可以得到一个由若干RBM堆叠起来的深度网络。但是，这实际上不只是一个简单的多层玻尔兹曼机，Hinton的学生G. Y. Tay指出它实际上是一个深度sigmoid信念网络。可以证明，每次这样添加一层特征，实际上是改善了生成训练数据的概率的对数值的变分下界</p>
+<p>假设现在可见向量为<span class="math inline">\(\bf v\)</span>，经过学习，可以得到第一层RBM，其隐藏状态为<span class="math inline">\({\bf h}_1\)</span>，权重为<span class="math inline">\({\bf W}_1\)</span>。然后，将<span class="math inline">\({\bf h}_1\)</span>作为输入，学习可以得到第二层RBM，其隐藏状态为<span class="math inline">\({\bf h}_2\)</span>，权重为<span class="math inline">\({\bf W}_2\)</span>。注意如果<span class="math inline">\({\bf W}_2\)</span>的初始值为<span class="math inline">\({\bf W}_1^\mathsf{T}\)</span>，且<span class="math inline">\({\bf h}_2\)</span>的节点数与<span class="math inline">\(\bf v\)</span>的节点数相同，那么第二个RBM实际上就是<span class="math inline">\({\bf h}_1\)</span>一个不错的模型，因为它是第一个RBM翻转而成的，而RBM不太在乎哪个是隐藏单元哪个是可见单元。学到这两个RBM以后，可以将它们组合起来得到一个新的模型，它的上面两层是RBM，也就是第二个隐藏层和第一个隐藏层之间是一个无向模型，连接对称；而底下两层（第一个隐藏层和输入）之间是有向模型，像一个SBN。也就是说，对<span class="math inline">\(\bf v\)</span>和<span class="math inline">\({\bf h}_1\)</span>之间的对称连接，舍弃那些从<span class="math inline">\(\bf v\)</span>指向<span class="math inline">\({\bf h}_1\)</span>的边。这样就得到了一个深度信念网（DBN）。如果DBN由三个RBM堆叠而成，那么最上面两层（沿用前面的记法，是<span class="math inline">\({\bf h}_3\)</span>和<span class="math inline">\({\bf h}_2\)</span>）形成一个RBM，下面三层形成两个SBN。</p>
+<p>对于这样三个RBM堆叠生成的DBN，生成数据的过程是：首先，在<span class="math inline">\({\bf h}_2\)</span>和<span class="math inline">\({\bf h}_3\)</span>之间往复运动，达到平衡态（这个过程使用的是交替吉布斯采样方法，即先平行更新所有<span class="math inline">\({\bf h}_3\)</span>中的神经元，然后平行更新所有<span class="math inline">\({\bf h}_2\)</span>中的神经元，再平行更新所有<span class="math inline">\({\bf h}_3\)</span>中的神经元，交替执行这样一个漫长的过程。最后，顶层的RBM实际上定义了<span class="math inline">\({\bf h}_2\)</span>的先验分布，当这个RBM达到稳态以后，使用<span class="math inline">\({\bf W}_2\)</span>生成<span class="math inline">\({\bf h}_1\)</span>，再使用<span class="math inline">\({\bf W}_1\)</span>生成数据。整个结构如下图所示</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_14_generative_model.png" alt="三层DBN"><figcaption>三层DBN</figcaption>
+</figure>
+<p>注意这里红色的箭头不是生成模型的一部分，它们是对应<span class="math inline">\({\bf W}_i\)</span>的转置，在推断时候用到</p>
+<p>这里需要插一句的是，阶乘分布的均值不再是阶乘分布。假设RBM有4个隐藏单元，给定一个可见向量，这4个隐藏单元上的后验分布是阶乘的。假设对输入向量<span class="math inline">\({\bf v}_1\)</span>，隐藏单元被打开的概率分别为0.9、0.9、0.1和0.1，对输入向量<span class="math inline">\({\bf v}_2\)</span>，隐藏单元被打开的概率分别为0.1、0.1、0.9和0.9。那么这两个平均（聚合）以后的概率为0.5、0.5、0.5和0.5。现在，假设隐藏单元的状态为(1, 1, 0, 0)，如果该状态处于<span class="math inline">\({\bf v}_1\)</span>的后验分布中，则<span class="math inline">\(P((1, 1, 0, 0)) = 0.9^4 = 0.6561\)</span>（讲义这里好像算错了……）；如果该状态处于<span class="math inline">\({\bf v}_2\)</span>的后验分布中，则<span class="math inline">\(P((1, 1, 0, 0)) = 0.1^4 = 0.0001\)</span>，在聚合的后验分布下，<span class="math inline">\(P((1, 1, 0, 0)) = (0.6561 + 0.0001) / 2 = 0.3281\)</span>。但是，如果这个聚合的后验分布也是可分解为阶乘的，那么就应该是<span class="math inline">\(0.5^4 = 0.0625\)</span></p>
+<p>接下来回到主线：为什么这种贪婪的学习方法（学一个RBM，再学一个新的RBM来对第一个RBM的隐藏单元的行为模式建模）是可行的呢？先学出来的RBM的权重<span class="math inline">\({\bf W}\)</span>实际上定义了五个不同的分布：前两个是<span class="math inline">\(P({\bf v}|{\bf h})\)</span>和<span class="math inline">\(P({\bf h}|{\bf v})\)</span>，使用这两个分布可以通过交替马尔可夫链，在给定隐藏状态的条件下更新可见状态，再在给定可见状态的条件下更新隐藏状态。如果这个链运行的时间足够长，就可以获得一个来自于联合分布<span class="math inline">\(P({\bf v},{\bf h})\)</span>的样本，因此<span class="math inline">\(\bf W\)</span>也定义了联合分布<span class="math inline">\(P({\bf v},{\bf h})\)</span>（当然，它也通过<span class="math inline">\(-E\)</span>的形式更直接地定义了联合分布，但是因为网络里有太多单元，这个值无法计算）。对于这个联合分布，如果忽略<span class="math inline">\(\bf v\)</span>，就得到了<span class="math inline">\(\bf h\)</span>的分布，也就是由RBM定义的<span class="math inline">\({\bf h}\)</span>的先验分布。同理，也可以得到RBM定义的<span class="math inline">\(\bf v\)</span>的先验分布。接下来，定义 <span class="math display">\[
+P({\bf v}) = \sum_{\bf h}P({\bf h})P({\bf v}|{\bf h})
+\]</span> 不看求和项里的<span class="math inline">\(P({\bf v}|{\bf h})\)</span>，只学习一个<span class="math inline">\(P({\bf h})\)</span>的更好的模型（能更好拟合聚合后验的先验），就也会改进<span class="math inline">\(P({\bf v})\)</span>的模型（这里聚合后验aggregated posterior指对训练集中的所有<span class="math inline">\(\bf v\)</span>求<span class="math inline">\(P({\bf h}|{\bf v})\)</span>的平均）。所以，真正做的事情是，使用第一个RBM来获得这个聚合后验，然后用第二个RBM来为此聚合后验构建一个更好的模型。假设第二个RBM的初始状态就是把第一个颠倒过来，那么初始模型就是第一个RBM所得到的聚合后验，如果调整权重只能让系统更好</p>
+<p>将RBM堆叠得到DBN以后，实际上可以对整个系统使用唤醒-睡眠算法的一个变种继续微调（fine-tune）：</p>
+<ol type="1">
+<li>首先，做一个随机的自底向上的计算，调整底层的生成权重，使得底层可以长于重构特征（类似于标准的唤醒-睡眠算法）</li>
+<li>在顶层的RBM中，做若干次正向和反向的计算，对RBM的隐藏状态和可见状态做若干次抽样，然后做对比差异学习（第12章中所讲述）</li>
+<li>做一个随机的自顶向下的计算，通过底下的SBN生成数据，进而调整顶层的权重，使得顶层可以长于重构特征（即唤醒-睡眠算法的睡眠阶段）</li>
+</ol>
+<p>DBN的一个应用是可以对MNIST手写数字和对应标签的联合分布建模，示意图如下所示</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_14_DBN_for_MNIST.png" alt="用于MNIST手写数字识别的DBN"><figcaption>用于MNIST手写数字识别的DBN</figcaption>
+</figure>
+<p>图中，右侧下方由两层RBM堆叠生成的SBN是无监督学习产生的。将最上层的500个隐藏单元和10个标签（实际上是一个softmax单元）连接起来，送入一个大的，有2000个隐藏单元的隐藏层，训练顶层的RBM来对连接向量建模。顶层的RBM训练好以后，用前面介绍的改进版唤醒-睡眠算法微调整个系统，这样整个系统既可以识别数字，也可以很好地生成样本——这也就是导论章节里demo的来源</p>
+<h2 id="通过微调使dbn做判别学习">通过微调使DBN做判别学习</h2>
+<p>前面说到，DBN的每一层其实都是学习好的RBM，那么连接层与层之间的权重就可以看作是经过预训练得到的权重的初始值。在前一节里，通过唤醒-睡眠算法的一个变种，微调过的权重可以善于生成数据。在这一节，将使用反向传播算法来微调模型，来使它善于判别数据</p>
+<p>为什么使用反向传播来微调预训练模型能收到不错的效果呢？对此的解释可以分成两个方面</p>
+<ul>
+<li>从最优化的方面，如果网络比较大，而且每一层有自己的局部性，那么每一次学习一层效果会比较好。假设现在解决的是计算机视觉的问题，每一层都有一些局部感受野，那么相隔比较远的几块区域不会有什么相互作用，所以并行学出一个很大的层是很容易的。预训练的时候，先学出一些比较合理的特征检测器，然后再进行反向传播，可以让这些特征检测器有助于做判别，因为此时初始的梯度比随机的更合理，反向传播也不需要再做一个全局的搜索</li>
+<li>从泛化的角度，使用与训练的网络能更好地降低发生过拟合的风险。因为最终学到的权重中包含的信息大部分来自于对输入向量分布的建模，而输入向量（如果做CV）包含的信息通常比标签包含的信息多很多。由于使用预训练模型已经得到了很多特征检测器，就不用再利用标签中包含的信息从头学习了，这些信息已经足够用来把这些检测器微调到类别边界上的合适位置。这里还有一点值得注意，就是因为反向传播已经不再用来发现新特征，因此甚至不需要特别多的有标签数据，使用无标签的数据已经能够发现好的特征了。尽管在没有标签的时候，由于系统不知道学到什么样的特征会对之后的判别任务有帮助，因此会学到比较多无用的特征，但是如果某些特征有用，它们肯定比原始输入有用得多（也就是说，使用生成学习学到的特征肯定有那么几个特别有用，比从头训练一个判别特征要好）</li>
+</ul>
+<p>（后面都是讲模型效果怎么好，略）</p>
+<h2 id="判别微调时发生了什么">判别微调时发生了什么</h2>
+<p>首先，根据Bengio组的工作，第一个隐藏层的特征检测器的感受野在微调前后并没有发生太大的变化，但是效果就是对判别类任务有帮助，而且网络越深，帮助越大。此外，没有经过预训练的网络随着训练epoch的增多，权重最后会陷入不同局部最小值，而有预训练的网络的权重最后相对会集中一些</p>
+<p>（上面略去了一些对实验比较具体的讲解）</p>
+<p>所以为什么预训练很靠谱呢？假设生成图像-标签对的方式是，让一个现实生活中的人去生成一张照片（例如拍照），然后我们自己去给这张照片根据其像素点的关系贴一个标签，不依赖于拍照的人，那么试图学习一个从图像到标签的映射是合理的，因为此时标签直接依赖于图像本身。但是实际上，更合理也更常见的是，让照片的生成者自己去给生成的图像附加一个标签，那么此时标签就跟图像的生成者有关系，不再跟像素点有关了。而且，照片的生成过程一般是，当你看到一只奶牛，你把它照下来，然后说这张图片是奶牛的图片。因此此时照片的拍摄者和图片之间有很高的带宽，标签不再依赖于图像而依赖于拍摄者，而且两者之间的带宽比较低（不知道这张照片是否被上下颠倒了，不知道奶牛的颜色、死活、大小等等）。因此，比较靠谱的做法是试着先顺着高带宽的通路找到那个拍摄者，再由拍摄者决定标签——预训练的过程，就是从表象追溯本原的过程，而微调的过程就是从本原寻找标签的过程</p>
+<h2 id="使用rbm对实数值数据建模">使用RBM对实数值数据建模</h2>
+<p>对于手写数字，图片上的某个像素点可能只沾上了一点墨水，因此可以用概率很好地建模——沾上了多少墨水，被激活的概率就是多少。但是对于真实的图像来说，这种做法不会特别奏效，因为真实图片中每个点的像素密度几乎总是它邻居的平均值，这种现象不能用logistic单元建模，它不能表示类似于“像素密度很可能是69，但是不可能是71或67”这样的事实，所以需要另一种单元，通常是用带有高斯范数的线性单元。这样，可以把像素点使用高斯变量建模。对此，仍然可以使用交替吉布斯采样法来运行马尔可夫链，来进行对比散度学习，不过需要设置一个更小的学习率。等式如下所示 <span class="math display">\[
+E({\bf v}, {\bf h}) = \sum_{i \in {\rm vis}}\frac{(v_i - b_i)^2}{2\sigma_i^2} - \sum_{j \in {\rm hid}}b_jh_j - \sum_{i, j}\frac{v_i}{\sigma_i}h_jw_{ij}
+\]</span> 右边的第一项是一个向下凹的抛物线，防止能量值过大，其最小值点在第<span class="math inline">\(i\)</span>个单元的偏置处取到。第<span class="math inline">\(i\)</span>个单元的值离<span class="math inline">\(b_i\)</span>越远，能量加得越多，呈二次项关系，因此是要让第<span class="math inline">\(i\)</span>个可见单元离<span class="math inline">\(b_i\)</span>尽可能近。第三项表示可见单元和隐藏单元之间的交互项，如果把这一项对<span class="math inline">\(v_i\)</span>求梯度，可以得到一个常量<span class="math inline">\(\sum_j (h_jw_{ij}/\sigma_i)\)</span></p>
+<p>能量函数写出来比较容易，也容易求导，但是学习时还是有问题。很多文章都说这种高斯二元RBM很难运转起来，而且也难以学到可见单元比较紧的方差。找到这个问题的原因花了很久，可以参看下图</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_14_Gaussian_binary_RBM.png" alt="学习高斯二元RBM的困难"><figcaption>学习高斯二元RBM的困难</figcaption>
+</figure>
+<p>考虑可见单元<span class="math inline">\(i\)</span>对隐藏单元<span class="math inline">\(j\)</span>施加的效果，当单元<span class="math inline">\(i\)</span>的标准差<span class="math inline">\(\sigma_i\)</span>很小的时候，它会放大自底向上的权重，同时降低自顶向下权重的效果。结果是，或者自顶向上的效果太大，或者自顶向下的结果太小，隐藏单元趋近饱和，要么被永远开启，要么被永远关闭。解决方法是将隐藏节点个数设置得比可见单元数多很多，因此它们之间小的权重也可以有大的自顶向下的效果（人多力量大）</p>
+<p>这里，介绍一种单元，称为阶梯sigmoid单元（stepped sigmoid unit）。核心思想史，对每个随机的二元隐藏单元都创造很多拷贝，每个拷贝有相同的权重，也有基本的偏置<span class="math inline">\(b\)</span>，但是对<span class="math inline">\(b\)</span>施加一些固定的偏移量：第一个单元偏移量为-0.5，第二个-1.5，第三个-2.5，以此类推。这样，如果<span class="math inline">\(\frac{w_{ij}}{\sigma_i}\)</span>特别小，没有单元被激活，但是随着这个值的变大，被激活的单元数也会线性增多。也就是说，当<span class="math inline">\(\sigma_i\)</span>变小时，被激活的拷贝单元会变多，使得自顶向下的影响效果不会变小。但是，这种做法代价太昂贵，不过可以做一些快速的近似，有 <span class="math display">\[
+\langle y \rangle = \sum_{n=1}^\infty \sigma(x+0.5-n) \approx \log(1+e^x) \approx \max(0,x+{\rm noise})
+\]</span> 这就是前面提到过的ReLU单元<span class="math inline">\({\rm ReLU}(x) = \max(0, x)\)</span>，计算起来很快</p>
+<p>ReLU的一个性质是，如果参数的偏置为0，那么就会有缩放不变性，这种性质对处理图像很好。也就是说如果对图像<span class="math inline">\(\bf x\)</span>，把所有像素密度乘以一个标量<span class="math inline">\(a\)</span>，那么 <span class="math display">\[
+{\rm ReLU}(a{\bf x}) = a{\rm ReLU}({\bf x})
+\]</span> 但是ReLU并不是完全线性的，即 <span class="math display">\[
+{\rm ReLU}(a+b) \not= {\rm ReLU}(a) + {\rm ReLU}(b)
+\]</span> 这一性质有点像卷积神经网络展示出来的平移不变性</p>
+<p>（14.5节是可选视频，这里跳过了）</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2018/02/22/UTNN-14-Deep-Neural-Nets-with-Generative-Pre-Training/" title="Hinton神经网络与机器学习 14. 深度信念网络与判别微调">txshi-mt.com/2018/02/22/UTNN-14-Deep-Neural-Nets-with-Generative-Pre-Training/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/UTNN/" rel="tag"># UTNN</a>
+          
+            <a href="/tags/深度信念网络/" rel="tag"># 深度信念网络</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/02/17/UTNN-13-Deep-Belief-Nets/" rel="next" title="Hinton神经网络与机器学习 13. 深度信念网络">
+                <i class="fa fa-chevron-left"></i> Hinton神经网络与机器学习 13. 深度信念网络
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">80</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">75</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#通过堆叠rbm学习特征层"><span class="nav-number">1.</span> <span class="nav-text">&#x901A;&#x8FC7;&#x5806;&#x53E0;RBM&#x5B66;&#x4E60;&#x7279;&#x5F81;&#x5C42;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#通过微调使dbn做判别学习"><span class="nav-number">2.</span> <span class="nav-text">&#x901A;&#x8FC7;&#x5FAE;&#x8C03;&#x4F7F;DBN&#x505A;&#x5224;&#x522B;&#x5B66;&#x4E60;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#判别微调时发生了什么"><span class="nav-number">3.</span> <span class="nav-text">&#x5224;&#x522B;&#x5FAE;&#x8C03;&#x65F6;&#x53D1;&#x751F;&#x4E86;&#x4EC0;&#x4E48;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用rbm对实数值数据建模"><span class="nav-number">4.</span> <span class="nav-text">&#x4F7F;&#x7528;RBM&#x5BF9;&#x5B9E;&#x6570;&#x503C;&#x6570;&#x636E;&#x5EFA;&#x6A21;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
