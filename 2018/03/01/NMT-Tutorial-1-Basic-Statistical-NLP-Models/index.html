@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="N元语法,NMT_Tutorial," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="本系列笔记主要来自于以下三篇关于神经机器翻译（NMT）的tutorial：  [Koehn2017], Philipp Koehn, Statistical Machine Translation, Draft of Chapter 13: Neural Machine Translation , 2017.09 [Neubig2017], Graham Neubig, Neural Machin">
+<meta name="keywords" content="N元语法,NMT_Tutorial">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NMT Tutorial 1. 统计语言模型之N元语法">
+<meta property="og:url" content="txshi-mt.com/2018/03/01/NMT-Tutorial-1-Basic-Statistical-NLP-Models/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="本系列笔记主要来自于以下三篇关于神经机器翻译（NMT）的tutorial：  [Koehn2017], Philipp Koehn, Statistical Machine Translation, Draft of Chapter 13: Neural Machine Translation , 2017.09 [Neubig2017], Graham Neubig, Neural Machin">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-03-06T07:29:48.320Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NMT Tutorial 1. 统计语言模型之N元语法">
+<meta name="twitter:description" content="本系列笔记主要来自于以下三篇关于神经机器翻译（NMT）的tutorial：  [Koehn2017], Philipp Koehn, Statistical Machine Translation, Draft of Chapter 13: Neural Machine Translation , 2017.09 [Neubig2017], Graham Neubig, Neural Machin">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2018/03/01/NMT-Tutorial-1-Basic-Statistical-NLP-Models/"/>
+
+
+
+
+
+  <title>NMT Tutorial 1. 统计语言模型之N元语法 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2018/03/01/NMT-Tutorial-1-Basic-Statistical-NLP-Models/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NMT Tutorial 1. 统计语言模型之N元语法</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-01T17:08:05+08:00">
+                Mar 1 2018
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/NLP/" itemprop="url" rel="index">
+                    <span itemprop="name">NLP</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本系列笔记主要来自于以下三篇关于神经机器翻译（NMT）的tutorial：</p>
+<ul>
+<li>[Koehn2017], Philipp Koehn, <a href="https://arxiv.org/abs/1709.07809" target="_blank" rel="noopener"><em>Statistical Machine Translation, Draft of Chapter 13: Neural Machine Translation</em></a> , 2017.09</li>
+<li>[Neubig2017], Graham Neubig, <a href="https://arxiv.org/abs/1703.01619" target="_blank" rel="noopener"><em>Neural Machine Translation and Sequence-to-Sequence Models: A Tutorial</em></a> , 2017.03</li>
+<li>[Luong2016], Thang Luong, Kyunghyun Cho and Christopher Manning, <a href="https://nlp.stanford.edu/projects/nmt/Luong-Cho-Manning-NMT-ACL2016-v4.pdf" target="_blank" rel="noopener">NMT Tutorial</a> , ACL 2016</li>
+</ul>
+<p>其它资料可能来自于<a href="http://web.stanford.edu/class/cs224n/syllabus.html" target="_blank" rel="noopener">斯坦福CS224课程</a>、Yoav Goldberg的<em>Neural Network Methods for Natural Language Processing</em>和其它到时列明的课程讲义/书籍</p>
+<p>本篇主要来自于Neubig2017，以统计语言模型为主。尽管这些概念/方法在NMT中已不太常用，但是个人感觉仍然有必要了解一下，打好基础</p>
+<h2 id="统计机器翻译问题的形式化定义">统计机器翻译问题的形式化定义</h2>
+<p>假设输入句子（源句子）<span class="math inline">\(F\)</span>是一个序列： <span class="math display">\[
+F = f_1, \ldots, f_J = f_1^{|F|}
+\]</span> 输出句子（目标句子）<span class="math inline">\(E\)</span>也是一个序列： <span class="math display">\[
+E = e_1, \ldots, e_I = e_1^{|E|}
+\]</span> 那么任何翻译系统都可以看成是一个函数 <span class="math display">\[
+\hat{E} = {\rm mt}(F)
+\]</span> 其接受一个输入<span class="math inline">\(F\)</span>作为源句子，返回一个假设<span class="math inline">\(\hat{E}\)</span>作为翻译结果</p>
+<p>统计机器翻译（SMT）是通过创建一个概率模型<span class="math inline">\(P(E|F;\theta)\)</span>来翻译，目的是找到能最大化这个<span class="math inline">\(P\)</span>的目标句，即得到的<span class="math inline">\(\hat{E}\)</span>满足 <span class="math display">\[
+\hat{E} = \mathop{\rm arg\max}_EP(E|F;\theta)
+\]</span> 其中<span class="math inline">\(\theta\)</span>是模型参数，指定概率分布。通常机器翻译算法从源语句和目标语句对齐的数据源（称为<strong>平行语料</strong>）学出参数<span class="math inline">\(\theta\)</span>。在这个框架下，需要解决三个主要问题</p>
+<ul>
+<li>建模问题：模型<span class="math inline">\(P(E|F;\theta)\)</span>长什么样？有什么参数？如何使参数指定概率分布？</li>
+<li>学习问题：采用什么样的学习方法？</li>
+<li>搜索问题：如何找到概率最大的句子？搜索最优假设的过程通常也被称为<strong>解码</strong></li>
+</ul>
+<h2 id="逐词计算概率">逐词计算概率</h2>
+<p>在解决翻译问题之前，先看一下如何为目标句创建一个<strong>语言模型</strong>。语言模型的作用可以大致理解为，对某个给定的单词序列，计算这个序列在语言中出现的概率。对于目标句，就是要创建概率模型<span class="math inline">\(P(E)\)</span>，用它来评估译句的自然度，以及生成文本。形式化地说，就是计算 <span class="math display">\[
+P(E) = P(|E|=T, e_1^T)
+\]</span> 即当句子长度<span class="math inline">\(|E|\)</span>为<span class="math inline">\(T\)</span>时，第一个单词为<span class="math inline">\(e_1\)</span>，第二个单词为<span class="math inline">\(e_2\)</span>……第<span class="math inline">\(T\)</span>个单词为<span class="math inline">\(e_T\)</span>的联合概率。此外，通常会在句末添加一个表达句子结束的符号<code>&lt;/s&gt;</code>，因此长度为<span class="math inline">\(T\)</span>的句子实际长度为<span class="math inline">\(T+1\)</span>，其中<span class="math inline">\(e_{T+1} = \langle /s \rangle\)</span>。这样，当解码输出<code>&lt;/s&gt;</code>时，就可以知道句子该结束了</p>
+<p>但是，很难直观得到这个概率值：假设单词表大小为<span class="math inline">\(V\)</span>，句子长度为<span class="math inline">\(T\)</span>，那么一共有<span class="math inline">\(V^T\)</span>个可能的句子。不过，联合概率可以表示成若干条件概率的连乘。例如，<span class="math inline">\(P(e_1, e_2, e_3) = P(e_1)P(e_2|e_1)P(e_3|e_1e_2)\)</span>。更一般地说，有 <span class="math display">\[
+P(E) = \prod_{t=1}^{T+1}P(e_t|e_1^{t-1})
+\]</span> 那么，问题转化为，如何在已知前面单词的情况下，有效计算<span class="math inline">\(P(e_t|e_1^{t-1})\)</span></p>
+<h2 id="基于记数的n元语法">基于记数的n元语法</h2>
+<p>计算该概率的方法比较简单：准备一份训练数据，然后先数出<span class="math inline">\(e_1, e_2, \ldots, e_t\)</span>的数量，再数出<span class="math inline">\(e_1, e_2, \ldots, e_{t-1}\)</span>的数量。例如，对句子“you are from Beijing”，先数出所有“you are from Beijing”开头的字符串的数量，再数出“you are from”开头的字符串的数量，两者相除，就得到了要求的概率值。形式化地说，为 <span class="math display">\[
+P_{\rm ML}(e_t|e_1^{t-1}) = \frac{c_{\rm prefix}(e_1^t)}{c_{\rm prefix}(e_1^{t-1})}
+\]</span> 这里<span class="math inline">\(c_{\rm prefix}(\cdot)\)</span>是指定字符串在训练数据中句首出现的次数，这种方法称为<strong>最大似然法</strong></p>
+<p>这种方法的问题是，不是所有句子都能在训练集出现。例如，训练集中可能有很多句“you are from Shanghai”或者“they are from Beijing”，但是就是没有“you are from Beijing”。按照上面列出的原始的概率算法，“you are from Beijing”这句话的概率为0——推而广之，语言模型会给每句没有在训练集中出现的句子的概率都给成0，因此不是特别有意义</p>
+<p>为了避免这样的问题出现，可以使用一种退而求其次的方法来近似估计某句话在语言里出现的概率，即不再看以某个字符串开头的句子，而是设置一个固定大小的窗口，限定单词上下文（或称为语境）的长度。例如，假设将语境限制为目标单词的前<span class="math inline">\(n-1\)</span>个单词，那么就有 <span class="math display">\[
+P(e_t|e_1^{t-1}) \approx P_{\rm ML}(e_t|e_{t-n+1}^{t-1})
+\]</span> 这种模型称为<strong>n元语法模型</strong>。N元语法模型的参数<span class="math inline">\(\theta\)</span>包含了所有给定<span class="math inline">\(n-1\)</span>个单词时，出现下一个单词的概率 <span class="math display">\[
+\theta_{e_{t-n+1}^t} = P(e_t | e_{t-n+1}^{t-1})
+\]</span> 为了训练n元模型，可以使用MLE来计算 <span class="math display">\[
+\theta_{e_{t-n+1}^t} = P_{\rm ML}(e_t | e_{t-n+1}^{t-1}) = \frac{c(e_{t-n+1}^t)}{c(e_{t-n+1}^{t-1})}
+\]</span> 其中<span class="math inline">\(c(\cdot)\)</span>是指定字符串在语料中任何位置出现的次数</p>
+<p>但是，这里还有一个问题：上面这个式子里，分子<span class="math inline">\(c(e_{t-n+1}^t)\)</span>可能还会是0，这样，算出来的概率也还是0。为了彻底解决这个问题，n元语法使用了若干种<strong>平滑方法</strong>（smoothing）。例如，<strong>插值法</strong>（interpolation）的原理是在找不到n元组时，退而使用n-1元组出现的概率。在最简单的二元语法中，有 <span class="math display">\[
+P(e_t|e_{t-1}) = (1-\alpha)P_{\rm ML}(e_t|e_{t-1}) + \alpha P_{\rm ML}(e_t)
+\]</span> 超参数<span class="math inline">\(\alpha\)</span>越大，一元语法（独立于语境，单词<span class="math inline">\(e_t\)</span>出现的频率）的比重越大。进一步扩展，n元语法的插值法是递归设置 <span class="math display">\[
+P(e_t|e_{t-m+1}^{t-1}) = (1-\alpha_m)P_{\rm ML}(e_t|e_{t-m+1}^{t-1}) + \alpha_m P(e_t|e_{t-m+2}^{t-1})
+\]</span> 其中，第一项是<span class="math inline">\(m\)</span>元语言模型的最大似然估计，第二项递归计算了从1元到<span class="math inline">\(m-1\)</span>元语言模型的插值</p>
+<p>在此基础上，还有一些更复杂的平滑技术，例如</p>
+<ul>
+<li>上下文相关的平滑系数。上式中给定的<span class="math inline">\(\alpha_m\)</span>不再是一个常数，而是一个跟上文有关的数<span class="math inline">\(\alpha_{e_{t-m+1}^{t-1}}\)</span>。这样，可以使<span class="math inline">\(\alpha\)</span>正比于<span class="math inline">\(c(e^t_{t-n+1})\)</span></li>
+<li>回退法（backoff）。当高元语法的概率值为0时，再计算低元语法的概率值</li>
+<li>修改的分布。计算<span class="math inline">\(m\)</span>元语言模型的概率值时，不再使用最大似然估计计算<span class="math inline">\(P_{\rm ML}\)</span>，而是使用一些其它的算法。例如<strong>折扣法</strong>需要将求出的计数值<span class="math inline">\(c\)</span>再减去一个常数</li>
+</ul>
+<p>目前，<strong>修改后的Kneser-Ney平滑</strong>（Modified Kneser-Ney Smoothing）是一种最常用，最有效的标准平滑算法。关于平滑算法的综述，更详细的介绍可以参见[Chen1996]</p>
+<h2 id="语言模型的评估">语言模型的评估</h2>
+<p>度量语言模型准确性最直接的方法是计算模型在验证集或测试集上的<strong>似然</strong>。参数<span class="math inline">\(\theta\)</span>在某数据上的似然就是模型为该数据所计算出的概率。例如，假设测试集为<span class="math inline">\(\mathcal{E}_{\rm test}\)</span>，则似然就是 <span class="math display">\[
+P(\mathcal{E}_{\rm test};\theta)
+\]</span> 通常数据集都包含若干独立的文档或句子<span class="math inline">\(E\)</span>，因此 <span class="math display">\[
+P(\mathcal{E}_{\rm test};\theta) = \prod_{E\in \mathcal{E}_{\rm test}}P(E;\theta)
+\]</span> 进一步地，一般是使用<strong>对数似然</strong> <span class="math display">\[
+\log P(\mathcal{E}_{\rm test};\theta) = \sum_{E \in \mathcal{E}_{\rm test}}\log P(E;\theta)
+\]</span> 由于语言模型对每个句子所计算出的概率一般都非常小，若干很小的概率值相乘以后，很可能出现下溢现象。而如果求对数以后再求和，可以很好地避免这种现象发生。此外，做基于梯度的优化时，加和项的求导比乘积项的求导计算起来方便很多。综上所述，对数似然是一种更好的方法。也可以在求出对数似然以后除以语料库中单词的个数，这样可以比较不同语料库得到的语言模型的效果</p>
+<p>最后一种衡量语言模型准确度的方法是<strong>困惑度</strong>（perplexity, ppl），是每个单词负对数似然的平均值的自然指数 <span class="math display">\[
+{\rm ppl}(\mathcal{E}_{\rm test};\theta) = e^{-(\log P(\mathcal{E}_{\rm test};\theta)) / {\rm length}(\mathcal{E}_{\rm test})}
+\]</span> 对这个指标，一种直观的解释是“模型在做决定的时候，对这个决定由多犹豫？”，更准确地说，这个值描述的是“如果每次出词的时候都按照语言模型的概率分布随机猜一个词，那么平均每多少个词可以猜到那个正确的词？”</p>
+<p>困惑度这种度量方案比较为研究人员所偏爱，因为这种方法做出来的结果比较大，因此不同模型之间的差别体现得更加直观（所以提高了论文投中的概率[手动滑稽]）</p>
+<h2 id="处理未知词">处理未知词</h2>
+<p>测试集里出现的单词可能在训练集里没有出现过，这种词一般称为<strong>未知词</strong>（简称UNK），需要做进一步处理。语言模型常见的处理方法包括</p>
+<ul>
+<li><p>假设词表就是封闭的，即就假设测试集里出现的单词也一定会在训练集出现</p></li>
+<li><p>对UNK设置一个分布，然后求插值。即认为UNK实际上是“零元语法”，在算一元语法时计算 <span class="math display">\[
+P(e_t)  = (1-\alpha_1)P_{\rm ML}(e_t) + \alpha_1P_{\rm unk}(e_t)
+\]</span> 这里，<span class="math inline">\(P_{\rm unk}\)</span>这个分布要为所有单词<span class="math inline">\(V_{\rm all}\)</span>都能算出一个概率，而不只是对训练语料看到的词表<span class="math inline">\(V\)</span>计算概率。分布的求法有两种，一种是再训练一个基于字符的语言模型，这样它可以“拼出”UNK；另一种是猜测<span class="math inline">\(|V_{\rm all}|\)</span>（也就是全词表的大小，要求<span class="math inline">\(|V_{\rm all}| &gt; |V|\)</span>），然后定义<span class="math inline">\(P_{\rm unk}(e_t) = 1/|V_{\rm all}|\)</span></p></li>
+<li><p>将训练集中的某些词替换为<code>&lt;unk&gt;</code>。通常可以把那些只出现了一次的词替换为<code>&lt;unk&gt;</code>，这样还可以预测出在什么语境下会看到未知词</p></li>
+</ul>
+<h2 id="n元语法的扩展">N元语法的扩展</h2>
+<p>关于N元语法更详细的，描述，可以参考[Goodman2001]。其它一些扩展的研究方向包括</p>
+<ul>
+<li>大规模语言模型，可以参考<a href="http://www.cs.cmu.edu/~tbergkir/11711fa17/" target="_blank" rel="noopener">CMU 11-711 “Algorithms for NLP”</a> Language Modeling 部分的课件和扩展阅读</li>
+<li>专门领域的语言模型，例如[Bellegarda2004]</li>
+<li>长距离的语言模型，例如cache LM [DeMori1990]、主题模型</li>
+<li>基于语法的语言模型，例如[Weischedel2008]</li>
+</ul>
+<p>[Bellegarda2004] Jerome R Bellegarda. Statistical language model adaptation: review and perspectives. <em>Speech communication</em>, 42(1):93–108, 2004.</p>
+<p>[Chen1996] Stanley F. Chen and Joshua Goodman. An empirical study of smoothing techniques for language modeling. In <em>Proceedings of the 34th Annual Meeting of the Association for Computational Linguistics (ACL)</em>, pages 310–318, 1996.</p>
+<p>[DeMori1990] Roland Kuhn and Renato De Mori. A cache-based natural language model for speech recognition. <em>IEEE transactions on pattern analysis and machine intelligence</em>, 12(6):570–583, 1990.</p>
+<p>[Goodman2001] Joshua T. Goodman. A bit of progress in language modeling. <em>Computer Speech &amp; Language</em>, 15(4):403–434, 2001.</p>
+<p>[Weischedel2008] Libin Shen, Jinxi Xu, and Ralph Weischedel. A new string-to-dependency machine translation algorithm with a target dependency language model. In <em>Proceedings of the 46th Annual Meeting of the Association for Computational Linguistics (ACL)</em>, pages 577–585, 2008.</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2018/03/01/NMT-Tutorial-1-Basic-Statistical-NLP-Models/" title="NMT Tutorial 1. 统计语言模型之N元语法">txshi-mt.com/2018/03/01/NMT-Tutorial-1-Basic-Statistical-NLP-Models/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/N元语法/" rel="tag"># N元语法</a>
+          
+            <a href="/tags/NMT-Tutorial/" rel="tag"># NMT_Tutorial</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/02/24/UTNN-15-Autoencoders/" rel="next" title="Hinton神经网络与机器学习 15. 自动编码器">
+                <i class="fa fa-chevron-left"></i> Hinton神经网络与机器学习 15. 自动编码器
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">82</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#统计机器翻译问题的形式化定义"><span class="nav-number">1.</span> <span class="nav-text">&#x7EDF;&#x8BA1;&#x673A;&#x5668;&#x7FFB;&#x8BD1;&#x95EE;&#x9898;&#x7684;&#x5F62;&#x5F0F;&#x5316;&#x5B9A;&#x4E49;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#逐词计算概率"><span class="nav-number">2.</span> <span class="nav-text">&#x9010;&#x8BCD;&#x8BA1;&#x7B97;&#x6982;&#x7387;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于记数的n元语法"><span class="nav-number">3.</span> <span class="nav-text">&#x57FA;&#x4E8E;&#x8BB0;&#x6570;&#x7684;n&#x5143;&#x8BED;&#x6CD5;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#语言模型的评估"><span class="nav-number">4.</span> <span class="nav-text">&#x8BED;&#x8A00;&#x6A21;&#x578B;&#x7684;&#x8BC4;&#x4F30;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#处理未知词"><span class="nav-number">5.</span> <span class="nav-text">&#x5904;&#x7406;&#x672A;&#x77E5;&#x8BCD;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#n元语法的扩展"><span class="nav-number">6.</span> <span class="nav-text">N&#x5143;&#x8BED;&#x6CD5;&#x7684;&#x6269;&#x5C55;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
