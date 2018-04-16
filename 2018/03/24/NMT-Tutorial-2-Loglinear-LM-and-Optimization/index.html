@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="softmax,NMT_Tutorial,梯度下降," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="本章笔记基于[Neubig2017]第四章和NNMNLP第二章的一部分 上一章提到的N元语法模型实际上就是基于计数和条件概率，而log-linear语言模型（或称对数-线性语言模型）使用了另一种方法。在一些经典的文献中，log-linear语言模型通常被称作为“最大熵语言模型”（maximum entropy language model） 模型简介 Log-linear语言模型的本质是把语言模型">
+<meta name="keywords" content="softmax,NMT_Tutorial,梯度下降">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NMT Tutorial 2. Log-linear语言模型">
+<meta property="og:url" content="txshi-mt.com/2018/03/24/NMT-Tutorial-2-Loglinear-LM-and-Optimization/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="本章笔记基于[Neubig2017]第四章和NNMNLP第二章的一部分 上一章提到的N元语法模型实际上就是基于计数和条件概率，而log-linear语言模型（或称对数-线性语言模型）使用了另一种方法。在一些经典的文献中，log-linear语言模型通常被称作为“最大熵语言模型”（maximum entropy language model） 模型简介 Log-linear语言模型的本质是把语言模型">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-04-16T17:31:13.427Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NMT Tutorial 2. Log-linear语言模型">
+<meta name="twitter:description" content="本章笔记基于[Neubig2017]第四章和NNMNLP第二章的一部分 上一章提到的N元语法模型实际上就是基于计数和条件概率，而log-linear语言模型（或称对数-线性语言模型）使用了另一种方法。在一些经典的文献中，log-linear语言模型通常被称作为“最大熵语言模型”（maximum entropy language model） 模型简介 Log-linear语言模型的本质是把语言模型">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2018/03/24/NMT-Tutorial-2-Loglinear-LM-and-Optimization/"/>
+
+
+
+
+
+  <title>NMT Tutorial 2. Log-linear语言模型 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2018/03/24/NMT-Tutorial-2-Loglinear-LM-and-Optimization/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NMT Tutorial 2. Log-linear语言模型</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-24T20:14:50+08:00">
+                Mar 24 2018
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/NLP/" itemprop="url" rel="index">
+                    <span itemprop="name">NLP</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><em>本章笔记基于[Neubig2017]第四章和NNMNLP第二章的一部分</em></p>
+<p>上一章提到的N元语法模型实际上就是基于计数和条件概率，而log-linear语言模型（或称对数-线性语言模型）使用了另一种方法。在一些经典的文献中，log-linear语言模型通常被称作为“最大熵语言模型”（maximum entropy language model）</p>
+<h2 id="模型简介">模型简介</h2>
+<p>Log-linear语言模型的本质是把语言模型的建立看作是一个多元分类问题，核心是从上文中提取特征。形式化地说，假设上文为<span class="math inline">\(e_{t-n+1}^{t-1}\)</span>，log-linear语言模型需要一个特征函数<span class="math inline">\(\phi(e_{t-n+1}^{t-1})\)</span>，其将上文信息作为输入，输出一个<span class="math inline">\(N\)</span>维特征向量（注意这里是feature vector而不是eigenvector）<span class="math inline">\(\boldsymbol{x} \in \mathbb{R}^N\)</span>，这个<span class="math inline">\(\boldsymbol{x}\)</span>就是对上文信息的一个表示（这里的<span class="math inline">\(N\)</span>不是N元语法里面的那个N，不表示上文单词数量！）</p>
+<p>最简单的提取特征的方法是将上文中的每个单词都做一个独热编码（one-hot encoding）。例如，假设语言模型的词汇表为<span class="math inline">\(V\)</span>，大小记为<span class="math inline">\(|V|\)</span>，词汇表中每个单词都会被分配一个ID，记作<span class="math inline">\(i\)</span>且有<span class="math inline">\(1 \le i \le |V|\)</span>，那么对某个ID为<span class="math inline">\(i\)</span>的单词，其独热编码以后的结果就是一个<span class="math inline">\(V\)</span>维的向量，这个向量在第<span class="math inline">\(i\)</span>个维度上的值为1，其余都是0。如果用类似二元语法的思想（即只用目标单词的前一个单词做预测）来做log-linear语言模型，这样就够了。但是如果想在上文里包含更多的单词，就需要进行扩展。一种常见的思路是将每个单词的独热向量拼接起来，这样，如果上文中包含了<span class="math inline">\(M\)</span>个单词，得到的特征向量的长度<span class="math inline">\(N\)</span>就是<span class="math inline">\(M|V|\)</span>。当然，除了对上文单词做独热编码，log-linear语言模型还允许灵活加入其它特征，这也是该模型的一大长处。常见的特征还包括</p>
+<ul>
+<li>上文的语义类别。可以使用聚类方法将相似单词聚类，这样，上文每个单词的独热编码不再是单词表长度，而是聚类得到的类别个数</li>
+<li>上文单词的其它语义信息，例如词性标注（POS-Tag）信息</li>
+<li>词袋特征。此时，不止考虑前面少数几个单词，而是考虑前面所有单词，统计它们出现的个数。注意在这种情况下会失去单词的位置信息，不过可以捕捉到单词的共现信息</li>
+</ul>
+<p>下文中所使用的特征仍然是前面少数几个单词的独热编码</p>
+<p>得到特征以后，模型会使用参数<span class="math inline">\(\theta\)</span>计算出一个得分向量<span class="math inline">\(\boldsymbol{s} \in \mathbb{R}^{|V|}\)</span>，对应于词汇表中的所有单词。这里参数<span class="math inline">\(\theta\)</span>具体包含两个参数：权重矩阵<span class="math inline">\(\boldsymbol{W} \in \mathbb{R}^{|V| \times N}\)</span>和偏置向量<span class="math inline">\(\boldsymbol{b} \in \mathbb{R}^{|V|}\)</span>，都是训练得出。得到<span class="math inline">\(\boldsymbol{W}\)</span>和<span class="math inline">\(\boldsymbol{b}\)</span>以后，对给定的<span class="math inline">\(\boldsymbol{x}\)</span>，就可以计算得到一个得分向量<span class="math inline">\(\boldsymbol{s}\)</span>，其中 <span class="math display">\[
+\boldsymbol{s} = \boldsymbol{Wx} + \boldsymbol{b}
+\]</span> 由于真正应用中词汇表的大小通常都比较大，特征数也比较多，因此权重矩阵<span class="math inline">\(\boldsymbol{W}\)</span>通常会很大（如果只使用前面提到的独热编码的上文信息做特征，假设上文单词数为2，词汇表大小为20000，则权重矩阵的大小就是<span class="math inline">\(20000 \times 40000\)</span>。同时，<span class="math inline">\(\boldsymbol{x}\)</span>本身也是一个比较大的向量，两者相乘比较耗时。由于<span class="math inline">\(\boldsymbol{x}\)</span>通常是若干独热编码向量的组合，因此它会特别稀疏，只有少许维度非0（而且可能只取值为1）。所以，可以使用如下操作避免矩阵乘法带来的性能问题： <span class="math display">\[
+\boldsymbol{s} = \sum_{j: x_j \not= 0}\boldsymbol{W}_{., j}x_j + \boldsymbol{b}
+\]</span> 其中<span class="math inline">\(\boldsymbol{W}_{., j}\)</span>代表矩阵<span class="math inline">\(\boldsymbol{W}\)</span>的第<span class="math inline">\(j\)</span>列。上一个式子的直接翻译是“对特征向量<span class="math inline">\(\boldsymbol{x}\)</span>，找出其所有不为零的维度，然后找出权重矩阵<span class="math inline">\(\boldsymbol{W}\)</span>对应的列，将这一列向量乘以特征向量对应维度的值，再把所有这样处理得到的向量相加，最后加上偏置向量”</p>
+<p>这样得到的得分向量每个维度的值都可能是任意的一个实数。为了得到一个更好的，有概率意义的结果，可以做一个softmax计算以达到归一化的效果 <span class="math display">\[
+\boldsymbol{p} = {\rm softmax}(\boldsymbol{s})
+\]</span> 具体计算方法为，对<span class="math inline">\(\boldsymbol{s}\)</span>的每个分量<span class="math inline">\(s_j\)</span>，其对应的<span class="math inline">\(p_j\)</span>为 <span class="math display">\[
+p_j = \frac{\exp(s_j)}{\sum_i\exp(s_i)}
+\]</span></p>
+<h2 id="softmax的计算问题">Softmax的计算问题</h2>
+<p><em>本节来自于花书DLBook第4.1节</em></p>
+<p>然而，真实计算softmax函数的值时，既可能出现上溢的情况，又可能出现下溢的情况。假设最后得到的<span class="math inline">\(\boldsymbol{s} = \left[\begin{matrix}1000 \\ 1003\end{matrix}\right]\)</span>，一般计算<span class="math inline">\(e^{1000}\)</span>的时候都会上溢，例如使用python计算</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> math</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>math.exp(<span class="number">1000</span>)</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">"&lt;stdin&gt;"</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">OverflowError: math range error</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>np.exp(<span class="number">1000</span>)</span><br><span class="line">__main__:<span class="number">1</span>: RuntimeWarning: overflow encountered <span class="keyword">in</span> exp</span><br><span class="line">inf</span><br></pre></td></tr></table></figure>
+<p>而如果最后得到的<span class="math inline">\(\boldsymbol{s} = \left[\begin{matrix}-1000 \\ -1003\end{matrix}\right]\)</span>，一般计算<span class="math inline">\(e^{-1000}\)</span>的时候又都会下溢，例如</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> math</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>math.exp(<span class="number">-1000</span>)</span><br><span class="line"><span class="number">0.0</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>np.exp(<span class="number">-1000</span>)</span><br><span class="line"><span class="number">0.0</span></span><br></pre></td></tr></table></figure>
+<p>此时softmax的分母会被认为是0，进而抛出异常</p>
+<p>因此，真正计算时，通常会将原始要计算的向量<span class="math inline">\(\boldsymbol{s}\)</span>做一个处理得到向量<span class="math inline">\(\boldsymbol{z}\)</span>，即对<span class="math inline">\(\boldsymbol{s}\)</span>的每个分量<span class="math inline">\(s_i\)</span>都减去<span class="math inline">\(\boldsymbol{s}\)</span>最大的那个分量。即 <span class="math display">\[
+\boldsymbol{z} = \boldsymbol{s} - \max_i s_i
+\]</span> 记<span class="math inline">\(\max_i s_i = c\)</span>，同时<span class="math inline">\(\rm{softmax}(\boldsymbol{z}) = \boldsymbol{q},\  \rm{softmax}(\boldsymbol{s}) = \boldsymbol{p}\)</span>，下面证明有<span class="math inline">\(\boldsymbol{q} = \boldsymbol{p}\)</span>。假设<span class="math inline">\(\boldsymbol{c}\)</span>是维度与<span class="math inline">\(\boldsymbol{z}\)</span>和<span class="math inline">\(\boldsymbol{s}\)</span>的维度均相等的向量，其每个分量<span class="math inline">\(c_i = \max_i s_i = c\)</span>，即<span class="math inline">\(\forall i, j, 1 \le i, j \le {\rm dim}\  \boldsymbol{c} \Rightarrow c_i = c_j = c\)</span>， <span class="math display">\[
+\begin{align*}
+&amp;&amp;\boldsymbol{q} = {\rm softmax}(\boldsymbol{z}) &amp;= {\rm softmax}(\boldsymbol{s} - \boldsymbol{c}) \\
+&amp;&amp;\Rightarrow q_i&amp;= \frac{\exp(s_i - c)}{\sum_j \exp(s_j - c)} \\
+&amp;&amp;&amp;= \frac{\exp(s_i)}{\exp(c)\sum_j\left(\exp(s_j) / \exp(c)\right)} \\
+&amp;&amp;&amp; = \frac{\exp(s_i)}{\exp(c) / \exp(c)\sum_j\exp(s_j)} = \frac{\exp(s_i)}{\sum_j\exp(s_j)} = p_i \\
+&amp;&amp; \Rightarrow \boldsymbol{q} &amp;= \boldsymbol{p}\  \blacksquare
+\end{align*}
+\]</span> 因此，计算<span class="math inline">\(\rm{softmax}\left(\left[\begin{matrix}1000 \\ 1003\end{matrix}\right]\right)\)</span>等价于计算<span class="math inline">\(\rm{softmax}\left(\left[\begin{matrix}-3 \\ 0\end{matrix}\right]\right)\)</span>，以此类推。这样的处理方法保证所有<span class="math inline">\(\exp\)</span>函数的参数的最大值为0，因此避免了上溢的可能。同时，所有softmax函数的分母里都会有至少一个为1的项，也就避免了分母下溢，被0除的可能。但是，分子仍然存在下溢的可能，因此在计算<span class="math inline">\(\log \rm{softmax}\)</span>的值时仍然需要特别小心</p>
+<h2 id="模型示例">模型示例</h2>
+<p>我们举个例子。假设词汇表的大小只有2，包括A、B两个词。现在已知最后出现的两个词为B和A，log-linear语言模型的作用就是训练一个权重矩阵<span class="math inline">\(\boldsymbol{W}\)</span>和偏置向量<span class="math inline">\(\boldsymbol{b}\)</span>，进而推断此时接下来两个词出现的概率。假设<span class="math inline">\(\boldsymbol{W}\)</span>和<span class="math inline">\(\boldsymbol{b}\)</span>已经训练好，有 <span class="math display">\[
+\boldsymbol{W} = \left[\begin{matrix}1.2 &amp; -1.2 &amp; 8.5 &amp; 4.5 \\ -0.6 &amp; 1.3 &amp; -3.5 &amp; -2.7 \\
+\end{matrix}\right], \boldsymbol{b} = \left[\begin{matrix}0.1 \\ -0.3\end{matrix}\right]
+\]</span> 那么特征向量<span class="math inline">\(\boldsymbol{x}\)</span>按照前面介绍的独热编码应该为 <span class="math display">\[
+\boldsymbol{x} = \left[\begin{matrix}0 \\ 1 \\ 1 \\ 0\end{matrix}\right]
+\]</span> 则 <span class="math display">\[
+\boldsymbol{s} = \left[\begin{matrix}-1.2 \\ 1.3 \end{matrix}\right] + \left[\begin{matrix}8.5 \\ -3.5 \end{matrix}\right] + \left[\begin{matrix}0.1 \\ -0.3 \end{matrix}\right] = \left[\begin{matrix}7.4 \\ -2.5 \end{matrix}\right]
+\]</span> 经过softmax计算，有<span class="math inline">\(\boldsymbol{p} = \left[\begin{matrix}0.99995 \\ 0.00005\end{matrix}\right]\)</span>，说明接下来很可能会出现A</p>
+<p>可以看出，权重矩阵的每一列都有一定的意义。如果特征向量由若干个独热编码组成，那么<span class="math inline">\(\boldsymbol{W}\)</span>的第<span class="math inline">\(j\)</span>列实际上表明了第<span class="math inline">\(j\)</span>个特征激活时，各个词出现的可能性。这个列向量的分量越大，说明对应的词出现的可能性越大，反之说明越小。例如，<span class="math inline">\(\left[\begin{matrix}8.5 \\ -3.5\end{matrix}\right]\)</span>这一列是前一个词为A时，接下来出现A和B的可能性。这意味着此时出现A的可能性远大于出现B的可能性</p>
+<h2 id="学习模型参数">学习模型参数</h2>
+<h3 id="损失函数">损失函数</h3>
+<p>第一节讲述了在有权重矩阵和偏置向量的情况下，如何使用建立好的模型根据给定的上文预测即将出现的词。那么接下来的问题是如何得到（学习）这些模型参数<span class="math inline">\(\theta\)</span>。为此，需要先定义一个合适的<strong>损失函数</strong><span class="math inline">\(\ell\)</span>。所谓损失函数，其直观意义可以看做是在给定当前模型参数<span class="math inline">\(\theta\)</span>的情况下，模型的预测值<span class="math inline">\(\hat{y}\)</span>与真实值<span class="math inline">\(y\)</span>之间差了多远，也就是现在这个模型有多差。因此，训练模型参数的过程，就是要调整参数<span class="math inline">\(\theta\)</span>使得损失函数<span class="math inline">\(\ell\)</span>尽量小的过程。通常情况下，损失函数等于似然的负对数 <span class="math display">\[
+\ell (\mathcal{E}_{\rm train},\boldsymbol{\theta}) = -\log P(\mathcal{E}_{\rm train}|\boldsymbol{\theta}) = -\sum_{E \in \mathcal{E}_{\rm train}}\log P(E|\boldsymbol{\theta})
+\]</span> 这个想法和最大似然的思想是等价的，因为最大似然等价于最小化负似然，而加入对数函数不影响目标函数的单调性。假设这样的损失函数在微观上（每个词的级别上）也适用，则有 <span class="math display">\[
+\ell (e^t_{t-n+1}, \boldsymbol{\theta}) = \log P(e_t|e_{t-n+1}^{t-1})
+\]</span></p>
+<h3 id="使用随机梯度下降sgd进行优化">使用随机梯度下降（SGD）进行优化</h3>
+<p>熟悉logistic回归和其它统计学习方法的读者应该可以马上意识到，log-linear语言模型实际上可以看作是logistic回归变种在NLP领域上的一个应用，而logistic回归通常使用梯度下降法做优化。当样本量太大时，通常使用随机梯度下降。不过这里本文还是准备对随机梯度下降做一个具体的介绍</p>
+<p><em>本部分内容参考了花书4.3小节</em></p>
+<p>大部分机器学习问题的最终形式都是一个优化问题，即给定一个参数为<span class="math inline">\(\theta\)</span>的函数<span class="math inline">\(f(\theta)\)</span>，找到一个合适的<span class="math inline">\(\theta\)</span>，使得<span class="math inline">\(f\)</span>能取得最小值。用数学的语言描述，就是求出<span class="math inline">\(\theta^\ast = \mathop{\rm arg\min}_{\theta}f(\theta)\)</span>——当然，有些时候需要找到能使<span class="math inline">\(f\)</span>取得最大值的<span class="math inline">\(\theta\)</span>，在这种情况下，同样的<span class="math inline">\(\theta\)</span>也会使<span class="math inline">\(-f(\theta)\)</span>取得最小值，所以两者是等价的。这里的这个<span class="math inline">\(f\)</span>也就是前面提到的损失函数<span class="math inline">\(\ell\)</span></p>
+<p>这样一来，问题就被抽象为求最值的问题。在比较简单的，一元函数的情况下，对函数求导并令导数为0，就可以求出最优的<span class="math inline">\(\theta\)</span>。但是，考虑到有些情况下上述方法无法得到解析解，因此还需要使用一种迭代的方法来完成同样的任务。对于给定的函数<span class="math inline">\(f\)</span>，其一阶导数的一个重要性质是，如果其在某个点<span class="math inline">\(x\)</span>的一阶导数<span class="math inline">\(f&#39;(x) &gt; 0\)</span>，则函数单调递增；如果一阶导数<span class="math inline">\(f&#39;(x) &lt; 0\)</span>，则函数单调下降。在最简单的情况下，假设<em>已知函数是凹函数</em>且处处连续、处处可导，那么当<span class="math inline">\(x\)</span>在某个点<span class="math inline">\(x_0\)</span>的一阶导数大于0时，由于函数递增，那么为了向极值点（这里是极小值点）靠近，<span class="math inline">\(x\)</span>应该向左移动，慢慢变小；当当<span class="math inline">\(x\)</span>在某个点<span class="math inline">\(x_0\)</span>的一阶导数小于0时，由于函数递减，那么为了向极值点靠近，<span class="math inline">\(x\)</span>应该向右移动，慢慢变大。综合这两种情况，对足够小的<span class="math inline">\(\epsilon\)</span>，总有 <span class="math display">\[
+f(x-\epsilon\cdot {\rm sign}(f&#39;(x))) &lt; f(x)
+\]</span> 也就是说，无论如何，总可以把<span class="math inline">\(x\)</span>往导数的反方向移动一小步来减小<span class="math inline">\(f(x)\)</span>。经过足够多步的迭代，在<span class="math inline">\(\epsilon\)</span>设置适当的情况下，<span class="math inline">\(x\)</span>最后总能到达极小值点。此时<span class="math inline">\(f&#39;(x) = 0\)</span>。不过需要注意的是，极值点在很多情况下不是最值点，有可能只是一个局部最优解</p>
+<p>上述过程就是<strong>梯度下降</strong>在一元函数情况下的介绍，相对比较容易理解。当函数的输入时多维的向量时，要稍微复杂一些。前面在讲述一元函数一阶导数的时候有一点没有提到，一元函数<span class="math inline">\(f(x)\)</span>在<span class="math inline">\(x_0\)</span>点的导数的另一个意义是变量在该点做微小移动时，函数值的变化率。这个意义可以扩展到多元函数的领域里：假设函数<span class="math inline">\(f(\boldsymbol{x})\)</span>的参数<span class="math inline">\(\boldsymbol{x} \in \mathbb{R}^n\)</span>，那么当<span class="math inline">\(\boldsymbol{x}\)</span>的<span class="math inline">\(n-1\)</span>个维度上的分量都不变，仅对第<span class="math inline">\(i\)</span>个维度上的分量做微小移动时，函数值的变化率就是这个函数在<span class="math inline">\(x_i\)</span>轴上的<strong>偏导数</strong>，记为<span class="math inline">\(\frac{\partial }{\partial x_i}f(\boldsymbol{x})\)</span>。换句话说，函数<span class="math inline">\(f\)</span>的偏导数是函数沿着某个坐标轴的变化率。在此之上，可以定义<strong>梯度</strong>为 <span class="math display">\[
+\nabla_{\boldsymbol{x}}f(\boldsymbol{x}) = \left[\begin{array}{c}\frac{\partial f}{\partial x_1} &amp; \cdots &amp; \frac{\partial f}{\partial x_i} &amp; \cdots &amp;\frac{\partial f}{\partial x_n}\end{array}\right]^\mathsf{T}
+\]</span> 有了这些概念，接着就可以看什么是<strong>方向导数</strong>。直观地讲，可以想象在三维空间里想象一个图像形状为碗型的二元函数，自变量由x轴和y轴确定，z轴为因变量。在碗壁上的任何一个点，都可以向360度不同的方向滑动，另一方面，自变量的微小移动使得函数在360度的方向上都会有不同的变化率，在单位向量<span class="math inline">\(\boldsymbol{u}\)</span>方向上的变换率就是<span class="math inline">\(f\)</span>在<span class="math inline">\(\boldsymbol{u}\)</span>方向上的方向导数，其定义为<span class="math inline">\(\boldsymbol{u}^\mathsf{T}\nabla_{\boldsymbol{x}}f(\boldsymbol{x})\)</span>。其中，使得方向导数最小的方向，是函数变化量最大的方向，因此 <span class="math display">\[
+\begin{align*}
+&amp;\min_{\boldsymbol{u}, \boldsymbol{u}^\mathsf{T}\boldsymbol{u} = 1} \boldsymbol{u}^\mathsf{T}\nabla_{\boldsymbol{x}}f(\boldsymbol{x}) \\
+= &amp;\min_{\boldsymbol{u}, \boldsymbol{u}^\mathsf{T}\boldsymbol{u} = 1}  \|\boldsymbol{u}\|_2\|\nabla_\boldsymbol{x}f(\boldsymbol{x})\|_2\cos\theta
+\end{align*}
+\]</span> 其中<span class="math inline">\(\theta\)</span>是梯度方向与单位向量之间的夹角。由于<span class="math inline">\(\boldsymbol{u}\)</span>是单位向量，因此<span class="math inline">\(\|\boldsymbol{u}\|_2 = 1\)</span>，且梯度的模长与<span class="math inline">\(\boldsymbol{u}\)</span>无关，因此上式等价于最小化<span class="math inline">\(\cos \theta\)</span>，这个值在<span class="math inline">\(\theta = \pi\)</span>时取得，此时<span class="math inline">\(\boldsymbol{u}\)</span>指向梯度方向的反方向。因此在输入为向量的情况下，梯度下降的更新公式为 <span class="math display">\[
+\boldsymbol{x}^{t+1} = \boldsymbol{x}^{t} - \epsilon \nabla_{\boldsymbol{x}}f(\boldsymbol{x}^t)
+\]</span> (本部分的叙述顺序基本参考了花书的顺序，但是这样使得某些概念的引出顺序与因果顺序相反。例如，梯度的几何意义就是函数下降最快方向的反方向，但是这里梯度的定义先于方向导数的定义给出。在这点上，国内的讲述方法可能更符合因果，但是理解起来难度会大一些。此外，这些概念结合图看可能更好理解，可以参考知乎讨论<a href="https://www.zhihu.com/question/36301367" target="_blank" rel="noopener">如何直观形象的理解方向导数与梯度以及它们之间的关系？</a>和可汗学院的讲授视频<a href="https://www.khanacademy.org/math/multivariable-calculus/multivariable-derivatives/gradient-and-directional-derivatives/v/gradient" target="_blank" rel="noopener">梯度与方向导数</a>)</p>
+<p>将这个公式套用到前面“损失函数”一节中的定义，可以知道log-linear语言模型的参数更新方式为 <span class="math display">\[
+\boldsymbol{\theta}^{t+1} = \boldsymbol{\theta}^t - \epsilon \frac{\partial\ell(e_{t-n+1}^t, \boldsymbol{\theta})}{\partial\boldsymbol{\theta}}
+\]</span> 其中<span class="math inline">\(\epsilon\)</span>更通常情况下被写为<span class="math inline">\(\eta\)</span>，称作<strong>学习率</strong>。直观地看，<span class="math inline">\(\eta\)</span>的大小决定了梯度下降每次向前走的步长大小，它的选取应该慎重：如果<span class="math inline">\(\eta\)</span>太大，则算法会出现震荡（步子迈得太大，直接越过了极值点，如此反复），难以收敛；如果<span class="math inline">\(\eta\)</span>太小，算法收敛得会太慢，或者陷入不好的局部最优解。通常的做法是随着训练的持续慢慢调小学习率。其它比较好的工程实践还包括提前停止（保留一部分数据做验证集，算法在验证集上效果变差时终止迭代）和随机打乱原始数据顺序等（避免连续看到同一类型的数据，影响模型效果）</p>
+<p>此外，上面给出的更新方式是每看到一个样本更新一次，这种做法通常也称为<strong>在线学习</strong>法（online learning）。另外一种方法是将所有数据的梯度都计算出来，然后求均值，这种方法称为全批量（full-batch）梯度下降。在线学习的问题是一个样本的梯度方向可能不是最优方向（不过在样本量足够大，迭代次数足够多的情况下也能收敛到比较好的极值点）；而全批量梯度下降的问题是深度学习使用的数据集通常比较大，计算起来耗费资源太多。因此真正广泛应用的是小批量（mini-batch）随机梯度下降法，即随机选取若干样本，计算梯度的均值</p>
+<p>在SGD之上，还有一些衍生的优化算法，例如动量（momentum）法、AdaGrad和Adam等等。这些算法将在之后的文章中做总结</p>
+<h3 id="损失函数对参数的偏导数">损失函数对参数的偏导数</h3>
+<p>通过上面的讲述，可知更新模型参数的关键是要求出损失函数对参数的偏导数。将上面的式子整理可得 <span class="math display">\[
+\begin{align*}
+\boldsymbol{s} &amp;= \sum_{j: x_j \not= 0}\boldsymbol{W}_{., j}x_j + \boldsymbol{b} \\
+\boldsymbol{p} &amp;= {\rm softmax}(\boldsymbol{s}) \\
+\ell &amp;= -\log p_{e_t}
+\end{align*}
+\]</span> 因此有 <span class="math display">\[
+\begin{align*}
+\frac{\partial \ell}{\partial \boldsymbol{W}_{.,j}} &amp;= \frac{\partial \ell}{\partial p_{e_t}} \cdot \frac{\partial p_{e_t}}{\partial \boldsymbol{s}} \cdot \frac{\partial \boldsymbol{s}}{\partial \boldsymbol{W}_{.,j}} \\
+\frac{\partial \ell}{\partial \boldsymbol{b}} &amp;= \frac{\partial \ell}{\partial p_{e_t}} \cdot \frac{\partial p_{e_t}}{\partial \boldsymbol{s}} \cdot \frac{\partial \boldsymbol{s}}{\partial \boldsymbol{b}}
+\end{align*}
+\]</span> 可以看出两者都需要求<span class="math inline">\(\frac{\partial \ell}{\partial p_{e_t}} \cdot \frac{\partial p_{e_t}}{\partial \boldsymbol{s}} = \frac{\partial \ell}{\partial \boldsymbol{s}}\)</span>。由于有 <span class="math display">\[
+p_{e_t} = \frac{e^{s_t}}{\sum_ue^{s_u}}
+\]</span> 因此 <span class="math display">\[
+\ell = -\log p_{e_t} = -\log \frac{e^{s_t}}{\sum_ue^{s_u}} = -s_t + \log\sum_ue^{s_u}
+\]</span> 由标量对向量的求导法则，得出一个同样维度的向量，其中每个分量是标量对原向量中该分量的导数（详细可见Towser大神整理的文章<a href="https://pan.baidu.com/s/1_OUSFaIk2nq7z2mvnzWFLQ" target="_blank" rel="noopener">机器学习中的矩阵、向量求导</a>），即假设<span class="math inline">\(a\)</span>为标量，<span class="math inline">\(\boldsymbol{x}\)</span>为向量，且<span class="math inline">\(\boldsymbol{x} = \left[\begin{array}{ccc}x_1 &amp; \cdots &amp; x_n\end{array}\right]^\mathsf{T}\)</span>，则有 <span class="math display">\[
+\frac{\partial a}{\partial \boldsymbol{x}} = \left[\begin{array}{c}\frac{\partial a}{\partial x_1} \\ \cdots \\ \frac{\partial a}{\partial x_n} \end{array}\right]^\mathsf{T}
+\]</span> 而且有 <span class="math display">\[
+\frac{\partial \ell}{\partial s_v} = \begin{cases}-1 + \frac{e^{s_v}}{\sum_ue^{s_u}} &amp; {\rm if\  }v = t \\ \frac{e^{s_v}}{\sum_ue^{s_u}} &amp; {\rm elsewhere}\end{cases} 
+\]</span> 进一步简化，可知 <span class="math display">\[
+\frac{\partial \ell}{\partial \boldsymbol{s}} = \boldsymbol{p} - {\rm onehot}(e_t)
+\]</span> 因此， <span class="math display">\[
+\begin{align*}
+\frac{\partial \ell}{\partial \boldsymbol{W}_{.,j}} &amp;= x_j (\boldsymbol{p} - {\rm onehot}(e_t))\\
+\frac{\partial \ell}{\partial \boldsymbol{b}} &amp;= \boldsymbol{p} - {\rm onehot}(e_t)
+\end{align*}
+\]</span> 另外补充一下，分类问题更常用的是交叉熵损失函数。假设真实类标签分布向量为<span class="math inline">\(\boldsymbol{q}\)</span>，分类器预测出来的分布向量为<span class="math inline">\(\boldsymbol{p}\)</span>，则交叉熵损失函数的值<span class="math inline">\(\ell_{\rm CE}\)</span>为 <span class="math display">\[
+\ell_{\rm CE} = -\sum_i^C q_i\log p_i
+\]</span> 其中<span class="math inline">\(C\)</span>是类别标签的个数。如果把语言模型问题看作是<span class="math inline">\(|V|\)</span>元分类问题，那么交叉熵损失函数也适用，其中<span class="math inline">\(\boldsymbol{q}\)</span>是一个独热编码向量。不难看出此时<span class="math inline">\(\ell_{\rm CE}\)</span>和前面提到的损失函数<span class="math inline">\(\ell\)</span>是等价的</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2018/03/24/NMT-Tutorial-2-Loglinear-LM-and-Optimization/" title="NMT Tutorial 2. Log-linear语言模型">txshi-mt.com/2018/03/24/NMT-Tutorial-2-Loglinear-LM-and-Optimization/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/softmax/" rel="tag"># softmax</a>
+          
+            <a href="/tags/NMT-Tutorial/" rel="tag"># NMT_Tutorial</a>
+          
+            <a href="/tags/梯度下降/" rel="tag"># 梯度下降</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/03/01/NMT-Tutorial-1-Basic-Statistical-NLP-Models/" rel="next" title="NMT Tutorial 1. 统计语言模型之N元语法">
+                <i class="fa fa-chevron-left"></i> NMT Tutorial 1. 统计语言模型之N元语法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#模型简介"><span class="nav-number">1.</span> <span class="nav-text">&#x6A21;&#x578B;&#x7B80;&#x4ECB;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#softmax的计算问题"><span class="nav-number">2.</span> <span class="nav-text">Softmax&#x7684;&#x8BA1;&#x7B97;&#x95EE;&#x9898;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#模型示例"><span class="nav-number">3.</span> <span class="nav-text">&#x6A21;&#x578B;&#x793A;&#x4F8B;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#学习模型参数"><span class="nav-number">4.</span> <span class="nav-text">&#x5B66;&#x4E60;&#x6A21;&#x578B;&#x53C2;&#x6570;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#损失函数"><span class="nav-number">4.1.</span> <span class="nav-text">&#x635F;&#x5931;&#x51FD;&#x6570;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用随机梯度下降sgd进行优化"><span class="nav-number">4.2.</span> <span class="nav-text">&#x4F7F;&#x7528;&#x968F;&#x673A;&#x68AF;&#x5EA6;&#x4E0B;&#x964D;&#xFF08;SGD&#xFF09;&#x8FDB;&#x884C;&#x4F18;&#x5316;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#损失函数对参数的偏导数"><span class="nav-number">4.3.</span> <span class="nav-text">&#x635F;&#x5931;&#x51FD;&#x6570;&#x5BF9;&#x53C2;&#x6570;&#x7684;&#x504F;&#x5BFC;&#x6570;</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
