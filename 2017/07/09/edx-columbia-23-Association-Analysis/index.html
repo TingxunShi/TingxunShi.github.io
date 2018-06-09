@@ -391,7 +391,7 @@
       
         <h2 id="基本背景">基本背景</h2>
 <p>关联分析的目的可以看做是要找到经常出现的产品组。形式化地说，给定<span class="math inline">\(p\)</span>个不同的物品，编号为<span class="math inline">\(\{1,\ldots , p\}\)</span>，以及一些这些物品子集<span class="math inline">\(X_n \subset \{1,\ldots, p\}\)</span>构成的集合，假设<span class="math inline">\(X_n\)</span>是顾客<span class="math inline">\(n=1,\ldots, N\)</span>购买的物品，<strong>关联分析</strong>的目的是找到经常同时出现的物品，例如，如果<span class="math inline">\(\mathcal{K} \subset \{1,\ldots,p\}\)</span>是经常同时出现的物品，则应有 <span class="math display">\[
-P(\mathcal{K}) = \frac{\#\{n{\rm\  such\  that\  }\mathcal{K} \subseteq X_n\}}{N}
+P(\mathcal{K}) = \frac{\#\{n{\rm\ such\ that\ }\mathcal{K} \subseteq X_n\}}{N}
 \]</span> 很大。而<strong>关联规则</strong>意味着购买<span class="math inline">\(A\)</span>增加了用户购买<span class="math inline">\(B\)</span>的概率</p>
 <p>可以将每个顾客篮子里的物品编号，然后顾客篮子里的物品就可以用一个0-1数组来表示。例如，若面包编号为1，牛奶编号为2，尿布编号为3，则若顾客1买了面包和牛奶，ta的篮子可以表示为[1,1,0]；若顾客2买了面包和尿布，ta的篮子可以表示为[1,0,1]</p>
 <p>一个直观的想法是，可以使用穷举法找出所有出现概率超过某个阈值的物品组合。但是，当顾客数量<span class="math inline">\(N\)</span>和商品数量<span class="math inline">\(p\)</span>都很大时，搜索空间呈指数级增长：<span class="math inline">\(\mathcal{K} \subseteq \{1,\ldots, p\}\)</span>一共有<span class="math inline">\(2^p\)</span>个子集，即便把子集中元素数控制在至多<span class="math inline">\(k\)</span>个，那么也有<span class="math inline">\(p \choose k\)</span>个组合。当<span class="math inline">\(p=10^4\)</span>，<span class="math inline">\(k=5\)</span>时，<span class="math inline">\({p \choose k} \approx 10^{18}\)</span></p>
@@ -411,7 +411,7 @@ P(\mathcal{K}) = \frac{\#\{n{\rm\  such\  that\  }\mathcal{K} \subseteq X_n\}}{N
 <h3 id="算法">算法</h3>
 <p>Apriori算法的目标是快速找到<strong>所有</strong>出现概率大于预定阈值<span class="math inline">\(t​\)</span>的子集<span class="math inline">\(\mathcal{K} \subset \{1,\ldots,p\}​\)</span>。其算法的基础是频繁性依赖，即</p>
 <ol type="1">
-<li>如果集合<span class="math inline">\(\mathcal{K}\)</span>出现的次数不够频繁，那么<span class="math inline">\(\mathcal{K}&#39; = \mathcal{K} \cup A\  (A \subset \{1,\ldots, p\})\)</span>也不够频繁。即<span class="math inline">\(P(\mathcal{K}) &lt; t \rightarrow P(\mathcal{K}&#39;) &lt; t\)</span>。其数学解释为<span class="math inline">\(P(\mathcal{K}&#39;) = P(\mathcal{K}, A) = P(A|\mathcal{K})P(\mathcal{K}) \le P(\mathcal{K}) &lt; t\)</span></li>
+<li>如果集合<span class="math inline">\(\mathcal{K}\)</span>出现的次数不够频繁，那么<span class="math inline">\(\mathcal{K}&#39; = \mathcal{K} \cup A\ (A \subset \{1,\ldots, p\})\)</span>也不够频繁。即<span class="math inline">\(P(\mathcal{K}) &lt; t \rightarrow P(\mathcal{K}&#39;) &lt; t\)</span>。其数学解释为<span class="math inline">\(P(\mathcal{K}&#39;) = P(\mathcal{K}, A) = P(A|\mathcal{K})P(\mathcal{K}) \le P(\mathcal{K}) &lt; t\)</span></li>
 <li>反之，如果有<span class="math inline">\(P(\mathcal{K}) &gt; t\)</span>且<span class="math inline">\(A \subset \mathcal{K}\)</span>，则<span class="math inline">\(P(A) &gt; P(\mathcal{K}) &gt; t\)</span></li>
 </ol>
 <blockquote>
@@ -591,7 +591,7 @@ P(\mathcal{K}) = \frac{\#\{n{\rm\  such\  that\  }\mathcal{K} \subseteq X_n\}}{N
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -602,7 +602,7 @@ P(\mathcal{K}) = \frac{\#\{n{\rm\  such\  that\  }\mathcal{K} \subseteq X_n\}}{N
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -613,7 +613,7 @@ P(\mathcal{K}) = \frac{\#\{n{\rm\  such\  that\  }\mathcal{K} \subseteq X_n\}}{N
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

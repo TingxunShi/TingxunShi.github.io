@@ -397,9 +397,9 @@ m_\mathcal{H}(N) \le B(N, k) = \sum_{i=0}^{k-1}{N \choose i} \le N^{k-1}
 \]</span> 由于机器学习算法<span class="math inline">\(\mathcal{A}\)</span>最后只会选择出一个模型<span class="math inline">\(g\)</span>，因此这个模型遭遇“坏事情”（即<span class="math inline">\(|E_{\rm in}(g) - E_{\rm out}(g)|\)</span>比较大）的概率肯定小于<span class="math inline">\(\mathcal{H}\)</span>中任意一个模型<span class="math inline">\(h\)</span>遭遇“坏事情”的概率。再代入前面推出的VC上界和成长函数的上界，对统计上足够大的数据集<span class="math inline">\(\mathcal{D}\)</span>和算法<span class="math inline">\(g = \mathcal{A(D) \in H}\)</span>，如果<span class="math inline">\(k \ge 3\)</span>有（因为已经说了<span class="math inline">\(\mathcal{D}\)</span>足够大，因此肯定有<span class="math inline">\(N\)</span>足够大，即<span class="math inline">\(N \ge 2\)</span>） <span class="math display">\[
 \begin{align*}
 &amp;P_\mathcal{D}\left[|E_{\rm in}(g) - E_{\rm out}(g)| &gt; \epsilon \right] \\
-\le &amp;P_\mathcal{D}[\exists h \in \mathcal{H}{\rm\  s.t.\  }|E_{\rm in}(h) - E_{\rm out}(h)| &gt; \epsilon ] \\
+\le &amp;P_\mathcal{D}[\exists h \in \mathcal{H}{\rm\ s.t.\ }|E_{\rm in}(h) - E_{\rm out}(h)| &gt; \epsilon ] \\
 \le &amp;4m_{\mathcal{H}}(2N)\exp\left(-\frac{1}{8}\epsilon^2N\right) \\
-\le &amp;4(2N)^{k-1}\exp\left(-\frac{1}{8}\epsilon^2N\right)\hspace{3ex}({\rm if\  }k{\rm\  exists})
+\le &amp;4(2N)^{k-1}\exp\left(-\frac{1}{8}\epsilon^2N\right)\hspace{3ex}({\rm if\ }k{\rm\ exists})
 \end{align*}
 \]</span> 即在以下三种条件同时满足的情况下，机器可能会学习。包括</p>
 <ul>
@@ -426,7 +426,7 @@ m_\mathcal{H}(N) \le B(N, k) = \sum_{i=0}^{k-1}{N \choose i} \le N^{k-1}
 <h2 id="感知机的vc维">感知机的VC维</h2>
 <p>对于二维的感知机，一方面，如果数据集<span class="math inline">\(\mathcal{D}\)</span>线性可分，意味着感知机PLA算法可以收敛，即当迭代了足够的步数<span class="math inline">\(T\)</span>以后，有<span class="math inline">\(E_{\rm in}(g) = 0\)</span>。另一方面，如果数据来自于某个概率分布，且标签由某个确定的目标函数所产生（即<span class="math inline">\({\bf x}_n \sim P, y_n = f({\bf x}_n)\)</span>，那么由于二维感知机的VC维是3，因此“坏事情”发生的概率很小，<span class="math inline">\(N\)</span>足够大时，有<span class="math inline">\(E_{\rm out}(g) \approx E_{\rm in}(g)\)</span>。两者综合起来，有<span class="math inline">\(E_{\rm out}(g) \approx 0\)</span>，即二维感知机算法是能达到学习效果的</p>
 <p>同样的推论能否应用在<span class="math inline">\(\bf x\)</span>有多于两个特征的情况？回顾之前的分析，一维感知机（正/负射线）的VC维是2，二维感知机的VC维是3，那么是否有<span class="math inline">\(d\)</span>维感知机的VC维是<span class="math inline">\(d+1\)</span>？接下来试着证明之（本节简记“<span class="math inline">\(d\)</span>维空间感知机的VC维”为<span class="math inline">\(d_{\rm VC}\)</span> ）：</p>
-<p>首先证明<span class="math inline">\(d_{\rm VC} \ge d + 1\)</span>。若要证明该命题，只需构造<span class="math inline">\(d + 1\)</span>个输入，使得该输入可以被感知机假设集<span class="math inline">\(\mathcal{H}\)</span>打散即可。我们做如下构造：这<span class="math inline">\(d+1\)</span>条数据中，第一条是<span class="math inline">\(d\)</span>维空间的零点，第二条到第d+1条中第<span class="math inline">\(i\  (i = \{1,2,\ldots, d\})\)</span>个分量为1其它分量为0。将<span class="math inline">\(x_0 = 1\)</span>补入矩阵，有 <span class="math display">\[
+<p>首先证明<span class="math inline">\(d_{\rm VC} \ge d + 1\)</span>。若要证明该命题，只需构造<span class="math inline">\(d + 1\)</span>个输入，使得该输入可以被感知机假设集<span class="math inline">\(\mathcal{H}\)</span>打散即可。我们做如下构造：这<span class="math inline">\(d+1\)</span>条数据中，第一条是<span class="math inline">\(d\)</span>维空间的零点，第二条到第d+1条中第<span class="math inline">\(i\ (i = \{1,2,\ldots, d\})\)</span>个分量为1其它分量为0。将<span class="math inline">\(x_0 = 1\)</span>补入矩阵，有 <span class="math display">\[
 {\rm X} = \left[\begin{matrix} -{\bf x}_1^\mathsf{T} - \\ -{\bf x}_2^\mathsf{T} - \\ -{\bf x}_3^\mathsf{T} - \\  \vdots \\ -{\bf x}_{d+1}^\mathsf{T} -   \end{matrix}\right] = \left[\begin{matrix}1 &amp; 0 &amp; 0 &amp; \cdots &amp; 0\\ 1 &amp; 1 &amp; 0 &amp; \cdots &amp; 0 \\ 1 &amp; 0 &amp; 1 &amp; \cdots &amp; 0 \\ \vdots &amp; \vdots &amp; &amp; \ddots &amp;\vdots \\ 1 &amp; 0 &amp; 0 &amp; \cdots &amp; 1\end{matrix}\right]
 \]</span> 注意<span class="math inline">\(\rm X\)</span>是可逆的，即其逆矩阵存在且唯一。而“打散”意味着，对于任意一种<span class="math inline">\(y_1, y_2 ,\cdots, y_{d+1}\)</span>的排列组合<span class="math inline">\(\bf y\)</span>，总有<span class="math inline">\({\rm sign}({\rm X}{\bf w}) = {\bf y}\)</span>。而由于若<span class="math inline">\({\rm X}{\bf w} = {\bf y}\)</span>，前面的式子也成立。又因为<span class="math inline">\(\rm X\)</span>可逆，因此只需要使权重<span class="math inline">\(\bf w\)</span>为<span class="math inline">\({\rm X}^{-1}{\bf y}\)</span>，就可以满足对任意的<span class="math inline">\(\bf y\)</span>有<span class="math inline">\({\rm sign}({\rm X}{\bf w}) = {\bf y}\)</span>，因此这个<span class="math inline">\({\rm X}\)</span>可以被<span class="math inline">\(\mathcal{H}\)</span>打散，<span class="math inline">\(d_{\rm VC} \ge d + 1\)</span></p>
 <p>接下来证明<span class="math inline">\(d_{\rm VC} \le d+1\)</span>，即任何<span class="math inline">\(d+2\)</span>个输入都不能被<span class="math inline">\(\mathcal{H}\)</span>打散。要证明这个任意性比较困难，但是可以先回到二维空间再仔细研究一番。</p>
@@ -639,7 +639,7 @@ E_{\rm{in}}(g) - \sqrt{\frac{8}{N}\ln\left(\frac{4(2N)^{d_{\rm VC}}}{\delta}\rig
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -650,7 +650,7 @@ E_{\rm{in}}(g) - \sqrt{\frac{8}{N}\ln\left(\frac{4(2N)^{d_{\rm VC}}}{\delta}\rig
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -661,7 +661,7 @@ E_{\rm{in}}(g) - \sqrt{\frac{8}{N}\ln\left(\frac{4(2N)^{d_{\rm VC}}}{\delta}\rig
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

@@ -396,7 +396,7 @@
 \Rightarrow &amp; \ln\frac{p(x|y=1)P(y=1)}{p(x|y=0)P(y=0)} &gt; 0
 \end{align*}
 \]</span></p>
-<p>假设对<span class="math inline">\(y=0\  {\rm or}\  1\)</span>其期望密度共享同一个协方差矩阵，即<span class="math inline">\(p(x|y) = N(x|\mu, \Sigma)\)</span>，那么代入前一讲的概率密度函数，有 <span class="math display">\[
+<p>假设对<span class="math inline">\(y=0\ {\rm or}\ 1\)</span>其期望密度共享同一个协方差矩阵，即<span class="math inline">\(p(x|y) = N(x|\mu, \Sigma)\)</span>，那么代入前一讲的概率密度函数，有 <span class="math display">\[
 \ln\frac{p(x|y=1)P(y=1)}{p(x|y=0)P(y=0)} = \ln \frac{\pi_1}{\pi_0} - \frac{1}{2} (\mu_1 + \mu_0)^\mathsf{T}\Sigma^{-1}(\mu_1 - \mu_0) + x^\mathsf{T}\Sigma^{-1}(\mu_1 - \mu_0)
 \]</span> 其中不带<span class="math inline">\(x\)</span>的是一个常数项，可以写作<span class="math inline">\(w_0\)</span>，<span class="math inline">\(x^\mathsf{T}\)</span>的系数可以写作<span class="math inline">\(w\)</span>。得到的这个线性式子也称作线性判别分析（LDA）</p>
 <p>因此该贝叶斯分类器的决策规律可以写为一个线性函数，即 <span class="math display">\[
@@ -408,8 +408,8 @@ f(x) = {\rm sign}(x^\mathsf{T}w + w_0)
 <p>其中<span class="math inline">\(w \in \mathbb{R}^d, w_0 \in \mathbb{R}\)</span>。这个分类器要求样本<span class="math inline">\(x\)</span>是（大致）线性可分的。<span class="math inline">\(\mathbb{R}^d\)</span>的两个子集<span class="math inline">\(A,B\)</span>被称为是<strong>线性可分的</strong>，如果满足以下条件 <span class="math display">\[
 x^\mathsf{T}w + w_0
 \begin{cases}
-&gt;0 &amp; {\rm if\  }x \in A \\
-&lt;0 &amp; {\rm if\  }x \in B
+&gt;0 &amp; {\rm if\ }x \in A \\
+&lt;0 &amp; {\rm if\ }x \in B
 \end{cases}
 \]</span> 这里<span class="math inline">\((w,w_0)\)</span>定义了一个<strong>仿射超平面</strong></p>
 <p>为了理解仿射超平面的概念，先看一下超平面的概念。<span class="math inline">\(\mathbb{R}^d\)</span>中的超平面是其<span class="math inline">\(d-1\)</span>维的线性子空间。作为线性子空间，超平面肯定会包含原点。任意超平面<span class="math inline">\(H\)</span>可以用向量<span class="math inline">\(w\)</span>来表示，即 <span class="math display">\[
@@ -456,8 +456,8 @@ y = f(x) = {\rm sign}(x^\mathsf{T}w)
 \begin{align*}
 y_i \cdot x_i^\mathsf{T}w 
 \begin{cases}
-&gt;0 &amp; \  {\rm if\  }y_i = {\rm sign}(x_i^\mathsf{T}w) \\
-&lt;0 &amp; \  {\rm if\  }y_i \not= {\rm sign}(x_i^\mathsf{T}w)
+&gt;0 &amp; \ {\rm if\ }y_i = {\rm sign}(x_i^\mathsf{T}w) \\
+&lt;0 &amp; \ {\rm if\ }y_i \not= {\rm sign}(x_i^\mathsf{T}w)
 \end{cases}
 \end{align*}
 \]</span> 通过最小化<span class="math inline">\(\mathcal{L}\)</span>，我们试着总去预测出正确的标签</p>
@@ -652,7 +652,7 @@ w^{(t+1)} = w^{(t)} + \eta y_ix_i
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -663,7 +663,7 @@ w^{(t+1)} = w^{(t)} + \eta y_ix_i
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -674,7 +674,7 @@ w^{(t+1)} = w^{(t)} + \eta y_ix_i
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

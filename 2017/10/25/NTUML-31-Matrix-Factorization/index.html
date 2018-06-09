@@ -111,20 +111,20 @@
 
 
 
-<meta name="description" content="线性网络假设函数 在本系列课程的第一讲里，曾讲到过一种称为“推荐系统”的问题，也就是根据用户对电影的评分历史，估计ta对一部新电影可能的评分。也就是说，对于第\(m\)部电影，其数据集\(\mathcal{D}_m\)可以表示为 \[ \{(\tilde{\bf x}_n = (n), y_n = r_{nm}): \  {\rm user\  }n{\rm\    rated\  movie\">
+<meta name="description" content="线性网络假设函数 在本系列课程的第一讲里，曾讲到过一种称为“推荐系统”的问题，也就是根据用户对电影的评分历史，估计ta对一部新电影可能的评分。也就是说，对于第\(m\)部电影，其数据集\(\mathcal{D}_m\)可以表示为 \[ \{(\tilde{\bf x}_n = (n), y_n = r_{nm}): \ {\rm user\ }n{\rm\  rated\ movie\ }m\}">
 <meta name="keywords" content="NTUML,矩阵分解">
 <meta property="og:type" content="article">
 <meta property="og:title" content="NTUML 31. 矩阵分解">
 <meta property="og:url" content="txshi-mt.com/2017/10/25/NTUML-31-Matrix-Factorization/index.html">
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
-<meta property="og:description" content="线性网络假设函数 在本系列课程的第一讲里，曾讲到过一种称为“推荐系统”的问题，也就是根据用户对电影的评分历史，估计ta对一部新电影可能的评分。也就是说，对于第\(m\)部电影，其数据集\(\mathcal{D}_m\)可以表示为 \[ \{(\tilde{\bf x}_n = (n), y_n = r_{nm}): \  {\rm user\  }n{\rm\    rated\  movie\">
+<meta property="og:description" content="线性网络假设函数 在本系列课程的第一讲里，曾讲到过一种称为“推荐系统”的问题，也就是根据用户对电影的评分历史，估计ta对一部新电影可能的评分。也就是说，对于第\(m\)部电影，其数据集\(\mathcal{D}_m\)可以表示为 \[ \{(\tilde{\bf x}_n = (n), y_n = r_{nm}): \ {\rm user\ }n{\rm\  rated\ movie\ }m\}">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML31_linear_network.png">
 <meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML31_mat_fact.png">
 <meta property="og:updated_time" content="2017-12-19T12:35:39.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NTUML 31. 矩阵分解">
-<meta name="twitter:description" content="线性网络假设函数 在本系列课程的第一讲里，曾讲到过一种称为“推荐系统”的问题，也就是根据用户对电影的评分历史，估计ta对一部新电影可能的评分。也就是说，对于第\(m\)部电影，其数据集\(\mathcal{D}_m\)可以表示为 \[ \{(\tilde{\bf x}_n = (n), y_n = r_{nm}): \  {\rm user\  }n{\rm\    rated\  movie\">
+<meta name="twitter:description" content="线性网络假设函数 在本系列课程的第一讲里，曾讲到过一种称为“推荐系统”的问题，也就是根据用户对电影的评分历史，估计ta对一部新电影可能的评分。也就是说，对于第\(m\)部电影，其数据集\(\mathcal{D}_m\)可以表示为 \[ \{(\tilde{\bf x}_n = (n), y_n = r_{nm}): \ {\rm user\ }n{\rm\  rated\ movie\ }m\}">
 <meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML31_linear_network.png">
 
 
@@ -394,7 +394,7 @@
       
         <h2 id="线性网络假设函数">线性网络假设函数</h2>
 <p>在本系列课程的第一讲里，曾讲到过一种称为“推荐系统”的问题，也就是根据用户对电影的评分历史，估计ta对一部新电影可能的评分。也就是说，对于第<span class="math inline">\(m\)</span>部电影，其数据集<span class="math inline">\(\mathcal{D}_m\)</span>可以表示为 <span class="math display">\[
-\{(\tilde{\bf x}_n = (n), y_n = r_{nm}): \  {\rm user\  }n{\rm\    rated\  movie\  }m\}
+\{(\tilde{\bf x}_n = (n), y_n = r_{nm}): \ {\rm user\ }n{\rm\  rated\ movie\ }m\}
 \]</span> 这种数据与前面介绍的数据最大的不同是，<span class="math inline">\(\tilde{\bf x}_n\)</span>是抽象特征，只是一个用户的编号ID。我们不知道ta背后是男是女，是长是幼，对电影是什么口味，只知道ta打过了哪些分数。那么如何从这些数据里学到每个用户的喜好呢？</p>
 <p>首先，要考虑如何表示这种特征。需要注意的是，用户ID只是一个离散的数值，没有什么实际意义。此外，对用户ID的比较、四则运算等也是没有意义的（一般来说，用户ID越小，说明用户注册时间越早，所以可能会透露出一些额外的信息。不过这里认为评分和注册时间没有什么关系）。类似的特征有很多，例如人的血型，编程语言种类等等。这种没有数值关联性的特征通常称为<strong>类别特征</strong>。目前为止，介绍过的大部分模型基本都是接受数值特征，例外情况只有决策树及其延伸（例如随机森林）。因此，要把这些类别特征利用到更广泛的模型中，就需要将它们转成数值特征，这也是特征变换的一种。不过这种特征变换通常是预先定义好的，这种预先定义的动作就称为<strong>编码</strong>。一种比较简单的编码方式称为二值向量编码方式（binary vector encoding，更常见的称呼方法是独热编码 one hot encoding）：假设对于该变量有<span class="math inline">\(t\)</span>种取值，那么就建立一个长度为<span class="math inline">\(t\)</span>的数组，每一位都分给一种可能的取值情况。当该特征属于某种取值时，其对应的那一位置为1，其余位置为0。例如，人的血型有A、B、O和AB四种取值情况，那么这四个值可以分别表示为 <span class="math display">\[
 \begin{align*}
@@ -404,7 +404,7 @@
 {\tt AB} &amp;=[0, 0, 0, 1]^\mathsf{T} \\
 \end{align*}
 \]</span> 因此，对第m个电影，编码后的数据<span class="math inline">\(\mathcal{D}_m\)</span>可以表示为 <span class="math display">\[
-\{({\bf x}_n = {\rm OneHotEncoded}(n), y_n = r_{nm}): \  {\rm user\  }n{\rm\    rated\  movie\  }m\}
+\{({\bf x}_n = {\rm OneHotEncoded}(n), y_n = r_{nm}): \ {\rm user\ }n{\rm\  rated\ movie\ }m\}
 \]</span> 进一步地，可以把用户对所有电影的评分收集起来，得到一个联合数据<span class="math inline">\(\mathcal{D}\)</span> <span class="math display">\[
 \{({\bf x}_n = {\rm OneHotEncoded}(n), {\bf y}_n = [\begin{array}{cccccc}r_{n1} &amp; ? &amp;? &amp;r_{n4} &amp; r_{n5} &amp; \ldots &amp; r_{nM}\end{array}]^\mathsf{T})\}
 \]</span> 由于用户基本不可能对所有电影都作出过评分，因此可以将用户没有评过分的项用“？”标记起来</p>
@@ -423,7 +423,7 @@ h({\bf x}) = {\rm W^\mathsf{T}V}{\bf x}
 <p>这样，用于推荐系统的线性网络，就是要最优化<span class="math inline">\(\rm V\)</span>和<span class="math inline">\(\rm W\)</span></p>
 <h2 id="基本矩阵分解">基本矩阵分解</h2>
 <p>前面给出的假设函数中，<span class="math inline">\({\rm V}{\bf x}\)</span>这一项可以看作是对<span class="math inline">\({\bf x}\)</span>做的特征变换<span class="math inline">\(\boldsymbol{\Phi}({\bf x})\)</span>。这样，如果单独看第<span class="math inline">\(m\)</span>个电影，其对应的实际上就是一个线性模型<span class="math inline">\(h_m({\bf x}) = {\bf w}_{m}^\mathsf{T}\boldsymbol{\Phi}({\bf x})\)</span>，训练的目标就是希望这个模型对每个<span class="math inline">\(\mathcal{D}_m\)</span>都能达到<span class="math inline">\({\bf w}_m^{\mathsf T}{\bf v}_n \approx y_n = r_{nm}\)</span>的效果。因此，可以使用平方误差来做损失函数，即 <span class="math display">\[
-E_{\rm in}(\{ {\bf w}_m\}, \{ {\bf v}_n\}) = \frac{1}{\sum_{m=1}^M |\mathcal{D}_m|} \sum_{ {\rm user\  }n{\rm\  rated\  movie\  }m}(r_{nm} - {\bf w}_m^{\mathsf T}{\bf v}_n)^2
+E_{\rm in}(\{ {\bf w}_m\}, \{ {\bf v}_n\}) = \frac{1}{\sum_{m=1}^M |\mathcal{D}_m|} \sum_{ {\rm user\ }n{\rm\ rated\ movie\ }m}(r_{nm} - {\bf w}_m^{\mathsf T}{\bf v}_n)^2
 \]</span> 由于内积的对称性，有<span class="math inline">\(r_{nm} \approx {\bf w}_m^{\mathsf T}{\bf v}_n = {\bf v}_n^\mathsf{T}{\bf w}_m\)</span>。将这个式子矩阵化，有<span class="math inline">\(\rm R\approx V^\mathsf{T}W\)</span>，其中<span class="math inline">\(\rm R\)</span>是评分矩阵，<span class="math inline">\(\rm V\)</span>是所有用户特征组成的矩阵，<span class="math inline">\(\rm W\)</span>是所有电影特征（权重）组成的矩阵。如果能通过已知的一部分<span class="math inline">\(\rm R\)</span>（不需要知道所有的元素）将其分解为<span class="math inline">\(\rm V\)</span>和<span class="math inline">\(\rm W\)</span>的乘积，那么就能得到使用者特征，和每部电影应该怎么做线性组合。也就是说，在这个模型里做的模型是由已知评分反推那些特征影响用户评分，以及每部电影有哪些元素。例如，某个维度可能对应用户是否喜欢喜剧片，以及电影是否是喜剧片，如下图所示</p>
 <figure>
 <img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML31_mat_fact.png" alt="矩阵分解的物理意义"><figcaption>矩阵分解的物理意义</figcaption>
@@ -431,7 +431,7 @@ E_{\rm in}(\{ {\bf w}_m\}, \{ {\bf v}_n\}) = \frac{1}{\sum_{m=1}^M |\mathcal{D}_
 <p>矩阵分解经常用来从抽象特征中提取具体特征</p>
 <p>矩阵分解的最优化问题可以进一步推演 <span class="math display">\[
 \begin{align*}
-\min_{\rm W, V}E_{\rm in}(\{ {\bf w}_m\}, \{ {\bf v}_n\}) &amp;\propto \sum_{ {\rm user\  }n{\rm\  rated\  movie\  }m}(r_{nm} - {\bf w}_m^{\mathsf T}{\bf v}_n)^2 \\
+\min_{\rm W, V}E_{\rm in}(\{ {\bf w}_m\}, \{ {\bf v}_n\}) &amp;\propto \sum_{ {\rm user\ }n{\rm\ rated\ movie\ }m}(r_{nm} - {\bf w}_m^{\mathsf T}{\bf v}_n)^2 \\
 &amp;= \sum_{m=1}^M \left(\sum_{( {\bf x}_n, r_{nm}) \in \mathcal{D}_m} (r_{nm} - {\bf w}_m^{\mathsf T}{\bf v}_n)^2 \right)
 \end{align*}
 \]</span> 这里可以看到又出现了两组变量，难以同时优化，但是可以交替优化：先固定<span class="math inline">\({\bf v}_n\)</span>，最小化<span class="math inline">\({\bf w}_m\)</span>，此时就是求解一组线性回归模型，不过不带常数项；然后，固定<span class="math inline">\({\bf w}_m\)</span>，最小化<span class="math inline">\({\bf v}_n\)</span>，也是求解一组线性回归模型，只是此时是求解关于用户的线性回归模型，而且也不带常数项。这种算法称为交替最小二乘法。其完整表述如下</p>
@@ -449,7 +449,7 @@ E_{\rm in}(\{ {\bf w}_m\}, \{ {\bf v}_n\}) = \frac{1}{\sum_{m=1}^M |\mathcal{D}_
 <h2 id="随机梯度下降">随机梯度下降</h2>
 <p>上述问题也可以用随机梯度下降（SGD）来求解：从数据集中选取一条数据，在这条数据上算梯度，做梯度下降。这种算法的效率非常高，而且易于实现，易于扩展到其它误差函数上</p>
 <p>首先，写出对每一条数据的误差函数 <span class="math display">\[
-{\rm err}({\rm user\  }n, {\rm movie\  }m, {\rm rating\  }r_{nm}) = (r_{nm} - {\bf w}_m^{\mathsf T}{\bf v}_n)^2 
+{\rm err}({\rm user\ }n, {\rm movie\ }m, {\rm rating\ }r_{nm}) = (r_{nm} - {\bf w}_m^{\mathsf T}{\bf v}_n)^2 
 \]</span> 其梯度非常好计算 <span class="math display">\[
 \begin{align*}
 \nabla_{ {\bf v}_n}{\rm err} &amp;= -2(r_{nm} - {\bf w}_m^{\mathsf T}{\bf v}_n){\bf w}_m \\
@@ -649,7 +649,7 @@ E_{\rm in}(\{ {\bf w}_m\}, \{ {\bf v}_n\}) = \frac{1}{\sum_{m=1}^M |\mathcal{D}_
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -660,7 +660,7 @@ E_{\rm in}(\{ {\bf w}_m\}, \{ {\bf v}_n\}) = \frac{1}{\sum_{m=1}^M |\mathcal{D}_
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -671,7 +671,7 @@ E_{\rm in}(\{ {\bf w}_m\}, \{ {\bf v}_n\}) = \frac{1}{\sum_{m=1}^M |\mathcal{D}_
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

@@ -429,7 +429,7 @@ G({\bf x}) = {\rm sign}(-1 + g_1({\bf x}) + g_2({\bf x}))
 <p>第<span class="math inline">\(\ell\)</span>层中，第<span class="math inline">\(j\)</span>个节点送进其变换函数之前的值，是上一层所有节点的加权得分总和，记为<span class="math inline">\(s_j^{(\ell)}\)</span>。由上一段的定义，有 <span class="math display">\[
 s_j^{(\ell)} = \sum_{i=0}^{d^{(\ell - 1)}} w_{ij}^{(\ell)}x_i^{(\ell-1)}
 \]</span> 其中<span class="math inline">\(x_j^{(\ell)}\)</span>是得分经过变换后得到的值（如果<span class="math inline">\(\ell = 0\)</span>，则对应原始数据中的一个特征），有 <span class="math display">\[
-x_j^{(\ell)} = \begin{cases} \tanh\left(s_j^{(\ell)}\right) &amp; {\rm if\  }\ell &lt; L \\ s_j^{(\ell)} &amp; {\rm if\  }\ell = L\end{cases}
+x_j^{(\ell)} = \begin{cases} \tanh\left(s_j^{(\ell)}\right) &amp; {\rm if\ }\ell &lt; L \\ s_j^{(\ell)} &amp; {\rm if\ }\ell = L\end{cases}
 \]</span> 称中间使用非线性变换的层为<strong>隐含层</strong>（更确切地说，是输出结果被其它层当做输入的层），则神经网络假设集合做的事情就是将原始<span class="math inline">\(\bf x\)</span>作为输入层<span class="math inline">\({\bf x}^{(0)}\)</span>，经过中间隐含层的一系列计算得到<span class="math inline">\({\bf x}^{(\ell)}\)</span>，最后由输出层做预测得到<span class="math inline">\(x_1^{(L)}\)</span>的过程</p>
 <p>从物理意义上看，中间各层实际就是对数据做各种变换<span class="math inline">\(\boldsymbol{\phi}^{(\ell)}({\bf x})\)</span>， <span class="math display">\[
 \boldsymbol{\phi}^{(\ell)}({\bf x}) = \tanh\left(\left[\begin{array}{c} \sum_{i=0}^{d^{(\ell -1)}} w_{i1}^{(\ell)}x_i^{(\ell - 1)} \\ \vdots\end{array}\right]\right)
@@ -442,12 +442,12 @@ x_j^{(\ell)} = \begin{cases} \tanh\left(s_j^{(\ell)}\right) &amp; {\rm if\  }\el
 e_n &amp;= (y_n - {\rm NNet}({\bf x}_n))^2 = \left(y_n - s_1^{(L)}\right)^2 \\
 &amp;= \left(y_n - \sum_{i=0}^{d^{(L-1)}}w_{i1}^{(L)}x_i^{(L-1)}\right)^2
 \end{align*}
-\]</span> 因此，对于神经网络的最外层，要计算<span class="math inline">\(\frac{\partial e_n}{\partial w_{i1}^{(L)}}\  (0 \le i \le d^{(L-1)})\)</span>，可以借助中间变量<span class="math inline">\(s_1^{(L)}\)</span>，使用链式法则 <span class="math display">\[
+\]</span> 因此，对于神经网络的最外层，要计算<span class="math inline">\(\frac{\partial e_n}{\partial w_{i1}^{(L)}}\ (0 \le i \le d^{(L-1)})\)</span>，可以借助中间变量<span class="math inline">\(s_1^{(L)}\)</span>，使用链式法则 <span class="math display">\[
 \begin{align*}
 \frac{\partial e_n}{\partial w_{i1}^{(L)}} 
 = \frac{\partial e_n}{\partial s_1^{(L)}} \cdot \frac{\partial s_1^{(L)}}{\partial w_{i1}^{(L)}} = -2\left(y_n-s_1^{(L)}\right) \cdot \left(x_i^{(L-1)}\right)
 \end{align*}
-\]</span> 推而广之，对于前面的隐含层<span class="math inline">\(\ell, 1 \le \ell &lt; L\)</span>，<span class="math inline">\(\frac{\partial e_n}{\partial w_{ij}^{(\ell)}}\  (0 \le i \le d^{(\ell-1)}; 1 \le j \le d^{(\ell)})\)</span>可以通过类似的方法计算： <span class="math display">\[
+\]</span> 推而广之，对于前面的隐含层<span class="math inline">\(\ell, 1 \le \ell &lt; L\)</span>，<span class="math inline">\(\frac{\partial e_n}{\partial w_{ij}^{(\ell)}}\ (0 \le i \le d^{(\ell-1)}; 1 \le j \le d^{(\ell)})\)</span>可以通过类似的方法计算： <span class="math display">\[
 \frac{\partial e_n}{\partial w_{ij}^{(\ell)}} = \frac{\partial e_n}{\partial s_j^{(\ell)}} \cdot \frac{\partial s_j^{(\ell)}}{\partial w_{ij}^{(\ell)}}
 \]</span> 其中乘数可以很容易地得到为<span class="math inline">\(x_i^{(\ell - 1)}\)</span>，但是被乘数的计算并不直观。暂且将被乘数记为<span class="math inline">\(\delta_{j}^{(\ell)}\)</span>，上面的式子可以写为 <span class="math display">\[
 \frac{\partial e_n}{\partial w_{ij}^{(\ell)}} = \frac{\partial e_n}{\partial s_j^{(\ell)}} \cdot \frac{\partial s_j^{(\ell)}}{\partial w_{ij}^{(\ell)}} = \delta_{j}^{(\ell)} \cdot\left(x_i^{(\ell - 1)}\right)
@@ -653,7 +653,7 @@ E_{\rm in}({\bf w}) = \frac{1}{N}\sum_{n=1}^N {\rm err} \left(\left(\cdots \tanh
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -664,7 +664,7 @@ E_{\rm in}({\bf w}) = \frac{1}{N}\sum_{n=1}^N {\rm err} \left(\left(\cdots \tanh
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -675,7 +675,7 @@ E_{\rm in}({\bf w}) = \frac{1}{N}\sum_{n=1}^N {\rm err} \left(\left(\cdots \tanh
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

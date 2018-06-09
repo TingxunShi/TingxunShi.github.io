@@ -406,7 +406,7 @@
 <p>本章的主角是感知机这种模型，它在20世纪60年代初期曾经红极一时，但是随着Minsky和Papert证明了它们能力上的限制以后就迅速衰落了下去</p>
 <p>对于统计的模式识别问题，有一套比较标准的解决方案：首先，把原始输入向量转化成特征向量。这个阶段不涉及任何“学习”的内容，由开发人员通过直觉来手写代码完成。得到的特征可能有用，也可能没用，如果没用的话，再设法去产生新的特征来验证，这样最后肯定能够得到一组能用的特征向量。真正的学习阶段出现在确定各个特征的权重时。由于最后得到的是一个标量，因此每个特征的权重代表了该特征在多大程度上支持或者反对“输入数据属于要识别的模式”这个命题。确定权重以后，将所有特征加权求和，如果最后得到的值超过某个权重，就认为输入是目标类别的正例，反之则认为是负例。感知机是统计模式识别系统的一个例子，有多种变种，但是被Rosenblatt称为<span class="math inline">\(\alpha\)</span>-感知机的模型大体遵循了这个过程：使用人工从输入获得的激活向量，学习出一个权重，将权重与激活向量求内积得到一个值，根据这个值与阈值的比较结果判定样本的类别</p>
 <p>具体说来，感知机使用的是一个二元阈值神经元模型，这个模型在前一章曾经提到过。其表达形式如下： <span class="math display">\[
-z = b + \sum_i x_iw_i,\  y= \begin{cases}1 &amp; {\rm if}\  z \ge 0 \\ 0 &amp; {\rm otherwise}\end{cases}
+z = b + \sum_i x_iw_i,\ y= \begin{cases}1 &amp; {\rm if}\ z \ge 0 \\ 0 &amp; {\rm otherwise}\end{cases}
 \]</span> 由于偏置项可以看作是阈值的负数，为了不去为偏置项设置一个单独的学习策略，可以将输入做一个修改：在输入向量中增加一个维度，这个维度上的值永远是1，那么学到的权重向量在该维度上就是偏置值</p>
 <p>对输入进行处理（加入常数项）后，就可以使用如下方法训练感知机：</p>
 <blockquote>
@@ -443,8 +443,8 @@ z = b + \sum_i x_iw_i,\  y= \begin{cases}1 &amp; {\rm if}\  z \ge 0 \\ 0 &amp; {
 <p>感知机的局限性主要来自于应用者所使用的特征。如果用的是对的特征，那几乎什么都能做；但是如果用的是错的特征，就会受到很大的限制</p>
 <p>假设现在的数据集输入全都是0-1数组，那么最简单的做法是为数组的每种情况都创建一个特征，这样，对<span class="math inline">\(n\)</span>位的数组，创建<span class="math inline">\(2^n\)</span>个特征可以涵盖所有情形，理论上不会受到任何限制。但是实际上，这种方法很难泛化，因为看到的训练集很可能只是可能出现的所有情况的一个子集，如果测试时遇到了新不在这个子集里的特征组合，那么查表法就无法工作（回忆林课的例子，假设现在有3个特征位，一共有8种组合。即便我们知道了其中5种组合分别对应于正例还是负例，也无法确定剩下3种组合应该如何判定）</p>
 <p>如果要使用感知机算法，对这类数据学习权重来判断正负例，事情也会不太简单。事实上，对某些非常简单的例子，感知机算法都无能为力。考虑如下问题：假设输入数据维度为2，每个维度的取值范围是0或者1，假设输入数据为 <span class="math display">\[
-(1,1) \rightarrow 1;\  \  (0, 0) \rightarrow 1 \\
-(1,0) \rightarrow 0;\  \  (0, 1) \rightarrow 0
+(1,1) \rightarrow 1;\ \ (0, 0) \rightarrow 1 \\
+(1,0) \rightarrow 0;\ \ (0, 1) \rightarrow 0
 \]</span> 即，如果两元素相同，则为正例；两元素相反，则为负例。对于这样的例子，感知机不能学习到权重。从代数的角度看，求解这个例子相当于求解如下四个不等式 <span class="math display">\[
 \begin{align*}
 &amp;w_1 + w_2 \ge \theta,&amp;&amp;0 \ge \theta\\
@@ -636,7 +636,7 @@ z = b + \sum_i x_iw_i,\  y= \begin{cases}1 &amp; {\rm if}\  z \ge 0 \\ 0 &amp; {
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -647,7 +647,7 @@ z = b + \sum_i x_iw_i,\  y= \begin{cases}1 &amp; {\rm if}\  z \ge 0 \\ 0 &amp; {
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -658,7 +658,7 @@ z = b + \sum_i x_iw_i,\  y= \begin{cases}1 &amp; {\rm if}\  z \ge 0 \\ 0 &amp; {
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

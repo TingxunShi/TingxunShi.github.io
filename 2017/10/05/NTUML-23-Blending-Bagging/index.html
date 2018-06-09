@@ -402,9 +402,9 @@
 </ul>
 <p>以上做法都可以对应于机器学习中的某种算法。总的来说，将这些人意见融合起来的过程，就可以类比为模型聚合的算法过程。可以使用更加形式化的方法来描述上述做法。假设有<span class="math inline">\(T\)</span>个朋友对应于<span class="math inline">\(T\)</span>个假设函数<span class="math inline">\(g_1, \ldots, g_T\)</span>，每个朋友<span class="math inline">\(t\)</span>做出的预测为<span class="math inline">\(g_t({\bf x})\)</span>，则（假设每个人只预测涨跌，涨记为<span class="math inline">\(+1\)</span>，跌记为<span class="math inline">\(-1\)</span>）</p>
 <ul>
-<li>验证法的形式化表示为<span class="math inline">\(G({\bf x}) = g_{t_\ast}({\bf x}){\rm\  with\  }t_\ast = \mathop{\rm arg\min}_{t \in \{1,2,\ldots, T\}}E_{\rm val}(g_t^-)\)</span></li>
+<li>验证法的形式化表示为<span class="math inline">\(G({\bf x}) = g_{t_\ast}({\bf x}){\rm\ with\ }t_\ast = \mathop{\rm arg\min}_{t \in \{1,2,\ldots, T\}}E_{\rm val}(g_t^-)\)</span></li>
 <li>平等投票法的形式化表示为<span class="math inline">\(G({\bf x}) = {\rm sign}\left(\sum_{t=1}^T 1\cdot g_t({\bf x})\right)\)</span>，这里每个<span class="math inline">\(g_t({\bf x})\)</span>前面乘的1就是每个人的权重</li>
-<li>非平等投票法的形式化表示为<span class="math inline">\(G({\bf x}) = {\rm sign}\left(\sum_{t=1}^T \alpha_t\cdot g_t({\bf x})\right), \alpha_t \ge 0\)</span>。注意这种方式包含了前面提到的验证法和平等投票法。当<span class="math inline">\(\alpha_t = 1\)</span>时，该方法退化为平等投票法；当<span class="math inline">\(\alpha_t = [\![E_{\rm val}(g_t^-)\  {\rm smallest}]\!]\)</span>时，该方法退化为验证法</li>
+<li>非平等投票法的形式化表示为<span class="math inline">\(G({\bf x}) = {\rm sign}\left(\sum_{t=1}^T \alpha_t\cdot g_t({\bf x})\right), \alpha_t \ge 0\)</span>。注意这种方式包含了前面提到的验证法和平等投票法。当<span class="math inline">\(\alpha_t = 1\)</span>时，该方法退化为平等投票法；当<span class="math inline">\(\alpha_t = [\![E_{\rm val}(g_t^-)\ {\rm smallest}]\!]\)</span>时，该方法退化为验证法</li>
 <li>根据特长选择法的形式化表示为<span class="math inline">\(G({\bf x}) = {\rm sign}\left(\sum_{t=1}^T q_t({\bf x})\cdot g_t({\bf x})\right), q_t({\bf x}) \ge 0\)</span>。这里<span class="math inline">\(q_t({\bf x})\)</span>实际上是根据输入对<span class="math inline">\(t\)</span>做判断给ta几票的函数。当<span class="math inline">\(q_t({\bf x}) = \alpha_t\)</span>时，该方法退化为非平等投票法</li>
 </ul>
 <p>可见，聚合模型是一个很大的模型族</p>
@@ -651,7 +651,7 @@ G({\bf x}) = {\rm sign}\left(\sum_{t=1}^T \alpha_t\cdot g_t({\bf x})\right), \al
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -662,7 +662,7 @@ G({\bf x}) = {\rm sign}\left(\sum_{t=1}^T \alpha_t\cdot g_t({\bf x})\right), \al
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -673,7 +673,7 @@ G({\bf x}) = {\rm sign}\left(\sum_{t=1}^T \alpha_t\cdot g_t({\bf x})\right), \al
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

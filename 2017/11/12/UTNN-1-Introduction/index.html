@@ -439,14 +439,14 @@ y = b+\sum_ix_iw_i
 \]</span> 其中<span class="math inline">\(w_i\)</span>是第<span class="math inline">\(i\)</span>个输入<span class="math inline">\(x_i\)</span>的权重</p>
 <p>在此基础上，McCullock-Pitts在1943年提出了<strong>二元阈值神经元</strong>，其第一步还是要算出输入的加权和，然后，要将加权和与某个阈值作比较，如果超出该阈值，则发射一个冲动信号。原作者认为，冲动信号就像是某个谓词的真值，因此这里每个神经元就是将输入的真值做组合，输出自己所代表谓词的真值。二元阈值神经元有两种表示形式。一种是纯加权和的形式，并设定阈值为<span class="math inline">\(\theta\)</span>。即 <span class="math display">\[
 \begin{align*}
-z &amp;= \sum_ix_iw_i,\  \    y = \begin{cases}1 &amp; {\rm if\  }z \ge \theta \\ 0 &amp; {\rm otherwise}\end{cases}
+z &amp;= \sum_ix_iw_i,\ \  y = \begin{cases}1 &amp; {\rm if\ }z \ge \theta \\ 0 &amp; {\rm otherwise}\end{cases}
 \end{align*}
 \]</span> 如果将阈值看作是负的偏置，即<span class="math inline">\(\theta = -b\)</span>，就可以写出与线性神经元类似的偏置+权重的形式，即 <span class="math display">\[
-z = b + \sum_i x_iw_i,\  \  y = \begin{cases}1 &amp; {\rm if\  }z \ge 0 \\ 0 &amp; {\rm otherwise}\end{cases}
+z = b + \sum_i x_iw_i,\ \ y = \begin{cases}1 &amp; {\rm if\ }z \ge 0 \\ 0 &amp; {\rm otherwise}\end{cases}
 \]</span> Hinton将上述两种神经元进行了组合，得到了<strong>ReLU神经元</strong>（有时也称为线性阈值神经元）。这种方法仍然会计算输入的线性加权和，但是输出是所有输入的一个非线性函数。具体形式为 <span class="math display">\[
-z = b + \sum_i x_iw_i,\  \  y = \begin{cases}z &amp; {\rm if\  }z \ge 0 \\ 0 &amp; {\rm otherwise}\end{cases}
+z = b + \sum_i x_iw_i,\ \ y = \begin{cases}z &amp; {\rm if\ }z \ge 0 \\ 0 &amp; {\rm otherwise}\end{cases}
 \]</span> 本课中最常用的神经元是<strong>sigmoid神经元</strong>，<del>该神经元也是实践中最常用的神经元</del>，它给出的是输出是实数的，且图像平滑有界。这种神经元通常使用logistic函数，即 <span class="math display">\[
-z = b + \sum_i x_iw_i, \  \  y = \frac{1}{1+e^{-z}}
+z = b + \sum_i x_iw_i, \ \ y = \frac{1}{1+e^{-z}}
 \]</span> <del>Logistic函数的好处是其导数的形式很漂亮，使学习过程变得容易</del>。具体道理在第三讲会讲解</p>
 <p>最后一种神经元是随机二元神经元。它使用的表达式与sigmoid神经元相同，不过把logistic函数的输出看作是短时间内产生冲动的概率。即，它的输出还是0或者1，但是是以概率<span class="math inline">\(P = 1/(1+e^{-z})\)</span>输出1。类似的技巧可以用在ReLU上，此时神经元产生冲动的概率服从泊松分布</p>
 <p><strong>笔者注</strong></p>
@@ -458,7 +458,7 @@ z = b + \sum_i x_iw_i, \  \  y = \frac{1}{1+e^{-z}}
 \]</span> 可知当<span class="math inline">\(x=0\)</span>时，sigmoid函数的梯度达到最大值，仅为0.25。而当<span class="math inline">\(x\)</span>很大或者很小时，该函数会接近1或者-1，此时称发生了<strong>饱和</strong>（saturation）现象（事实上，有<span class="math inline">\(\sigma(5) \approx 0.9933\)</span>）。在这种情况下，函数的梯度值接近0。当使用深度网络或者RNN时，由反向传播的理论，会出现多个梯度的连乘。而多个接近于0的数连成会快速逼近0，造成<strong>梯度消失</strong>，使得几乎就有没有信号通过神经元传到权重再到数据了。而且，如果初始化的矩阵随机得不好，权重过大，那么饱和会快速出现，模型基本学不到什么东西</p>
 <p>对于ReLU而言，当<span class="math inline">\(x&gt;0\)</span>时，其激活函数<span class="math inline">\(x\)</span>的导数为1，连乘不会逼近0，避免了梯度消失。此外，对于输入值为负的神经元，其梯度为0，不会参与训练，保证了神经网络的稀疏性，可以避免过拟合。最后，ReLU梯度的计算更加简单，只需要写一个if-else语句，而sigmoid函数的导数涉及到了浮点数计算，实际上还是麻烦的</p>
 <p>在近年的实际应用中，另一种<strong>tanh神经元</strong>也受到了一定程度的重视。形式为 <span class="math display">\[
-z = b + \sum_i x_iw_i, \  \  y = \tanh(z)
+z = b + \sum_i x_iw_i, \ \ y = \tanh(z)
 \]</span> 事实上，<span class="math inline">\(\tanh\)</span>函数可以由sigmoid函数经过一个简单变换得到。其与原始sigmoid函数相比最大的好处是其是<em>零中心</em>的（函数图像在0点中心对称），不过并没有解决在输入太大或太小时造成的梯度消失问题</p>
 <h2 id="关于学习的一个简单样例">关于学习的一个简单样例</h2>
 <p>本节将给出一个关于机器学习的例子，尽管使用的网络结构比较简单，但是它已经可以做一些手写数字识别的工作。这个网络只有两层：</p>
@@ -677,7 +677,7 @@ z = b + \sum_i x_iw_i, \  \  y = \tanh(z)
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -688,7 +688,7 @@ z = b + \sum_i x_iw_i, \  \  y = \tanh(z)
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -699,7 +699,7 @@ z = b + \sum_i x_iw_i, \  \  y = \tanh(z)
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

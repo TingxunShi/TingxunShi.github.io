@@ -419,8 +419,8 @@ P[|E_{\rm in}(g) - E_{\rm out}(g)| &gt; \epsilon] \le 2M\exp(-2\epsilon^2 N)
 P[|E_{\rm in}(g) - E_{\rm out}(g)| &gt; \epsilon] \le^? 2m_{\mathcal{H}}\exp(-2\epsilon^2 N)
 \]</span> 如果换完以后之前的性质仍然成立，那么就可以用有穷的<span class="math inline">\(m_\mathcal{H}\)</span>来替换无穷的<span class="math inline">\(M\)</span>。这样就可以证明在无限假设集上学习的可行性，并为之后决定如何选择正确的假设集提供支持</p>
 <h2 id="有效线性分类器的数量">有效线性分类器的数量</h2>
-<p>重新回顾一下对假设<span class="math inline">\(h_m\)</span>所谓”坏事情“这一定义的概念。如果对分类器<span class="math inline">\(h_m\)</span>有<span class="math inline">\(|E_{\rm in}(h_m) - E_{\rm out}(h_m)| &gt; \epsilon\)</span>，就称为坏事件<span class="math inline">\(\mathcal{B}_m\)</span>会发生。由于假设集合比较大，为了让算法<span class="math inline">\(\mathcal{A}\)</span>能自由选择，需要计算任一坏事件发生的概率，即求出<span class="math inline">\(P[\mathcal{B}_1{\rm\  or\  }\mathcal{B}_2{\rm\  or\  }\ldots{\rm\  or\  }\mathcal{B}_M]\)</span>的上界。在最坏的情况下，每个<span class="math inline">\(\mathcal{B}_m\)</span>都不互相交叠，所以由事件并的概率上界定理，有 <span class="math display">\[
-P[\mathcal{B}_1{\rm\  or\  }\mathcal{B}_2{\rm\  or\  }\ldots{\rm\  or\  }\mathcal{B}_M] \le P[\mathcal{B}_1] + P[\mathcal{B}_2] + \ldots + P[\mathcal{B}_M]
+<p>重新回顾一下对假设<span class="math inline">\(h_m\)</span>所谓”坏事情“这一定义的概念。如果对分类器<span class="math inline">\(h_m\)</span>有<span class="math inline">\(|E_{\rm in}(h_m) - E_{\rm out}(h_m)| &gt; \epsilon\)</span>，就称为坏事件<span class="math inline">\(\mathcal{B}_m\)</span>会发生。由于假设集合比较大，为了让算法<span class="math inline">\(\mathcal{A}\)</span>能自由选择，需要计算任一坏事件发生的概率，即求出<span class="math inline">\(P[\mathcal{B}_1{\rm\ or\ }\mathcal{B}_2{\rm\ or\ }\ldots{\rm\ or\ }\mathcal{B}_M]\)</span>的上界。在最坏的情况下，每个<span class="math inline">\(\mathcal{B}_m\)</span>都不互相交叠，所以由事件并的概率上界定理，有 <span class="math display">\[
+P[\mathcal{B}_1{\rm\ or\ }\mathcal{B}_2{\rm\ or\ }\ldots{\rm\ or\ }\mathcal{B}_M] \le P[\mathcal{B}_1] + P[\mathcal{B}_2] + \ldots + P[\mathcal{B}_M]
 \]</span> 当<span class="math inline">\(M = \infty\)</span>时，由于是无限多个概率连加，因此这个上界有可能也是无限大的值，至少会是一个很大的值，会大于1，所以这个上界就没有实际意义了。</p>
 <p>问题出在哪儿呢？回顾上界定理中取到上界的条件，是所有子事件互不交叠。但是这个现象在当前讨论的问题中很难出现。相反地，对于相似的假设<span class="math inline">\(h_1 \approx h_2\)</span>，其<span class="math inline">\(E_{\rm out}\)</span>是相似的，而对大部分<span class="math inline">\(\mathcal{D}\)</span>甚至其<span class="math inline">\(E_{\rm in}\)</span>是相等的。可以通过考虑之前提到的感知机的例子来理解这个结论。对于一个已知的感知机，如果将其稍微旋转或平移一点，就会得到一个新的感知机。这两个感知机只会对那些处于旋转或平移经过的区域中的点给出不同的分类结果，而由于这些区域非常小，<span class="math inline">\(\mathcal{D}\)</span>中数据落在这些区域里的概率也会非常小。因此很显然，之前给出的概率上界是被过分估计了的。那么，接下来，就要找出这些”坏事情“重叠的事情</p>
 <p>一种自然的想法是，能否把<span class="math inline">\(\mathcal{H}\)</span>中所有的<span class="math inline">\(h\)</span>做一个归类，来分析重叠的状况。对<span class="math inline">\(\mathbb{R}^2\)</span>上的所有线<span class="math inline">\(\mathcal{H}\)</span>，尽管有无限多种可能性，但是可以分类讨论</p>
@@ -461,7 +461,7 @@ h(x) = {\rm sign}(x-a)
 <p>如果给定了<span class="math inline">\(N\)</span>个数据点，那么对该<span class="math inline">\(\mathcal{H}\)</span>，有<span class="math inline">\(m_\mathcal{H}(N) = N+1\)</span>。因为<span class="math inline">\(N\)</span>个点可以把一条直线切成<span class="math inline">\(N+1\)</span>个不同的区间，任何落在同一个区间内的阈值<span class="math inline">\(a\)</span>其决定的<span class="math inline">\(h\)</span>效果都一样。注意当<span class="math inline">\(N\)</span>很大时，会有<span class="math inline">\((N+1) &lt;\!\!&lt; 2^N\)</span></p>
 <h3 id="正区间positive-interval的成长函数">正区间（Positive Interval）的成长函数</h3>
 <p>接下来，输入不变，对<span class="math inline">\(\mathcal{H}\)</span>的定义稍作变化：不再让大于某个阈值<span class="math inline">\(\ell\)</span>的所有<span class="math inline">\(x\)</span>都被分为+1，而是施加一个上限<span class="math inline">\(r\)</span>，将所有<span class="math inline">\(x\in [\ell, r)\)</span>分为+1，即此时对<span class="math inline">\(h \in \mathcal{H}\)</span>有 <span class="math display">\[
-h(x) = +1 {\rm\  iff\  }x \in [\ell, r), -1{\rm\  otherwise}
+h(x) = +1 {\rm\ iff\ }x \in [\ell, r), -1{\rm\ otherwise}
 \]</span> 此时，<span class="math inline">\(N\)</span>个点还是可以把一条直线切成<span class="math inline">\(N+1\)</span>个不同的区间。如果<span class="math inline">\(\ell\)</span>和<span class="math inline">\(r\)</span>都落在不同的区间，那么一部分<span class="math inline">\(x\)</span>会被标为+1，另一部分被标为-1。这样的<span class="math inline">\(\ell\)</span>和<span class="math inline">\(r\)</span>的选法共有<span class="math inline">\(N+1 \choose 2\)</span>种。还有一种情况，就是<span class="math inline">\(\ell\)</span>和<span class="math inline">\(r\)</span>都落在同一个区间，此时所有<span class="math inline">\(x\)</span>都会被标为-1。因此对于这样的<span class="math inline">\(\mathcal{H}\)</span>，其成长函数为 <span class="math display">\[
 \begin{align*}
 m_\mathcal{H}(N) &amp;= {N+1 \choose 2} + 1 \\
@@ -664,7 +664,7 @@ m_\mathcal{H}(k - 1) = 2^{k-1},\hspace{1ex} m_\mathcal{H}(k) &lt; 2^k
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -675,7 +675,7 @@ m_\mathcal{H}(k - 1) = 2^{k-1},\hspace{1ex} m_\mathcal{H}(k) &lt; 2^k
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -686,7 +686,7 @@ m_\mathcal{H}(k - 1) = 2^{k-1},\hspace{1ex} m_\mathcal{H}(k) &lt; 2^k
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

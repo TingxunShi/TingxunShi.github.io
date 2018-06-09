@@ -436,7 +436,7 @@
 <p>完整的代码在github上可以获得</p>
 <h3 id="改进方案">改进方案</h3>
 <p>从最后得到的图中可以看到，数据集中有一些离群点（outlier）。离群点的存在会影响线性回归模型的求解。为了避免这一点，可以使用如下定义的Huber loss让模型更加鲁棒 <span class="math display">\[
-L_\delta (y, f(x)) = \begin{cases} \frac{1}{2}(y-f(x))^2 &amp; {\rm for\  }|y-f(x)| \le \delta \\ \delta|y-f(x)| - \frac{1}{2}\delta^2 &amp; {\rm otherwise}\end{cases}
+L_\delta (y, f(x)) = \begin{cases} \frac{1}{2}(y-f(x))^2 &amp; {\rm for\ }|y-f(x)| \le \delta \\ \delta|y-f(x)| - \frac{1}{2}\delta^2 &amp; {\rm otherwise}\end{cases}
 \]</span> 需要注意的是，在实现时，不能直接写<code>if Y-Y_predicted &lt; delta</code>。因为<code>Y</code>和<code>Y_predict</code>都是变量，根据<a href="https://stackoverflow.com/questions/34959853/how-to-make-an-if-statement-using-a-boolean-tensor" target="_blank" rel="noopener">StackOverflow上的讨论</a>，一方面，TF变量之间的比较需要使用操作<code>tf.less()</code> ；另一方面，对<code>tf.less()</code>得到的结果，需要调用<code>Session</code>对象的<code>run</code>方法才能得到python的布尔变量。达到同样的目的的一种更简单的做法是调用<code>tf.cond</code>操作，这个操作有点像Excel里的IF函数：第一个参数是一个条件，第二个参数是条件为真时调用的函数，第二个参数是条件为假时调用的函数。因此huber loss完整的TF实现如下：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">huber_loss</span><span class="params">(labels, predictions, delta=<span class="number">1.0</span>)</span>:</span></span><br><span class="line">    residual = tf.abs(labels - predictions)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">f1</span><span class="params">()</span>:</span> <span class="keyword">return</span> <span class="number">0.5</span> * tf.square(residual)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">f2</span><span class="params">()</span>:</span> <span class="keyword">return</span> delta * residual - <span class="number">0.5</span> * tf.square(delta)</span><br><span class="line">    <span class="keyword">return</span> tf.cond(residual &lt; delta, f1, f2)</span><br></pre></td></tr></table></figure>
 <h2 id="tf.data"><code>tf.data</code></h2>
@@ -649,7 +649,7 @@ L_\delta (y, f(x)) = \begin{cases} \frac{1}{2}(y-f(x))^2 &amp; {\rm for\  }|y-f(
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -660,7 +660,7 @@ L_\delta (y, f(x)) = \begin{cases} \frac{1}{2}(y-f(x))^2 &amp; {\rm for\  }|y-f(
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -671,7 +671,7 @@ L_\delta (y, f(x)) = \begin{cases} \frac{1}{2}(y-f(x))^2 &amp; {\rm for\  }|y-f(
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

@@ -390,7 +390,7 @@
 
       
         <p><strong>概率模型</strong>是概率分布<span class="math inline">\(p(x|\theta)\)</span>的集合。我们并不知道具体参数<span class="math inline">\(\theta\)</span>是什么，需要进行推测。例如对于给定的数据<span class="math inline">\(x\)</span>，我们想建立一个高斯分布模型<span class="math inline">\(p(x|\theta), \theta = \{\mu, \Sigma\}\)</span>。注意这里隐含着一个重要的假设，即所有数据都是独立同分布的（iid），即 <span class="math display">\[
-x_i \mathop{\sim}^{iid} p(x|\theta),\  i = 1, \ldots, n
+x_i \mathop{\sim}^{iid} p(x|\theta),\ i = 1, \ldots, n
 \]</span> 所有这些数据<span class="math inline">\(x\)</span>的联合概率分布可以写为 <span class="math display">\[
 p(x_1,\ldots,x_n|\theta) = \prod_{i=1}^n p(x_i|\theta)
 \]</span></p>
@@ -413,18 +413,33 @@ p(x_1,\ldots,x_n|\theta) = \prod_{i=1}^n p(x_i|\theta)
 <ol type="1">
 <li>求解<span class="math inline">\(\mu\)</span></li>
 </ol>
+<p><span class="math display">\[\begin{align*}
 
+  0 &amp;= \nabla_\mu \sum_{i=1}^n \ln \frac{1}{\sqrt{(2\pi)^d|\Sigma|}}\exp\left(-\frac{1}{2}(x_i - \mu)^T\Sigma^{-1}(x_i - \mu)\right) \\
+  &amp;= \nabla_\mu \sum_{i=1}^n -\ln \sqrt{(2\pi)^d|\Sigma|} + \ln \exp\left(-\frac{1}{2}(x_i - \mu)^T\Sigma^{-1}(x_i - \mu)\right) \\
+  &amp;= \nabla_\mu \sum_{i=1}^n -\frac{1}{2} \ln(2\pi)^d |\Sigma| - \frac{1}{2}(x_i - \mu)^T \Sigma^{-1} (x_i - \mu)\end{align*}\]</span></p>
 <p>第一项不带<span class="math inline">\(\mu\)</span>，对<span class="math inline">\(\mu\)</span>求导为0，所以只需要考虑第二项，即</p>
+<p><span class="math display">\[\begin{align*}
 
+  0 &amp;= \frac{1}{2} \sum_{i=1}^n \nabla_\mu \left((x_i - \mu)^T \Sigma^{-1}(x_i - \mu)\right) \\
+  &amp;= \frac{1}{2} \sum_{i=1}^n \nabla_\mu \left(x_i^T\Sigma^{-1}x_i - x_i^T\Sigma^{-1}\mu -\mu^T\Sigma^{-1}x_i + \mu^T\Sigma^{-1}\mu \right)
+
+  \end{align*}\]</span></p>
 <p>根据以下两条列向量求导法则 <span class="math display">\[
 \frac{\partial {\mathbf a}^T{\mathbf x}}{\partial {\mathbf x}} = \frac{\partial {\mathbf x}^T{\mathbf a}}{\partial {\mathbf x}} = {\mathbf a} \\
-\frac{\partial {\mathbf x}^T{\mathbf A}{\mathbf x}}{\partial{\mathbf x}} = 2{\mathbf A}{\mathbf x}\  \  ({\mathbf A}不是{\mathbf x}的函数且为对称矩阵)
+\frac{\partial {\mathbf x}^T{\mathbf A}{\mathbf x}}{\partial{\mathbf x}} = 2{\mathbf A}{\mathbf x}\ \ ({\mathbf A}不是{\mathbf x}的函数且为对称矩阵)
 \]</span> 上式可化简为 <span class="math display">\[
 0 = \frac{1}{2}\sum_{i=1}^n -2\Sigma^{-1}x_i + 2\Sigma^{-1}\mu
 \]</span> 由于<span class="math inline">\(\Sigma\)</span>是正定矩阵，因此 <span class="math display">\[
 \sum_{i=1}^n (x_i - \mu) = 0 \Rightarrow \hat{\mu}_{\rm ML} = \frac{1}{n}\sum_{i=1}^n x_i
 \]</span> 2. 求解<span class="math inline">\(\Sigma\)</span></p>
+<p><span class="math display">\[\begin{align*}
 
+  0 &amp;= \nabla_\Sigma \sum_{i=1}^n - \frac{1}{2} \ln(2\pi)^d |\Sigma| - \frac{1}{2}(x_i - \mu)^T\Sigma^{-1}(x_i - \mu) \\
+  &amp;= -\frac{n}{2}\nabla_\Sigma \ln|\Sigma| - \frac{1}{2}\nabla_\Sigma {\rm trace}\left(\Sigma^{-1}\sum_{i=1}^n (x_i - \mu)(x_i - \mu)^T\right) \\
+  &amp;= -\frac{n}{2}\Sigma^{-1} + \frac{1}{2}\Sigma^{-2}\sum_{i=1}^n (x_i - \mu)(x_i - \mu)^T
+
+  \end{align*}\]</span></p>
 <p>代入<span class="math inline">\(\mu = \hat{\mu}_{\rm ML}\)</span>，可得 <span class="math display">\[
 \hat{\Sigma}_{\rm ML} = \frac{1}{n}\sum_{i=1}^n (x_i - \hat{\mu}_{\rm ML})(x_i - \hat{\mu}_{\rm ML})^T
 \]</span></p>
@@ -587,7 +602,7 @@ p(x_1,\ldots,x_n|\theta) = \prod_{i=1}^n p(x_i|\theta)
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -598,7 +613,7 @@ p(x_1,\ldots,x_n|\theta) = \prod_{i=1}^n p(x_i|\theta)
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -609,7 +624,7 @@ p(x_1,\ldots,x_n|\theta) = \prod_{i=1}^n p(x_i|\theta)
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

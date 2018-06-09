@@ -408,7 +408,7 @@
 <p>对树做剪枝的极端情况是，树的高度<span class="math inline">\(\le 1\)</span>。考虑之前讲过的决策树（C&amp;RT算法），树高为1的数只有一个分枝。回顾决策树的分枝条件定义，其要做的是让左右子树各自的不纯度两者加起来的值最小。如果不纯度的定义为二元分类误差，那么实际上此时决策树退化成了一个决策树桩。即前面提到的AdaBoost决策树桩是AdaBoost决策树的一种特殊情况</p>
 <h2 id="最优化角度看adaboost">最优化角度看AdaBoost</h2>
 <p>之前讲解AdaBoost时，曾经提出过样本权重的更新法则 <span class="math display">\[
-u_n^{(t+1)} = \begin{cases}u_n^{(t)} \cdot \blacklozenge_t &amp; {\rm if\  incorrect} \\ u_n^{(t)} / \blacklozenge_t &amp; {\rm if \  correct}\end{cases}
+u_n^{(t+1)} = \begin{cases}u_n^{(t)} \cdot \blacklozenge_t &amp; {\rm if\ incorrect} \\ u_n^{(t)} / \blacklozenge_t &amp; {\rm if \ correct}\end{cases}
 \]</span> 这个式子可以做进一步化简：考虑之前提到的，如果<span class="math inline">\(y_n \in \{-1, +1\}\)</span>，那么当分类结果正确时，有<span class="math inline">\(y_ng_t({\bf x}_n) = 1\)</span>，否则<span class="math inline">\(y_ng_t({\bf x}_n) = -1\)</span>。因此上式可以简写为递推式 <span class="math display">\[
 u_n^{(t+1)}  = u_n^{(t)} \cdot \blacklozenge_t^{-y_ng_t({\bf x}_n)}
 \]</span> 带入<span class="math inline">\(\blacklozenge_t = e^{\alpha_t}\)</span>，可以得到 <span class="math display">\[
@@ -416,7 +416,7 @@ u_n^{(t+1)} = u_n^{(t)} \cdot \exp(-y_n\alpha_tg_t({\bf x}_n))
 \]</span> 将这个递推式展开，有 <span class="math display">\[
 u_n^{(T+1)} = u_n^{(1)} \cdot \prod_{t=1}^T\exp(-y_n\alpha_tg_t({\bf x}_n)) = \frac{1}{N} \cdot \exp\left(-y_n\sum_{t=1}^T\alpha_tg_t({\bf x}_n)\right)
 \]</span> 注意最后指数里有一部分可以对应于AdaBoost的总假设函数<span class="math inline">\(G({\bf x})\)</span> ：<span class="math inline">\(G({\bf x}) = {\rm sign}\left( \sum_{t=1}^T \alpha_tg_t({\bf x})\right)\)</span>。可以将<span class="math inline">\(\sum_{t=1}^T \alpha_t g_t({\bf x})\)</span>记为<span class="math inline">\(\{g_t\}\)</span>在<span class="math inline">\(\bf x\)</span>上的投票得分（voting score）</p>
-<p>前面还说过，AdaBoost实际上是一个线性混合的过程：将所有基假设函数看作是对原始数据的一个变换，然后在转换后的空间里学习出一个线性模型，这个线性模型就说明了每个<span class="math inline">\(g_t\)</span>会占几票。如果将基假设函数的变换过程<span class="math inline">\(g_t({\bf x}_n)\)</span>写为<span class="math inline">\(\phi_i({\bf x}_n)\)</span>，将每个<span class="math inline">\(g_t\)</span>的票数写为权重的样子<span class="math inline">\(w_i\)</span>，那么投票得分就可以改写为<span class="math inline">\(\sum_{i=1}^T w_i\phi_i({\bf x}_n)\)</span>。回顾之前提到的SVM间隔的定义，<span class="math inline">\({\rm margin} = \frac{y_n \cdot ({\bf w}^\mathsf{T}\phi({\bf x}_n) + b)}{\|{\bf w}\|}\)</span>，如果忽略掉这个式子中的常数项<span class="math inline">\(b\)</span>，正则项<span class="math inline">\(1/\|{\bf w}\|\)</span>和用来判断点是落在分离超平面正确一侧还是错误一侧的<span class="math inline">\(y_n\)</span>，其核心部分<span class="math inline">\({\bf w}^\mathsf{T}\phi({\bf x}_n)\)</span>其实传递的是点到超平面距离的概念。因此，<span class="math inline">\(y_n \cdot {\rm voting\  score}\)</span>实际上就是带符号的且没有做过正则化的间隔，我们也希望这个间隔是一个比较大的正数。既然如此，那么<span class="math inline">\(\exp(-y_n({\rm voting\  score}))\)</span>就应该越小越好，<span class="math inline">\(u_n^{(T+1)}\)</span>也应该越小越好。<strong>实际上，AdaBoost就是在减小<span class="math inline">\(\sum_{n=1}^Nu_n^{(t)}\)</span></strong>，其本质也是要让分离超平面离数据点的间隔变大。也就是说，它要减小的是 <span class="math display">\[
+<p>前面还说过，AdaBoost实际上是一个线性混合的过程：将所有基假设函数看作是对原始数据的一个变换，然后在转换后的空间里学习出一个线性模型，这个线性模型就说明了每个<span class="math inline">\(g_t\)</span>会占几票。如果将基假设函数的变换过程<span class="math inline">\(g_t({\bf x}_n)\)</span>写为<span class="math inline">\(\phi_i({\bf x}_n)\)</span>，将每个<span class="math inline">\(g_t\)</span>的票数写为权重的样子<span class="math inline">\(w_i\)</span>，那么投票得分就可以改写为<span class="math inline">\(\sum_{i=1}^T w_i\phi_i({\bf x}_n)\)</span>。回顾之前提到的SVM间隔的定义，<span class="math inline">\({\rm margin} = \frac{y_n \cdot ({\bf w}^\mathsf{T}\phi({\bf x}_n) + b)}{\|{\bf w}\|}\)</span>，如果忽略掉这个式子中的常数项<span class="math inline">\(b\)</span>，正则项<span class="math inline">\(1/\|{\bf w}\|\)</span>和用来判断点是落在分离超平面正确一侧还是错误一侧的<span class="math inline">\(y_n\)</span>，其核心部分<span class="math inline">\({\bf w}^\mathsf{T}\phi({\bf x}_n)\)</span>其实传递的是点到超平面距离的概念。因此，<span class="math inline">\(y_n \cdot {\rm voting\ score}\)</span>实际上就是带符号的且没有做过正则化的间隔，我们也希望这个间隔是一个比较大的正数。既然如此，那么<span class="math inline">\(\exp(-y_n({\rm voting\ score}))\)</span>就应该越小越好，<span class="math inline">\(u_n^{(T+1)}\)</span>也应该越小越好。<strong>实际上，AdaBoost就是在减小<span class="math inline">\(\sum_{n=1}^Nu_n^{(t)}\)</span></strong>，其本质也是要让分离超平面离数据点的间隔变大。也就是说，它要减小的是 <span class="math display">\[
 \sum_{n=1}^N u_n^{(T+1)} = \frac{1}{N}\sum_{n=1}^N\exp\left(-y_n\sum_{t=1}^T\alpha_tg_t({\bf x}_n)\right)
 \]</span> 再次搬出之前提到过很多次的线性得分<span class="math inline">\(s = \sum_{t=1}^T \alpha_t g_t({\bf x}_n)\)</span>，以及之前提到的0/1误差函数<span class="math inline">\({\rm err_{0/1}}(s, y) = [\![ys \le 0]\!]\)</span>。如果将上面的这个式子看作是AdaBoost某种意义上要减小的误差函数，记为<span class="math inline">\(\widehat{\rm err}_{\rm ADA}\)</span>，那么有<span class="math inline">\({\rm \widehat{err}_{ADA}} = \exp(-ys)\)</span>（称为指数损失函数）也是<span class="math inline">\(\rm err_{0/1}\)</span>的上界。因此可以说，AdaBoost也是在减小0/1误差函数的凸上限，进而达到解好分类问题的目的</p>
 <p>接下来，要证明AdaBoost算法的确可以减小<span class="math inline">\(\rm \widehat{err}_{ADA}\)</span>。这个证明过程类似于之前提到的梯度下降法（GD），只不过GD是要找到一个向量<span class="math inline">\(\bf v\)</span>作为下降方向，而AdaBoost是要找到一个基函数<span class="math inline">\(g_t\)</span>作为下降方向。即在第<span class="math inline">\(t\)</span>步迭代，为了寻找最优的<span class="math inline">\(g_t\)</span>，就是要求解 <span class="math display">\[
@@ -436,8 +436,8 @@ u_n^{(T+1)} = u_n^{(1)} \cdot \prod_{t=1}^T\exp(-y_n\alpha_tg_t({\bf x}_n)) = \f
 \]</span> 这就很像之前GD <span class="math inline">\(\min_{\|v\|=1} E_{\rm in}({\bf w}_t + \eta {\bf v}) \approx E_{\rm in}({\bf w}_t) + \eta {\bf v}^\mathsf{T}\nabla E_{\rm in}({\bf w}_t)\)</span>的形式了！同理，这里<span class="math inline">\(\sum_{n=1}^N u_n^{(t)}\)</span>是常数项，因此最好的<span class="math inline">\(h\)</span>会最小化<span class="math inline">\(\sum_{n=1}^N u_n^{(t)}(-y_nh({\bf x}_n))\)</span>。</p>
 <p>由于这里考虑的是二元分类问题，因此<span class="math inline">\(y_n \in \{-1, +1\}, h({\bf x}_n) \in \{-1, +1\}\)</span>。利用这个性质，展开要最小化的式子，有 <span class="math display">\[
 \begin{align*}
-\sum_{n=1}^N u_n^{(t)}(-y_nh({\bf x}_n)) &amp;= \sum_{n=1}^N u_n^{(t)} \begin{cases} - 1 &amp; {\rm if\  }y_n = h({\bf x}_n) \\ +1 &amp; {\rm if\  }y_n \not= h({\bf x}_n)\end{cases} \\
-&amp;= - \sum_{n=1}^N u_n^{(t)} +  \sum_{n=1}^N u_n^{(t)} \begin{cases} 0 &amp; {\rm if\  }y_n = h({\bf x}_n) \\ 2 &amp; {\rm if\  }y_n \not= h({\bf x}_n)\end{cases} \\
+\sum_{n=1}^N u_n^{(t)}(-y_nh({\bf x}_n)) &amp;= \sum_{n=1}^N u_n^{(t)} \begin{cases} - 1 &amp; {\rm if\ }y_n = h({\bf x}_n) \\ +1 &amp; {\rm if\ }y_n \not= h({\bf x}_n)\end{cases} \\
+&amp;= - \sum_{n=1}^N u_n^{(t)} +  \sum_{n=1}^N u_n^{(t)} \begin{cases} 0 &amp; {\rm if\ }y_n = h({\bf x}_n) \\ 2 &amp; {\rm if\ }y_n \not= h({\bf x}_n)\end{cases} \\
 &amp;= -\sum_{n=1}^N u_n^{(t)}  + 2\sum_{n=1}^N u_n^{(t)} [\![y_n \not= h({\bf x}_n)]\!] \\
 &amp;= -\sum_{n=1}^N u_n^{(t)}  + 2E_{\rm in}^{ {\bf u}^{(t)}}(h) \cdot N
 \end{align*}
@@ -679,7 +679,7 @@ u_n^{(T+1)} = u_n^{(1)} \cdot \prod_{t=1}^T\exp(-y_n\alpha_tg_t({\bf x}_n)) = \f
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -690,7 +690,7 @@ u_n^{(T+1)} = u_n^{(1)} \cdot \prod_{t=1}^T\exp(-y_n\alpha_tg_t({\bf x}_n)) = \f
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -701,7 +701,7 @@ u_n^{(T+1)} = u_n^{(1)} \cdot \prod_{t=1}^T\exp(-y_n\alpha_tg_t({\bf x}_n)) = \f
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="TensorFlow,损失函数,TensorFlow实践," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="从最抽象的角度来讲，机器学习问题的求解过程就是提出一个损失函数来度量模型预测值与真实值之间的差距，然后通过某种给定的优化方法来调整模型参数，使模型效果提升的过程。在这个过程中，选择正确的损失函数是问题求解的基础，而对于某些特定的问题，设计一个有针对性的，新的损失函数则可以看作是胜负手 常见的损失函数通常都适用于有监督学习问题，其中根据问题的不同类型，损失函数也可以划分为两类：针对回归问题的损失函数">
+<meta name="keywords" content="TensorFlow,损失函数,TensorFlow实践">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NMT Tutorial 2扩展a. 损失函数">
+<meta property="og:url" content="txshi-mt.com/2018/04/26/NMT-Tutorial-2a-Loss-Functions/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="从最抽象的角度来讲，机器学习问题的求解过程就是提出一个损失函数来度量模型预测值与真实值之间的差距，然后通过某种给定的优化方法来调整模型参数，使模型效果提升的过程。在这个过程中，选择正确的损失函数是问题求解的基础，而对于某些特定的问题，设计一个有针对性的，新的损失函数则可以看作是胜负手 常见的损失函数通常都适用于有监督学习问题，其中根据问题的不同类型，损失函数也可以划分为两类：针对回归问题的损失函数">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Huber_loss.svg/600px-Huber_loss.svg.png">
+<meta property="og:image" content="http://scikit-learn.org/stable/_images/sphx_glr_plot_huber_vs_ridge_001.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NMT_TutorialsNMT_Tutoral_2p_loss_funcs_for_regression.png">
+<meta property="og:image" content="https://i.stack.imgur.com/ykDZz.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutoral_2a_loss_funcs_for_classification.png">
+<meta property="og:updated_time" content="2018-06-09T09:36:44.906Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NMT Tutorial 2扩展a. 损失函数">
+<meta name="twitter:description" content="从最抽象的角度来讲，机器学习问题的求解过程就是提出一个损失函数来度量模型预测值与真实值之间的差距，然后通过某种给定的优化方法来调整模型参数，使模型效果提升的过程。在这个过程中，选择正确的损失函数是问题求解的基础，而对于某些特定的问题，设计一个有针对性的，新的损失函数则可以看作是胜负手 常见的损失函数通常都适用于有监督学习问题，其中根据问题的不同类型，损失函数也可以划分为两类：针对回归问题的损失函数">
+<meta name="twitter:image" content="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Huber_loss.svg/600px-Huber_loss.svg.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2018/04/26/NMT-Tutorial-2a-Loss-Functions/"/>
+
+
+
+
+
+  <title>NMT Tutorial 2扩展a. 损失函数 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2018/04/26/NMT-Tutorial-2a-Loss-Functions/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NMT Tutorial 2扩展a. 损失函数</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-26T23:52:13+08:00">
+                Apr 26 2018
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/优化/" itemprop="url" rel="index">
+                    <span itemprop="name">优化</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>从最抽象的角度来讲，机器学习问题的求解过程就是提出一个损失函数来度量模型预测值与真实值之间的差距，然后通过某种给定的优化方法来调整模型参数，使模型效果提升的过程。在这个过程中，选择正确的损失函数是问题求解的基础，而对于某些特定的问题，设计一个有针对性的，新的损失函数则可以看作是胜负手</p>
+<p>常见的损失函数通常都适用于有监督学习问题，其中根据问题的不同类型，损失函数也可以划分为两类：针对回归问题的损失函数和针对分类问题的损失函数。在本节后面的阐述中，除非特别说明，记<span class="math inline">\(\boldsymbol{y}\)</span>为真实值，<span class="math inline">\(\hat{\boldsymbol{y}}\)</span>为预测值，<span class="math inline">\(N\)</span>为样本个数</p>
+<h2 id="针对回归问题的损失函数">针对回归问题的损失函数</h2>
+<h3 id="均方误差函数">均方误差函数</h3>
+<p>求解回归问题时，最常见的损失函数无疑是<strong>均方误差函数</strong>（均方误差：mean squared error, MSE），也称为<span class="math inline">\(\ell_2\)</span>误差函数。具体形式为 <span class="math display">\[
+{\rm MSE}(\boldsymbol{y}, \hat{\boldsymbol{y}}) = \frac{1}{N}\sum_{i=1}^N\left(y_i - \hat{y}_i\right)^2
+\]</span> 由上式可知，如果使用均方误差函数做损失函数，模型做出的预测与实际值差得越多，则受到的惩罚越大。因此，如果数据集中有离群点，则会很大程度上影响最终学到的模型。但是，从另一方面讲，如果不希望模型的预测值与某个真实值相差太远，均方误差函数则是一个很好的选择</p>
+<h3 id="平均绝对值误差函数">平均绝对值误差函数</h3>
+<p>均方误差函数如果写成向量形式，则为 <span class="math display">\[
+{\rm MSE}(\boldsymbol{y}, \hat{\boldsymbol{y}}) = \frac{1}{N}\left|\!\left|\boldsymbol{y}-\hat{\boldsymbol{y}}\right|\!\right|^2_2
+\]</span></p>
+<p>也就是说，均方误差函数的核心是预测值与真实值这两个向量差的<span class="math inline">\(\ell_2\)</span>范数。考虑到正则化里有<span class="math inline">\(\ell_2\)</span>正则化和<span class="math inline">\(\ell_1\)</span>正则化，那么对于损失函数，求预测值与真实值这两个向量差的<span class="math inline">\(\ell_1\)</span>范数是不是一个好的选择？的确如此，这种损失函数更多被称为<strong>平均绝对值误差函数</strong>（平均绝对值误差：mean absolute error, MAE）。具体形式为 <span class="math display">\[
+{\rm MAE}(\boldsymbol{y}, \hat{\boldsymbol{y}}) = \frac{1}{N}\sum_{i=1}^N\left|y_i - \hat{y}_i\right|
+\]</span> MAE的最大问题是损失函数在<span class="math inline">\(y_i = \hat{y}_i\)</span>处不可导，因此在计算梯度时可能会造成问题</p>
+<p>对于这两个比较常见的损失函数，一个自然而然的问题就是，实际问题中究竟应该选择哪个？对于这个自然而然的问题，有一个自然而然的答案，就是具体问题具体分析。然而，有一些基本的事实是不能忽视的。首先，MSE处处可导，易于优化。其次，需要考虑：如果对于两个样本，模型给出的预测值与第一个样本差了<span class="math inline">\(\delta\)</span>，与第二个样本差了<span class="math inline">\(2\delta\)</span>，那么模型在第二个样本上的表现的拙劣程度，是不是在第一个样本上表现的拙劣程度的两倍？更广泛地说，模型预测值与真实值的差距，是否与人们对这个模型的失望程度呈线性关系？如果的确是线性关系，那么MAE可以使用；如果模型预测值的离谱程度会放大人们的失望程度，那么还是应该使用MSE（事实上，MSE也的确使用更广，而离群点的问题可以通过其它手段来克服）。此外还需注意的一点是，MSE对参数的梯度会随着损失值的减小而变小，因此即使学习率不变也容易收敛；而MAE对参数的梯度不随损失值的变化而变化，是一个常量，因此需要即时调整学习率</p>
+<p>根据<a href="https://en.wikipedia.org/wiki/Huber_loss" target="_blank" rel="noopener">维基百科</a>，MSE可以看作是误差的算术平均值无偏估计，而MAE则是误差的中位数无偏估计。关于这两种损失函数比较的进一步阅读，可以参考 Chai, Tianfeng, and Roland R. Draxler. “Root mean square error (RMSE) or mean absolute error (MAE)?–Arguments against avoiding RMSE in the literature.” <em>Geoscientific model development</em> 7.3 (2014): 1247-1250.</p>
+<h3 id="huber-loss">Huber loss</h3>
+<p>针对MSE对离群点鲁棒性不太强的弱点，Huber提出了一种新的损失函数来进行弥补，称为<strong>huber loss</strong>。其定义为 <span class="math display">\[
+{\rm huber}(y_i, \hat{y}_i) = \begin{cases}\frac{1}{2}(y_i - \hat{y}_i)^2 &amp; {\rm if\ }|y_i - \hat{y}_i| \le \delta \\ 
+\delta|y_i - \hat{y}_i| - \frac{1}{2}\delta^2 &amp; {\rm elsewhere}\end{cases}
+\]</span> 其核心思想是，假设预测值和真实值之间差值的绝对值在给定的参数<span class="math inline">\(\delta\)</span>内，则认为原始数据点是正常点，使用平方误差来求损失值；否则认为原始数据点可能是离群点，使用绝对值误差并减去一个与<span class="math inline">\(\delta\)</span>有关的量来求损失值。在<a href="http://scikit-learn.org/stable/modules/linear_model.html#huber-regression" target="_blank" rel="noopener">sklearn关于huber回归的文档</a>中，建议将<span class="math inline">\(\delta\)</span>设置为1.35以达到95%的统计有效性</p>
+<figure>
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Huber_loss.svg/600px-Huber_loss.svg.png" alt="huber loss示意图"><figcaption>huber loss示意图</figcaption>
+</figure>
+<p>上图来自维基百科，给出了<span class="math inline">\(\delta=1\)</span>时的huber loss与平方误差之间的关系。原图中并没有标记坐标轴的意义，参考ESL一书可知横轴为预测值与真实值之间的差，而纵轴为损失函数值。可以看出随着预测值与真实值之间差距的拉大，huber损失函数值只是呈线性缓慢增长，与绝对值误差函数相似</p>
+<figure>
+<img src="http://scikit-learn.org/stable/_images/sphx_glr_plot_huber_vs_ridge_001.png" alt="huber回归与岭回归的对比"><figcaption>huber回归与岭回归的对比</figcaption>
+</figure>
+<p>上图来自于sklearn官方文档，给出了在有若干明显离群点的数据集上分别使用huber回归（各模型使用的<span class="math inline">\(\delta\)</span>不同）和岭回归的对比图。可以看出在设置了合适的<span class="math inline">\(\delta\)</span>时huber回归的效果要明显好很多</p>
+<h3 id="关于回归问题的损失函数小结">关于回归问题的损失函数小结</h3>
+<p>上述三种损失函数的关系大致如下图所示</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NMT_TutorialsNMT_Tutoral_2p_loss_funcs_for_regression.png" alt="回归问题损失函数之间的关系"><figcaption>回归问题损失函数之间的关系</figcaption>
+</figure>
+<p>其与TensorFlow提供的损失函数有如下对应关系</p>
+<ul>
+<li>MAE，对应于<code>tf.losses.absolute_difference</code></li>
+<li>MSE，对应于<code>tf.losses.mean_squared_error</code></li>
+<li>huber loss，对应于<code>tf.losses.huber_loss</code></li>
+</ul>
+<p>TensorFlow还提供了<code>tf.losses.mean_pairwise_squared_error</code>来逐对计算平方误差。这种损失函数比较繁琐而且用得不多，这里就不介绍了（另外，根据<a href="https://stackoverflow.com/questions/42805532/loss-function-mean-pairwise-squared-error?rq=1" target="_blank" rel="noopener">stackoverflow的一个回答</a>，在TF1.6之前的版本里这个损失函数的实现甚至是有bug的）</p>
+<h2 id="针对分类问题的损失函数">针对分类问题的损失函数</h2>
+<h3 id="交叉熵损失函数">交叉熵损失函数</h3>
+<h4 id="概述">概述</h4>
+<p>对于分类问题，最常使用的损失函数是<strong>交叉熵损失函数</strong>（cross entropy loss function）。接下来的讲述来自于花书的5.5节（不过对逻辑做了一些修改）</p>
+<p>对于给定的若干样本，假设它们的标签符合某种真实的分布<span class="math inline">\(p_{\rm data}({\bf x})\)</span>（对于最常见的二分类问题，这个分布是某个伯努利分布），但是这个真实分布无从得知，能够观察到的也仅是训练集上的经验分布<span class="math inline">\(\hat{p}_{\rm data}\)</span>。设计模型的目标就是要使得由模型参数<span class="math inline">\(\boldsymbol{\theta}\)</span>确定的分布<span class="math inline">\(p_{\rm model}(\boldsymbol{\theta},{\bf x})\)</span>能够逼近真实分布，即对任意的<span class="math inline">\(\boldsymbol{x}\)</span>使<span class="math inline">\(p_{\rm model}(\boldsymbol{\theta},\boldsymbol{x})\)</span>逼近于<span class="math inline">\(p_{\rm data}(\boldsymbol{x})\)</span>。在解决两个概率分布近似程度度量的问题时，通常使用KL散度，即 <span class="math display">\[
+D_{\rm KL}(\hat{p}_{\rm data} \| p_{\rm model}) = \mathbb{E}_{ {\bf x}\sim \hat{p}_{\rm data}}\left[\log \hat{p}_{\rm data}(\boldsymbol{x}) - \log p_{\rm model}(\boldsymbol{x})\right]
+\]</span> 这个值越小，说明两个分布越接近。因此，模型的目标就是最小化上面的<span class="math inline">\(D_{\rm KL}\)</span>。去掉与模型无关的项，最小化KL散度等价于最小化 <span class="math display">\[
+-\mathbb{E}_{ {\bf x}\sim \hat{p}_{\rm data}}\left[ \log p_{\rm model}(\boldsymbol{x})\right]
+\]</span> 也就是真实分布与模型预测分布之间的交叉熵（从信息论的角度讲，交叉熵的意义也可以理解为，使用预测分布表示真实分布所需的平均编码长度）。当两个概率分布都是离散分布时，上式等价于 <span class="math display">\[
+-\frac{1}{m}\sum_{i=1}^m \hat{p}_{\rm data}(\boldsymbol{x}_i)\log p_{\rm model}(\boldsymbol{x}_i)
+\]</span> 如果记<span class="math inline">\({\bf y}_i\)</span>为第<span class="math inline">\(i\)</span>个样本的真实的标签向量（当分类问题时多分类问题时，真实的标签向量通常是一个独热编码向量。例如对某个5-分类问题，如果样本的真实标签是3，那么对应的向量是[0, 0, 0, 1, 0]），<span class="math inline">\(\hat{\bf y}_i\)</span>为模型给出样本属于各真实标签的概率组成的向量，那么最小化上式又等价于最小化 <span class="math display">\[
+-\frac{1}{m}\sum_{i=1}^m{\bf y}_i\cdot \log{\hat{\bf y}}_i
+\]</span> 最小化交叉熵损失函数也等价于使用最大似然法求解最优的<span class="math inline">\(\boldsymbol{\theta}_{\rm ML}\)</span>，因为 <span class="math display">\[
+\begin{align*}
+\boldsymbol{\theta}_{\rm ML} &amp;= \mathop{ {\rm arg}\max}_{\boldsymbol{\theta}}p_{\rm model}\left(\mathbb{X};\boldsymbol{\theta}\right) \\ 
+&amp;= \mathop{ {\rm arg}\max}_{\boldsymbol{\theta}} \prod_{i=1}^m p_{\rm model}(\boldsymbol{x}^{(i)};\boldsymbol{\theta}) \\
+&amp;= \mathop{ {\rm arg}\max}_{\boldsymbol{\theta}} \sum_{i=1}^m \log p_{\rm model}(\boldsymbol{x}^{(i)};\boldsymbol{\theta}) \\
+&amp;=  \mathop{ {\rm arg}\max}_{\boldsymbol{\theta}} \frac{1}{m}\sum_{i=1}^m \log p_{\rm model}(\boldsymbol{x}^{(i)};\boldsymbol{\theta}) \\
+&amp;=  \mathop{ {\rm arg}\max}_{\boldsymbol{\theta}} \mathbb{E}_{ {\bf x}\sim \hat{p}_{\rm data}}\log p_{\rm model}(\boldsymbol{x};\boldsymbol{\theta}) \\
+&amp;=  \mathop{ {\rm arg}\min}_{\boldsymbol{\theta}} -\mathbb{E}_{ {\bf x}\sim \hat{p}_{\rm data}}\log p_{\rm model}(\boldsymbol{x};\boldsymbol{\theta})
+\end{align*}
+\]</span></p>
+<h4 id="softmax交叉熵损失函数">Softmax交叉熵损失函数</h4>
+<p>对多元分类问题，一般情况下我们认为对任意给定的数据，其只应该被标记为一个确定的且唯一的标签。对于这样的问题，通常的方法是计算样本对各类别的得分，然后对得分做一个softmax归一化，这样得到的结果可以解释为样本被模型判断属于各类别的概率。对于这种问题，在TensorFlow中，使用<code>tf.losses.softmax_cross_entropy</code>来计算预测值与真实值之间的交叉熵。但是需要注意的是，<strong>TensorFlow中用来计算交叉熵的预测值是原始得分</strong>。该损失函数，如函数名称所示，会对原始得分做一个softmax，将softmax得分分别求负对数，然后将负对数的结果与真实值做内积。由于真实值通常是一个独热编码，因此实际上等价于找出负对数向量中的第<span class="math inline">\(i\)</span>个分量，这里<span class="math inline">\(i\)</span>是样本所属的真实标签序号。例如</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">sess = tf.InteractiveSession()</span><br><span class="line">y_pred = tf.placeholder(dtype=tf.float32, shape=(<span class="keyword">None</span>, <span class="keyword">None</span>))</span><br><span class="line">y_true = tf.placeholder(dtype=tf.int32, shape=(<span class="keyword">None</span>, <span class="keyword">None</span>))</span><br><span class="line">softmax_celoss = tf.losses.softmax_cross_entropy(y_true, y_pred)</span><br><span class="line">print(sess.run(softmax_celoss, </span><br><span class="line">               y_pred=[[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>], [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]],</span><br><span class="line">               y_true=[[<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>], [<span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>]]</span><br><span class="line">))</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="number">0.9401897</span></span><br></pre></td></tr></table></figure>
+<p>在上述示例中，两条数据都可能属于4个类别0、1、2、3中的一个，真实数据标签分别为3和2。假设模型对两条数据给出分属各个类别的得分都是<code>[1, 2, 3, 4]</code>，那么得分被softmax归一化以后为<code>[0.0320586 , 0.08714432, 0.23688282, 0.64391426]</code>可以看作是模型对数据属于各类别的概率做出的预测。将该数组中各元素取负对数得到<code>[3.4401897, 2.4401897, 1.4401897, 0.4401897]</code>。第一条数据预测值与真实值的交叉熵为0.44，第二条数据为1.44，两者相加再求平均即可得到0.94</p>
+<p>使用<code>tf.losses.softmax_cross_entropy</code>时，要求每条数据传入的真实标签是一个独热编码后的向量。如果希望只传入类别的id，那么可以使用<code>tf.losses.sparse_softmax_cross_entropy</code>。接续上面的代码片段</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sparse_softmax_celoss = tf.losses.sparse_softmax_cross_entropy(y_true, y_pred)</span><br><span class="line">print(sess.run(softmax_celoss, </span><br><span class="line">               y_pred=[[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>], [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]],</span><br><span class="line">               y_true=[[<span class="number">3</span>], [<span class="number">2</span>]]</span><br><span class="line">))</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="number">0.9401897</span></span><br></pre></td></tr></table></figure>
+<p>可以看到两者相同</p>
+<h4 id="sigmoid交叉熵损失函数">Sigmoid交叉熵损失函数</h4>
+<p>前面提到，softmax交叉熵损失函数隐含认为每个样本所属的类别是唯一的。但是在某些情况下，并不要求给定样本的类别标签两两互斥，在这种情况下，softmax交叉熵损失函数就不是一个好的选择（这也再次说明，需要具体问题具体分析，针对问题挑选合适的损失函数！）。作为替代品，TensorFlow提供了<code>tf.losses.sigmoid_cross_entropy</code>损失函数来解决这个问题，此时模型给出的得分不再统一做归一化，而是对每个分量分别施加sigmoid函数。这样，分数的每个分量仍然可以被解释为模型认为该样本属于对应类别的概率，但此时分量之间是独立的。举个例子，假设对于一个二分类问题，对于某条数据，模型给出的原始分数是[100, 100]，那么使用softmax交叉熵函数隐含认为该数据属于两个类的概率各为50%，而使用sigmoid交叉熵函数认为该模型属于两个类的概率都接近100%。使用前面给出的示例数据</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">sess = tf.InteractiveSession()</span><br><span class="line">y_pred = tf.placeholder(dtype=tf.float32, shape=(<span class="keyword">None</span>, <span class="keyword">None</span>))</span><br><span class="line">y_true = tf.placeholder(dtype=tf.int32, shape=(<span class="keyword">None</span>, <span class="keyword">None</span>))</span><br><span class="line">sigmoid_celoss = tf.losses.sigmoid_cross_entropy(y_true, y_pred)</span><br><span class="line">print(sess.run(sigmoid_celoss, </span><br><span class="line">               y_pred=[[<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>], [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]],</span><br><span class="line">               y_true=[[<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>], [<span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>]]</span><br><span class="line">))</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="number">1.7517316</span></span><br></pre></td></tr></table></figure>
+<p>sigmoid交叉熵函数的计算略微复杂一点，这里以上面代码例子中第一条数据为例。</p>
+<ul>
+<li>首先，将所有得分分别求sigmoid，这样[1, 2, 3, 4]被转化成[0.73105858, 0.88079708, 0.95257413, 0.98201379]</li>
+<li>然后，用1减去上面得到的sigmoid得分，同时也用1减去真实标签，得到[0.26894142, 0.11920292, 0.04742587, 0.01798621]和[1, 1, 1, 0]</li>
+<li>对两个与sigmoid有关的向量分别求负对数，得[0.31326169, 0.12692801, 0.04858735, 0.01814993]和[1.31326169, 2.12692801, 3.04858735, 4.01814993]</li>
+<li>将负对数向量与各自的标签向量分别求交叉熵，得到0.01814993和1.31326169 + 2.12692801 + 3.04858735 = 6.48877705</li>
+<li>两者求和并除以类别数：(6.48877705 + 0.01814993) / 4 = 1.626731745</li>
+</ul>
+<p>通过同样的方法可以得到第二条样本的sigmoid交叉熵为1.876731745。因此样本的总体交叉熵为两条样本交叉熵的均值，为1.751731745</p>
+<p>（与代码框中直接计算的结果有些许不同，但是感觉可以忽略）</p>
+<p>记样本个数为<span class="math inline">\(m\)</span>，类别数量为<span class="math inline">\(k\)</span>，上述过程可以形式化地写为 <span class="math display">\[
+\begin{align*}
+{\rm sigmoid\_CE} &amp;= \frac{1}{m}\frac{1}{k}\sum_{i=1}^m\left( -{\bf y}_i\log \hat{\bf y}_i - ({\bf 1} - {\bf y}_i)\log({\bf 1}-\hat{\bf y}_i) \right) \\
+\hat{\bf y}_i &amp;= \sigma({\rm score}_i) \\
+\sigma(x) &amp;= \frac{1}{1+e^{-x}}
+\end{align*}
+\]</span> 从上面两个例子中可以观察到一个现象：<em>对于上述例子中给定的数据和真实标签</em>，使用sigmoid交叉熵函数得到的损失值比使用softmax交叉熵函数得到的损失值要大一些。究其原因是，模型对四个类别给出的原始得分都是正数，经过sigmoid变换以后，考虑sigmoid交叉熵函数要解决的问题，损失函数会以为模型觉得原始样本属于第1、2、3个类别的概率都很大。但是核对真实标签，发现数据只应属于第2/3个类别，因此损失函数会认为模型做出了错误的判断。通过这个例子，可以更清楚地看到正确选择损失函数的重要性</p>
+<p>上面的形式化表示与Logistic回归的损失函数形式上非常像，的确如此，如果将类别个数限定为2，sigmoid交叉熵函数与Logistic回归的损失函数是相同的。事实上，如果要传给损失函数的是已经被sigmoid的值，那么将该预测值和真实值送入TensorFlow提供的<code>tf.losses.log_loss</code>函数，与将原始分数和真实值送入<code>tf.losses.sigmoid_cross_entropy</code>函数得到的结果是相等的</p>
+<h3 id="铰链损失函数hinge-loss">铰链损失函数（hinge loss）</h3>
+<p>Hinge loss是一种与交叉熵损失函数思路不同的损失函数，它没有使用负对数做最大似然估计，衡量的也不是两个分布之间的差别。对某条数据，假设模型给出的预测值<span class="math inline">\(\hat{y} \in \mathbb{R}\)</span>，真实值<span class="math inline">\(y \in \{-1, 1\}\)</span>，则hinge loss的形式为 <span class="math display">\[
+{\rm HingeLoss}(y, \hat{y}) = \max(0, 1-y\cdot \hat{y})
+\]</span> 这里<span class="math inline">\(\hat{y}\)</span>不是最后的标签，而是模型输出的原始得分。对该损失函数，可以将输入分为三种情况来考虑</p>
+<ul>
+<li>真实标签与预测值同号，且预测值分数（的绝对值）很高：此时<span class="math inline">\(y \cdot \hat{y}\)</span>是一个远大于1的数，因此<span class="math inline">\(1-y\cdot \hat{y} &lt; 0\)</span>，样本对损失函数没有贡献</li>
+<li>真实标签与预测值同号，但预测值分数（的绝对值）比较小：此时<span class="math inline">\(0 &lt; y \cdot \hat{y} &lt; 1\)</span>，样本对损失函数有贡献，但是不大，<span class="math inline">\(0 &lt; \ell &lt; 1\)</span></li>
+<li>真实标签与预测值异号，此时损失函数值必然大于1。即模型会对这样的数据施加很大的惩罚，而且预测值绝对值越大，说明错得越离谱，惩罚也越大</li>
+</ul>
+<p>综上所述，使用hinge loss会主要根据错分样本调整模型参数，次要地根据正确分类但是信心不强的样本调整参数，但是正确分类且信心很强的样本对模型没有影响。这样得到的（线性）模型可以达到最大间隔分离超平面的效果——这种模型也正是传统统计学习中很受重视的<a href="http://txshi-mt.com/tags/SVM/">支持向量机SVM</a>。事实上，对如下常见的SVM问题的形式化描述 <span class="math display">\[
+\begin{align*}
+\min_{b, {\bf w}}\hspace{2ex}&amp;\frac{1}{2}\left\|{\bf w}\right\|_2^2 + C\cdot \sum_{n=1}^N \xi_n\\
+{\rm s.t.} \hspace{2ex} &amp;y_n({\bf w^\mathsf{T}z}_n + b) \ge 1 -\xi_n,\  \xi_n \ge 0 \forall n
+\end{align*}
+\]</span> 记<span class="math inline">\({\bf w^\mathsf{T}z}_n + b\)</span>为<span class="math inline">\(\hat{y}_n\)</span>，则对限制条件，有 <span class="math display">\[
+y_n \cdot \hat{y}_n \ge 1 - \xi_n \Rightarrow \xi_n \ge 1-y_n\cdot \hat{y}_n
+\]</span> 又<span class="math inline">\(\xi_n \ge 0\)</span>，因此优化条件可以写为 <span class="math display">\[
+\begin{align*}
+\min_{b, {\bf w}} \frac{1}{2}\left\|{\bf w}\right\|^2_2 + C\cdot \sum_{n=1}^N {\rm HingeLoss}(y_n, \hat{y}_n)
+ \end{align*}
+\]</span> 这意味着SVM可以看作是对hinge loss的优化再加一个<span class="math inline">\(\ell_2\)</span>正则项</p>
+<p>Hinge loss的好处是<em>在没有离群点的情况下</em>其对未知数据分类的准确度比较高，因为直观地讲，使用hingle loss训练得到的分类器的目标是尽可能把两类数据分得很开，这样就降低了新数据落在分类器另一边的可能（图例可见之前<a href="http://txshi-mt.com/2017/09/18/NTUML-17-Linear-SVM/">林轩田老师课程笔记</a>）。但是，hinge loss也会比较严重地受到离群点的影响</p>
+<p>以SVM为代表的使用hinge loss为损失函数的模型还有一个比较重要的短板，就是它不能提供一个很好的概率解释（这也是使用sklearn的<code>SGDClassifier</code>做分类器时的一个大坑。因为这个分类器默认的损失函数就是hinge loss，这样得到的模型调用概率预测函数<code>predict_proba</code>时会报错，所以要让该分类器给出概率估计，必须在构造分类器时手动传<code>'log'</code>作为<code>loss</code>这一参数的值）</p>
+<p>此外，hinge loss这一函数在<span class="math inline">\(y\cdot \hat{y} = 1\)</span>时不可导，因此使用基于梯度的优化方法时需要一些额外工作。但是，SVM问题本身是一个凸优化问题，所以求解该问题时通常直接使用二次规划的方法解决</p>
+<h3 id="均方误差函数-1">均方误差函数</h3>
+<p>将MSE纳入本章纯粹是为了顾及内容的完备性。从理论上讲，用MSE来解决分类问题也是可行的，因为MSE也是真实0-1误差的上界（可以参考<a href="http://txshi-mt.com/2017/09/01/NTUML-11-Linear-Models-for-Classification/">林轩田老师课程笔记</a>）。但是真正使用MSE来做分类问题的损失函数是有问题的。理论上讲，MSE假设误差遵循高斯分布，而分类问题的误差一般都是二项分布，两者分布不同。从实际上讲，前面提到过，MSE倾向于惩罚离群点，而对于分类问题中的数据，在MSE看来的“离群点”反而可能是那些离真实边界最远的点。如果使用MSE训练分类器，训练出的分界线会向这些“离群点”靠近，因此反而会错分那些离真实边界比较近的点。参考下图（来自于PRML）</p>
+<figure>
+<img src="https://i.stack.imgur.com/ykDZz.png" alt="使用不同损失函数所得分类器的比较，可以看出使用MSE会降低分类器的准确率"><figcaption>使用不同损失函数所得分类器的比较，可以看出使用MSE会降低分类器的准确率</figcaption>
+</figure>
+<p>因此，分类问题一般不使用针对回归问题的损失函数</p>
+<h3 id="关于分类问题的损失函数小结">关于分类问题的损失函数小结</h3>
+<p>上述各损失函数的关系大致如下图所示（这里没有包括均方误差函数）</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutoral_2a_loss_funcs_for_classification.png" alt="分类问题损失函数之间的关系"><figcaption>分类问题损失函数之间的关系</figcaption>
+</figure>
+<p>神经翻译领域，大部分情况下都是使用softmax_cross_entropy作为损失函数</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2018/04/26/NMT-Tutorial-2a-Loss-Functions/" title="NMT Tutorial 2扩展a. 损失函数">txshi-mt.com/2018/04/26/NMT-Tutorial-2a-Loss-Functions/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/TensorFlow/" rel="tag"># TensorFlow</a>
+          
+            <a href="/tags/损失函数/" rel="tag"># 损失函数</a>
+          
+            <a href="/tags/TensorFlow实践/" rel="tag"># TensorFlow实践</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/03/24/NMT-Tutorial-2-Loglinear-LM-and-Optimization/" rel="next" title="NMT Tutorial 2. Log-linear语言模型">
+                <i class="fa fa-chevron-left"></i> NMT Tutorial 2. Log-linear语言模型
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="uyan_frame"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">84</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">79</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#针对回归问题的损失函数"><span class="nav-number">1.</span> <span class="nav-text">&#x9488;&#x5BF9;&#x56DE;&#x5F52;&#x95EE;&#x9898;&#x7684;&#x635F;&#x5931;&#x51FD;&#x6570;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#均方误差函数"><span class="nav-number">1.1.</span> <span class="nav-text">&#x5747;&#x65B9;&#x8BEF;&#x5DEE;&#x51FD;&#x6570;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#平均绝对值误差函数"><span class="nav-number">1.2.</span> <span class="nav-text">&#x5E73;&#x5747;&#x7EDD;&#x5BF9;&#x503C;&#x8BEF;&#x5DEE;&#x51FD;&#x6570;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#huber-loss"><span class="nav-number">1.3.</span> <span class="nav-text">Huber loss</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#关于回归问题的损失函数小结"><span class="nav-number">1.4.</span> <span class="nav-text">&#x5173;&#x4E8E;&#x56DE;&#x5F52;&#x95EE;&#x9898;&#x7684;&#x635F;&#x5931;&#x51FD;&#x6570;&#x5C0F;&#x7ED3;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#针对分类问题的损失函数"><span class="nav-number">2.</span> <span class="nav-text">&#x9488;&#x5BF9;&#x5206;&#x7C7B;&#x95EE;&#x9898;&#x7684;&#x635F;&#x5931;&#x51FD;&#x6570;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#交叉熵损失函数"><span class="nav-number">2.1.</span> <span class="nav-text">&#x4EA4;&#x53C9;&#x71B5;&#x635F;&#x5931;&#x51FD;&#x6570;</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#概述"><span class="nav-number">2.1.1.</span> <span class="nav-text">&#x6982;&#x8FF0;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#softmax交叉熵损失函数"><span class="nav-number">2.1.2.</span> <span class="nav-text">Softmax&#x4EA4;&#x53C9;&#x71B5;&#x635F;&#x5931;&#x51FD;&#x6570;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#sigmoid交叉熵损失函数"><span class="nav-number">2.1.3.</span> <span class="nav-text">Sigmoid&#x4EA4;&#x53C9;&#x71B5;&#x635F;&#x5931;&#x51FD;&#x6570;</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#铰链损失函数hinge-loss"><span class="nav-number">2.2.</span> <span class="nav-text">&#x94F0;&#x94FE;&#x635F;&#x5931;&#x51FD;&#x6570;&#xFF08;hinge loss&#xFF09;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#均方误差函数-1"><span class="nav-number">2.3.</span> <span class="nav-text">&#x5747;&#x65B9;&#x8BEF;&#x5DEE;&#x51FD;&#x6570;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#关于分类问题的损失函数小结"><span class="nav-number">2.4.</span> <span class="nav-text">&#x5173;&#x4E8E;&#x5206;&#x7C7B;&#x95EE;&#x9898;&#x7684;&#x635F;&#x5931;&#x51FD;&#x6570;&#x5C0F;&#x7ED3;</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

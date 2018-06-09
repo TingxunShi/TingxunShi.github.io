@@ -100,7 +100,7 @@
 
 
 
-  <meta name="keywords" content="NTUML,Logistic回归," />
+  <meta name="keywords" content="Logistic回归,NTUML," />
 
 
 
@@ -112,7 +112,7 @@
 
 
 <meta name="description" content="用于二元分类的线性模型 之前提到的三种线性模型都使用了\(s = {\bf w}^\mathsf{T}{\bf x}\)这个函数来计算得分  线性分类直接对这个分值取正负号，使用0/1误差来做误差函数。\(E_{\rm in}(\bf w)\)是离散的，优化是NP-hard问题 线性回归对这个分值不作处理直接输出，因此值域是\(\mathbb{R}\)，误差函数是平方误差。这个\(E_{\rm i">
-<meta name="keywords" content="NTUML,Logistic回归">
+<meta name="keywords" content="Logistic回归,NTUML">
 <meta property="og:type" content="article">
 <meta property="og:title" content="NTUML 11. 用于分类问题的线性模型">
 <meta property="og:url" content="txshi-mt.com/2017/09/01/NTUML-11-Linear-Models-for-Classification/index.html">
@@ -442,8 +442,8 @@
 <p>可以看到，换底以后，交叉熵误差函数成为了0/1误差函数严格的上界。也就是说，对任意<span class="math inline">\(ys\)</span>（其中<span class="math inline">\(s = {\bf w}^\mathsf{T}{\bf x}\)</span>），有 <span class="math display">\[
 \begin{align*}
 &amp;{\rm err}_{0/1}(s, y) \le {\rm err_{SCE}}(s, y) = \frac{1}{\ln 2}{\rm err_{CE}}(s, y) \\
-\Longrightarrow &amp; \  \  E_{\rm in}^{0/1}({\bf w}) \le E_{\rm in}^{\rm SCE}({\bf w})  = \frac{1}{\ln 2}E_{\rm in}^{\rm CE}({\bf w}) \\
-&amp;\  \  E_{\rm out}^{0/1}({\bf w}) \le E_{\rm out}^{\rm SCE}({\bf w})  = \frac{1}{\ln 2}E_{\rm out}^{\rm CE}({\bf w})
+\Longrightarrow &amp; \ \ E_{\rm in}^{0/1}({\bf w}) \le E_{\rm in}^{\rm SCE}({\bf w})  = \frac{1}{\ln 2}E_{\rm in}^{\rm CE}({\bf w}) \\
+&amp;\ \ E_{\rm out}^{0/1}({\bf w}) \le E_{\rm out}^{\rm SCE}({\bf w})  = \frac{1}{\ln 2}E_{\rm out}^{\rm CE}({\bf w})
 \end{align*}
 \]</span> 套用之前的VC维理论，有 <span class="math display">\[
 \begin{align*}
@@ -456,7 +456,7 @@ E_{\rm out}^{0/1}({\bf w}) &amp;\le \frac{1}{\ln 2}E_{\rm out}^{\rm CE}({\bf w})
 &amp;\le \frac{1}{\ln 2}E_{\rm in}^{\rm CE}({\bf w}) + \frac{1}{\ln 2} \Omega^{CE}
 \end{align*}
 \]</span> 无论从哪个方向，都可以得出结论 <span class="math display">\[
-{\rm small\  }E_{\rm in}^{\rm CE}({\bf w}) \Rightarrow {\rm small\  }E_{\rm out}^{0/1}({\bf w})
+{\rm small\ }E_{\rm in}^{\rm CE}({\bf w}) \Rightarrow {\rm small\ }E_{\rm out}^{0/1}({\bf w})
 \]</span> 平方误差同理。因此，这证明，Logistic回归和线性回归都可以用在线性分类问题上，算法为</p>
 <blockquote>
 <ol type="1">
@@ -472,7 +472,7 @@ E_{\rm out}^{0/1}({\bf w}) &amp;\le \frac{1}{\ln 2}E_{\rm out}^{\rm CE}({\bf w})
 {\bf w}_{t+1} \leftarrow {\bf w}_t + \eta \underbrace{\frac{1}{N}\sum_{n=1}^N \theta(-y_n{\bf w}_t^\mathsf{T}{\bf x}_n)(y_n{\bf x}_n)}_{-\nabla E_{\rm in}({\bf w}_t)}
 \]</span> 要让每次迭代更新的时间复杂度为<span class="math inline">\(O(1)\)</span>，需要同时满足两个要求：首先，方向<span class="math inline">\(\bf v\)</span>不应该变化太多，还应该有<span class="math inline">\({\bf v} \approx -\nabla E_{\rm in}({\bf w}_t)\)</span>。这是因为由前面的推导，这个方向梯度的减小是最快的。其次，希望计算<span class="math inline">\({\bf v}\)</span>时只用到一个点<span class="math inline">\(({\bf x}_n, y_n)\)</span>，因为只有这样才能保证时间复杂度。所以，原式中的求和项一定要想办法去掉</p>
 <p>如何去掉这个求和项？注意到式子中有一个<span class="math inline">\(\frac{1}{N}\sum_{n=1}^N\)</span>。可以很自然地将其与期望<span class="math inline">\(\mathcal{E}\)</span>的概念联系起来：如果随机且均匀地选取了<span class="math inline">\(n\)</span>个点求它们梯度的期望，就应该是这样计算。假如每次只随机取一个点，将这个点的梯度看作是梯度的期望，就可以避免求和的过程。这种做法叫做<strong>随机梯度下降</strong>（SGD），将整体的梯度看作是选出的若干点（“若干”可以为1）梯度的期望，即 <span class="math display">\[
-\nabla_{\bf w} E_{\rm in}({\bf w}) = \mathcal{E}_{ {\rm random\  }n}\nabla_{\bf w}{\rm err}({\bf w}, {\bf x}_n, y_n)
+\nabla_{\bf w} E_{\rm in}({\bf w}) = \mathcal{E}_{ {\rm random\ }n}\nabla_{\bf w}{\rm err}({\bf w}, {\bf x}_n, y_n)
 \]</span> SGD的Logistic回归迭代为： <span class="math display">\[
 {\bf w}_{t+1} \leftarrow {\bf w}_t + \eta \underbrace{\theta(-y_n{\bf w}_t^\mathsf{T}{\bf x}_n)(y_n{\bf x}_n)}_{-\nabla {\rm err}({\bf w}_t, {\bf x}_n, y_n)}
 \]</span> 可以将随机梯度看作是真实梯度加上了一些期望为0的噪声：虽然总体上还是沿真实梯度方向前进，但是每一步都会向随机的某个方向偏一点。SGD的做法就是把原来算法中真实的梯度换成随机的梯度。由于噪声的期望为0，因此经过足够多的迭代以后，真实梯度的平均也约等于随机梯度的平均。这样的好处是，计算量减小了很多，尤其适合于大数据环境或在线学习的状况。但是，SGD会比较不稳定（尤其是<span class="math inline">\(\eta\)</span>很大的情况下）</p>
@@ -500,13 +500,13 @@ g({\bf x}) = \mathop{ {\rm arg}\max}_{k \in \mathcal{Y}} \theta\left({\bf w}_{[k
 <p>尽管存在着问题，OVA算法仍然是一种简单但是特别有效的，可适用于多类别分类的基础算法</p>
 <h2 id="使用二元分类做多元分类">使用二元分类做多元分类</h2>
 <p>前面说到，OVA面临的最大问题是，当类别数很多时，问题会变成不平衡样本分类问题。其原因是将每个类别视作正例时，都是所有样本参与分类过程。如果有<span class="math inline">\(K\)</span>个类，属于每个类的数据量都近似，那么每次分类时正负样本数量比都是<span class="math inline">\(1 : K-1\)</span>。为了解决这个问题，可以考虑如何在分类时仍然让正负样本数接近1比1。因此，可以使用一对一（OVO, One-Versus-One）的分类法：每次取出<span class="math inline">\(K\)</span>个类别中属于某两类的样本进行比较，其它样本都不参与分类。这样，总共有<span class="math inline">\(K \choose 2\)</span>个分类步骤，得到<span class="math inline">\(K \choose 2\)</span>个分类器。对于任何一条数据，看这<span class="math inline">\(K \choose 2\)</span>个分类器各自认为它属于哪个类别，最后哪个类别收到的票数多，哪个类别获胜。可以形象地认为，<span class="math inline">\(K\)</span>个类别就这个数据两两作赛，谁赢的次数多谁就是冠军。因此OVO分类法返回的假设函数为 <span class="math display">\[
-g({\bf x}) = {\rm tournament\  champion}\  \{ {\bf w}_{[k, \ell]}^\mathsf{T}{\bf x}\}
+g({\bf x}) = {\rm tournament\ champion}\ \{ {\bf w}_{[k, \ell]}^\mathsf{T}{\bf x}\}
 \]</span> 多元分类的OVO算法总体过程如下</p>
 <blockquote>
 <p>对每个类别对<span class="math inline">\((k, \ell) \in \mathcal{Y} \times \mathcal{Y}\)</span></p>
 <p>　　在如下数据集上运行线性二元分类器算法，获得<span class="math inline">\({\bf w}_{[k, \ell]}\)</span> <span class="math display">\[
-\mathcal{D}_{[k, \ell]} = \{({\bf x}_n, y_n&#39; = 2[\![y_n = k]\!] - 1): y_n =k{\rm\  or\  }y_n=\ell\}
-\]</span> 返回<span class="math inline">\(g({\bf x}) = {\rm tournament\  champion}\  \{ {\bf w}_{[k, \ell]}^\mathsf{T}{\bf x}\}\)</span></p>
+\mathcal{D}_{[k, \ell]} = \{({\bf x}_n, y_n&#39; = 2[\![y_n = k]\!] - 1): y_n =k{\rm\ or\ }y_n=\ell\}
+\]</span> 返回<span class="math inline">\(g({\bf x}) = {\rm tournament\ champion}\ \{ {\bf w}_{[k, \ell]}^\mathsf{T}{\bf x}\}\)</span></p>
 </blockquote>
 <p>这个算法是每次分类过程效率比较高（因为只使用了少量样本）、稳定，而且也可以适用于任何二元分类算法。但是，算法需要更多空间（存储更多的<span class="math inline">\({\bf w}\)</span>），预测更慢（因为要跑<span class="math inline">\(K \choose 2\)</span>个分类过程，训练更多</p>
 <p>同样，OVO算法仍然是一种简单但是特别有效的，可适用于多类别分类的基础算法</p>
@@ -569,9 +569,9 @@ g({\bf x}) = {\rm tournament\  champion}\  \{ {\bf w}_{[k, \ell]}^\mathsf{T}{\bf
       
         <div class="post-tags">
           
-            <a href="/tags/NTUML/" rel="tag"># NTUML</a>
-          
             <a href="/tags/Logistic回归/" rel="tag"># Logistic回归</a>
+          
+            <a href="/tags/NTUML/" rel="tag"># NTUML</a>
           
         </div>
       
@@ -682,7 +682,7 @@ g({\bf x}) = {\rm tournament\  champion}\  \{ {\bf w}_{[k, \ell]}^\mathsf{T}{\bf
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -693,7 +693,7 @@ g({\bf x}) = {\rm tournament\  champion}\  \{ {\bf w}_{[k, \ell]}^\mathsf{T}{\bf
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -704,7 +704,7 @@ g({\bf x}) = {\rm tournament\  champion}\  \{ {\bf w}_{[k, \ell]}^\mathsf{T}{\bf
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

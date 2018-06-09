@@ -485,7 +485,7 @@ E_{\rm oob}(G) = \frac{1}{N} \sum_{n=1}^N {\rm err}(y_n, G_n^-({\bf x}_n))
 </ul>
 <p>为了降低模型的复杂度，提高训练效率，需要将这些特征移除掉。尽管这些事情理论上可以手工完成，但是我们仍然希望能够通过学习的方法达到目的，即希望能学到一个特征子集的转换<span class="math inline">\(\boldsymbol{\Phi}({\bf x}) = (x_{i_1}, x_{i_2}, \ldots, x_{i_d&#39;}), d&#39; &lt; d\)</span>，然后用转换后的特征来学习<span class="math inline">\(g_t\)</span></p>
 <p>特征选择的好处，首先它的效率得到了提升，而且排除掉了<span class="math inline">\(d-d&#39;\)</span>项噪声，降低了过拟合的可能性。最后，对<span class="math inline">\(d&#39;\)</span>项特征作分析可以集中在有用的特征上，提高模型的可解释性。但是从另一个角度看，特征选择也会带来风险。首先它是一个组合问题，选择最优组合的过程可能会占用额外时间；其次，如果特征选择没有做好，可能反而就会导致过拟合，得到错误的解释（或者分析时只能看到相关性不能看到因果性）。因此，这里责任最重的地方就是如何在<span class="math inline">\(d\)</span>项特征中找到<span class="math inline">\(d&#39;\)</span>维特征子集。幸运的是，决策树本身自带一些特征选择的方法（因为它在训练时要决定在哪个特征上做分割是最有效的）</p>
-<p>前面提过，特征选择本质是一个特征组合问题。有组合，就会有组合爆炸的可能性。那么如何降低这种可能性的发生，降低计算量？一种比较自然的启发式算法是，可以尝试计算每个特征的重要程度<span class="math inline">\({\rm important}(i){\rm \  for\  }i=1,2,\ldots, d\)</span>。如果这个重要程度能够计算出来，那么只需要选<span class="math inline">\(d&#39;\)</span>个重要程度最大的特征<span class="math inline">\(i_1, i_2, \ldots, i_{d&#39;}\)</span>就可以。这种简单的方式在线性模型中很容易实现，因为重要程度可以根据模型权重向量<span class="math inline">\(\bf w\)</span>的分量<span class="math inline">\(|w_i|\)</span>来判断。<span class="math inline">\(|w_i|\)</span>越大，特征的重要程度就越大。而<span class="math inline">\(\bf w\)</span>的学习很直接，也很容易。然而，非线性模型中由于增添了特征之间的交互，特征重要性的判断通常会难很多。但是随机森林本身的一些机制，使得其成为了一种很容易做特征选择的非线性模型</p>
+<p>前面提过，特征选择本质是一个特征组合问题。有组合，就会有组合爆炸的可能性。那么如何降低这种可能性的发生，降低计算量？一种比较自然的启发式算法是，可以尝试计算每个特征的重要程度<span class="math inline">\({\rm important}(i){\rm \ for\ }i=1,2,\ldots, d\)</span>。如果这个重要程度能够计算出来，那么只需要选<span class="math inline">\(d&#39;\)</span>个重要程度最大的特征<span class="math inline">\(i_1, i_2, \ldots, i_{d&#39;}\)</span>就可以。这种简单的方式在线性模型中很容易实现，因为重要程度可以根据模型权重向量<span class="math inline">\(\bf w\)</span>的分量<span class="math inline">\(|w_i|\)</span>来判断。<span class="math inline">\(|w_i|\)</span>越大，特征的重要程度就越大。而<span class="math inline">\(\bf w\)</span>的学习很直接，也很容易。然而，非线性模型中由于增添了特征之间的交互，特征重要性的判断通常会难很多。但是随机森林本身的一些机制，使得其成为了一种很容易做特征选择的非线性模型</p>
 <p>使用随机森林做特征选择的基本原理是，如果特征<span class="math inline">\(i\)</span>比较重要，那么往这个特征上塞入一些噪声，模型的表现肯定会变差。那么问题是，如何给某个特征加入一些随机值？不能给入服从均匀分布或者高斯分布的噪声，因为原始数据可能不服从这样的分布，武断地加入某个确认分布的噪声会改变数据在第<span class="math inline">\(i\)</span>个维度上的分布<span class="math inline">\(P(x_i)\)</span>。这里利用了类似bootstrapping的方法：为了验证某个特征<span class="math inline">\(i\)</span>的重要性，对<span class="math inline">\(\{x_{n,i}\}_{n=1}^N\)</span>重新生成一个排列（permutation），这样，数据在该特征上的分布<span class="math inline">\(P(x_i)\)</span>就不会有什么变化了。记重排列特征<span class="math inline">\(i\)</span>上的值以后得到的数据集为<span class="math inline">\(\mathcal{D}^{(p)}\)</span>，特征<span class="math inline">\(i\)</span>的重要性可以根据如下方式（称为排列测试 permutation test）做一粗略估计： <span class="math display">\[
 {\rm importance}(i) = {\rm performance}(\mathcal{D}) - {\rm performance}(\mathcal{D}^{(p)})
 \]</span> 这里，求<span class="math inline">\({\rm performance}(\mathcal{D}^{(p)})\)</span>时需要用重排列后的数据集重新训练和验证模型。不过对于随机森林，可以免去验证的步骤，使用OOB就可以。甚至，可以不重新训练<span class="math inline">\(G\)</span>，而是把OOB中的第<span class="math inline">\(i\)</span>个特征做一个重排列。即 <span class="math display">\[
@@ -665,7 +665,7 @@ E_{\rm oob}(G) = \frac{1}{N} \sum_{n=1}^N {\rm err}(y_n, G_n^-({\bf x}_n))
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -676,7 +676,7 @@ E_{\rm oob}(G) = \frac{1}{N} \sum_{n=1}^N {\rm err}(y_n, G_n^-({\bf x}_n))
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -687,7 +687,7 @@ E_{\rm oob}(G) = \frac{1}{N} \sum_{n=1}^N {\rm err}(y_n, G_n^-({\bf x}_n))
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

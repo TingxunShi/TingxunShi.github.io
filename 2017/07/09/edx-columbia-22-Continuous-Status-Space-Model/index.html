@@ -111,18 +111,18 @@
 
 
 
-<meta name="description" content="连续马尔科夫模型 连续马尔科夫模型中，状态不再是一个个离散值，而是可以是\(\mathbb{R}^d\)中的任何数，即状态存在于连续空间。最简单的例子是过程 \[ s_t = s_{t-1} + \epsilon_t,\  \  \epsilon_t \sim N(0, aI) \] 本讲主要讨论的是最基本的连续状态空间模型，称为线性高斯马尔科夫模型，又称为Kalman滤波器 \[ \underb">
+<meta name="description" content="连续马尔科夫模型 连续马尔科夫模型中，状态不再是一个个离散值，而是可以是\(\mathbb{R}^d\)中的任何数，即状态存在于连续空间。最简单的例子是过程 \[ s_t = s_{t-1} + \epsilon_t,\ \ \epsilon_t \sim N(0, aI) \] 本讲主要讨论的是最基本的连续状态空间模型，称为线性高斯马尔科夫模型，又称为Kalman滤波器 \[ \underbra">
 <meta name="keywords" content="EdX-Columbia">
 <meta property="og:type" content="article">
 <meta property="og:title" content="EdX Columbia ML 22. 连续状态空间模型">
 <meta property="og:url" content="txshi-mt.com/2017/07/09/edx-columbia-22-Continuous-Status-Space-Model/index.html">
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
-<meta property="og:description" content="连续马尔科夫模型 连续马尔科夫模型中，状态不再是一个个离散值，而是可以是\(\mathbb{R}^d\)中的任何数，即状态存在于连续空间。最简单的例子是过程 \[ s_t = s_{t-1} + \epsilon_t,\  \  \epsilon_t \sim N(0, aI) \] 本讲主要讨论的是最基本的连续状态空间模型，称为线性高斯马尔科夫模型，又称为Kalman滤波器 \[ \underb">
+<meta property="og:description" content="连续马尔科夫模型 连续马尔科夫模型中，状态不再是一个个离散值，而是可以是\(\mathbb{R}^d\)中的任何数，即状态存在于连续空间。最简单的例子是过程 \[ s_t = s_{t-1} + \epsilon_t,\ \ \epsilon_t \sim N(0, aI) \] 本讲主要讨论的是最基本的连续状态空间模型，称为线性高斯马尔科夫模型，又称为Kalman滤波器 \[ \underbra">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:updated_time" content="2017-12-19T12:35:39.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="EdX Columbia ML 22. 连续状态空间模型">
-<meta name="twitter:description" content="连续马尔科夫模型 连续马尔科夫模型中，状态不再是一个个离散值，而是可以是\(\mathbb{R}^d\)中的任何数，即状态存在于连续空间。最简单的例子是过程 \[ s_t = s_{t-1} + \epsilon_t,\  \  \epsilon_t \sim N(0, aI) \] 本讲主要讨论的是最基本的连续状态空间模型，称为线性高斯马尔科夫模型，又称为Kalman滤波器 \[ \underb">
+<meta name="twitter:description" content="连续马尔科夫模型 连续马尔科夫模型中，状态不再是一个个离散值，而是可以是\(\mathbb{R}^d\)中的任何数，即状态存在于连续空间。最简单的例子是过程 \[ s_t = s_{t-1} + \epsilon_t,\ \ \epsilon_t \sim N(0, aI) \] 本讲主要讨论的是最基本的连续状态空间模型，称为线性高斯马尔科夫模型，又称为Kalman滤波器 \[ \underbra">
 
 
 
@@ -391,10 +391,10 @@
       
         <h2 id="连续马尔科夫模型">连续马尔科夫模型</h2>
 <p>连续马尔科夫模型中，状态不再是一个个离散值，而是可以是<span class="math inline">\(\mathbb{R}^d\)</span>中的任何数，即状态存在于连续空间。最简单的例子是过程 <span class="math display">\[
-s_t = s_{t-1} + \epsilon_t,\  \  \epsilon_t \sim N(0, aI)
+s_t = s_{t-1} + \epsilon_t,\ \ \epsilon_t \sim N(0, aI)
 \]</span></p>
 <p>本讲主要讨论的是最基本的连续状态空间模型，称为<strong>线性高斯马尔科夫模型</strong>，又称为<strong>Kalman滤波器</strong> <span class="math display">\[
-\underbrace{s_t = C_{s_{t-1}} + \epsilon_{t-1}}_{\rm latent\  process},\  \  \  \underbrace{x_t = D_{s_t} + \varepsilon_t}_{\rm observed\  process}
+\underbrace{s_t = C_{s_{t-1}} + \epsilon_{t-1}}_{\rm latent\ process},\ \ \ \underbrace{x_t = D_{s_t} + \varepsilon_t}_{\rm observed\ process}
 \]</span></p>
 <p>其中</p>
 <ul>
@@ -406,7 +406,7 @@ s_t = s_{t-1} + \epsilon_t,\  \  \epsilon_t \sim N(0, aI)
 <p>这一问题中要学习的<strong>只是</strong>根据观测序列学习状态序列。之前离散HMM中的<span class="math inline">\(\pi, A, B\)</span>都不需要学习</p>
 <h2 id="kalman滤波">Kalman滤波</h2>
 <p>Kalman滤波要解决的问题是：给定观测到的序列<span class="math inline">\(x_1, x_2, \ldots\)</span>和模型 <span class="math display">\[
-s_{t+1}|s_t \sim N(C_{s_t}, Q),\  \  x_t|s_t \sim N(D_{s_t}, V)
+s_{t+1}|s_t \sim N(C_{s_t}, Q),\ \ x_t|s_t \sim N(D_{s_t}, V)
 \]</span> 学习其背后隐含状态的后验分布<span class="math inline">\(p(s_t|x_1, \ldots, x_t)\)</span></p>
 <p>根据Bayes定律，有 <span class="math display">\[
 \begin{align*}
@@ -617,7 +617,7 @@ p(s_t|x_1, \ldots , x_t) = N(\mu_t^s, \Sigma_t^s)
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -628,7 +628,7 @@ p(s_t|x_1, \ldots , x_t) = N(\mu_t^s, \Sigma_t^s)
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -639,7 +639,7 @@ p(s_t|x_1, \ldots , x_t) = N(\mu_t^s, \Sigma_t^s)
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

@@ -396,12 +396,12 @@ y_i \approx f(x_i;w) = w_0 + \sum_{j=1}^d x_{ij} w_j
 <p>目标函数为最小二乘函数，即选取使平方误差和最小的<span class="math inline">\(w\)</span> <span class="math display">\[
 w_{\rm LS} = \mathop{\rm arg}\min_w \sum_{i=1}^n \left(y_i - f(x_i;w)\right)^2 \equiv \mathop{\rm arg}\min_w \mathcal{L} \\
 \mathcal{L} = \sum_{i=1}^n(y_i - w_0 - \sum_{j=1}^dx_{ij}w_j)^2 \\
-\mathcal{L} = \sum_{i=1}^n(y_i - x_i^Tw)^2\  \  向量形式表示
+\mathcal{L} = \sum_{i=1}^n(y_i - x_i^Tw)^2\ \ 向量形式表示
 \]</span> 向量形式下推导如下： <span class="math display">\[\begin{align*}
 0 &amp;= \sum_{i=1}^n \nabla_w (y_i - x_i^Tw)^2  \\
 &amp;= \sum_{i=1}^n \nabla_w (y_i - x_i^Tw)^T(y_i - x_i^Tw) \\
 &amp;= \sum_{i=1}^n \nabla_w (y_i^Ty_i - y_i^Tx_i^Tw - w^Tx_iy_i + w^Tx_ix_i^Tw)
-\end{align*}\]</span> 由于<span class="math inline">\(y_i,\  w^Tx_i\)</span>都是标量，标量的转置与自身相同，因此上式可以转化为 <span class="math display">\[
+\end{align*}\]</span> 由于<span class="math inline">\(y_i,\ w^Tx_i\)</span>都是标量，标量的转置与自身相同，因此上式可以转化为 <span class="math display">\[
 \sum_{i=1}^n \nabla_w (y_i^2 - 2w^Tx_iy_i + w^Tx_ix_i^Tw) = 0
 \]</span> 根据之前的向量求导法则，有 <span class="math display">\[
 -\sum_{i=1}^n2y_ix_i + \left(\sum_{i=1}^n 2x_ix_i^T \right)w = 0 \Rightarrow w_{\rm LS} = \left(\sum_{i=1}^n x_ix_i^T\right)^{-1}\left(\sum_{i=1}^n y_ix_i \right)
@@ -574,7 +574,7 @@ w_{\rm LS} = \mathop{\rm arg}\min_w \sum_{i=1}^n \left(y_i - f(x_i;w)\right)^2 \
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -585,7 +585,7 @@ w_{\rm LS} = \mathop{\rm arg}\min_w \sum_{i=1}^n \left(y_i - f(x_i;w)\right)^2 \
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -596,7 +596,7 @@ w_{\rm LS} = \mathop{\rm arg}\min_w \sum_{i=1}^n \left(y_i - f(x_i;w)\right)^2 \
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

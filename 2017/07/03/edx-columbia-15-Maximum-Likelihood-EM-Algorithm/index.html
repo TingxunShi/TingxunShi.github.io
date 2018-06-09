@@ -450,10 +450,10 @@ p(a,b|c) = p(a|b,c)p(b|c) \Rightarrow p(b|c) = \frac{p(a,b|c)}{p(a|b,c)}
 <h3 id="关于em算法可以提升ln-pxtheta_1的证明">关于EM算法可以提升<span class="math inline">\(\ln p(x|\theta_1)\)</span>的证明</h3>
 <p><span class="math display">\[
 \begin{align*}
-\ln p(x|\theta_1^{(t)}) &amp;= \mathcal{L}(x, \theta_1^{(t)}) + \underbrace{KL\left(q(\theta_2) || p(\theta_2|x_1, \theta_1^{(t)})\right)}_{=0\  \because\  q = p} \\
-&amp;= \mathcal{L}_t(x, \theta_1^{(t)})\  \  \  \  \leftarrow {\rm E-Step} \\
-&amp;\le \mathcal{L}_t(x, \theta_1^{(t+1)})\  \  \  \leftarrow {\rm M-Step} \\
-&amp;\le \mathcal{L}(x, \theta_1^{(t+1)}) + \underbrace{KL\left(q_t(\theta_2) || p(\theta_2|x_1, \theta_1^{(t+1)})\right)}_{&gt;0\  \because\  q \not= p} \\
+\ln p(x|\theta_1^{(t)}) &amp;= \mathcal{L}(x, \theta_1^{(t)}) + \underbrace{KL\left(q(\theta_2) || p(\theta_2|x_1, \theta_1^{(t)})\right)}_{=0\ \because\ q = p} \\
+&amp;= \mathcal{L}_t(x, \theta_1^{(t)})\ \ \ \ \leftarrow {\rm E-Step} \\
+&amp;\le \mathcal{L}_t(x, \theta_1^{(t+1)})\ \ \ \leftarrow {\rm M-Step} \\
+&amp;\le \mathcal{L}(x, \theta_1^{(t+1)}) + \underbrace{KL\left(q_t(\theta_2) || p(\theta_2|x_1, \theta_1^{(t+1)})\right)}_{&gt;0\ \because\ q \not= p} \\
 &amp;= \mathcal{L}(x, \theta_1^{(t+1)}) + {KL\left(q(\theta_2) || p(\theta_2|x_1, \theta_1^{(t+1)})\right)}\\
 &amp;= \ln p(x|\theta_1^{(t+1)})
 \end{align*}
@@ -659,7 +659,7 @@ q(x_i^m) = p(x_i^m|x_i^o, \mu, \Sigma) = N(\hat{\mu}_i, \hat{\Sigma}_i)
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -670,7 +670,7 @@ q(x_i^m) = p(x_i^m|x_i^o, \mu, \Sigma) = N(\hat{\mu}_i, \hat{\Sigma}_i)
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -681,7 +681,7 @@ q(x_i^m) = p(x_i^m|x_i^o, \mu, \Sigma) = N(\hat{\mu}_i, \hat{\Sigma}_i)
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

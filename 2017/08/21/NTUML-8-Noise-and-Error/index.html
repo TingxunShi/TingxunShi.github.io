@@ -400,7 +400,7 @@
 </ul>
 <p>那么在有噪声的情况下，VC上界是否还有意义？要解答这个问题，需要理解VC上界的核心是什么。回顾之前讲解VC维时，都是拿小球举的例子。这里，每个小球都可以对应为学习时看到的<span class="math inline">\(\bf x\)</span>，每个球被选中的概率遵循分布<span class="math inline">\(P({\bf x})\)</span>。小球颜色的确定方法为，如果对这条数据，假设函数<span class="math inline">\(h\)</span>的值和目标函数<span class="math inline">\(f\)</span>的值不一样，就将小球漆为橙色。那么有了噪声怎么办？噪声的出现使得对确定的<span class="math inline">\(\bf x\)</span>其颜色可能会变化，不再由<span class="math inline">\(f\)</span>所决定。即小球是否为橙色（对应于<span class="math inline">\(y \not= h({\bf x})\)</span> ）现在由概率分布<span class="math inline">\(y\sim P(y|{\bf x})\)</span>决定，不再是一个恒定的值（课程里的说法是小球的颜色会一会儿一变）。然而即便如此，仍然可以估算出罐中（同一时刻）橙色球的比例，只需要在拿出球的一刹那将球的颜色记录下来。这意味着，无论小球的颜色是否会变，橙色球的比例都可以通过抽样的方法来确定。因此，只要<span class="math inline">\({\bf x} \mathop{\sim}^{\rm i.i.d} P({\bf x}), y \mathop{\sim}^{\rm i.i.d} P({y|\bf x})\)</span>，即$ ({}, y) ^{} P({}, y)$</p>
 <p>由于现在<span class="math inline">\(y\)</span>不再由<span class="math inline">\(f\)</span>决定而是由<span class="math inline">\(P(y|{\bf x})\)</span>决定，因此类似于<span class="math inline">\(f\)</span>“目标函数”的叫法，这个<span class="math inline">\(P(y|{\bf x})\)</span>被称为“目标分布”，即其说明了对每个<span class="math inline">\(\bf x\)</span>最理想的预测是什么，同时还说明了噪声产生的概率。例如，假设对某个<span class="math inline">\(\bf x\)</span>有<span class="math inline">\(P(\circ | {\bf x}) = 0.7, P(\times | {\bf x}) = 0.3\)</span>，则其对应的标签应该是<span class="math inline">\(\circ\)</span>，同时有30%的情况下会带来噪声。在这样的定义下，目标函数的概念也可以用目标分布来表示，即 <span class="math display">\[
-P(y|{\bf x}) = \begin{cases} 1 &amp; {\rm if\  } y = f({\bf x}) \\ 0 &amp; {\rm elsewhere} \end{cases}
+P(y|{\bf x}) = \begin{cases} 1 &amp; {\rm if\ } y = f({\bf x}) \\ 0 &amp; {\rm elsewhere} \end{cases}
 \]</span> 目标函数的概念被扩展了以后，机器学习的目标也就发生了变化，其是通过常见的输入（分布<span class="math inline">\(P({\bf x})\)</span>告知我们哪些点是重要的）来预测最理想的标签值（由分布<span class="math inline">\(P(y|{\bf x})\)</span>决定）</p>
 <h2 id="错误的衡量">错误的衡量</h2>
 <p>在用机器学习算法解决问题的过程中，最后一步是要看选择的假设<span class="math inline">\(g\)</span>是否能满足<span class="math inline">\(g \approx f\)</span>。为了判断这一点，之前使用的方法是看<span class="math inline">\(E_{\rm out}\)</span>，其中 <span class="math display">\[
@@ -424,9 +424,9 @@ E_{\rm out}(g) &amp;= \mathcal{E}_{ {\bf x} \sim P}{\rm err}(g({\bf x}), f({\bf 
 <li>平方误差。用数学方法表示为<span class="math inline">\({\rm err}(\tilde{y}, y) = (\tilde{y} - y)^2\)</span>，看的是<span class="math inline">\(\tilde{y}\)</span>与<span class="math inline">\(y\)</span>有多接近</li>
 </ul>
 <p>错误衡量函数（也称为误差函数）和目标分布一起决定了最理想的目标函数的形式。例如，假设现在有<span class="math inline">\(P(y=1|{\bf x}) = 0.2, P(y=2|{\bf x}) = 0.7, P(y=3|{\bf x}) = 0.1\)</span>。如果使用0-1误差作为误差函数，则误差值与<span class="math inline">\(\tilde{y}\)</span>之间的关系如下 <span class="math display">\[
-{\rm err} = \begin{cases}0.8 &amp; {\rm if\  }\tilde{y} = 1 \\ 0.3 &amp; {\rm if\  }\tilde{y} = 2 \\ 0.9 &amp; {\rm if\  }\tilde{y} = 3 \\ 1.0 &amp; {\rm if\  }\tilde{y} = 1.9 \end{cases}
+{\rm err} = \begin{cases}0.8 &amp; {\rm if\ }\tilde{y} = 1 \\ 0.3 &amp; {\rm if\ }\tilde{y} = 2 \\ 0.9 &amp; {\rm if\ }\tilde{y} = 3 \\ 1.0 &amp; {\rm if\ }\tilde{y} = 1.9 \end{cases}
 \]</span> 这里<span class="math inline">\(\tilde{y} = 2\)</span>是最优的预测，同时<span class="math inline">\(\tilde{y} = 1.9\)</span>的效果非常不好。但是如果使用平方误差作为误差函数，结果就大有不同 <span class="math display">\[
-{\rm err} = \begin{cases}1.1 &amp; {\rm if\  }\tilde{y} = 1 \\ 0.3 &amp; {\rm if\  }\tilde{y} = 2 \\ 1.5 &amp; {\rm if\  }\tilde{y} = 3 \\ 0.29 &amp; {\rm if\  }\tilde{y} = 1.9 \end{cases}
+{\rm err} = \begin{cases}1.1 &amp; {\rm if\ }\tilde{y} = 1 \\ 0.3 &amp; {\rm if\ }\tilde{y} = 2 \\ 1.5 &amp; {\rm if\ }\tilde{y} = 3 \\ 0.29 &amp; {\rm if\ }\tilde{y} = 1.9 \end{cases}
 \]</span> 这时之前效果很差的预测值<span class="math inline">\(\tilde{y}= 1.9\)</span>反而变成了最好的预测值！事实上，可以证明，如果误差函数是0-1误差，则最好的预测值应该为<span class="math inline">\(f({\bf x}) = \mathop{ {\rm arg}\max}_{y \in \mathcal{Y}}P(y|{\bf x})\)</span>；如果误差函数是平方误差，则最好的预测值应该为<span class="math inline">\(f({\bf x}) = \sum_{y \in \mathcal{Y}}y\cdot P(y|{\bf x})\)</span></p>
 <p>因此，错误衡量函数扮演了一个非常重要的角色。一方面，它指导机器学习算法<span class="math inline">\(\mathcal{A}\)</span>选出一个最好的<span class="math inline">\(g\)</span>，另一方面，它评估了所得到的模型与目标函数之间的相似性<span class="math inline">\(g \approx f\)</span></p>
 <h2 id="算法误差的衡量">算法误差的衡量</h2>
@@ -447,8 +447,8 @@ E_{\rm out}(g) &amp;= \mathcal{E}_{ {\bf x} \sim P}{\rm err}(g({\bf x}), f({\bf 
 </figure>
 <p>在这种情况下，<span class="math inline">\(E_{\rm out}\)</span>和<span class="math inline">\(E_{\rm in}\)</span>的形式也有所变化，为 <span class="math display">\[
 \begin{align*}
-E_{\rm out}(h) &amp;= \mathcal{E}_{({\bf x}, y) \sim P}\left\{\begin{array}{cc}1 &amp; {\rm if\  }y=+1 \\ 1000 &amp; {\rm if\  }y=-1\end{array}\right\} \cdot [\![y \not= h({\bf x})]\!] \\
-E_{\rm in}(h) &amp;= \frac{1}{N}\sum_{n=1}^N\left\{\begin{array}{cc}1 &amp; {\rm if\  }y=+1 \\ 1000 &amp; {\rm if\  }y=-1\end{array}\right\} \cdot [\![y \not= h({\bf x}_n)]\!]
+E_{\rm out}(h) &amp;= \mathcal{E}_{({\bf x}, y) \sim P}\left\{\begin{array}{cc}1 &amp; {\rm if\ }y=+1 \\ 1000 &amp; {\rm if\ }y=-1\end{array}\right\} \cdot [\![y \not= h({\bf x})]\!] \\
+E_{\rm in}(h) &amp;= \frac{1}{N}\sum_{n=1}^N\left\{\begin{array}{cc}1 &amp; {\rm if\ }y=+1 \\ 1000 &amp; {\rm if\ }y=-1\end{array}\right\} \cdot [\![y \not= h({\bf x}_n)]\!]
 \end{align*}
 \]</span> 这种问题称作<strong>加权的分类问题</strong>，因为对不同的<span class="math inline">\(({\bf x}, y)\)</span>权重不同</p>
 <p>这种问题如何求解？首先VC理论仍然适用，所以可以肯定问题是可以求解的。接下来的问题就是怎么让<span class="math inline">\(E_{\rm in}^w\)</span>越小越好（这里上角标<span class="math inline">\(w\)</span>表示是加权问题）。目前讲过的两种模型中，如果数据线性可分，那么PLA肯定可以收敛而且不会受权重改变的影响；如果数据线性不可分，就要使用口袋算法，不过要做一些修改，即当<span class="math inline">\({\bf w}_{t+1}\)</span>所达到的<span class="math inline">\(E_{\rm in}^{\bf w}\)</span>更小时，再用它替换<span class="math inline">\(\hat{\bf w}\)</span></p>
@@ -631,7 +631,7 @@ E_{\rm in}(h) &amp;= \frac{1}{N}\sum_{n=1}^N\left\{\begin{array}{cc}1 &amp; {\rm
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -642,7 +642,7 @@ E_{\rm in}(h) &amp;= \frac{1}{N}\sum_{n=1}^N\left\{\begin{array}{cc}1 &amp; {\rm
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -653,7 +653,7 @@ E_{\rm in}(h) &amp;= \frac{1}{N}\sum_{n=1}^N\left\{\begin{array}{cc}1 &amp; {\rm
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

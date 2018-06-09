@@ -111,20 +111,20 @@
 
 
 
-<meta name="description" content="从主成分分析到自动编码器 主成分分析（PCA）的思想是，高维数据通常可以使用很低维度的数据编码。假设输入是\(N\)维数据，现在想用\(M\  (M&amp;lt;N)\)维的数据表示之，方法是选择\(M\)个相互正交的方向，且数据在这些方向上有最大的方差，然后略去剩下\(N-M\)个数据不大的方向。这样，\(M\)个主方向就形成了一个低维子空间，可以将原始\(N\)维数据表示成它在子空间上的投影。由于舍">
+<meta name="description" content="从主成分分析到自动编码器 主成分分析（PCA）的思想是，高维数据通常可以使用很低维度的数据编码。假设输入是\(N\)维数据，现在想用\(M\ (M&amp;lt;N)\)维的数据表示之，方法是选择\(M\)个相互正交的方向，且数据在这些方向上有最大的方差，然后略去剩下\(N-M\)个数据不大的方向。这样，\(M\)个主方向就形成了一个低维子空间，可以将原始\(N\)维数据表示成它在子空间上的投影。由于舍弃">
 <meta name="keywords" content="自动编码器,UTNN">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Hinton神经网络与机器学习 15. 自动编码器">
 <meta property="og:url" content="txshi-mt.com/2018/02/24/UTNN-15-Autoencoders/index.html">
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
-<meta property="og:description" content="从主成分分析到自动编码器 主成分分析（PCA）的思想是，高维数据通常可以使用很低维度的数据编码。假设输入是\(N\)维数据，现在想用\(M\  (M&amp;lt;N)\)维的数据表示之，方法是选择\(M\)个相互正交的方向，且数据在这些方向上有最大的方差，然后略去剩下\(N-M\)个数据不大的方向。这样，\(M\)个主方向就形成了一个低维子空间，可以将原始\(N\)维数据表示成它在子空间上的投影。由于舍">
+<meta property="og:description" content="从主成分分析到自动编码器 主成分分析（PCA）的思想是，高维数据通常可以使用很低维度的数据编码。假设输入是\(N\)维数据，现在想用\(M\ (M&amp;lt;N)\)维的数据表示之，方法是选择\(M\)个相互正交的方向，且数据在这些方向上有最大的方差，然后略去剩下\(N-M\)个数据不大的方向。这样，\(M\)个主方向就形成了一个低维子空间，可以将原始\(N\)维数据表示成它在子空间上的投影。由于舍弃">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_15_PCA.png">
 <meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_15_Alex_deep_autoencoder.png">
 <meta property="og:updated_time" content="2018-02-25T04:06:03.064Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hinton神经网络与机器学习 15. 自动编码器">
-<meta name="twitter:description" content="从主成分分析到自动编码器 主成分分析（PCA）的思想是，高维数据通常可以使用很低维度的数据编码。假设输入是\(N\)维数据，现在想用\(M\  (M&amp;lt;N)\)维的数据表示之，方法是选择\(M\)个相互正交的方向，且数据在这些方向上有最大的方差，然后略去剩下\(N-M\)个数据不大的方向。这样，\(M\)个主方向就形成了一个低维子空间，可以将原始\(N\)维数据表示成它在子空间上的投影。由于舍">
+<meta name="twitter:description" content="从主成分分析到自动编码器 主成分分析（PCA）的思想是，高维数据通常可以使用很低维度的数据编码。假设输入是\(N\)维数据，现在想用\(M\ (M&amp;lt;N)\)维的数据表示之，方法是选择\(M\)个相互正交的方向，且数据在这些方向上有最大的方差，然后略去剩下\(N-M\)个数据不大的方向。这样，\(M\)个主方向就形成了一个低维子空间，可以将原始\(N\)维数据表示成它在子空间上的投影。由于舍弃">
 <meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_15_PCA.png">
 
 
@@ -393,7 +393,7 @@
 
       
         <h2 id="从主成分分析到自动编码器">从主成分分析到自动编码器</h2>
-<p>主成分分析（PCA）的思想是，高维数据通常可以使用很低维度的数据编码。假设输入是<span class="math inline">\(N\)</span>维数据，现在想用<span class="math inline">\(M\  (M&lt;N)\)</span>维的数据表示之，方法是选择<span class="math inline">\(M\)</span>个相互正交的方向，且数据在这些方向上有最大的方差，然后略去剩下<span class="math inline">\(N-M\)</span>个数据不大的方向。这样，<span class="math inline">\(M\)</span>个主方向就形成了一个低维子空间，可以将原始<span class="math inline">\(N\)</span>维数据表示成它在子空间上的投影。由于舍弃的信息在舍弃的方向上变化不大，所以没有什么损失。要从降维表示的数据重构原有数据，只需要在舍弃的方向上使用所有数据在该方向上的均值，误差就是数据点在未表示方向上的分量与均值的差的平方和，如下图所示</p>
+<p>主成分分析（PCA）的思想是，高维数据通常可以使用很低维度的数据编码。假设输入是<span class="math inline">\(N\)</span>维数据，现在想用<span class="math inline">\(M\ (M&lt;N)\)</span>维的数据表示之，方法是选择<span class="math inline">\(M\)</span>个相互正交的方向，且数据在这些方向上有最大的方差，然后略去剩下<span class="math inline">\(N-M\)</span>个数据不大的方向。这样，<span class="math inline">\(M\)</span>个主方向就形成了一个低维子空间，可以将原始<span class="math inline">\(N\)</span>维数据表示成它在子空间上的投影。由于舍弃的信息在舍弃的方向上变化不大，所以没有什么损失。要从降维表示的数据重构原有数据，只需要在舍弃的方向上使用所有数据在该方向上的均值，误差就是数据点在未表示方向上的分量与均值的差的平方和，如下图所示</p>
 <figure>
 <img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_15_PCA.png" alt="PCA示意图"><figcaption>PCA示意图</figcaption>
 </figure>
@@ -599,7 +599,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -610,7 +610,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -621,7 +621,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

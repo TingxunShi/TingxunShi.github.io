@@ -427,9 +427,9 @@
 <p>从图中可知，从决策树的树根出发，其到任意一个叶子节点的路径都是一个完整的决策过程</p>
 <p>接下来，考虑如何表示决策树的假设模型。如前所述，决策树是一个条件模型，因此可以套用第23讲的内容，将其最基本的形式写出，为 <span class="math display">\[
 G({\bf x}) = \sum_{t=1}^T q_t({\bf x})\cdot g_t({\bf x})
-\]</span> 这里的基假设<span class="math inline">\(g_t\)</span>其实就是路径<span class="math inline">\(t\)</span>中最后一个节点（叶子节点）的内容，通常是一个常数。条件<span class="math inline">\(q_t({\bf x})\)</span>是上图中橘色的箭头，可以写为<span class="math inline">\([\![{\rm is\  }{\bf x}{\rm \  on\  path\  }t]\!]\)</span>，即判断输入是否在某条路径<span class="math inline">\(t\)</span>上。通常决策的过程（即路径<span class="math inline">\(t\)</span>上）会有很多简单的决定（在上图中以菱形的内部节点表示）。可以看出，做决定的瞬间并不复杂（即内部节点和叶子节点的操作不复杂），决策树的复杂性是埋藏在条件的抉择中</p>
+\]</span> 这里的基假设<span class="math inline">\(g_t\)</span>其实就是路径<span class="math inline">\(t\)</span>中最后一个节点（叶子节点）的内容，通常是一个常数。条件<span class="math inline">\(q_t({\bf x})\)</span>是上图中橘色的箭头，可以写为<span class="math inline">\([\![{\rm is\ }{\bf x}{\rm \ on\ path\ }t]\!]\)</span>，即判断输入是否在某条路径<span class="math inline">\(t\)</span>上。通常决策的过程（即路径<span class="math inline">\(t\)</span>上）会有很多简单的决定（在上图中以菱形的内部节点表示）。可以看出，做决定的瞬间并不复杂（即内部节点和叶子节点的操作不复杂），决策树的复杂性是埋藏在条件的抉择中</p>
 <p>前面对决策树做出的解释是站在了“决策路径”的角度。从这个角度观察，决策树的假设函数可以写为 <span class="math display">\[
-G({\bf x}) = \sum_{t=1}^T [\![{\bf x}{\rm\  on\  path\  }t]\!] \cdot {\rm leaf}_t({\bf x})
+G({\bf x}) = \sum_{t=1}^T [\![{\bf x}{\rm\ on\ path\ }t]\!] \cdot {\rm leaf}_t({\bf x})
 \]</span> 由于树结构天然的递归性，也可以站在递归的角度对描述决策树。此时，决策树由根节点、分枝条件和子决策树构成。此时决策树的假设函数为 <span class="math display">\[
 G({\bf x}) = \sum_{c=1}^C [\![b({\bf x})= c]\!] \cdot G_c({\bf x})
 \]</span> 这里，<span class="math inline">\(C\)</span>是由该根节点分出的子树个数，也是该节点的分枝条件数。<span class="math inline">\(G({\bf x})\)</span>是整棵树对应的假设函数，<span class="math inline">\(b({\bf x})\)</span>是分枝条件，<span class="math inline">\(G_c({\bf x})\)</span>是第<span class="math inline">\(c\)</span>个分枝对应的子树</p>
@@ -459,7 +459,7 @@ G({\bf x}) = \sum_{c=1}^C [\![b({\bf x})= c]\!] \cdot G_c({\bf x})
 </ul></li>
 </ul>
 <p>C&amp;RT在分裂内部节点时使用的是决策树桩算法：选择一个特征，在该特征上选择一个最优分割点切下去，一半判定为正例，另一半判定为负例。那么如何决定怎么切最好呢？算法使用了一种叫做“纯度”的指标来判别。由于C&amp;RT最后每个叶子节点（也就是每个<span class="math inline">\(g_t\)</span>）返回的都是一个常数，显然当这个节点包含的所有数据其<span class="math inline">\(y_n\)</span>基本相同时（也就是纯度越高时），常数假设函数的效果最好。因此分枝条件的形式为 <span class="math display">\[
-b({\bf x}) = \mathop{\arg \min}_{ {\rm decision\  stumps\  }h({\bf x})} \sum_{c=1}^2 |\mathcal{D}_c{\rm\  with\  }h|\cdot {\rm impurity}(\mathcal{D}_c{\rm\  with\  }h)
+b({\bf x}) = \mathop{\arg \min}_{ {\rm decision\ stumps\ }h({\bf x})} \sum_{c=1}^2 |\mathcal{D}_c{\rm\ with\ }h|\cdot {\rm impurity}(\mathcal{D}_c{\rm\ with\ }h)
 \]</span> 上式的意义可以解释为，对所有的决策树桩（每个决策树桩实际对应了一个特征），判断使用该决策树桩将数据集分成两块以后，各个子数据集不纯度的加权总和。不纯度最低的（也就是纯度最高的）决策树桩用来真正做分裂。这里函数<span class="math inline">\(\rm impurity\)</span>函数用来判定某个数据集的不纯度，后面会定义。不纯度的权重为该数据集的大小</p>
 <p>接下来来看算法核心的部分，即数据集的纯度如何定义。由于纯度的作用是为了返回最后最优的那个常数，因此最后返回的常数好还是不好从某种角度就决定了纯度高还是不高。同样的道理，不纯度的也可以由这个常数的<span class="math inline">\(E_{\rm in}\)</span>来衡量。对于回归问题，不纯度的定义类似于平方误差 <span class="math display">\[
 {\rm inpurity}(\mathcal{D}) = \frac{1}{N}\sum_{n=1}^N (y_n - \bar{y})^2
@@ -480,7 +480,7 @@ b({\bf x}) = \mathop{\arg \min}_{ {\rm decision\  stumps\  }h({\bf x})} \sum_{c=
 <h2 id="crt启发式算法">C&amp;RT启发式算法</h2>
 <p>将上述对四个关键点的设计代回到决策树的基础算法框架中，就能得到一个可用的完整算法。但是这个算法还有一个问题：如果所有<span class="math inline">\({\bf x}_n\)</span>两两不同，这个算法的<span class="math inline">\(E_{\rm in}\)</span>必然是0。这意味着这个算法的VC维非常大，很容易有过拟合的危险。尤其是随着分枝的深入，越接近叶子节点时，决策树子树处理的数据实际上越少，这就更增大了过拟合发生的可能性，因此需要向这个算法加入一些正则项</p>
 <p>决策树算法中一个很自然的正则项是对树的叶子节点数做一个限制，即<span class="math inline">\(\Omega(G) = {\rm NumberOfLeaves}(G)\)</span>。这样，带有正则项的决策树要优化的目标函数变为 <span class="math display">\[
-\mathop{\arg \min}_{ {\rm all\  possible\  }G}E_{\rm in}(G) + \lambda \Omega(G)
+\mathop{\arg \min}_{ {\rm all\ possible\ }G}E_{\rm in}(G) + \lambda \Omega(G)
 \]</span> 这样得到的树称作<em>修剪过的</em>决策树</p>
 <p>但是注意目标函数里是考虑<em>所有可能的</em><span class="math inline">\(G\)</span>，这个搜索空间在实际实现时有一些困难，因此需要做一些修改，即实际的搜索空间是</p>
 <ul>
@@ -489,9 +489,9 @@ b({\bf x}) = \mathop{\arg \min}_{ {\rm decision\  stumps\  }h({\bf x})} \sum_{c=
 </ul>
 <p>此时实际的搜索空间大小就是<span class="math inline">\(G^{(0)}\)</span>中叶子节点的数目。正则项系数<span class="math inline">\(\lambda\)</span>仍然是由验证得到</p>
 <p>决策树还有一些其他特点。之前考虑的特征基本都是数值特征，分枝时候使用的是决策树桩 <span class="math display">\[
-b({\bf x}) = [\![x_i \le \theta]\!] + 1,\  \  \theta\in \mathbb{R}
+b({\bf x}) = [\![x_i \le \theta]\!] + 1,\ \ \theta\in \mathbb{R}
 \]</span> 但是真正在工作中，可能会遇到大量离散的类别特征，例如性别={男, 女}。对于这种特征，线性模型通常不能直接处理，而决策树不会受到影响，只需要修改一下分枝时用到的模型即可。一般来讲，对类别特征使用的切割方式是使用<strong>决策子集</strong> <span class="math display">\[
-b({\bf x}) = [\![x_i \in S]\!] + 1,\  \  S \subset\{1,2,\ldots, K\}
+b({\bf x}) = [\![x_i \in S]\!] + 1,\ \ S \subset\{1,2,\ldots, K\}
 \]</span> （补充一点课堂里没有提到的。对于类别特征，在使用线性模型做处理时，通常的方法是对特征进行<strong>独热编码</strong>，即：第一步将该项类别特征用数字代替，每一位数字对应一个类别特征的具体值，例如上面性别这一项，将男对应为1，将女对应为0。第二步，假设该项类别特征有<span class="math inline">\(K\)</span>种不一样的取值，那么就设置一个长度为<span class="math inline">\(K\)</span>的向量<span class="math inline">\(\bf k\)</span>。对每个具体的值，假设其在第一步被编码为<span class="math inline">\(i, i \in \{0, 1, \ldots, K-1\}\)</span>，将这个<span class="math inline">\(\bf k\)</span>的其它项设为0，但是把第<span class="math inline">\(i\)</span>项设为1。这样，如果样本中”性别“这一列的值是”男“，送进模型之前性别这部分的向量应该是[0, 1]；如果是”女“，则应该是[1, 0]）</p>
 <p>C&amp;RT算法在具体实现时还会对缺失值进行处理。假设有一个分枝条件是<span class="math inline">\(b({\bf x}) = [\![{\rm weight \le 50kg}]\!]\)</span>，但是某些样本没有获取到体重的具体值，应该怎么办？在训练时，C&amp;RT算法会使用一种叫做“替代分枝”（surrogate branch）的方法，即它会寻找一些类似的条件来做近似的分枝判断，例如它可能会使用高度是否小于等于155cm来代替判断体重是否小于等于50kg，而替代特征的选择也会在训练时学习到。其原理是，替代分枝<span class="math inline">\(b_1({\bf x}), b_2({\bf x})\)</span>等等的分枝效果应该跟最优的分枝效果近似</p>
 <h2 id="决策树实战">决策树实战</h2>
@@ -669,7 +669,7 @@ b({\bf x}) = [\![x_i \in S]\!] + 1,\  \  S \subset\{1,2,\ldots, K\}
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -680,7 +680,7 @@ b({\bf x}) = [\![x_i \in S]\!] + 1,\  \  S \subset\{1,2,\ldots, K\}
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -691,7 +691,7 @@ b({\bf x}) = [\![x_i \in S]\!] + 1,\  \  S \subset\{1,2,\ldots, K\}
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

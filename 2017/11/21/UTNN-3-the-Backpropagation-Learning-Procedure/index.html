@@ -426,7 +426,7 @@ E= \frac{1}{2}\sum_{n\in {\rm training}}(t^n - y^n)^2
 <h2 id="学习logistic神经元的权重">学习Logistic神经元的权重</h2>
 <p>为了将线性神经元的学习规则扩展到由非线性神经元组成的多层网络的学习规则，需要做两点</p>
 <p>首先，需要将学习规则扩展到单个非线性神经元，这里选用的非线性激活函数是Logistic函数。这个函数的输出是一个实数值，图像平滑，而且在实数集上有界。神经元的激活函数如下： <span class="math display">\[
-z = b + \sum_{i}x_iw_i,\  y=\frac{1}{1+e^{-z}}
+z = b + \sum_{i}x_iw_i,\ y=\frac{1}{1+e^{-z}}
 \]</span> 这里<span class="math inline">\(y\)</span>就是一个Logistic函数，可以简记为<span class="math inline">\(y=\sigma(z)\)</span>。可以容易地推导出对<span class="math inline">\(z \in \mathbb{R}, y \in (-1, 1)\)</span>。Logistic函数的另一个性质是求导比较容易，即有 <span class="math display">\[
 y = \sigma(z) \Rightarrow \frac{dy}{dz} = y(1-y)
 \]</span> 接下来就是求误差函数对权重的导数，有 <span class="math display">\[
@@ -443,7 +443,7 @@ y = \sigma(z) \Rightarrow \frac{dy}{dz} = y(1-y)
 <img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_03_back_propagation.png" alt="反向传播示意"><figcaption>反向传播示意</figcaption>
 </figure>
 <p>上图中，节点<span class="math inline">\(j\)</span>是输出层节点，<span class="math inline">\(i\)</span>是它前面的隐藏层节点，输出误差仍然使用平方误差，因此正向传播时满足 <span class="math display">\[
-z_j = \sum_i w_{ij}y_i,\  \  y_j = \sigma(z_j),\  \  E= \frac{1}{2}\sum_{j \in {\rm output}}(t_j - y_j)^2
+z_j = \sum_i w_{ij}y_i,\ \ y_j = \sigma(z_j),\ \ E= \frac{1}{2}\sum_{j \in {\rm output}}(t_j - y_j)^2
 \]</span> 对应的反向传播就有 <span class="math display">\[
 \begin{align*}
 \frac{\partial E}{\partial y_j} &amp;= -(t_j - y_j) \\
@@ -652,7 +652,7 @@ z_j = \sum_i w_{ij}y_i,\  \  y_j = \sigma(z_j),\  \  E= \frac{1}{2}\sum_{j \in {
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -663,7 +663,7 @@ z_j = \sum_i w_{ij}y_i,\  \  y_j = \sigma(z_j),\  \  E= \frac{1}{2}\sum_{j \in {
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -674,7 +674,7 @@ z_j = \sum_i w_{ij}y_i,\  \  y_j = \sigma(z_j),\  \  E= \frac{1}{2}\sum_{j \in {
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

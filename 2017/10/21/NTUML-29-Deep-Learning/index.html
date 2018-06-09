@@ -443,12 +443,12 @@ h_k({\bf x}) = \sum_{j=0}^{\tilde{d}}w_{kj}\left(\sum_{i=1}^d w_{ij}x_i\right)
 \]</span> 注意内层求和项的指标是从1开始计数，因为对常数项逼近一个恒等函数没什么意义。此外，这里加入了前面所提到的正则化手段，即编码器和解码器的权重相等，<span class="math inline">\(w_{ij}^{(1)} = w_{ji}^{(2)}\)</span>，这里统一写成了<span class="math inline">\(w_{ij}\)</span>。以及，为了避免产生非平凡解，且考虑到实际要得到的是原始数据的<em>压缩</em>表示，还限制编码后数据的维度<span class="math inline">\(\tilde{d}\)</span>要小于原始维度<span class="math inline">\(d\)</span>。这样，记所有权重组成的矩阵为<span class="math inline">\(\rm W\)</span>，线性自动编码器假设函数的形式为 <span class="math display">\[
 h({\bf x}) = {\rm WW}^\mathsf{T}{\bf x}
 \]</span> 既然假设函数的形式已经被定义好，那么接下来的做法似乎水到渠成：只需要按部就班写出损失函数，就可以让损失函数对<span class="math inline">\(\rm W\)</span>求偏导，找出最优的<span class="math inline">\(\rm W\)</span>。损失函数的形式为（由于最后求出来的是一个向量，因此下面公式中用了黑体<span class="math inline">\(\bf h\)</span>） <span class="math display">\[
-E_{\rm in}({\bf h})= E_{\rm in}({\rm W}) = \frac{1}{N}\sum_{n=1}^N \left\|{\bf x}_n - {\rm WW}^\mathsf{T}{\bf x}_n\right\|^2,\  \  {\rm W} \in \mathbb{R}^{d\times \tilde{d}}
+E_{\rm in}({\bf h})= E_{\rm in}({\rm W}) = \frac{1}{N}\sum_{n=1}^N \left\|{\bf x}_n - {\rm WW}^\mathsf{T}{\bf x}_n\right\|^2,\ \ {\rm W} \in \mathbb{R}^{d\times \tilde{d}}
 \]</span> 前面讲到的线性问题都可以得到一个解析解，但是这里乍看之下并不容易，因为求和项里实际上是<span class="math inline">\(w_{ij}\)</span>的四次多项式，求解起来可能要费点周折，需要使用一些线性代数里的工具。由于<span class="math inline">\(\rm WW^{\mathsf{T}}\)</span>是半正定矩阵，因此可以对它做特征值分解，记为<span class="math inline">\(\rm WW^\mathsf{T} = V\Gamma V^{\mathsf{T}}\)</span>。这里得到的<span class="math inline">\(\rm V\)</span>是正交矩阵，即<span class="math inline">\({\rm VV^\mathsf{T} = V^\mathsf{T}V = I}_d\)</span>，而<span class="math inline">\(\rm \Gamma\)</span>是一个对角矩阵，由特征值组成，对角线上非零元素的数量至多为<span class="math inline">\(\tilde{d}\)</span>个。因此<span class="math inline">\({\rm WW^\mathsf{T}}{\bf x}_n = {\rm V\Gamma V}^\mathsf{T}{\bf x}_n\)</span>，接下来可通过优化<span class="math inline">\(\rm V\)</span>和<span class="math inline">\(\rm \Gamma\)</span>来最小化<span class="math inline">\(E_{\rm in}\)</span></p>
 <p>在进入下一步之前，先看一下<span class="math inline">\({\rm WW^\mathsf{T}}{\bf x}_n = {\rm V\Gamma V}^\mathsf{T}{\bf x}_n\)</span>的几何意义。这里原数据左乘一个正交矩阵<span class="math inline">\({\rm V}^\mathsf{T}{\bf x}_n\)</span>实际上就是对原数据做一个坐标变换，类似于某种旋转或镜像。再左乘<span class="math inline">\(\rm \Gamma\)</span>，由于<span class="math inline">\(\rm \Gamma\)</span>是对角矩阵且只有至多<span class="math inline">\(\tilde{d}\)</span>个非零元素，因此这一步是将原数据至少<span class="math inline">\(d-\tilde{d}\)</span>个维度的分量置为0，然后对其他分量做缩放，得到一个新的坐标。最后再乘<span class="math inline">\(\rm V\)</span>，就是将新的坐标变换到原来的坐标系。因此，类似地，如果对原数据不做任何修改，那么有<span class="math inline">\({\bf x}_n = {\rm VIV^{\mathsf{T}}}{\bf x}_n\)</span>。原问题就变成了 <span class="math display">\[
 \min_{\rm V} \min_{\rm \Gamma} \frac{1}{N}\sum_{n=1}^N\left\|{\rm VIV^{\mathsf{T}}}{\bf x}_n - {\rm V\Gamma V^{\mathsf{T}}}{\bf x}_n\right\|^2
 \]</span> 首先来看最优的<span class="math inline">\(\rm \Gamma\)</span>。由于乘以<span class="math inline">\(\rm V\)</span>和<span class="math inline">\(\rm V^{\mathsf{T}}\)</span>是旋转和镜像，不改变向量的长度，因此去掉它对最优化问题的解没有影响。即上述问题等价于 <span class="math display">\[
-\min_{\rm \Gamma}\sum\left\|({\rm I-\Gamma})({\rm some\  vector})\right\|^2
+\min_{\rm \Gamma}\sum\left\|({\rm I-\Gamma})({\rm some\ vector})\right\|^2
 \]</span> 这里<span class="math inline">\(\rm \Gamma\)</span>是唯一的变量，因此为了让上式小，就要让<span class="math inline">\(\rm I-\Gamma\)</span>中有尽量多的0。由于<span class="math inline">\(\rm \Gamma\)</span>是对角矩阵，<span class="math inline">\(\rm I\)</span>是单位矩阵，那么为了达到效果，就要让<span class="math inline">\(\rm \Gamma\)</span>的对角线上有尽量多的1。由前面的推导，<span class="math inline">\(\rm \Gamma\)</span>上最多有<span class="math inline">\(\tilde{d}\)</span>个1。不失一般性地，最优的<span class="math inline">\(\rm \Gamma\)</span>可以为 <span class="math display">\[
 {\rm \Gamma} = \left[\begin{matrix}{\rm I}_{\tilde{d}} &amp; 0 \\ 0 &amp; 0\end{matrix}\right]
 \]</span> 这样，求解原问题等价于求解如下问题 <span class="math display">\[
@@ -457,8 +457,8 @@ E_{\rm in}({\bf h})= E_{\rm in}({\rm W}) = \frac{1}{N}\sum_{n=1}^N \left\|{\bf x
 \min_{\rm V}\sum_{n=1}^N \left\| \left[\begin{matrix}0 &amp; 0 \\ 0 &amp; {\rm I}_{d-\tilde{d}}\end{matrix}\right]{\rm V}^{\mathsf{T}}{\bf x}_n\right\|^2 \equiv \max_{\rm V}\sum_{n=1}^N \left\| \left[\begin{matrix} {\rm I}_{\tilde{d}} &amp; 0 \\ 0 &amp; 0\end{matrix}\right]{\rm V}^{\mathsf{T}}{\bf x}_n\right\|^2
 \]</span> 考虑极端的情况，如果<span class="math inline">\(\tilde{d} = 1\)</span>，此时只与<span class="math inline">\(\rm V^\mathsf{T}\)</span>的第一个行向量<span class="math inline">\({\bf v}^\mathsf{T}\)</span>有关。考虑<span class="math inline">\(\rm V\)</span>是正交矩阵，有<span class="math inline">\({\bf v}^\mathsf{T}{\bf v} = 1\)</span>。因此可以得到如下最优化问题 <span class="math display">\[
 \begin{align*}
-\max_{\bf v}\  \  &amp;\sum_{n=1}^N {\bf v}^\mathsf{T}{\bf x}_n{\bf x}_n^\mathsf{T}{\bf v} \\
-{\rm s.t.}\  \  &amp;{\bf v}^\mathsf{T}{\bf v} = 1
+\max_{\bf v}\ \ &amp;\sum_{n=1}^N {\bf v}^\mathsf{T}{\bf x}_n{\bf x}_n^\mathsf{T}{\bf v} \\
+{\rm s.t.}\ \ &amp;{\bf v}^\mathsf{T}{\bf v} = 1
 \end{align*}
 \]</span> 使用拉格朗日乘子，可知最优的<span class="math inline">\(\bf v\)</span>满足 <span class="math display">\[
 \sum_{n=1}^N {\bf x}_n{\bf x}_n^\mathsf{T} {\bf v} = \lambda {\bf v}
@@ -650,7 +650,7 @@ E_{\rm in}({\bf h})= E_{\rm in}({\rm W}) = \frac{1}{N}\sum_{n=1}^N \left\|{\bf x
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -661,7 +661,7 @@ E_{\rm in}({\bf h})= E_{\rm in}({\rm W}) = \frac{1}{N}\sum_{n=1}^N \left\|{\bf x
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -672,7 +672,7 @@ E_{\rm in}({\bf h})= E_{\rm in}({\rm W}) = \frac{1}{N}\sum_{n=1}^N \left\|{\bf x
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

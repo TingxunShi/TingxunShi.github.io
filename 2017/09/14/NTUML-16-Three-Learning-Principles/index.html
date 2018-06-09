@@ -399,7 +399,7 @@
 <p>该拉丁格言的意译为“如无必要，勿增实体”。用在机器学习的领域，意味着<strong>对数据最简单的拟合往往也是最好的</strong>。不过这里有两个问题：1. 说一个模型“简单”是什么意思，2. 我们怎么知道越简单就越好</p>
 <h3 id="简单的模型">简单的模型</h3>
 <p>之前其实提到过什么是“简单的假设”。如果一个假设<span class="math inline">\(h\)</span>简单，通常它的复杂度<span class="math inline">\(\Omega(h)\)</span>不高，需要定义的参数少。另外，也提到过什么是“简单的假设集”。如果一个假设集简单，它包含的有效假设不多，成长函数增长比较慢。这两个定义并不冲突：假设一个假设集<span class="math inline">\(\mathcal{H}\)</span>只有<span class="math inline">\(2^\ell\)</span>个假设，那么属于它的每个假设<span class="math inline">\(h\)</span>只需要<span class="math inline">\(\ell\)</span>个比特就能描述。因此，这两者之间的关系为， <span class="math display">\[
-{\rm small\  }\Omega(h) \Leftarrow {\rm small\  }\Omega(\mathcal{H})
+{\rm small\ }\Omega(h) \Leftarrow {\rm small\ }\Omega(\mathcal{H})
 \]</span> 因此，或者使用简单的模型，或者使用正则化得到简单的假设，这样就会对数据集有简单的解释</p>
 <h3 id="简单就好">简单就好</h3>
 <p>除去数学证明，还可以通过一些富有哲学意味的推演来说明简单的就是好的。假设使用了一个简单的模型<span class="math inline">\(\mathcal{H}\)</span>，那么它的成长函数<span class="math inline">\(m_\mathcal{H}(N)\)</span>就会比较小，成长比较慢。这样，如果给模型随便给出<span class="math inline">\(N\)</span>条数据（数据标签随机产生），那么这个模型很不太可能完美拟合数据（概率大概是<span class="math inline">\(\frac{m_\mathcal{H}(N)}{2^N}\)</span>）。反过来，如果模型对数据的拟合非常好，则说明这个拟合的结果是有显著性的，数据应该有迹可循。而这个推论对复杂的模型是不能成立的，即对于复杂数据，即是其可以对数据表现良好，也不敢说这个结果是有显著性的</p>
@@ -618,7 +618,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -629,7 +629,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -640,7 +640,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

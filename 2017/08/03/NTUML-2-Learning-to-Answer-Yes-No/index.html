@@ -398,7 +398,7 @@
 <p>我们可以进一步地规定输出空间<span class="math inline">\(\mathcal{Y} \in \{-1, +1\}\)</span>，其中<span class="math inline">\(y = -1\)</span>时表示拒绝，<span class="math inline">\(y=1\)</span>时表示许可。这样做的好处是我们可以直接使用<span class="math inline">\(\rm sign\)</span>函数来求出<span class="math inline">\(y\)</span>的值，具体地说，假设集合<span class="math inline">\(\mathcal{H}\)</span>中的每个元素<span class="math inline">\(h \in \mathcal{H}\)</span>都有如下形式 <span class="math display">\[
 h({\bf x}) = {\rm sign}\left(\left(\sum_{i=1}^d w_ix_i\right) - {\rm threshold}\right)
 \]</span> 其中<span class="math inline">\(\rm sign\)</span>函数的定义为 <span class="math display">\[
-{\rm sign}(x) = \begin{cases} +1 &amp; {\rm if\  } x &gt; 0 \\ -1 &amp; {\rm if\  }x &lt; 0\end{cases}
+{\rm sign}(x) = \begin{cases} +1 &amp; {\rm if\ } x &gt; 0 \\ -1 &amp; {\rm if\ }x &lt; 0\end{cases}
 \]</span> 即对用户的所有属性做一个加权打分，看它是否超过阈值。如果超过，则批准；否则就拒绝（如果正好等于阈值，这种情况很少发生，甚至可以随机决定<span class="math inline">\(y\)</span>是-1还是1）。</p>
 <p>这里我们说<span class="math inline">\(\mathcal{H}\)</span>是一个集合的原因是，不同的<span class="math inline">\(\bf w\)</span>和<span class="math inline">\(\rm threshold\)</span>都对应了不同的<span class="math inline">\(h\)</span>，所有这些可能性对应的所有<span class="math inline">\(h\)</span>构成了最后的假设集合<span class="math inline">\(\mathcal{H}\)</span>。<span class="math inline">\(h\)</span>这样的函数类型称为<strong>感知机（perceptron）</strong>，其中<span class="math inline">\(\bf w\)</span>称为权重。进一步地，假设我们把<span class="math inline">\(-\rm threshold\)</span>看做是<span class="math inline">\((-{\rm threshold}) \cdot (+1)\)</span>，然后把<span class="math inline">\(+1\)</span>看作是<span class="math inline">\(x_0\)</span>，那么前面的公式形式可以作进一步的简化，即 <span class="math display">\[
 \begin{align*}
@@ -453,7 +453,7 @@ h({\bf x}) = {\rm sign}(w_0 + w_1x_1 + w_2x_2)
 y{\bf w}_{t+1}^\mathsf{T}{\bf x} &amp;= y({\bf w} + y{\bf x})^\mathsf{T}{\bf x} \\
 &amp;= (y{\bf w}^\mathsf{T} + y(y{\bf x})^\mathsf{T}){\bf x} \\
 &amp;= y{\bf w}^\mathsf{T}{\bf x} + y{\bf x}^\mathsf{T}y^\mathsf{T}{\bf x} \\
-&amp;=  y{\bf w}^\mathsf{T}{\bf x} + yy^\mathsf{T}{\bf x}^\mathsf{T}{\bf x} \hspace{3ex} (\because y {\rm\  is\  a\  scalar}) \\
+&amp;=  y{\bf w}^\mathsf{T}{\bf x} + yy^\mathsf{T}{\bf x}^\mathsf{T}{\bf x} \hspace{3ex} (\because y {\rm\ is\ a\ scalar}) \\
 &amp;= y{\bf w}^\mathsf{T}{\bf x} + y^2|\!|{\bf x}|\!|_2^2 &gt; y{\bf w}^\mathsf{T}{\bf x} 
 \end{align*}
 \]</span></p>
@@ -692,7 +692,7 @@ y_{n(t)}{\bf w}_f^\mathsf{T}{\bf x}_{n(t)} \ge \min_n y_n {\bf w}_f^\mathsf{T}{\
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -703,7 +703,7 @@ y_{n(t)}{\bf w}_f^\mathsf{T}{\bf x}_{n(t)} \ge \min_n y_n {\bf w}_f^\mathsf{T}{\
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -714,7 +714,7 @@ y_{n(t)}{\bf w}_f^\mathsf{T}{\bf x}_{n(t)} \ge \min_n y_n {\bf w}_f^\mathsf{T}{\
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

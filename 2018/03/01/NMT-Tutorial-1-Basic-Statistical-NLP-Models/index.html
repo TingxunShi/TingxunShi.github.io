@@ -100,7 +100,7 @@
 
 
 
-  <meta name="keywords" content="N元语法,NMT_Tutorial," />
+  <meta name="keywords" content="NMT_Tutorial,N元语法," />
 
 
 
@@ -112,14 +112,14 @@
 
 
 <meta name="description" content="本系列笔记主要来自于以下三篇关于神经机器翻译（NMT）的tutorial：  [Koehn2017], Philipp Koehn, Statistical Machine Translation, Draft of Chapter 13: Neural Machine Translation , 2017.09 [Neubig2017], Graham Neubig, Neural Machin">
-<meta name="keywords" content="N元语法,NMT_Tutorial">
+<meta name="keywords" content="NMT_Tutorial,N元语法">
 <meta property="og:type" content="article">
 <meta property="og:title" content="NMT Tutorial 1. 统计语言模型之N元语法">
 <meta property="og:url" content="txshi-mt.com/2018/03/01/NMT-Tutorial-1-Basic-Statistical-NLP-Models/index.html">
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="本系列笔记主要来自于以下三篇关于神经机器翻译（NMT）的tutorial：  [Koehn2017], Philipp Koehn, Statistical Machine Translation, Draft of Chapter 13: Neural Machine Translation , 2017.09 [Neubig2017], Graham Neubig, Neural Machin">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-03-24T12:16:45.568Z">
+<meta property="og:updated_time" content="2018-04-26T15:55:38.130Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NMT Tutorial 1. 统计语言模型之N元语法">
 <meta name="twitter:description" content="本系列笔记主要来自于以下三篇关于神经机器翻译（NMT）的tutorial：  [Koehn2017], Philipp Koehn, Statistical Machine Translation, Draft of Chapter 13: Neural Machine Translation , 2017.09 [Neubig2017], Graham Neubig, Neural Machin">
@@ -454,7 +454,13 @@ P(\mathcal{E}_{\rm test};\theta) = \prod_{E\in \mathcal{E}_{\rm test}}P(E;\theta
 \]</span> 由于语言模型对每个句子所计算出的概率一般都非常小，若干很小的概率值相乘以后，很可能出现下溢现象。而如果求对数以后再求和，可以很好地避免这种现象发生。此外，做基于梯度的优化时，加和项的求导比乘积项的求导计算起来方便很多。综上所述，对数似然是一种更好的方法。也可以在求出对数似然以后除以语料库中单词的个数，这样可以比较不同语料库得到的语言模型的效果</p>
 <p>最后一种衡量语言模型准确度的方法是<strong>困惑度</strong>（perplexity, ppl），是每个单词负对数似然的平均值的自然指数 <span class="math display">\[
 {\rm ppl}(\mathcal{E}_{\rm test};\theta) = e^{-(\log P(\mathcal{E}_{\rm test};\theta)) / {\rm length}(\mathcal{E}_{\rm test})}
-\]</span> 对这个指标，一种直观的解释是“模型在做决定的时候，对这个决定由多犹豫？”，更准确地说，这个值描述的是“如果每次出词的时候都按照语言模型的概率分布随机猜一个词，那么平均每多少个词可以猜到那个正确的词？”</p>
+\]</span> 另一种更常见的写法是 <span class="math display">\[
+\begin{align*}
+{\rm ppl} &amp;= e^{-l} \\ 
+l &amp;= \frac{1}{M}\sum_{i=1}^M\log P(s_i)
+\end{align*}
+\]</span> 其中<span class="math inline">\(M\)</span>是测试集语料的长度，<span class="math inline">\(P(s_i)\)</span>是模型对第<span class="math inline">\(i\)</span>条语料正确单词给出的概率值</p>
+<p>对这个指标，一种直观的解释是“模型在做决定的时候，对这个决定由多犹豫？”，更准确地说，这个值描述的是“如果每次出词的时候都按照语言模型的概率分布随机猜一个词，那么平均每多少个词可以猜到那个正确的词？”</p>
 <p>困惑度这种度量方案比较为研究人员所偏爱，因为这种方法做出来的结果比较大，因此不同模型之间的差别体现得更加直观（所以提高了论文投中的概率[手动滑稽]）</p>
 <h2 id="处理未知词">处理未知词</h2>
 <p>测试集里出现的单词可能在训练集里没有出现过，这种词一般称为<strong>未知词</strong>（简称UNK），需要做进一步处理。语言模型常见的处理方法包括</p>
@@ -537,9 +543,9 @@ P(e_t)  = (1-\alpha_1)P_{\rm ML}(e_t) + \alpha_1P_{\rm unk}(e_t)
       
         <div class="post-tags">
           
-            <a href="/tags/N元语法/" rel="tag"># N元语法</a>
-          
             <a href="/tags/NMT-Tutorial/" rel="tag"># NMT_Tutorial</a>
+          
+            <a href="/tags/N元语法/" rel="tag"># N元语法</a>
           
         </div>
       
@@ -650,7 +656,7 @@ P(e_t)  = (1-\alpha_1)P_{\rm ML}(e_t) + \alpha_1P_{\rm unk}(e_t)
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -661,7 +667,7 @@ P(e_t)  = (1-\alpha_1)P_{\rm ML}(e_t) + \alpha_1P_{\rm unk}(e_t)
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -672,7 +678,7 @@ P(e_t)  = (1-\alpha_1)P_{\rm ML}(e_t) + \alpha_1P_{\rm unk}(e_t)
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

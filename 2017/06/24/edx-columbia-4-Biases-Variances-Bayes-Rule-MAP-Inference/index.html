@@ -111,18 +111,18 @@
 
 
 
-<meta name="description" content="偏差-方差均衡 由上一讲可知，普通最小二乘算出的权重\(w_{\rm LS}=(X^\mathsf{T}X)^{-1}X^\mathsf{T}y\)，为无偏差估计但是有比较高的方差，即 \[ \mathbb{E}[w_{\rm LS}] = w,\  \  {\rm var}[w_{\rm LS}] = \sigma^2 (X^\mathsf{T}X)^{-1} \] 而岭回归算出的权重\(w_{">
+<meta name="description" content="偏差-方差均衡 由上一讲可知，普通最小二乘算出的权重\(w_{\rm LS}=(X^\mathsf{T}X)^{-1}X^\mathsf{T}y\)，为无偏差估计但是有比较高的方差，即 \[ \mathbb{E}[w_{\rm LS}] = w,\ \ {\rm var}[w_{\rm LS}] = \sigma^2 (X^\mathsf{T}X)^{-1} \] 而岭回归算出的权重\(w_{\r">
 <meta name="keywords" content="EdX-Columbia,MAP,贝叶斯定律">
 <meta property="og:type" content="article">
 <meta property="og:title" content="EdX Columbia ML 4. 偏差方差、贝叶斯定律与MAP推断">
 <meta property="og:url" content="txshi-mt.com/2017/06/24/edx-columbia-4-Biases-Variances-Bayes-Rule-MAP-Inference/index.html">
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
-<meta property="og:description" content="偏差-方差均衡 由上一讲可知，普通最小二乘算出的权重\(w_{\rm LS}=(X^\mathsf{T}X)^{-1}X^\mathsf{T}y\)，为无偏差估计但是有比较高的方差，即 \[ \mathbb{E}[w_{\rm LS}] = w,\  \  {\rm var}[w_{\rm LS}] = \sigma^2 (X^\mathsf{T}X)^{-1} \] 而岭回归算出的权重\(w_{">
+<meta property="og:description" content="偏差-方差均衡 由上一讲可知，普通最小二乘算出的权重\(w_{\rm LS}=(X^\mathsf{T}X)^{-1}X^\mathsf{T}y\)，为无偏差估计但是有比较高的方差，即 \[ \mathbb{E}[w_{\rm LS}] = w,\ \ {\rm var}[w_{\rm LS}] = \sigma^2 (X^\mathsf{T}X)^{-1} \] 而岭回归算出的权重\(w_{\r">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:updated_time" content="2017-12-19T12:35:39.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="EdX Columbia ML 4. 偏差方差、贝叶斯定律与MAP推断">
-<meta name="twitter:description" content="偏差-方差均衡 由上一讲可知，普通最小二乘算出的权重\(w_{\rm LS}=(X^\mathsf{T}X)^{-1}X^\mathsf{T}y\)，为无偏差估计但是有比较高的方差，即 \[ \mathbb{E}[w_{\rm LS}] = w,\  \  {\rm var}[w_{\rm LS}] = \sigma^2 (X^\mathsf{T}X)^{-1} \] 而岭回归算出的权重\(w_{">
+<meta name="twitter:description" content="偏差-方差均衡 由上一讲可知，普通最小二乘算出的权重\(w_{\rm LS}=(X^\mathsf{T}X)^{-1}X^\mathsf{T}y\)，为无偏差估计但是有比较高的方差，即 \[ \mathbb{E}[w_{\rm LS}] = w,\ \ {\rm var}[w_{\rm LS}] = \sigma^2 (X^\mathsf{T}X)^{-1} \] 而岭回归算出的权重\(w_{\r">
 
 
 
@@ -391,16 +391,16 @@
       
         <h2 id="偏差-方差均衡">偏差-方差均衡</h2>
 <p>由上一讲可知，普通最小二乘算出的权重<span class="math inline">\(w_{\rm LS}=(X^\mathsf{T}X)^{-1}X^\mathsf{T}y\)</span>，为无偏差估计但是有比较高的方差，即 <span class="math display">\[
-\mathbb{E}[w_{\rm LS}] = w,\  \  {\rm var}[w_{\rm LS}] = \sigma^2 (X^\mathsf{T}X)^{-1}
+\mathbb{E}[w_{\rm LS}] = w,\ \ {\rm var}[w_{\rm LS}] = \sigma^2 (X^\mathsf{T}X)^{-1}
 \]</span></p>
 <p>而岭回归算出的权重<span class="math inline">\(w_{\rm RR} = (\lambda I + X^\mathsf{T}X)^{-1}X^\mathsf{T}y\)</span>，用前面的方法，可以算出 <span class="math display">\[
-\mathbb{E}[w_{\rm RR}] = (\lambda I + X^\mathsf{T}X)^{-1}X^\mathsf{T}Xw,\  \  {\rm var}[w_{\rm RR}] = \sigma^2 Z(X^\mathsf{T}X)^{-1}Z^\mathsf{T} \\
+\mathbb{E}[w_{\rm RR}] = (\lambda I + X^\mathsf{T}X)^{-1}X^\mathsf{T}Xw,\ \ {\rm var}[w_{\rm RR}] = \sigma^2 Z(X^\mathsf{T}X)^{-1}Z^\mathsf{T} \\
 Z = (I+\lambda(X^\mathsf{T}X)^{-1})^{-1} ( = (X^\mathsf{T}X+\lambda I)^{-1}X^\mathsf{T}X)
 \]</span> 可以看出来是一个有偏估计，但是方差更小。那么哪种方法更好？实际上，我们关心所得到的权重的通用性，即<span class="math inline">\(w\)</span>对于新的数据<span class="math inline">\((x_0, y_0)\)</span>表现如何（这里我们只知道<span class="math inline">\(x_0\)</span>，还不知道<span class="math inline">\(y_0\)</span>）。我们可以知道使用普通最小二乘预估的<span class="math inline">\(\hat{y}_0 = x_0^\mathsf{T} w_{\rm LS}\)</span>，使用岭回归预估的<span class="math inline">\(\hat{y}_0 = x_0^\mathsf{T}w_{\rm RR}\)</span></p>
 <p>对于建模得出的<span class="math inline">\(\hat{w}\)</span>（这里<span class="math inline">\(\hat{w}\)</span>可以是<span class="math inline">\(w_{\rm LS}\)</span>或者<span class="math inline">\(w_{\rm RR}\)</span>），可以使用平方误差和期望的定义来计算误差的期望，即 <span class="math display">\[
 \mathbb{E}[(y_0 - x_0^\mathsf{T}\hat{w})^2|X, x_0] = \int_{\mathbb{R}}\int_{\mathbb{R}^n} (y_0 - x_0^\mathsf{T}\hat{w})^2 p(y|X,w) p(y_0|x_0, w)dydy_0
 \]</span></p>
-<p>也就是说，假设我知道<span class="math inline">\(X\)</span>，<span class="math inline">\(x_0\)</span>，同时假设有一个真实的<span class="math inline">\(w\)</span>（尽管不知道具体是什么），而且结果<span class="math inline">\(y \sim N(Xw, \sigma^2I)\)</span>，要使用<span class="math inline">\(\hat{w} = w_{\rm LS}\  {\rm or}\  w_{\rm RR}\)</span>去近似<span class="math inline">\(w\)</span>，然后用<span class="math inline">\(y_0 \approx x_0^\mathsf{T}\hat{w}\)</span>去预测<span class="math inline">\(y_0 \sim N(x_0^\mathsf{T}w, \sigma^2)\)</span>，计算预测的期望平方误差</p>
+<p>也就是说，假设我知道<span class="math inline">\(X\)</span>，<span class="math inline">\(x_0\)</span>，同时假设有一个真实的<span class="math inline">\(w\)</span>（尽管不知道具体是什么），而且结果<span class="math inline">\(y \sim N(Xw, \sigma^2I)\)</span>，要使用<span class="math inline">\(\hat{w} = w_{\rm LS}\ {\rm or}\ w_{\rm RR}\)</span>去近似<span class="math inline">\(w\)</span>，然后用<span class="math inline">\(y_0 \approx x_0^\mathsf{T}\hat{w}\)</span>去预测<span class="math inline">\(y_0 \sim N(x_0^\mathsf{T}w, \sigma^2)\)</span>，计算预测的期望平方误差</p>
 <p>假设是计算以<span class="math inline">\(x_0\)</span>和<span class="math inline">\(X\)</span>的条件误差，可以套用公式 <span class="math display">\[
 \mathbb{E}[(y_0 - x_0^\mathsf{T}\hat{w})^2] = \mathbb{E}[y_0^2] - 2\mathbb{E}[y_0]x_0^\mathsf{T}\mathbb{E}[\hat{w}] + x_0^\mathsf{T}\mathbb{E}[\hat{w}\hat{w}^\mathsf{T}]x_0
 \]</span></p>
@@ -419,11 +419,11 @@ Z = (I+\lambda(X^\mathsf{T}X)^{-1})^{-1} ( = (X^\mathsf{T}X+\lambda I)^{-1}X^\ma
 <li>末项：得到的模型对训练数据有多敏感</li>
 </ul>
 <p>推而广之，可以认为真实模型都可以表示成<span class="math inline">\(y=f(x;w)+\epsilon\)</span>的形式，其中<span class="math inline">\(\mathbb{E}(\epsilon) = 0, {\rm var}(\epsilon) = \sigma^2\)</span>。我们通过最小化损失函数<span class="math inline">\(\hat{f} = {\rm arg}\min_f \mathcal{L}_f\)</span>来近似<span class="math inline">\(f\)</span>，然后将<span class="math inline">\(\hat{f}\)</span>用于新的数据，即$y_0 (x_0) _0 $。可知</p>
-<span class="math display">\[\begin{align*}
+<p><span class="math display">\[\begin{align*}
 \mathbb{E}[(y_0 - \hat{f}_0)^2] &amp;= \mathbb{E}[y_0^2] - 2\mathbb{E}[y_0\hat{f}_0] + \mathbb{E}[\hat{f}_0^2] \\
 &amp;= \sigma^2 + f_0^2 - 2f_0\mathbb{E}[\hat{f}_0] + \mathbb{E}[\hat{f}_0]^2 + {\rm var}[\hat{f}_0] \\
 &amp;= \sigma^2 + (f_0 - \mathbb{E}[\hat{f}_0])^2 + {\rm var}[\hat{f}_0]
-\end{align*}\]</span>
+\end{align*}\]</span></p>
 <p>第一项是数据本身的噪声，第二项是偏差的平方，第三项是方差</p>
 <p>选择参数一个很好的方法是交叉验证，过程大略为</p>
 <ol type="1">
@@ -477,10 +477,10 @@ w_{\rm MAP} &amp;= {\rm arg}\max_w \ln p(w|y, X) \\
 &amp;= {\rm arg}\max_w \ln p(y|w, X) + \ln p(w) - \ln p(y|X)
 \end{align*}\]</span></p>
 <p>这里第一项是原最小二乘法的目标函数（最大似然），第二项是先验，第三项可以不考虑，因为没有涉及到<span class="math inline">\(w\)</span>，而且在很多模型里我们也不知道这个项会是什么。代入得</p>
-<span class="math display">\[\begin{align*}
+<p><span class="math display">\[\begin{align*}
 w_{\rm MAP} &amp;= {\rm arg}\max_w \ln p(y|w, X) + \ln p(w) \\
 &amp;= {\rm arg}\max_w -\frac{1}{2\sigma^2}(y-Xw)^\mathsf{T}(y-Xw) - \frac{\lambda}{2}w^\mathsf{T}w + C
-\end{align*}\]</span>
+\end{align*}\]</span></p>
 <p>令这个函数为目标函数<span class="math inline">\(\mathcal{L}\)</span>，则可以通过令其对<span class="math inline">\(w\)</span>的偏导数为0求解最优的<span class="math inline">\(w\)</span> <span class="math display">\[
 \nabla_w \mathcal{L} = \frac{1}{\sigma^2} X^\mathsf{T}y - \frac{1}{\sigma^2}X^\mathsf{T}Xw - \lambda w = 0
 \]</span> 解得<span class="math inline">\(w_{\rm MAP} = (\lambda \sigma^2I +X^\mathsf{T}X)^{-1}X^\mathsf{T}y\)</span>。因此可以看出 <span class="math display">\[
@@ -661,7 +661,7 @@ w_{\rm ML} = w_{\rm LS}
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -672,7 +672,7 @@ w_{\rm ML} = w_{\rm LS}
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -683,7 +683,7 @@ w_{\rm ML} = w_{\rm LS}
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

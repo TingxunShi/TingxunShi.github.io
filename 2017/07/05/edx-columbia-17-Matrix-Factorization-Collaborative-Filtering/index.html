@@ -396,7 +396,7 @@
 <p>假设评分矩阵<span class="math inline">\(M\)</span>是一个<span class="math inline">\(N_1 \times N_2\)</span>的矩阵，其中<span class="math inline">\(N_1\)</span>是用户数量，<span class="math inline">\(N_2\)</span>是物品数量，<span class="math inline">\(M_{ij}\)</span>是用户<span class="math inline">\(i\)</span>对物品<span class="math inline">\(j\)</span>的评分。可以预见到<span class="math inline">\(M\)</span>必然是一个极稀疏的矩阵，因为大部分用户都只能对很小一部分物品打分。推荐系统的目的就是要将其它缺失值预测出来。使用的方法是奇异值分解，即每个矩阵<span class="math inline">\(M\)</span>都可以分解为<span class="math inline">\(M=USV^\mathsf{T}\)</span>，其中<span class="math inline">\(U^\mathsf{T}U=I\)</span>，<span class="math inline">\(V^\mathsf{T}V=I\)</span>，<span class="math inline">\(S\)</span>是对角矩阵，所有<span class="math inline">\(S_{ii} \ge 0\)</span>。如果<span class="math inline">\(M\)</span>是<span class="math inline">\(n \times d\)</span>矩阵，则<span class="math inline">\(U\)</span>为<span class="math inline">\(n\times r\)</span>的，<span class="math inline">\(V^\mathsf{T}\)</span>为<span class="math inline">\(r \times d\)</span>的。其中<span class="math inline">\(r = {\rm rank}(M)\)</span></p>
 <p>从另一个角度看，如果<span class="math inline">\(N_1 \times N_2\)</span>矩阵<span class="math inline">\(M\)</span>可以分解成<span class="math inline">\(N_1 \times d\)</span>矩阵<span class="math inline">\(U\)</span>与<span class="math inline">\(d \times N_2\)</span>矩阵<span class="math inline">\(V\)</span>的乘积，<span class="math inline">\(U\)</span>中的每一行可以看做是用户<span class="math inline">\(u_i\)</span>的<span class="math inline">\(d\)</span>个特征，<span class="math inline">\(V\)</span>中的每一列也可以看作是物品<span class="math inline">\(v_j\)</span>的<span class="math inline">\(d\)</span>个特征，两者内积就是原始矩阵中<span class="math inline">\(M_{ij}\)</span>的值。</p>
 <p>令集合<span class="math inline">\(\Omega\)</span>包含了所有有观测值的行列对<span class="math inline">\((i,j)\)</span>，也就是 <span class="math display">\[
-\Omega = \{(i,j): M_{ij} {\rm\  is\  measured}\}
+\Omega = \{(i,j): M_{ij} {\rm\ is\ measured}\}
 \]</span> 即如果用户<span class="math inline">\(i\)</span>给物品<span class="math inline">\(j\)</span>打过分，那么<span class="math inline">\((i,j) \in \Omega\)</span>。令<span class="math inline">\(\Omega_{u_i}\)</span>是用户<span class="math inline">\(i\)</span>打过分的物品，<span class="math inline">\(\Omega_{v_j}\)</span>是给物品<span class="math inline">\(j\)</span>打过分的用户</p>
 <p>假设用户的location满足<span class="math inline">\(u_i \sim N(0, \lambda^{-1}I)\)</span>，物品的location满足<span class="math inline">\(v_j \sim N(0, \lambda^{-1}I)\)</span>，则整个数据的分布满足<span class="math inline">\(M_{ij} \sim N(u_i^\mathsf{T}v_j, \sigma^2)\)</span>。注意由于<span class="math inline">\(M_{ij}\)</span>是评分，每个值都基本是个离散值，因此其实不适合使用正态分布建模。但是如果采用这个假设，算法会比较容易实现而且最终模型也很可用</p>
 <p>令<span class="math inline">\(M_o\)</span>是<span class="math inline">\(M\)</span>中观测到的部分，<span class="math inline">\(M_m\)</span>是缺失的部分，则 <span class="math display">\[
@@ -602,7 +602,7 @@ v_j = \left(\lambda \sigma^2 I + \sum_{i \in \Omega_{v_j}} u_iu_i^\mathsf{T} \ri
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -613,7 +613,7 @@ v_j = \left(\lambda \sigma^2 I + \sum_{i \in \Omega_{v_j}} u_iu_i^\mathsf{T} \ri
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -624,7 +624,7 @@ v_j = \left(\lambda \sigma^2 I + \sum_{i \in \Omega_{v_j}} u_iu_i^\mathsf{T} \ri
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

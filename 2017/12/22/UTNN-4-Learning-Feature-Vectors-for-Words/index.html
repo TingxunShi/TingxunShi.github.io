@@ -411,7 +411,7 @@
 <img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_04_family_tree.png" alt="家族树的示意图"><figcaption>家族树的示意图</figcaption>
 </figure>
 <p>家族树中包含了大量的人名，同时可以定义一些谓词来表示这些人之间的关系，包括父子关系、夫妻关系、叔侄关系/姑侄关系等等。其中，在给定了某些关系的前提下，一些关系可以推导出来。例如： <span class="math display">\[
-({\rm colin}\  has{\text{-}}father\  {\rm james}) \land ({\rm colin}\  has\text-mother\  {\rm victoria}) \rightarrow ({\rm james}\  has\text-wife\  {\rm victoria})
+({\rm colin}\ has{\text{-}}father\ {\rm james}) \land ({\rm colin}\ has\text-mother\ {\rm victoria}) \rightarrow ({\rm james}\ has\text-wife\ {\rm victoria})
 \]</span> 因此，具体的学习问题就是，给定大量表示家族树中信息的元组，学习出这些谓词之间的关系。最简单的办法是手写这些规则，但是这样会使得搜索空间变得很大，因此研究人员试图让神经网络在一个由实数权重组成的连续空间中搜索并捕捉信息。如果送给神经网络一个人名和一个关系名称，它能够给出对应的人名，那么就说这个神经网络学成了。例如，对上面的例子，神经网络的输入如果是James和wife，它应该能输出Victoria</p>
 <p>设计的时候，网络的输入层对人名和亲属关系都进行了独热编码。对每条数据， 只有两个神经元被激活，分别对应一个人名和一个关系。而输出是24个神经元，对每条数据只有一个神经元被激活。使用独热编码的好处是，对这24个向量组成的集合，其任何子集中的向量都是线性无关的，而且不需要对每个人名有任何先验知识</p>
 <p>接下来，对人名部分，会有6个神经元与之相连。因为这一层的神经元数小于输入层神经元数目，因此每个神经元不可能只对应于一个人名。这样，神经网络需要把每个人名表示成这6个神经元的某种行为模式。换句话说，这一层实际上可以学出来每个人名的分布式编码（输入的独热编码则对应地被称为局部编码）</p>
@@ -428,7 +428,7 @@
 </ul>
 <p>令人兴奋的是，以上信息都没有被人编码在数据里，而是由神经网络根据给定数据自己学出，它能自动判定在这个领域里哪些特征是好的特征。当然，这些特征起作用的先决条件是其它信息（例如亲属关系）使用相似的表现形式，以及后面的隐含层能够学到如何使用这些特征预测其它特征</p>
 <p>另一种观察神经网络如何工作（以及对其工作进行评估）的方法是，对已有的112条关系随机选出108条来训练，然后看神经网络在剩下4条数据上的表现。这项在20世纪80年代进行的实验最后能得到50%到75%的准确率，对于一项24分类的任务来说，这个结果已经足够可喜可贺，而且如果训练集更大，效果应该会更好</p>
-<p>如今，我们有更大的数据库，里面可能有百万条的关系数据，每条数据都可以写成<span class="math inline">\(A\  R\  B\)</span>的形式（即<span class="math inline">\(A\)</span>与<span class="math inline">\(B\)</span>存在关系<span class="math inline">\(R\)</span>）。对于这样的数据，可以训练两种网络</p>
+<p>如今，我们有更大的数据库，里面可能有百万条的关系数据，每条数据都可以写成<span class="math inline">\(A\ R\ B\)</span>的形式（即<span class="math inline">\(A\)</span>与<span class="math inline">\(B\)</span>存在关系<span class="math inline">\(R\)</span>）。对于这样的数据，可以训练两种网络</p>
 <ul>
 <li>一种网络是前面介绍的原型的延展，也是接受<span class="math inline">\(A\)</span>和<span class="math inline">\(R\)</span>做输入来预测<span class="math inline">\(B\)</span>，这样可以找到数据库中不太可能出现的元组，即对已有数据进行纠错</li>
 <li>另一种类似，但是是接受<span class="math inline">\(A\)</span>、<span class="math inline">\(R\)</span>和<span class="math inline">\(B\)</span>做输入，并为这些输入打标记，0为不可能，1为可能，以此来预测某个三元组为真的概率</li>
@@ -469,7 +469,7 @@ C = -\sum_j t_j\log y_j
 C(\boldsymbol{t}, \boldsymbol{y}) &amp;= -\sum_i t_i\log(y_i)
 \end{align*}
 \]</span> 由于<span class="math inline">\(\boldsymbol{t}\)</span>是独热编码，不失一般性，假设第<span class="math inline">\(k\)</span>个分量为1，其余分量均为0，则有 <span class="math display">\[
-t_i = \begin{cases} 1 &amp; {\rm if\  }i=k \\ 0 &amp; \rm{elsewhere}\end{cases}
+t_i = \begin{cases} 1 &amp; {\rm if\ }i=k \\ 0 &amp; \rm{elsewhere}\end{cases}
 \]</span> 因此展开交叉熵代价函数为 <span class="math display">\[
 \begin{align*}
 -\sum_i t_i\log(y_i) &amp;= -t_k\log(y_k) = -\log(y_k) \\
@@ -479,7 +479,7 @@ t_i = \begin{cases} 1 &amp; {\rm if\  }i=k \\ 0 &amp; \rm{elsewhere}\end{cases}
 \begin{align*}
 \frac{\partial C(\boldsymbol{t}, \boldsymbol{y})}{\partial \boldsymbol{z}} &amp;= 
 \begin{cases}
--1 + \frac{e^{t_i}}{\sum_i e^{t_i}} &amp; {\rm if\  }i = k \\
+-1 + \frac{e^{t_i}}{\sum_i e^{t_i}} &amp; {\rm if\ }i = k \\
 \frac{e^{t_i}}{\sum_i e^{t_i}} &amp; {\rm elsewhere} 
 \end{cases} \\
 &amp;= \boldsymbol{y}-\boldsymbol{t}
@@ -685,7 +685,7 @@ t_i = \begin{cases} 1 &amp; {\rm if\  }i=k \\ 0 &amp; \rm{elsewhere}\end{cases}
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -696,7 +696,7 @@ t_i = \begin{cases} 1 &amp; {\rm if\  }i=k \\ 0 &amp; \rm{elsewhere}\end{cases}
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -707,7 +707,7 @@ t_i = \begin{cases} 1 &amp; {\rm if\  }i=k \\ 0 &amp; \rm{elsewhere}\end{cases}
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

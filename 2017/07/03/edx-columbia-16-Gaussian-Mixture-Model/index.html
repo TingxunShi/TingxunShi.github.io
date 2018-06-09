@@ -394,7 +394,7 @@
 <p>如果使用加权算法，可以把硬聚类的kmean变成软聚类</p>
 <blockquote>
 <p>输入：数据点<span class="math inline">\(x_1, \ldots, x_n\)</span>，每个<span class="math inline">\(x \in \mathbb{R}^d\)</span> 目标：以<span class="math inline">\(\phi_i\)</span>和<span class="math inline">\(\mu_k\)</span>为变量，最小化<span class="math inline">\(\mathcal{L} = \sum_{i=1}^n\sum_{k=1}^K\phi_i(k)\frac{||x_i - \mu_k||^2}{\beta}\)</span> 条件：<span class="math inline">\(\phi_i(k)&gt;0, \sum_{i=1}^K \phi_i(k) = 1, \beta&gt;0\)</span> 迭代执行以下两步直至算法终止 1. 更新<span class="math inline">\(\phi\)</span>：对每个<span class="math inline">\(i\)</span>，更新其所属簇的权重 <span class="math display">\[
-\phi_i(k) = \frac{\exp\{-\frac{1}{\beta}||x_i - \mu_k||^2\}}{\sum_j \exp\{-\frac{1}{\beta}||x_i - \mu_j||^2\}},\  {\rm for\  }k=1,\ldots,K
+\phi_i(k) = \frac{\exp\{-\frac{1}{\beta}||x_i - \mu_k||^2\}}{\sum_j \exp\{-\frac{1}{\beta}||x_i - \mu_j||^2\}},\ {\rm for\ }k=1,\ldots,K
 \]</span> 2. 更新<span class="math inline">\(\mu\)</span>：对每个<span class="math inline">\(k\)</span>，使用加权均值更新<span class="math inline">\(\mu_k\)</span> <span class="math display">\[
 \mu_k = \frac{\sum_i x_i\phi_i(k)}{\sum_i \phi_i(k)}
 \]</span></p>
@@ -437,7 +437,7 @@ Q= \sum_{i=1}^n\sum_{k=1}^K \phi_i (k) \ln p(x_i,c_i=k|\pi, \mu_k, \Sigma_k) + C
 <p>具体的过程如下</p>
 <ul>
 <li>E-step：对<span class="math inline">\(i=1,\ldots,n\)</span>，令 <span class="math display">\[
-\phi_i(k) = \frac{\pi_k N(x_i|\mu_k, \Sigma_k)}{\sum_j \pi_j N(x_i|\mu_j, \Sigma_j)},\  {\rm for\  }k=1,\ldots,K
+\phi_i(k) = \frac{\pi_k N(x_i|\mu_k, \Sigma_k)}{\sum_j \pi_j N(x_i|\mu_j, \Sigma_j)},\ {\rm for\ }k=1,\ldots,K
 \]</span></li>
 <li>M-step：对<span class="math inline">\(k=1,\ldots,K\)</span>，定义<span class="math inline">\(n_k = \sum_{i=1}^n \phi_i(k)\)</span>，更新 <span class="math display">\[
 \begin{align*}
@@ -452,7 +452,7 @@ Q= \sum_{i=1}^n\sum_{k=1}^K \phi_i (k) \ln p(x_i,c_i=k|\pi, \mu_k, \Sigma_k) + C
 <p>输入：<span class="math inline">\(x_1,\ldots, x_n\)</span>，其中<span class="math inline">\(x\in \mathcal{X}\)</span> 目标：最大化<span class="math inline">\(\mathcal{L} = \sum_{i=1}^n \ln p(x_i|\pi, \boldsymbol{\theta})\)</span>，其中<span class="math inline">\(p(x|\theta_k)\)</span>是问题相关的 步骤：迭代EM两步直到<span class="math inline">\(\mathcal{L}\)</span>足够小</p>
 <ul>
 <li>E-step：对<span class="math inline">\(i=1,\ldots, n\)</span>，令 <span class="math display">\[
-\phi_i(k) = \frac{\pi_k p(x_i|\theta_k)}{\sum_j \pi_j p(x_i|\theta_j)},\  {\rm for\  }k=1,\ldots,K
+\phi_i(k) = \frac{\pi_k p(x_i|\theta_k)}{\sum_j \pi_j p(x_i|\theta_j)},\ {\rm for\ }k=1,\ldots,K
 \]</span></li>
 <li>M-step：对<span class="math inline">\(k=1,\ldots, K\)</span>，定义<span class="math inline">\(n_k = \sum_{i=1}^n \phi_i(k)\)</span>，令 <span class="math display">\[
 \pi_k = \frac{n_k}{n}, \theta_k = {\rm arg}\max_\theta \sum_{i=1}^n \phi_i(k)\ln p(x_i|\theta)
@@ -630,7 +630,7 @@ Q= \sum_{i=1}^n\sum_{k=1}^K \phi_i (k) \ln p(x_i,c_i=k|\pi, \mu_k, \Sigma_k) + C
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -641,7 +641,7 @@ Q= \sum_{i=1}^n\sum_{k=1}^K \phi_i (k) \ln p(x_i,c_i=k|\pi, \mu_k, \Sigma_k) + C
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -652,7 +652,7 @@ Q= \sum_{i=1}^n\sum_{k=1}^K \phi_i (k) \ln p(x_i,c_i=k|\pi, \mu_k, \Sigma_k) + C
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

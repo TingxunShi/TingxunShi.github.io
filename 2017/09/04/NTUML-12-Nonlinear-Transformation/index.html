@@ -419,7 +419,7 @@ h({\bf x}) = \tilde{h}({\bf z}) = {\rm sign}(\tilde{\bf w}^\mathsf{T}\boldsymbol
 <li><span class="math inline">\((-0.6, -1, +2)\)</span>对应了一个双曲线</li>
 <li><span class="math inline">\((0.6, +1, +2)\)</span>这个分类器会将所有样本都分为正例</li>
 </ul>
-<p>注意这里尽管得到的二次曲线不同，但是它们会有一些共同的限制。例如，当<span class="math inline">\(w_1 = w_2\)</span>且与<span class="math inline">\({w_0}\)</span>异号时，得到的圆虽然半径不同，但是其圆心始终会在原点上。要打破这样的限制，就需要<span class="math inline">\(\boldsymbol{\Phi}\)</span>做的变换包含了<span class="math inline">\(x_1\)</span>与<span class="math inline">\(x_2\)</span>二次（及更低次）组合的各种形式，即<span class="math inline">\(\boldsymbol{\Phi}_2({\bf x}) = (1, x_1, x_2, x_1^2, x_1x_2, x^2_2)\)</span>。重新记<span class="math inline">\(\mathcal{X}\)</span>经<span class="math inline">\(\boldsymbol{\Phi}_2\)</span>变换后得到的空间为<span class="math inline">\(\mathcal{Z}\)</span>，则假设集合<span class="math inline">\(\mathcal{H}_{\boldsymbol{\Phi}_2} = \{h({\bf x}): h({\bf x}) = \tilde{h}(\boldsymbol{\Phi}_2({\bf x})){\rm\  for \  some\  linear\  }\tilde{h}{\rm\  on\  }\mathcal{Z}\}\)</span>就可以实现<span class="math inline">\(\mathcal{X}\)</span>中的所有二次曲线，包括直线等退化情况</p>
+<p>注意这里尽管得到的二次曲线不同，但是它们会有一些共同的限制。例如，当<span class="math inline">\(w_1 = w_2\)</span>且与<span class="math inline">\({w_0}\)</span>异号时，得到的圆虽然半径不同，但是其圆心始终会在原点上。要打破这样的限制，就需要<span class="math inline">\(\boldsymbol{\Phi}\)</span>做的变换包含了<span class="math inline">\(x_1\)</span>与<span class="math inline">\(x_2\)</span>二次（及更低次）组合的各种形式，即<span class="math inline">\(\boldsymbol{\Phi}_2({\bf x}) = (1, x_1, x_2, x_1^2, x_1x_2, x^2_2)\)</span>。重新记<span class="math inline">\(\mathcal{X}\)</span>经<span class="math inline">\(\boldsymbol{\Phi}_2\)</span>变换后得到的空间为<span class="math inline">\(\mathcal{Z}\)</span>，则假设集合<span class="math inline">\(\mathcal{H}_{\boldsymbol{\Phi}_2} = \{h({\bf x}): h({\bf x}) = \tilde{h}(\boldsymbol{\Phi}_2({\bf x})){\rm\ for \ some\ linear\ }\tilde{h}{\rm\ on\ }\mathcal{Z}\}\)</span>就可以实现<span class="math inline">\(\mathcal{X}\)</span>中的所有二次曲线，包括直线等退化情况</p>
 <h2 id="非线性变换">非线性变换</h2>
 <p>之前说到，<span class="math inline">\(\mathcal{X}\)</span>空间中的非线性分类问题，在找到一个合适的从<span class="math inline">\(\mathcal{X}\)</span>到<span class="math inline">\(\mathcal{Z}\)</span>上的非线性变换<span class="math inline">\(\boldsymbol{\Phi}\)</span>以后，可以用<span class="math inline">\(\mathcal{Z}\)</span>空间上的感知机来做分类。如何训练<span class="math inline">\(\mathcal{Z}\)</span>上的感知机？参考之前使用数据<span class="math inline">\(\{({\bf x}_n, y_n)\}\)</span>训练<span class="math inline">\(\mathcal{X}\)</span>上感知机的方法，用经过非线性变换得到的新数据<span class="math inline">\(\{({\bf z}_n = \boldsymbol{\Phi}({\bf x}_n), y_n)\}\)</span>进行训练即可。整个步骤描述如下</p>
 <blockquote>
@@ -638,7 +638,7 @@ E_{\rm in}(g_0) \ge E_{\rm in}(g_1) \ge E_{\rm in}(g_2) \ge E_{\rm in}(g_3) \ge 
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -649,7 +649,7 @@ E_{\rm in}(g_0) \ge E_{\rm in}(g_1) \ge E_{\rm in}(g_2) \ge E_{\rm in}(g_3) \ge 
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -660,7 +660,7 @@ E_{\rm in}(g_0) \ge E_{\rm in}(g_1) \ge E_{\rm in}(g_2) \ge E_{\rm in}(g_3) \ge 
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

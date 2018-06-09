@@ -439,8 +439,8 @@ g_{t+1} &amp;\leftarrow \mathop{\rm arg\min}_{h\in \mathcal{H}}\left(\sum_{n=1}^
 <li><p>通过<span class="math inline">\(\mathcal{A}(\mathcal{D}, {\bf u}^{(t)})\)</span>得到<span class="math inline">\(g_t\)</span>。其中<span class="math inline">\(\mathcal{A}\)</span>是要减小<span class="math inline">\({\bf u}^{(t)}\)</span>加权的0/1误差</p></li>
 <li><p>使用如下方法将<span class="math inline">\({\bf u}^{(t)}\)</span>更新为<span class="math inline">\({\bf u}^{(t+1)}\)</span> <span class="math display">\[
 \begin{align*}
-[\![y_n \not= g_t({\bf x}_n)]\!]: u_n^{(t+1)} &amp;\leftarrow u_n^{(t)} \cdot \blacklozenge_t \hspace{2ex}(\rm incorrect\  examples)\\
-[\![y_n = g_t({\bf x}_n)]\!]: u_n^{(t+1)} &amp;\leftarrow u_n^{(t)} /\  \blacklozenge_t \hspace{2ex}(\rm correct\  examples) \\
+[\![y_n \not= g_t({\bf x}_n)]\!]: u_n^{(t+1)} &amp;\leftarrow u_n^{(t)} \cdot \blacklozenge_t \hspace{2ex}(\rm incorrect\ examples)\\
+[\![y_n = g_t({\bf x}_n)]\!]: u_n^{(t+1)} &amp;\leftarrow u_n^{(t)} /\ \blacklozenge_t \hspace{2ex}(\rm correct\ examples) \\
 \blacklozenge_t &amp;= \sqrt{\frac{1-\epsilon_t}{\epsilon_t}} \\
 \epsilon_t &amp;= \frac{\sum_{n=1}^N u_n^{(t)}[\![y_n \not= g_t({\bf x}_n)]\!]}{\sum_{n=1}^N u_n^{(t)}}
 \end{align*}
@@ -626,7 +626,7 @@ E_{\rm out}(G) \le E_{\rm in}(G) + O\left(\sqrt{O(d_{\rm VC}(\mathcal{H})\cdot T
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -637,7 +637,7 @@ E_{\rm out}(G) \le E_{\rm in}(G) + O\left(\sqrt{O(d_{\rm VC}(\mathcal{H})\cdot T
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -648,7 +648,7 @@ E_{\rm out}(G) \le E_{\rm in}(G) + O\left(\sqrt{O(d_{\rm VC}(\mathcal{H})\cdot T
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

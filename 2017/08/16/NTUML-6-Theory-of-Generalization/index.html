@@ -410,7 +410,7 @@
 <p>即当<span class="math inline">\(N=3\)</span>时，最多产生四种分类器。因此我们可以初步得到一个推论，即<strong>只要出现了停止点</strong><span class="math inline">\(k\)</span><strong>，它就会对所有</strong><span class="math inline">\(N&gt;k\)</span><strong>时最大可能的成长函数</strong><span class="math inline">\(m_\mathcal{H}(N)\)</span><strong>施加了一些限制</strong>。这样就可以得出一个想法 <span class="math display">\[
 \begin{align*}
 &amp;m_\mathcal{H}(N) \\
-\le &amp; {\rm\  maximum\  possible\  }m_\mathcal{H}(N){\rm\  given\  }k \\
+\le &amp; {\rm\ maximum\ possible\ }m_\mathcal{H}(N){\rm\ given\ }k \\
 \le &amp; poly(N)
 \end{align*}
 \]</span> 如果上述猜测能够被证明，而且<span class="math inline">\(m_\mathcal{H}\)</span>可以取代Hoeffding不等式上界中的<span class="math inline">\(M\)</span>，那么感知机算法就是可行的</p>
@@ -434,13 +434,13 @@ B(N,1) = 1
 <p>再次，如果<span class="math inline">\(N&lt;k\)</span>，那么此时不受停止点约束，可以随意让<span class="math inline">\(\mathcal{H}\)</span>打散，因此</p>
 <blockquote>
 <p><span class="math display">\[
-B(N, k) = 2^N{\rm\  for\  }N&lt;k
+B(N, k) = 2^N{\rm\ for\ }N&lt;k
 \]</span></p>
 </blockquote>
 <p>最后，如果<span class="math inline">\(N=k\)</span>，只需要从所有<span class="math inline">\(2^k\)</span>种分类器中删掉一个就能满足停止点约束，因此</p>
 <blockquote>
 <p><span class="math display">\[
-B(N, k) = 2^N - 1{\rm\  for\  }N = k
+B(N, k) = 2^N - 1{\rm\ for\ }N = k
 \]</span></p>
 </blockquote>
 <p>注意，已经证明有二维空间中的感知机的停止点<span class="math inline">\(k=4\)</span>，<span class="math inline">\(N=4\)</span>时的成长函数值<span class="math inline">\(m_\mathcal{H}(4)\)</span>为14，而<span class="math inline">\(B(4,4) = 15\)</span>，因此上限函数实际给出的是一个宽松的上界</p>
@@ -471,18 +471,18 @@ B(N, k) \le \sum_{i=0}^{k-1}{N \choose i}
 \]</span> 而不等式的右边最高项为<span class="math inline">\(N^{k-1}\)</span>。因此，对假设集合<span class="math inline">\(\mathcal{H}\)</span>，如果其存在停止点且值为<span class="math inline">\(k\)</span>，则其成长函数<span class="math inline">\(m_\mathcal{H}(N)\)</span>的上限由上限函数<span class="math inline">\(B(N,k)\)</span>决定，上限函数的上限由一个多项式函数<span class="math inline">\(O(N^{k-1})\)</span>决定，综上所述，如果停止点存在，则<span class="math inline">\(m_\mathcal{H}(N)\)</span>是多项式的。实际上，还可以证明<span class="math inline">\(B(N,k) \ge \sum_{i=0}^{k-1}{N \choose i}\)</span>，即两者之间是相等的</p>
 <h2 id="mathcalh中坏情况发生概率上界的证明"><span class="math inline">\(\mathcal{H}\)</span>中“坏情况”发生概率上界的证明</h2>
 <p>在证明了成长函数是多项式复杂度以后，一个自然的想法是把成长函数值放进Hoeffding不等式右侧，替换掉<span class="math inline">\(M\)</span>。然而事情实际上并不如此遂意，直接替换的结果是不对的。尽管如此，还是可以得到一个形式差不多的上界，即<strong>在<span class="math inline">\(N\)</span>足够大的情况下</strong>，有 <span class="math display">\[
-P[\exists h\in \mathcal{H} {\rm\  s.t.\  }|E_{\rm in}(h) - E_{\rm out}(h)| &gt; \epsilon] \le 2\cdot 2m_{\mathcal{H}}(2N)\cdot \exp\left(-2\cdot \frac{1}{16}\epsilon^2 N\right)
+P[\exists h\in \mathcal{H} {\rm\ s.t.\ }|E_{\rm in}(h) - E_{\rm out}(h)| &gt; \epsilon] \le 2\cdot 2m_{\mathcal{H}}(2N)\cdot \exp\left(-2\cdot \frac{1}{16}\epsilon^2 N\right)
 \]</span> 接下来，给出一个概要的证明，主要是针对一些多出来的常数是如何发生的：</p>
 <p>首先，在不等号左侧，有一个棘手的<span class="math inline">\(E_{\rm out}\)</span>需要解决。因为训练集的大小总是有限的，因此<span class="math inline">\(E_{\rm in}(h)\)</span>也是有限的。但是<span class="math inline">\(E_{\rm out}\)</span>却是无限的。所以关键问题是怎么把这个无限值转变成有限值。如何用有限多个点知道<span class="math inline">\(E_{\rm out}\)</span>呢？核心思想是借鉴之前训练-测试的方法，使用验证集来进行估计。可以取样出<span class="math inline">\(N\)</span>个点构成验证集<span class="math inline">\(\mathcal{D}&#39;\)</span>，估计出<span class="math inline">\(E_{\rm in}&#39;\)</span>。由于<span class="math inline">\(E_{\rm in}\)</span>、<span class="math inline">\(E_{\rm in}&#39;\)</span>的分布应该都类似于期望为<span class="math inline">\(E_{\rm out}\)</span>的正态分布，因此如果某个假设函数<span class="math inline">\(h\)</span>有其<span class="math inline">\(E_{\rm in}\)</span>跟<span class="math inline">\(E_{\rm out}\)</span>差得很远，那么有很大的概率（大于1/2）其<span class="math inline">\(E_{\rm in}\)</span>离<span class="math inline">\(E_{\rm in}&#39;\)</span>也很远，所以可以用<span class="math inline">\(E_{\rm in}&#39;\)</span>换掉<span class="math inline">\(E_{\rm out}\)</span>。换完以后，有（更具体的数学证明不再列出） <span class="math display">\[
-\frac{1}{2}P[\exists h\in \mathcal{H} {\rm\  s.t.\  }|E_{\rm in}(h) - E_{\rm out}(h)| &gt; \epsilon] \le P[\exists h\in \mathcal{H} {\rm\  s.t.\  }|E_{\rm in}(h) - E_{\rm in}&#39;(h)| &gt; \frac{\epsilon}{2}]
+\frac{1}{2}P[\exists h\in \mathcal{H} {\rm\ s.t.\ }|E_{\rm in}(h) - E_{\rm out}(h)| &gt; \epsilon] \le P[\exists h\in \mathcal{H} {\rm\ s.t.\ }|E_{\rm in}(h) - E_{\rm in}&#39;(h)| &gt; \frac{\epsilon}{2}]
 \]</span> 接下来，由于<span class="math inline">\(E_{\rm in}\)</span>有<span class="math inline">\(m_\mathcal{H}(N)\)</span>种，<span class="math inline">\(E_{\rm in}&#39;\)</span>也有<span class="math inline">\(m_\mathcal{H}(N)\)</span>种，因此综合起来，一共有<span class="math inline">\(m_\mathcal{H}(2N)\)</span>种假设函数可以使用。使用之前事件并的概率的上界，有 <span class="math display">\[
-{\rm BAD} \le 2m_{\mathcal{H}}(2N)P[\exists h\in \mathcal{H} {\rm\  s.t.\  }|E_{\rm in}(h) - E_{\rm in}&#39;(h)| &gt; \frac{\epsilon}{2}]
+{\rm BAD} \le 2m_{\mathcal{H}}(2N)P[\exists h\in \mathcal{H} {\rm\ s.t.\ }|E_{\rm in}(h) - E_{\rm in}&#39;(h)| &gt; \frac{\epsilon}{2}]
 \]</span> 最后看上述不等式中<span class="math inline">\(P​\)</span>的上界。还是使用之前类似的罐子举例子，只不过此时罐子中有<span class="math inline">\(2N​\)</span>个球，要比较的是挑出的<span class="math inline">\(N​\)</span>个球观测到的概率和罐里<span class="math inline">\(N​\)</span>个球反映的概率之间差别，由于全体观测反映的概率可以用取出球观测到的概率和罐内球反映的概率取均值得到，因此通过简单的计算，两者有以下关系 <span class="math display">\[
 |E_{\rm in} - E_{\rm in}&#39;| &gt; \frac{\epsilon}{2} \Leftrightarrow \left|E_{\rm in} - \frac{E_{\rm in} + E_{\rm in}&#39;}{2}\right| &gt; \frac{\epsilon}{4}
 \]</span> 其中$ $可以看做是一个总体的概率，因此概率的上界可以用Hoeffding不等式求出（不过注意这里其实是无放回的Hoeffding不等式），即 <span class="math display">\[
-P[\exists h\in \mathcal{H} {\rm\  s.t.\  }|E_{\rm in}(h) - E_{\rm in}&#39;(h)| &gt; \frac{\epsilon}{2}] \le 2\exp\left(-2\left(\frac{\epsilon}{4}\right)^2N\right)
+P[\exists h\in \mathcal{H} {\rm\ s.t.\ }|E_{\rm in}(h) - E_{\rm in}&#39;(h)| &gt; \frac{\epsilon}{2}] \le 2\exp\left(-2\left(\frac{\epsilon}{4}\right)^2N\right)
 \]</span> 综上所述，证明了VC（Vapnik-Chervonenkis）上界，即 <span class="math display">\[
-P[\exists h\in \mathcal{H} {\rm\  s.t.\  }|E_{\rm in}(h) - E_{\rm out}(h)| &gt; \epsilon] \le 4m_{\mathcal{H}}(2N)\cdot \exp\left(-\frac{1}{8}\epsilon^2 N\right)
+P[\exists h\in \mathcal{H} {\rm\ s.t.\ }|E_{\rm in}(h) - E_{\rm out}(h)| &gt; \epsilon] \le 4m_{\mathcal{H}}(2N)\cdot \exp\left(-\frac{1}{8}\epsilon^2 N\right)
 \]</span> 最后回到感知机算法。由于二维空间感知机的停止点为4，因此<span class="math inline">\(m_\mathcal{H}(N)\)</span>是<span class="math inline">\(O(N^3)\)</span>的，多项式时间复杂度。当<span class="math inline">\(N\)</span>增大时，<span class="math inline">\(m_\mathcal{H}(N)\)</span>的增长速度小于指数函数的衰减速度，整体上“坏事情”发生的概率大幅度减小。所以如果感知机算法<span class="math inline">\(\mathcal{A}\)</span>选出了<span class="math inline">\(E_{\rm in}\)</span>最小的<span class="math inline">\(g\)</span>，这个<span class="math inline">\(g\)</span>也会有最小的<span class="math inline">\(E_{\rm out}\)</span>，达到机器学习的效果</p>
 
       
@@ -656,7 +656,7 @@ P[\exists h\in \mathcal{H} {\rm\  s.t.\  }|E_{\rm in}(h) - E_{\rm out}(h)| &gt; 
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -667,7 +667,7 @@ P[\exists h\in \mathcal{H} {\rm\  s.t.\  }|E_{\rm in}(h) - E_{\rm out}(h)| &gt; 
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -678,7 +678,7 @@ P[\exists h\in \mathcal{H} {\rm\  s.t.\  }|E_{\rm in}(h) - E_{\rm out}(h)| &gt; 
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

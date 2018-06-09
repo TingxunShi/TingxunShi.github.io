@@ -418,9 +418,9 @@ p(y=+1|x) = \frac{\exp\{x^\mathsf{T}w + w_0\}}{1 + {\exp\{x^\mathsf{T}w + w_0\}}
 \]</span></p>
 <p><span class="math inline">\(\sigma\)</span>被称作是sigmoid函数</p>
 <p>因此到这里我们可以得到完整的问题定义： 令 <span class="math display">\[
-w \leftarrow \left[\!\begin{array}{c} w_0 \\ w   \end{array}\!\right],\  x \leftarrow \left[\!\begin{array}{c} 1 \\ x   \end{array}\!\right]
+w \leftarrow \left[\!\begin{array}{c} w_0 \\ w   \end{array}\!\right],\ x \leftarrow \left[\!\begin{array}{c} 1 \\ x   \end{array}\!\right]
 \]</span> 令<span class="math inline">\((x_1, y_1), \ldots, (x_n, y_n)\)</span>为一系列二元分类的数据集，且有<span class="math inline">\(y \in \{-1, +1\}\)</span>，<strong>Logistic回归模型</strong>认为每个<span class="math inline">\(y_i\)</span>都是独立生成的，而且有 <span class="math display">\[
-P(y_i = +1|x_i, w) = \sigma(x_i^\mathsf{T}w),\  \  \sigma(x_i;w) = \frac{e^{x_i^\mathsf{T}w}}{1 + e^{x_i^\mathsf{T}w}}
+P(y_i = +1|x_i, w) = \sigma(x_i^\mathsf{T}w),\ \ \sigma(x_i;w) = \frac{e^{x_i^\mathsf{T}w}}{1 + e^{x_i^\mathsf{T}w}}
 \]</span></p>
 <p>Logistic回归是一个判别方法（计算<span class="math inline">\(p(y|x)\)</span>），LDA/Bayes分类器是生成方法（对<span class="math inline">\(x\)</span>建模，计算<span class="math inline">\(p(x|y)\)</span>和<span class="math inline">\(p(y)\)</span>）</p>
 <h2 id="logistic回归似然">Logistic回归似然</h2>
@@ -658,7 +658,7 @@ p(w|x,y) \approx \frac{e^{-\frac{1}{2}(w-w_{\rm MAP})^\mathsf{T}\left(-\nabla^2 
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -669,7 +669,7 @@ p(w|x,y) \approx \frac{e^{-\frac{1}{2}(w-w_{\rm MAP})^\mathsf{T}\left(-\nabla^2 
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -680,7 +680,7 @@ p(w|x,y) \approx \frac{e^{-\frac{1}{2}(w-w_{\rm MAP})^\mathsf{T}\left(-\nabla^2 
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

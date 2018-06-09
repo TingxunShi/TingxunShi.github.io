@@ -429,10 +429,10 @@ E_{\rm in}({\bf w}) &amp;= \frac{1}{N}\sum_{n=1}^N({\bf w}^\mathsf{T}{\bf x}_n -
 \end{align*}
 \]</span> 可知 <span class="math display">\[
 \begin{align*}
-E_{\rm in}(\bf w) &amp;= \frac{1}{N}|\!|{\rm X}{\bf w} - {\bf y}|\!|^2 = \frac{1}{N}({\rm X}{\bf w} - {\bf y})^\mathsf{T}({\rm X}{\bf w} - {\bf y}) &amp;&amp; {\rm definition\  of\  norm}\\ 
-&amp;= \frac{1}{N}({\bf w}^\mathsf{T}{\rm X}^\mathsf{T} - {\bf y}^\mathsf{T})({\rm X}{\bf w} - {\bf y}) &amp;&amp; {\rm rule\  of\  transpose}\\
+E_{\rm in}(\bf w) &amp;= \frac{1}{N}|\!|{\rm X}{\bf w} - {\bf y}|\!|^2 = \frac{1}{N}({\rm X}{\bf w} - {\bf y})^\mathsf{T}({\rm X}{\bf w} - {\bf y}) &amp;&amp; {\rm definition\ of\ norm}\\ 
+&amp;= \frac{1}{N}({\bf w}^\mathsf{T}{\rm X}^\mathsf{T} - {\bf y}^\mathsf{T})({\rm X}{\bf w} - {\bf y}) &amp;&amp; {\rm rule\ of\ transpose}\\
 &amp;= \frac{1}{N}({\bf w}^\mathsf{T}{\rm X}^\mathsf{T}{\rm X}{\bf w} - {\bf w}^\mathsf{T}{\rm X}^\mathsf{T}{\bf y} - {\bf y}^\mathsf{T}{\rm X}{\bf w} + {\bf y}^\mathsf{T}{\bf y}) \\
-&amp;= \frac{1}{N}({\bf w}^\mathsf{T}{\rm X}^\mathsf{T}{\rm X}{\bf w} - 2{\bf w}^\mathsf{T}{\rm X}^\mathsf{T}{\bf y} + {\bf y}^\mathsf{T}{\bf y})  &amp;&amp;{ {\bf w}^\mathsf{T}{\rm X}^\mathsf{T}{\bf y}}{\rm\  is\  a\  scalar,\  }{a^\mathsf{T} = a}\\
+&amp;= \frac{1}{N}({\bf w}^\mathsf{T}{\rm X}^\mathsf{T}{\rm X}{\bf w} - 2{\bf w}^\mathsf{T}{\rm X}^\mathsf{T}{\bf y} + {\bf y}^\mathsf{T}{\bf y})  &amp;&amp;{ {\bf w}^\mathsf{T}{\rm X}^\mathsf{T}{\bf y}}{\rm\ is\ a\ scalar,\ }{a^\mathsf{T} = a}\\
 \nabla E_{\rm in}(\bf w) &amp;= \frac{1}{N}(2{\rm X}{\bf w} - 2{\rm X}^\mathsf{T}{\bf y}) = \frac{2}{N}({\rm X}^\mathsf{T}{\rm X}{\bf w} - {\rm X}^\mathsf{T}{\bf y}) 
 \end{align*}
 \]</span> 将<span class="math inline">\(\nabla_{\rm in}({\bf w})\)</span>置为0，如果<span class="math inline">\({\rm X}^\mathsf{T}{\rm X}\)</span>是可逆的，那么可以容易解出 <span class="math display">\[
@@ -457,7 +457,7 @@ E_{\rm in}(\bf w) &amp;= \frac{1}{N}|\!|{\rm X}{\bf w} - {\bf y}|\!|^2 = \frac{1
 </ul>
 <p>所谓“黑猫白猫，抓得住老鼠就是好猫”，只要<span class="math inline">\(E_{\rm out}({\bf w}_{\rm LIN})\)</span>足够小，这个算法就可以看作是一种好的算法。下面试着证明<span class="math inline">\(\overline{E_{\rm in}}\)</span>足够小，但是同样的思想可以用来证明<span class="math inline">\(E_{\rm out}\)</span>也足够小</p>
 <p>由于<span class="math inline">\(\overline{E_{\rm in}}\)</span>是对所有可能数据集<span class="math inline">\(E_{\rm in}\)</span>的平均值，而这些数据都来自于相同的分布，因此可以表示为 <span class="math display">\[
-\overline{E_{\rm in}} = \mathcal{E}_{\mathcal{D} \sim P^N}\{E_{\rm in}({\bf w}_{\rm LIN}{\rm\  w.r.t\  }\mathcal{D})\}
+\overline{E_{\rm in}} = \mathcal{E}_{\mathcal{D} \sim P^N}\{E_{\rm in}({\bf w}_{\rm LIN}{\rm\ w.r.t\ }\mathcal{D})\}
 \]</span> 其中每个<span class="math inline">\(E_{\rm in}\)</span>又可以如下表示 <span class="math display">\[
 \begin{align*}
 E_{\rm in}({\bf w}_{\rm LIN}) &amp;= \frac{1}{N}|\!|{\bf y} - \hat{\bf y}|\!|^2 = \frac{1}{N}|\!|{\bf y} -{\rm X}{\bf w}_{\rm LIN}|\!|^2 \\
@@ -474,7 +474,7 @@ E_{\rm in}({\bf w}_{\rm LIN}) &amp;= \frac{1}{N}|\!|{\bf y} - \hat{\bf y}|\!|^2 
 {\rm tr(I-H)} &amp;= {\rm tr(I}_n) - {\rm tr(H)} &amp;&amp; {\rm tr(A+B) = tr(A) + tr(B)} \\
 &amp;= N- {\rm tr(H)} \\
 {\rm tr(H)} &amp;= {\rm tr(XX}^\dagger) \\
-&amp;= {\rm tr(X(X^\mathsf{T}X)^{-1}X^\mathsf{T})} &amp;&amp; {\rm definition\  of\  X}^\dagger \\
+&amp;= {\rm tr(X(X^\mathsf{T}X)^{-1}X^\mathsf{T})} &amp;&amp; {\rm definition\ of\ X}^\dagger \\
 &amp;=  {\rm tr((X^\mathsf{T}X)^{-1}X^\mathsf{T}X)} &amp;&amp; {\rm tr(AB) = tr(BA)} \\
 &amp;= {\rm tr(I}_{d+1}) \\
 &amp;= d+1 \\
@@ -491,8 +491,8 @@ E_{\rm in}({\bf w}_{\rm LIN}) = \frac{1}{N} |\!|{\bf y} - \hat{\bf y}|\!|^2 &amp
 \end{align*}
 \]</span> 因此可以得到<span class="math inline">\(E_{\rm in}\)</span>和<span class="math inline">\(E_{\rm out}\)</span>的均值（不过后者的计算更加复杂） <span class="math display">\[
 \begin{align*}
-\overline{E_{\rm in}} = {\rm noise\  level} \cdot \left(1 - \frac{d+1}{N}\right) \\
-\overline{E_{\rm out}} = {\rm noise\  level} \cdot \left(1 + \frac{d+1}{N}\right) 
+\overline{E_{\rm in}} = {\rm noise\ level} \cdot \left(1 - \frac{d+1}{N}\right) \\
+\overline{E_{\rm out}} = {\rm noise\ level} \cdot \left(1 + \frac{d+1}{N}\right) 
 \end{align*}
 \]</span> 哲学上的意义是，噪声的存在使得模型的学习过程中也对噪声数据进行了学习，学到的<span class="math inline">\(\bf w\)</span>可能偏向了某个方向。由于测试数据是新鲜的，没看到过的，没用在学习过程中的数据，因此此消彼长，误差对偏向的方向惩罚更多。这样可以得到一个学习曲线图</p>
 <figure>
@@ -517,8 +517,8 @@ E_{\rm in}({\bf w}_{\rm LIN}) = \frac{1}{N} |\!|{\bf y} - \hat{\bf y}|\!|^2 &amp
 </figure>
 <p>先看左边数据为正例的情况。由于此时数据为正例，因此其标签为1。最小平方误差函数以<span class="math inline">\({\bf w}^\mathsf{T}{\bf x}\)</span>为自变量时，函数图像是一个抛物线，在<span class="math inline">\({\bf w}^\mathsf{T}{\bf x} = y = 1\)</span>时取得最低点0。此时0/1分类误差函数也取得0，因为此时<span class="math inline">\({\bf w}^\mathsf{T}{\bf x}\)</span>的符号与<span class="math inline">\(y\)</span>相同，不等号不成立，因此两函数交于<span class="math inline">\((1, 0)\)</span>点。此外，当<span class="math inline">\({\bf w}^\mathsf{T}{\bf x} = 0\)</span>时，该点正好处在0/1分类误差函数变化的阶梯点上。但是由于<span class="math inline">\({\bf w}^\mathsf{T}{\bf x}\)</span>的符号跟<span class="math inline">\(y\)</span>的符号不一致，因此0/1误差函数取1。而最小平方差函数在此时的值也为1（<span class="math inline">\((0-1)^2 = 1\)</span>），因此两函数还交于<span class="math inline">\((0, 1)\)</span>点。画出所有图像以后，可以发现在<span class="math inline">\(\mathbb{R}\)</span>上总有<span class="math inline">\({\rm err}_{\rm sqrt} \ge {\rm err}_{0/1}\)</span>。同样的结论也可以用在右边数据为负例的情况。因此，由VC维的理论可以有 <span class="math display">\[
 \begin{align*}
-{\rm classification\  }E_{\rm out}({\bf w}) &amp;\le {\rm classification\  }E_{\rm in}({\bf w}) + \sqrt{\cdots\cdots} \\
-&amp; \le {\rm regression\  }E_{\rm in}({\bf w}) + \sqrt{\cdots\cdots}
+{\rm classification\ }E_{\rm out}({\bf w}) &amp;\le {\rm classification\ }E_{\rm in}({\bf w}) + \sqrt{\cdots\cdots} \\
+&amp; \le {\rm regression\ }E_{\rm in}({\bf w}) + \sqrt{\cdots\cdots}
 \end{align*}
 \]</span> 即回归问题的样本内误差加上一个常量，可以是分类问题样本外误差的一个上界。所以最优化的<span class="math inline">\({\bf w}_{\rm LIN}\)</span>也可以解决分类问题。实践中，<span class="math inline">\({\bf w}_{\rm LIN}\)</span>是一个不错的基线分类器，也可以用来做PLA算法或口袋算法的初始权重</p>
 
@@ -693,7 +693,7 @@ E_{\rm in}({\bf w}_{\rm LIN}) = \frac{1}{N} |\!|{\bf y} - \hat{\bf y}|\!|^2 &amp
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -704,7 +704,7 @@ E_{\rm in}({\bf w}_{\rm LIN}) = \frac{1}{N} |\!|{\bf y} - \hat{\bf y}|\!|^2 &amp
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -715,7 +715,7 @@ E_{\rm in}({\bf w}_{\rm LIN}) = \frac{1}{N} |\!|{\bf y} - \hat{\bf y}|\!|^2 &amp
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

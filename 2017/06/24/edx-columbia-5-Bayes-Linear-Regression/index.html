@@ -392,11 +392,11 @@
         <h2 id="贝叶斯线性回归">贝叶斯线性回归</h2>
 <p>MAP估计和ML估计都是对模型参数的<strong>点估计</strong>，也就是说它为向量<span class="math inline">\(w\)</span>找到一个确定的值，这个值可以最大化目标函数。其中ML只考虑数据模型<span class="math inline">\(p(y|w, X)\)</span>，而MAP还考虑到了模型的先验<span class="math inline">\(p(y,w|X) = p(y|w, X)p(w)\)</span>。在这个基础上，贝叶斯推断还使用贝叶斯定律进一步地推断<span class="math inline">\(w\)</span>的不确定性</p>
 <p>考虑到后验分布正比于似然与先验分布的乘积，可以得出</p>
-<span class="math display">\[\begin{align*}
+<p><span class="math display">\[\begin{align*}
 p(w|y,X) &amp;\propto p(y|w, X)p(w) \\
 &amp;\propto \left[e^{-\frac{1}{2\sigma^2}(y-Xw)^\mathsf{T}(y-Xw)}\right]\left[e^{-\frac{\lambda}{2}w^\mathsf{T}w}\right] \\
 &amp;\propto e^{-\frac{1}{2}\{w^\mathsf{T}(\lambda I + \sigma^{-2}X^\mathsf{T}X)w - 2\sigma^{-2}w^\mathsf{T}X^\mathsf{T}y\}}
-\end{align*}\]</span>
+\end{align*}\]</span></p>
 <p>可以看出，<span class="math inline">\(p(w|y,X)\)</span>也满足高斯分布。因为高斯分布在指数上有一个<span class="math inline">\((w-\mu)^\mathsf{T}\Sigma^{-1}(w-\mu)\)</span>，如果把概率密度函数展开，则是 <span class="math display">\[\begin{align*}
 p(w|\mu, \Sigma) &amp;= \frac{1}{\sqrt{(2\pi)^d|\Sigma|}}\exp\left(-\frac{1}{2}(w - \mu)^\mathsf{T}\Sigma^{-1}(w - \mu)\right) \\
 &amp;= \frac{1}{(2\pi)^{\frac{d}{2}}|\Sigma|^{\frac{1}{2}}}\exp\left(-\frac{1}{2}(w^\mathsf{T}\Sigma^{-1}w - 2w^\mathsf{T}\Sigma^{-1}\mu + \mu^\mathsf{T}\Sigma^{-1}\mu)\right)
@@ -404,7 +404,7 @@ p(w|\mu, \Sigma) &amp;= \frac{1}{\sqrt{(2\pi)^d|\Sigma|}}\exp\left(-\frac{1}{2}(
 p(w|y,X) = \frac{1}{Z}\exp\left(-\frac{1}{2}(w^\mathsf{T}(\lambda I + \sigma^{-2}X^\mathsf{T}X)w - 2w^\mathsf{T}X^\mathsf{T}y / \sigma^2)\right)
 \]</span></p>
 <p>因此只需要令 <span class="math display">\[
-\Sigma^{-1} = (\lambda I + \sigma^{-2}X^\mathsf{T}X),\  \  \  \Sigma^{-1}\mu = X^\mathsf{T}y/\sigma^2
+\Sigma^{-1} = (\lambda I + \sigma^{-2}X^\mathsf{T}X),\ \ \ \Sigma^{-1}\mu = X^\mathsf{T}y/\sigma^2
 \]</span> <span class="math inline">\(p(w|y,X)\)</span>就可以写成正态分布概率密度函数的形式。此时 <span class="math display">\[
 Z = (2\pi)^{\frac{d}{2}}|\Sigma|^{\frac{1}{2}}e^{\frac{1}{2}\mu^\mathsf{T}\Sigma^{-1}\mu}
 \]</span> 即 <span class="math display">\[\begin{align*}
@@ -420,9 +420,8 @@ p(y_0|x_0, y, X) &amp;= \int_{\mathbb{R}^d}p(y_0, w|x_0, y, X)dw \\
 <p>又根据条件独立性有 <span class="math display">\[\begin{align*}
 p(y_0|w,x_0,y,X) &amp;= p(y_0|w,x_0) \ \ {\rm (似然)} \\
 p(w|x_0,y,X) &amp;= p(w|y,X) \ \ {\rm (后验)}
-\end{align*}
-
-因此\]</span>可以得到预测的分布 <span class="math display">\[
+\end{align*}\]</span></p>
+<p>因此可以得到预测的分布 <span class="math display">\[
 p(y_0|x_0,y,X) = \int_{\mathbb{R}^d}p(y_0|x_0,w)p(w|y,X)dw
 \]</span></p>
 <p>由于根据模型本身有<span class="math inline">\(p(y_0|x_0,w) = N(y_0|x_0^\mathsf{T}w, \sigma^2)\)</span>，根据贝叶斯定律，有<span class="math inline">\(p(w|y,X)=N(w|\mu,\Sigma)\)</span>（其中<span class="math inline">\(\mu\)</span>和<span class="math inline">\(\Sigma\)</span>前面已有推导），则代入计算（比较复杂没有推），有 <span class="math display">\[\begin{align*}
@@ -455,9 +454,8 @@ p(y_0|x_0,y,X) &amp;= N(y_0|\mu_0, \sigma^2_0) \\
 ({\rm Prior}):\ (\lambda I + \sigma^{-2}X^\mathsf{T}X)^{-1}\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ &amp;\equiv \Sigma \\
 \Downarrow \\
 ({\rm Posterior}):\ (\lambda I + \sigma^{-2}(x_0x_0^\mathsf{T}+X^\mathsf{T}X))^{-1} &amp;\equiv (\Sigma^{-1} + \sigma^{-2}x_0x_0^\mathsf{T})^{-1}
-\end{align*}
-
-根据秩为1矩阵的行列式的更新性质，\]</span>有 <span class="math display">\[
+\end{align*}\]</span></p>
+<p>根据秩为1矩阵的行列式的更新性质，有 <span class="math display">\[
 \mathcal{H}_{\rm post} = \mathcal{H}_{\rm prior} - \frac{d}{2}\ln(1+\sigma^{-2}x_0^\mathsf{T}\Sigma x_0)
 \]</span> 因此最小化<span class="math inline">\(\mathcal{H}_{\rm post}\)</span>的<span class="math inline">\(x_0\)</span>也最大化了<span class="math inline">\(\sigma^2 + x_0^\mathsf{T}\Sigma x_0\)</span></p>
 <h2 id="模型选择">模型选择</h2>
@@ -641,7 +639,7 @@ p(w|y,X,\lambda) = p(y|w,X)p(w|\lambda) / p(y|X, \lambda)
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -652,7 +650,7 @@ p(w|y,X,\lambda) = p(y|w,X)p(w|\lambda) / p(y|X, \lambda)
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -663,7 +661,7 @@ p(w|y,X,\lambda) = p(y|w,X)p(w|\lambda) / p(y|X, \lambda)
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

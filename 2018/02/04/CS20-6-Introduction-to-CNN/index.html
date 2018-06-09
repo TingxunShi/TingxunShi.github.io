@@ -438,7 +438,7 @@
 <h4 id="实现">实现</h4>
 <p>由于卷积的核心就是滤波器和输入某块区域的点乘，因此卷积层的正向传播操作通常实现为大矩阵的乘积。具体做法为</p>
 <ol type="1">
-<li>将输入图像的各个局部区域拉伸成若干列。例如假设输入大小是<span class="math inline">\(227 \times 227 \times 3\)</span>，滤波器大小为<span class="math inline">\(11 \times 11 \times 3 = 363\)</span>，步幅为4，那么输出的大小为<span class="math inline">\((227 - 11) / 4 + 1 = 55\)</span>。整个图像就会被拉伸成一个<span class="math inline">\(363 \times 3025\  (55 \times 55 = 3025)\)</span>的矩阵<code>X_col</code>，每一列都是一个感受野</li>
+<li>将输入图像的各个局部区域拉伸成若干列。例如假设输入大小是<span class="math inline">\(227 \times 227 \times 3\)</span>，滤波器大小为<span class="math inline">\(11 \times 11 \times 3 = 363\)</span>，步幅为4，那么输出的大小为<span class="math inline">\((227 - 11) / 4 + 1 = 55\)</span>。整个图像就会被拉伸成一个<span class="math inline">\(363 \times 3025\ (55 \times 55 = 3025)\)</span>的矩阵<code>X_col</code>，每一列都是一个感受野</li>
 <li>卷积层的权重被拉伸为行。假设有96个滤波器，那么得到的权重矩阵<code>W_row</code>的大小为<span class="math inline">\(96 \times 363\)</span></li>
 <li>卷积操作实际上就是<code>np.dot(W_row, X_col)</code></li>
 <li>得到的矩阵大小为<span class="math inline">\(96 \times 3025\)</span>，需要再被调整到正确的维度<span class="math inline">\(55 \times 55 \times 96\)</span></li>
@@ -671,7 +671,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -682,7 +682,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -693,7 +693,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

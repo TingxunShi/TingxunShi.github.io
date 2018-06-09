@@ -406,7 +406,7 @@
 <p>特征提取可以使用预训练好的网络来做，例如VGG、AlexNet、GoogleNet等等。按照<a href="https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Gatys_Image_Style_Transfer_CVPR_2016_paper.pdf" target="_blank" rel="noopener">原始论文</a>(Image Style Transfer Using Convolutional Neural Networks, Gatys et al., CVPR 2016, pp. 2414-2423)的定义，输入图像<span class="math inline">\(\vec{x}\)</span>在CNN的每一层都会被对应的滤波器（卷积核）编码，假设在第<span class="math inline">\(l\)</span>层有<span class="math inline">\(N_l\)</span>个卷积核，每个卷积核大小都是<span class="math inline">\(M_l \times M_l\)</span>的，那么第<span class="math inline">\(l\)</span>层编码的信息会存在矩阵<span class="math inline">\(F^l \in \mathcal{R}^{N_l \times M_l}\)</span>中，其中<span class="math inline">\(F_{ij}^l\)</span>是层<span class="math inline">\(l\)</span>位置<span class="math inline">\(j\)</span>被第<span class="math inline">\(i\)</span>个卷积核激活的值。令<span class="math inline">\(\vec{p}\)</span>为原始内容图像，<span class="math inline">\(\vec{x}\)</span>为生成图像，<span class="math inline">\(P^l\)</span>和<span class="math inline">\(F^l\)</span>为各自在第<span class="math inline">\(l\)</span>层得到的特征表示，则“内容损失”可以定义为 <span class="math display">\[
 \mathcal{L}_{\rm content}(\vec{p}, \vec{x}, l) = \frac{1}{2}\sum_{i, j}(F_{ij}^l - P_{ij}^l)^2
 \]</span> “内容损失”对层<span class="math inline">\(l\)</span>的激活值的偏导数为 <span class="math display">\[
-\frac{\partial \mathcal{L}_{\rm content}}{\partial F_{ij}^l} = \begin{cases}(F^l-P^l)_{ij} &amp; {\rm if\  }F_{ij}^l &gt; 0 \\ 0 &amp; {\rm if\  }F_{ij}^l &lt; 0 \end{cases}
+\frac{\partial \mathcal{L}_{\rm content}}{\partial F_{ij}^l} = \begin{cases}(F^l-P^l)_{ij} &amp; {\rm if\ }F_{ij}^l &gt; 0 \\ 0 &amp; {\rm if\ }F_{ij}^l &lt; 0 \end{cases}
 \]</span> 因此<span class="math inline">\(\vec{x}\)</span>的梯度可以使用反向传播得出，经过反向传播可以将原始随机生成的图像一点一点调整为和<span class="math inline">\(\vec{p}\)</span>内容相近的图像。<strong>所以这里要优化的是生成的图像，而不是网络的权重！</strong></p>
 <p>为了获得图像的风格表示，原始论文使用前面提到的Gram矩阵，通过特征相关性来达到目的。更形式化地，对第<span class="math inline">\(l\)</span>层，假设有<span class="math inline">\(N_l\)</span>个卷积核，那么对应的Gram矩阵<span class="math inline">\(G^l \in \mathcal{R}^{N_l \times N_l}\)</span>的每个元素是特征映射向量化后的内积 <span class="math display">\[
 G_{ij}^l = \sum_kF_{ik}^lF_{jk}^l
@@ -415,7 +415,7 @@ E_l = \frac{1}{4N_l^2M_l^2}\sum_{i,j}(G_{ij}^l - A_{ij}^l)^2
 \]</span> 总的风格损失为 <span class="math display">\[
 \mathcal{L}_{\rm style}(\vec{a}, \vec{x}) = \sum_{l=0}^Lw_lE_l
 \]</span> 其中<span class="math inline">\(w_l\)</span>是每层对总损失值贡献的权重。相应的，也可以计算该损失值对第<span class="math inline">\(l\)</span>层激活值的偏导 <span class="math display">\[
-\frac{\partial E_l}{\partial F_{ij}^l} = \begin{cases}\frac{1}{N_l^2M_l^2}((F^l)^\mathsf{T}(G^l-A^l))_{ji} &amp; {\rm if\  }F_{ij}^l &gt; 0 \\ 0 &amp; {\rm if\  }F_{ij}^l &lt; 0\end{cases}
+\frac{\partial E_l}{\partial F_{ij}^l} = \begin{cases}\frac{1}{N_l^2M_l^2}((F^l)^\mathsf{T}(G^l-A^l))_{ji} &amp; {\rm if\ }F_{ij}^l &gt; 0 \\ 0 &amp; {\rm if\ }F_{ij}^l &lt; 0\end{cases}
 \]</span> 为了将画<span class="math inline">\(\vec{a}\)</span>的风格迁移到照片<span class="math inline">\(\vec{p}\)</span>上，需要综合考虑上述两种损失值，因此要最小化的总损失函数为 <span class="math display">\[
 \mathcal{L}_{\rm total}(\vec{p}, \vec{a}, \vec{x}) = \alpha \mathcal{L}_{\rm content}(\vec{p}, \vec{x}) + \beta \mathcal{L}_{\rm style}(\vec{a}, \vec{x})
 \]</span></p>
@@ -599,7 +599,7 @@ E_l = \frac{1}{4N_l^2M_l^2}\sum_{i,j}(G_{ij}^l - A_{ij}^l)^2
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -610,7 +610,7 @@ E_l = \frac{1}{4N_l^2M_l^2}\sum_{i,j}(G_{ij}^l - A_{ij}^l)^2
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -621,7 +621,7 @@ E_l = \frac{1}{4N_l^2M_l^2}\sum_{i,j}(G_{ij}^l - A_{ij}^l)^2
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

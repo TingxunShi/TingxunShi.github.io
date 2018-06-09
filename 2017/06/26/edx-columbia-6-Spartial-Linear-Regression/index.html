@@ -395,7 +395,7 @@
 \therefore X(w_{\rm ln} + \delta) = Xw_{\rm ln} + X\delta = y + 0
 \]</span> 而因为<span class="math inline">\(d &gt; n\)</span>，因此<span class="math inline">\(\delta\)</span>可以有无限多个。</p>
 <p>下面用两种方法证明<span class="math inline">\(w_{\rm ln}\)</span>是这些解里<span class="math inline">\(\ell_2\)</span>范数最小的解，即 <span class="math display">\[
-w_{\rm ln} = {\rm arg}\min_w |\!|w|\!|^2\  \  \  {\rm subject\  to}\  Xw = y
+w_{\rm ln} = {\rm arg}\min_w |\!|w|\!|^2\ \ \ {\rm subject\ to}\ Xw = y
 \]</span></p>
 <h3 id="分析法">分析法</h3>
 <p>令<span class="math inline">\(w\)</span>是<span class="math inline">\(Xw=y\)</span>的另一个解，因此<span class="math inline">\(X(w-w_{\rm ln}) = 0\)</span>，且有 $$ <span class="math display">\[\begin{align*}
@@ -416,11 +416,11 @@ w_{\rm ln} = {\rm arg}\min_w |\!|w|\!|^2\  \  \  {\rm subject\  to}\  Xw = y
 \]</span> $ $</p>
 <h5 id="lagrange乘子法">Lagrange乘子法</h5>
 <p>为了求解 <span class="math display">\[
-{\rm arg}\min_w |\!|w|\!|^2\  \  \  {\rm subject\  to}\  Xw = y
+{\rm arg}\min_w |\!|w|\!|^2\ \ \ {\rm subject\ to}\ Xw = y
 \]</span> 可以引入Lagrange乘子，即 <span class="math display">\[
 \mathcal{L}(w, \eta) = w^Tw + \eta^T(Xw - y)
 \]</span> 分别对<span class="math inline">\(w\)</span>和<span class="math inline">\(\eta\)</span>求导，得到两个条件 <span class="math display">\[
-\nabla_w \mathcal{L} = 2w + X^T\eta = 0,\  \nabla_{\eta}\mathcal{L} = Xw - y = 0
+\nabla_w \mathcal{L} = 2w + X^T\eta = 0,\ \nabla_{\eta}\mathcal{L} = Xw - y = 0
 \]</span> 由第一个式子可知 <span class="math display">\[
 w = -X^T\eta / 2
 \]</span> 代入到第二个式子解得 <span class="math display">\[
@@ -431,7 +431,7 @@ w_{\rm ln} = X^T(XX^T)^{-1}y
 <h2 id="稀疏回归">稀疏回归</h2>
 <p>普通最小二乘和岭回归通常只用于理想情况。现实问题中，通常有很多特征，而其中只有一部分与<span class="math inline">\(y\)</span>相关，非常重要，而普通最小二乘和岭回归对所有特征都是同等对待，重要的特征会被不重要的特征拉低</p>
 <p>通常来讲，优化问题都可以抽象为公式 <span class="math display">\[
-{\rm total\  cost} = {\rm goodness\  of\  fit\  term} + {\rm penalty\  term}
+{\rm total\ cost} = {\rm goodness\ of\ fit\ term} + {\rm penalty\ term}
 \]</span> 前者说明模型<span class="math inline">\(f\)</span>对数据的近似有多好，后者使得最后的解不会那么“重”。岭回归的惩罚项是<span class="math inline">\(|\!|w|\!|^2\)</span>，而这个惩罚项的特点是，如果<span class="math inline">\(w\)</span>很大，那么缩小它能够很快地缩小惩罚项；然而如果<span class="math inline">\(w\)</span>小，那么缩小它的效果就不显著。因此使用这个惩罚项的结果是所有特征的权重都小了</p>
 <p>稀疏学习的目的是选出<span class="math inline">\(d\)</span>维特征的一个子集作为模型，而筛掉其它维度的特征，也就是把不重要的特征权重设为0。常用线性惩罚项——引出了LASSO</p>
 <p>LASSO: Least Absolute Shrinkage and Selection Operator，使用<span class="math inline">\(\ell_1\)</span>正则项 <span class="math display">\[
@@ -618,7 +618,7 @@ w_{\ell_p} = {\rm arg}\min_w |\!|y - Xw|\!|^2_2 + \lambda |\!|w|\!|_p^p \\
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -629,7 +629,7 @@ w_{\ell_p} = {\rm arg}\min_w |\!|y - Xw|\!|^2_2 + \lambda |\!|w|\!|_p^p \\
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -640,7 +640,7 @@ w_{\ell_p} = {\rm arg}\min_w |\!|y - Xw|\!|^2_2 + \lambda |\!|w|\!|_p^p \\
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

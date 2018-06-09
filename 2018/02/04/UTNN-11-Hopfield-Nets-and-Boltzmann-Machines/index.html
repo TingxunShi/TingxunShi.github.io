@@ -397,7 +397,7 @@
 <p>因此，能量函数的设置非常重要。某个配置的全局能量是若干局部贡献量的总和，而每个“贡献量”由连接权重和两个神经元的二元状态来决定。也就是说，能量函数的定义为 <span class="math display">\[
 E = -\sum_is_ib_i - \sum_{i&lt;j}s_is_jw_{ij}
 \]</span> 注意能量越小越好，所以这里加了负号来做限制。<span class="math inline">\(s_i\)</span>的取值是0或者1（或者在另一种Hopfield网里是-1或1）。有了二次能量函数的定义，每个单元就可以计算改变自身状态会改变多少能量。为此，需要定义<strong>能量差</strong>（energy gap）的概念，该值实际上就是关闭神经元<span class="math inline">\(i\)</span>和打开神经元<span class="math inline">\(i\)</span>两种情况下能量的变化量，即 <span class="math display">\[
-{\rm Energy\  gap} = \Delta E_i = E(s_i=0) - E(s_i = 1) = b_i + \sum_js_jw_{ij}
+{\rm Energy\ gap} = \Delta E_i = E(s_i=0) - E(s_i = 1) = b_i + \sum_js_jw_{ij}
 \]</span> 在Hopfield网中，寻找最小能量通常使用一种顺序迭代的方法：从某个随机状态开始，以随机次序每次更新某一个神经元：看它取哪个状态能量能变小，就让它处于哪个状态。注意这里不能使用节点同时决策的方法，因为如果同时并行更新状态，会导致周期为2的振荡出现。如果在并行更新状态的同时还加入随机的等待时间，也就是说，某个节点更新完状态以后不通知其它节点，而是等待随机长度的时间以后再进行下一次更新，那么这种振荡一般就不会出现</p>
 <p>Hopfield认为，这种基于能量，能稳定在某个能量最小值点的模型适用于存储记忆力。使用上述的状态决策规则，可以把部分正确的记忆内容扩散到所有节点，清除掉一些错误的或者不全面的记忆。因此，可以在只知道一部分内容的情况下访问某一项内容。Hopfield网的鲁棒性很强，在硬件出现损坏的时候也可以正常工作，而阈值决策规则的作用此时就像是古生物学家从几根骨骼化石复原出一只恐龙一样</p>
 <p>Hopfield网的记忆存储规则也比较简单。如果激活值使用1或者-1，那么将连接两单元的权重加上两神经元状态的乘积就可以，即 <span class="math display">\[
@@ -631,7 +631,7 @@ p({\bf v}) = \frac{ \sum_{ {\bf h}}e^{-E({\bf v}, {\bf h})}}{\sum_{ {\bf u}, {\b
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -642,7 +642,7 @@ p({\bf v}) = \frac{ \sum_{ {\bf h}}e^{-E({\bf v}, {\bf h})}}{\sum_{ {\bf u}, {\b
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -653,7 +653,7 @@ p({\bf v}) = \frac{ \sum_{ {\bf h}}e^{-E({\bf v}, {\bf h})}}{\sum_{ {\bf u}, {\b
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

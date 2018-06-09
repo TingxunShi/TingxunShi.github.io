@@ -442,14 +442,14 @@ y_0 = \sum_{i=1}^n y_i \frac{K(x_0, x_i)}{\sum_{j=1}^n K(x_0, x_j)}
 \]</span> 其意义是找到离<span class="math inline">\(x_0\)</span>比较近的<span class="math inline">\(x_i\)</span>，计算它们对应<span class="math inline">\(y_i\)</span>的加权平均值</p>
 <h2 id="高斯过程">高斯过程</h2>
 <p>假设有<span class="math inline">\(n\)</span>个样本，响应值<span class="math inline">\(y \in \mathbb{R}^n\)</span>，特征矩阵为<span class="math inline">\(X\)</span>，似然和先验分别为 <span class="math display">\[
-y \sim N(Xw, \sigma^2 I),\  \  w \sim N(0, \lambda^{-1}I)
+y \sim N(Xw, \sigma^2 I),\ \ w \sim N(0, \lambda^{-1}I)
 \]</span> 可知（= =）其边缘分布为 <span class="math display">\[
 p(y|X) = \int p(y|X, w)p(w)dw = N(0, \sigma^2I + \lambda^{-1}XX^\mathsf{T})
 \]</span> 注意有<span class="math inline">\((XX^\mathsf{T})_{ij} = x^\mathsf{T}_ix_j\)</span>，将<span class="math inline">\(x\)</span>用<span class="math inline">\(\phi(x)\)</span>替换，则有<span class="math inline">\((\phi(X)\phi(X)^\mathsf{T})_{ij} = K(x_i, x_j)\)</span>，记为<span class="math inline">\(K\)</span>，所以有 <span class="math display">\[
 p(y|X) = \int p(y|X, w)p(w)dw = N(0, \sigma^2I + \lambda^{-1}K)
 \]</span> 称为<strong>高斯过程</strong></p>
 <p>定义：假设<span class="math inline">\(f(x) \in \mathbb{R}\)</span>，且<span class="math inline">\(x \in \mathbb{R}^d\)</span>，定义<span class="math inline">\(K(x,x&#39;)\)</span>为两个点<span class="math inline">\(x\)</span>和<span class="math inline">\(x&#39;\)</span>之间的核，则<span class="math inline">\(f(x)\)</span>是<strong>高斯过程</strong>，<span class="math inline">\(y(x)\)</span>是对结果附加的噪声过程，如果 <span class="math display">\[
-y|f \sim N(f, \sigma^2 I),\  f \sim N(0, K) \Leftrightarrow y \sim N(0, \sigma^2I + K)
+y|f \sim N(f, \sigma^2 I),\ f \sim N(0, K) \Leftrightarrow y \sim N(0, \sigma^2I + K)
 \]</span> 其中<span class="math inline">\(y = (y_1, \ldots, y_n)^\mathsf{T}\)</span>，<span class="math inline">\(K\)</span>是<span class="math inline">\(n\)</span>阶方阵，且<span class="math inline">\(K_{ij} = K(x_i, x_j)\)</span> 注意高斯过程本身是不带噪声的，但是观测到的值会受到噪声影响（即<span class="math inline">\(f(x)\)</span>）。这里噪声都是服从i.i.d.的，而且是无限维的</p>
 <p>讲义中高斯过程的生成：选取<span class="math inline">\(x\in [0,1]\)</span>，然后将其分成1000份，每个区间抽一个点出来，然后构建<span class="math inline">\(K\)</span>，<span class="math inline">\(K\)</span>是一个<span class="math inline">\(1000 \times 1000\)</span>的矩阵，使用高斯核</p>
 <p>贝叶斯线性回归：假设我们有<span class="math inline">\(n\)</span>个样本对<span class="math inline">\(\mathcal{D} = \{(x_i,y_i)\}_{i=1}^N\)</span>，我们想根据<span class="math inline">\(x_0\)</span>预测<span class="math inline">\(y_0\)</span>，积掉<span class="math inline">\(w\)</span>，联合分布为 <span class="math display">\[
@@ -645,7 +645,7 @@ y(x)|\mathcal{D}_n &amp; \sim N(\mu(x), \Sigma(x)), \\
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -656,7 +656,7 @@ y(x)|\mathcal{D}_n &amp; \sim N(\mu(x), \Sigma(x)), \\
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -667,7 +667,7 @@ y(x)|\mathcal{D}_n &amp; \sim N(\mu(x), \Sigma(x)), \\
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

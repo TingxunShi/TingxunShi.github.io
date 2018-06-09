@@ -397,7 +397,7 @@ p(y|\mu, \sigma^2) = \frac{1}{(2\pi \sigma^2)^{\frac{n}{2}}}\exp\left(-\frac{1}{
 \]</span> 即最小二乘和最大似然的解是一样的</p>
 <p>最大似然隐含的意思在于，误差<span class="math inline">\(\epsilon_i = y_i - x_i^\mathsf{T}w\)</span>是独立的高斯噪声，等价于以下三种说法：</p>
 <ol type="1">
-<li><span class="math inline">\(y_i = x_i^\mathsf{T}w + \epsilon_i,\  \  \epsilon_i \mathop{\sim}^{iid}N(0,\sigma^2), i = 1,\ldots,n\)</span></li>
+<li><span class="math inline">\(y_i = x_i^\mathsf{T}w + \epsilon_i,\ \ \epsilon_i \mathop{\sim}^{iid}N(0,\sigma^2), i = 1,\ldots,n\)</span></li>
 <li><span class="math inline">\(y_i \mathop{\sim}^{ind} N(x_i^\mathsf{T}w, \sigma^2), i = 1, \ldots, n\)</span></li>
 <li><span class="math inline">\(y \sim N(Xw, \sigma^2I)\)</span></li>
 </ol>
@@ -408,9 +408,8 @@ p(y|\mu, \sigma^2) = \frac{1}{(2\pi \sigma^2)^{\frac{n}{2}}}\exp\left(-\frac{1}{
 &amp;= (X^\mathsf{T}X)^{-1}X^\mathsf{T}\mathbb{E}[y] \\
 &amp;= (X^\mathsf{T}X)^{-1}X^\mathsf{T}Xw \ \ (y \sim N(Xw, \sigma^2I)) \\
 &amp;= w
-\end{align*}
-
-即最大似\]</span>然估计<span class="math inline">\(w_{\rm ML}\)</span>是<span class="math inline">\(w\)</span>的一个无偏估计。但是要考虑到还有方差的存在，如果方差很大的话，即便期望是无偏的，也很可能会看到比较奇怪的值，因此需要对方差做一个判断。</p>
+\end{align*}\]</span></p>
+<p>即最大似然估计<span class="math inline">\(w_{\rm ML}\)</span>是<span class="math inline">\(w\)</span>的一个无偏估计。但是要考虑到还有方差的存在，如果方差很大的话，即便期望是无偏的，也很可能会看到比较奇怪的值，因此需要对方差做一个判断。</p>
 <p>如果有<span class="math inline">\(y \sim N(\mu, \Sigma)\)</span>，则 <span class="math display">\[
 {\rm var}[y] = \mathbb{E}[(y-\mathbb{E}[y])(y-\mathbb{E}[y])^\mathsf{T}] = \Sigma
 \]</span> 代入<span class="math inline">\(\mathbb{E}[y] = \mu\)</span>，有 <span class="math display">\[\begin{align*}
@@ -430,17 +429,16 @@ p(y|\mu, \sigma^2) = \frac{1}{(2\pi \sigma^2)^{\frac{n}{2}}}\exp\left(-\frac{1}{
 &amp;= (X^\mathsf{T}X)^{-1}X^\mathsf{T}\mathbb{E}[yy^\mathsf{T}]X(X^\mathsf{T}X)^{-1} - ww^\mathsf{T}
 \end{align*}\]</span></p>
 <p>由于<span class="math inline">\(\mathbb{E}[yy^\mathsf{T}] = \Sigma + \mu\mu^\mathsf{T}\)</span>且<span class="math inline">\(y \sim N(Xw, \sigma^2I)\)</span>，即<span class="math inline">\(\mu = Xw, \Sigma = \sigma^2 I\)</span>，因此</p>
-<span class="math display">\[\begin{align*}
+<p><span class="math display">\[\begin{align*}
 {\rm var}[w_{\rm ML}] &amp;= (X^\mathsf{T}X)^{-1}X^\mathsf{T}\mathbb{E}[yy^\mathsf{T}]X(X^\mathsf{T}X)^{-1} - ww^\mathsf{T} \\
 &amp;= (X^\mathsf{T}X)^{-1}X^\mathsf{T} (\Sigma + \mu\mu^\mathsf{T}) X(X^\mathsf{T}X)^{-1} - ww^\mathsf{T} \\
 &amp;= (X^\mathsf{T}X)^{-1}X^\mathsf{T} (\sigma^2I + Xww^\mathsf{T}X^\mathsf{T}) X(X^\mathsf{T}X)^{-1} - ww^\mathsf{T} \\
 &amp;= (X^\mathsf{T}X)^{-1}X^\mathsf{T}\sigma^2IX(X^\mathsf{T}X)^{-1} + (X^\mathsf{T}X)^{-1}X^\mathsf{T}Xww^\mathsf{T}X^\mathsf{T}X(X^\mathsf{T}X)^{-1}- ww^\mathsf{T}
-\end{align*}\]</span>
-<p>由于<span class="math inline">\(\sigma^2\)</span>是标量可以提出来，因此上式可以化简为 <span class="math display">\[
+\end{align*}\]</span> 由于<span class="math inline">\(\sigma^2\)</span>是标量可以提出来，因此上式可以化简为 <span class="math display">\[
 {\rm var}[w_{\rm ML}] = \sigma^2(X^\mathsf{T}X)^{-1}
 \]</span></p>
 <p>因此在如果我们假设<span class="math inline">\(y\)</span>满足高斯分布，即<span class="math inline">\(y \sim N(Xw, \sigma^2I)\)</span>，就有 <span class="math display">\[
-\mathbb{E}[w_{\rm ML}] = w,\  \  {\rm var}[w_{\rm ML}] = \sigma^2(X^\mathsf{T}X)^{-1}
+\mathbb{E}[w_{\rm ML}] = w,\ \ {\rm var}[w_{\rm ML}] = \sigma^2(X^\mathsf{T}X)^{-1}
 \]</span> 如果<span class="math inline">\(\sigma^2(X^\mathsf{T}X)^{-1}\)</span>太大，那么<span class="math inline">\(w_{\rm ML}\)</span>就会敏感于<span class="math inline">\(y\)</span>的值，不利于用其做预测</p>
 <h2 id="岭回归">岭回归</h2>
 <p>由于方差的存在，<span class="math inline">\(w\)</span>可能会变得很大，而这是我们所不希望看到的。因此可以在目标函数上加一个正则项来控制<span class="math inline">\(w\)</span>的大小，即类似下式这样的形式： <span class="math display">\[
@@ -486,24 +484,24 @@ w_{\rm RR} &amp;= [(X^\mathsf{T}X)(\lambda(X^\mathsf{T}X)^{-1} + I)]^{-1}(X^\mat
 &amp;= (\lambda(X^\mathsf{T}X)^{-1} + I)^{-1}w_{\rm LS}
 \end{align*}\]</span></p>
 <p>代入奇异值分解的结果，且考虑<span class="math inline">\(VV^\mathsf{T}=I\)</span>，有</p>
-<span class="math display">\[\begin{align*}
+<p><span class="math display">\[\begin{align*}
 w_{\rm RR} &amp;= (\lambda(X^\mathsf{T}X)^{-1} + I)^{-1}w_{\rm LS} \\
 &amp;= (\lambda VS^{-2}V^\mathsf{T} + I)^{-1}w_{\rm LS} \\
 &amp;= (V(\lambda S^{-2}V^\mathsf{T}+V^\mathsf{T}))^{-1}w_{\rm LS} \\
 &amp;= (V(\lambda S^{-2} + I)V^\mathsf{T})^{-1}w_{\rm LS} \\
 &amp;= V(\lambda S^{-2} + I)^{-1}V^\mathsf{T}w_{\rm LS} \\
 &amp;:= VMV^\mathsf{T}w_{\rm LS}
-\end{align*}\]</span>
+\end{align*}\]</span></p>
 <p>其中<span class="math inline">\(M_{ii} = \frac{S_{ii}^2}{\lambda + S_{ii}^2}\)</span></p>
 <p>也可以把奇异值分解的结果带入到<span class="math inline">\(w_{\rm LS}\)</span>的求解中</p>
-<span class="math display">\[\begin{align*}
+<p><span class="math display">\[\begin{align*}
 w_{\rm LS} &amp;= (X^\mathsf{T}X)^{-1}X^\mathsf{T}y \\
 &amp;= VS^{-2}V^\mathsf{T}VS^\mathsf{T}U^\mathsf{T}y \\
 &amp;= VS^{-2}SU^\mathsf{T}y \\
 &amp;= VS^{-1}U^\mathsf{T}y
-\end{align*}\]</span>
+\end{align*}\]</span></p>
 <p>代入到上式，有 <span class="math display">\[
-w_{\rm RR} = VS_{\lambda}^{-1}U^\mathsf{T}y,\  \  S_{\lambda}^{-1} = \left[\!\begin{array}{rrr}    \frac{S_{11}}{\lambda+S_{11}^2}&amp;&amp;0\\    &amp;\ddots&amp;\\    0&amp;&amp;\frac{S_{dd}}{\lambda+S_{dd}^2}    \end{array}\!\right]
+w_{\rm RR} = VS_{\lambda}^{-1}U^\mathsf{T}y,\ \ S_{\lambda}^{-1} = \left[\!\begin{array}{rrr}    \frac{S_{11}}{\lambda+S_{11}^2}&amp;&amp;0\\    &amp;\ddots&amp;\\    0&amp;&amp;\frac{S_{dd}}{\lambda+S_{dd}^2}    \end{array}\!\right]
 \]</span></p>
 <p>岭回归也可以看作是最小二乘的一个特例情况。如果如下定义<span class="math inline">\(\hat{y} \approx \hat{X}w\)</span>，即 <span class="math display">\[
 \left[\begin{array}{c}    y \\ 0 \\  \vdots  \\ 0  \end{array}\right] \approx \left[\begin{array}{ccc}    - &amp; X &amp; - \\ \sqrt{\lambda} &amp; &amp; 0 \\ &amp; \ddots &amp; \\ 0 &amp; &amp; \sqrt{\lambda}  \end{array}\right] \left[\begin{array}{c}    w_1 \\  \vdots  \\ w_d  \end{array}\right]
@@ -685,7 +683,7 @@ w_{\rm RR} = VS_{\lambda}^{-1}U^\mathsf{T}y,\  \  S_{\lambda}^{-1} = \left[\!\be
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -696,7 +694,7 @@ w_{\rm RR} = VS_{\lambda}^{-1}U^\mathsf{T}y,\  \  S_{\lambda}^{-1} = \left[\!\be
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -707,7 +705,7 @@ w_{\rm RR} = VS_{\lambda}^{-1}U^\mathsf{T}y,\  \  S_{\lambda}^{-1} = \left[\!\be
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

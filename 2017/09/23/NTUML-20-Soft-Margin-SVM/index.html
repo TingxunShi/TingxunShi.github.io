@@ -400,8 +400,8 @@
 \]</span> 相比而言，前面提到的硬间隔SVM的条件实在是太苛刻了：不仅要求每个样本都分对，还要求每个样本离分离超平面有一定的距离。因此，可以适当放松要求，让它对错分的样本不再施加到超平面的距离限制，只控制错分样本的数目让其越少越好（即不让模型无止境地犯错）。这样，得到的优化问题变成了 <span class="math display">\[
 \begin{align*}
 \min_{b, {\bf w}}\hspace{2ex}&amp;\frac{1}{2}{\bf w^\mathsf{T}w} + C\cdot \sum_{n=1}^N [\![y_n \not= {\rm sign}({\bf w^\mathsf{T}z}_n + b)]\!] \\
-{\rm s.t.} \hspace{2ex} &amp;y_n({\bf w^\mathsf{T}z}_n + b) \ge 1 {\rm\  for\  correct\  }n \\
-&amp;y_n ({\bf w^\mathsf{T}z}_n + b) \ge -\infty{\rm\  for\  incorrect\  }n
+{\rm s.t.} \hspace{2ex} &amp;y_n({\bf w^\mathsf{T}z}_n + b) \ge 1 {\rm\ for\ correct\ }n \\
+&amp;y_n ({\bf w^\mathsf{T}z}_n + b) \ge -\infty{\rm\ for\ incorrect\ }n
 \end{align*}
 \]</span> 这里<span class="math inline">\(C\)</span>控制了在训练集上准确性和间隔大小这两者之间的平衡。<span class="math inline">\(C\)</span>越大，越倾向于不要再训练集上犯错误；<span class="math inline">\(C\)</span>越小，越倾向于在正确分类的数据上分类器间隔尽可能大</p>
 <p>上述问题可以对表达形式做一步化简，得到一个等价的问题 <span class="math display">\[
@@ -412,7 +412,7 @@
 \]</span> 注意这个问题的限制条件里有<span class="math inline">\(N\)</span>个布尔表达式<span class="math inline">\([\![\cdot]\!]\)</span>，因此不是线性约束，整个问题不能再用二次规划求解器来求解，之前的对偶方法、核方法也就没法做了。而且“预测错”也有两种错误的方法，一种是离边界很近的错误，一种是离边界很远的错误，这个问题也没法区分这两种错误，因此需要对这个问题进行修改。一种修改方法是对每个数据点引入<span class="math inline">\(\xi_n\)</span>这个变量，表示分类器在这个数据点上犯的错误的严重性。最优化问题里要优化的问题也不再简单记录“犯了多少错误”，而是记录所有数据点总共犯错误的情况。即要求解的问题和约束为如下形式 <span class="math display">\[
 \begin{align*}
 \min_{b, {\bf w}}\hspace{2ex}&amp;\frac{1}{2}{\bf w^\mathsf{T}w} + C\cdot \sum_{n=1}^N \xi_n\\
-{\rm s.t.} \hspace{2ex} &amp;y_n({\bf w^\mathsf{T}z}_n + b) \ge 1 -\xi_n,\  \xi_n \ge 0 \forall n
+{\rm s.t.} \hspace{2ex} &amp;y_n({\bf w^\mathsf{T}z}_n + b) \ge 1 -\xi_n,\ \xi_n \ge 0 \forall n
 \end{align*}
 \]</span> 这样一来，所有约束条件都是线性约束，要求解的目标问题是二次函数，又可以用QP求解器求解了。这种问题称为<strong>软间隔支持向量机</strong>，其中<span class="math inline">\(\xi_n\)</span>记录的是数据点的“间隔破坏程度”，如下图所示</p>
 <figure>
@@ -424,7 +424,7 @@
 <p>对原始问题 <span class="math display">\[
 \begin{align*}
 \min_{b, {\bf w}}\hspace{2ex}&amp;\frac{1}{2}{\bf w^\mathsf{T}w} + C\cdot \sum_{n=1}^N \xi_n\\
-{\rm s.t.} \hspace{2ex} &amp;y_n({\bf w^\mathsf{T}z}_n + b) \ge 1 -\xi_n,\  \xi_n \ge 0 \forall n
+{\rm s.t.} \hspace{2ex} &amp;y_n({\bf w^\mathsf{T}z}_n + b) \ge 1 -\xi_n,\ \xi_n \ge 0 \forall n
 \end{align*}
 \]</span> 可以看到对每个点都有两个约束条件。引入拉格朗日乘子<span class="math inline">\(\alpha_n\)</span>和<span class="math inline">\(\beta_n\)</span>，可以得到拉格朗日函数 <span class="math display">\[
 \begin{align*}
@@ -447,8 +447,8 @@
 \]</span> 因此，软间隔SVM对偶问题的标准形式为 <span class="math display">\[
 \begin{align*}
 \min_{\boldsymbol{\alpha}} \hspace{2ex}&amp;\frac{1}{2}\sum_{n=1}^N\sum_{m=1}^N \alpha_n\alpha_m y_ny_m{\bf z}_n^\mathsf{T}{\bf z}_m - \sum_{n=1}^N\alpha_n \\
-{\rm subject\  to} \hspace{2ex}&amp;\sum_{n=1}^Ny_n\alpha_n = 0; \\
-&amp; 0 \le \alpha_n \le C, {\rm for\  }n=1,2,\ldots,N
+{\rm subject\ to} \hspace{2ex}&amp;\sum_{n=1}^Ny_n\alpha_n = 0; \\
+&amp; 0 \le \alpha_n \le C, {\rm for\ }n=1,2,\ldots,N
 \end{align*}
 \]</span> 与前面硬间隔SVM对偶问题的标准形式的唯一区别就是这里<span class="math inline">\(\alpha_n\)</span>有了上限<span class="math inline">\(C\)</span>。这也是一个标准的二次规划问题，有<span class="math inline">\(N\)</span>个变量，<span class="math inline">\(2N+1\)</span>个限制条件</p>
 <h2 id="软间隔svm传递的信息">软间隔SVM传递的信息</h2>
@@ -467,7 +467,7 @@
 b = y_s - y_s\xi_s - {\bf w^\mathsf{T}z}_s
 \]</span> （注意这里用到了<span class="math inline">\(y_s\)</span>的一个特点：因为<span class="math inline">\(y_s \in \{-1, +1\}\)</span>，因此任意数除以<span class="math inline">\(y_s\)</span>与乘以<span class="math inline">\(y_s\)</span>的效果是一样的）</p>
 <p>这里带了一个惩罚项，如果要算出<span class="math inline">\(\xi_s\)</span>，就得先算出<span class="math inline">\(b\)</span>，造成了一个鸡生蛋蛋生鸡的问题。因此要看第二个式子，如果<span class="math inline">\(\alpha_s &lt; C\)</span>，那么就会有<span class="math inline">\(\xi_s = 0\)</span>。这种<span class="math inline">\(0 &lt; \alpha_s &lt; C\)</span>的支持向量称为自由的支持向量。综上所述，使用任意<em>自由的</em>支持向量<span class="math inline">\(({\bf x}_s, y_s)\)</span>，都可以求出唯一的<span class="math inline">\(b\)</span>为 <span class="math display">\[
-b = y_s - \sum_{ {\rm SV\  indices\  }n} \alpha_ny_nK({\bf x}_n, {\bf x}_s)
+b = y_s - \sum_{ {\rm SV\ indices\ }n} \alpha_ny_nK({\bf x}_n, {\bf x}_s)
 \]</span> 当然，极少数的情况下，没有自由的支持向量，那么<span class="math inline">\(b\)</span>就只能通过一系列不等式得出，此时可能有不止一个<span class="math inline">\(b\)</span>存在</p>
 <p>软间隔SVM（使用高斯核）的例子如下图所示。可以看到，小的<span class="math inline">\(C\)</span>可能会有欠拟合，而大的<span class="math inline">\(C\)</span>仍然会导致过拟合的现象。因此，对软间隔SVM，仍然要小心地选择<span class="math inline">\((\gamma, C)\)</span></p>
 <figure>
@@ -679,7 +679,7 @@ E_{\rm LOOCV} \le \frac{\# {\rm SV}}{N}
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -690,7 +690,7 @@ E_{\rm LOOCV} \le \frac{\# {\rm SV}}{N}
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -701,7 +701,7 @@ E_{\rm LOOCV} \le \frac{\# {\rm SV}}{N}
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

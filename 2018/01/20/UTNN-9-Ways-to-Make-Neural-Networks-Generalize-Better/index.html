@@ -408,7 +408,7 @@
 C= E+ \frac{\lambda}{2}\sum_iw_i^2
 \]</span> 将其对<span class="math inline">\(w_i\)</span>求偏导，有 <span class="math display">\[
 \frac{\partial C}{\partial w_i} = \frac{\partial E}{\partial w_i} + \lambda w_i \\
-{\rm when\  }\frac{\partial C}{\partial w_i} = 0, w_i = -\frac{1}{\lambda}\frac{\partial E}{\partial w_i}
+{\rm when\ }\frac{\partial C}{\partial w_i} = 0, w_i = -\frac{1}{\lambda}\frac{\partial E}{\partial w_i}
 \]</span> 因此，在达到代价函数的最小值时，只有当该权重有比较大的误差导数时，这个权重才会比较大。因此加入L2惩罚项以后不会有那种值很大又什么都不做的权重存在。这种做法的好处是，首先，极大提高了网络的泛化能力，因为如果出现了大值而无用的权重，网络可能会用它来拟合偶然规律（取样误差）。其次，这样会使模型变得平滑，使输出的变化速度慢于输入的变化速度。假设网络接受两个相似的输入，有L2正则项的那个会倾向让两个输入的权重各为<span class="math inline">\(w/2\)</span>，而没有正则项的会让一个输入的权重为<span class="math inline">\(w\)</span>另一个为0。如果现在将其中某个输入替换为一个完全不同的值，前者的变化会比后者小</p>
 <p>除去L2正则项，L1正则项也是一个常用的方法，它所惩罚的是权重的绝对值。使用L1正则项会使大部分权重变为0（L2正则项会让大部分权重变得很小，但不会完全为0）。或者，可以使用一种更极端的惩罚函数，使得代价函数的梯度在权重很大时反而很小，这样它会把小的权重都淘汰掉，只剩下很少几个大的权重</p>
 <h3 id="权重限制">权重限制</h3>
@@ -422,12 +422,12 @@ C= E+ \frac{\lambda}{2}\sum_iw_i^2
 <h2 id="使用噪声做正则项">使用噪声做正则项</h2>
 <p>假设现在有一个简单的线性神经网络，代价函数是平方误差，网络结构是输入单元直接连接到输出单元。现在，往输入添加高斯噪声，即输入变为<span class="math inline">\(x_i + N(0, \sigma_i^2)\)</span>。经由权重<span class="math inline">\(w_i\)</span>的处理，最后的输出也会带有高斯噪声，即输出变为<span class="math inline">\(y_j + N(0, w_i^2\sigma_i^2)\)</span>。也就是说，额外增加的这个方差实际上使得平方误差项又增加了一个随机项，该随机项满足均值为0，方差为<span class="math inline">\(\sigma_i^2\)</span>的高斯分布。因此最小化新的平方误差时，也会最小化<span class="math inline">\(N(0, w_i^2\sigma_i^2)\)</span>这一项，这一项的作用可以看作是给<span class="math inline">\(w_i\)</span>增加了一个系数为<span class="math inline">\(\sigma_i^2\)</span>的L2惩罚项。具体推导如下 <span class="math display">\[
 \begin{align*}
-y^{\rm noisy} &amp;= \sum_iw_i(x_i + \epsilon_i) = \sum_iw_ix_i + \sum_i w_i\epsilon_i \  \  (\epsilon_i \sim N(0, \sigma_i^2)) \\
+y^{\rm noisy} &amp;= \sum_iw_i(x_i + \epsilon_i) = \sum_iw_ix_i + \sum_i w_i\epsilon_i \ \ (\epsilon_i \sim N(0, \sigma_i^2)) \\
 \mathbb{E}\left[(y^{\rm noisy} - t)^2\right] &amp;= \mathbb{E}\left[\left(y+ \sum_{i}w_i\epsilon_i - t\right)^2\right] = \mathbb{E}\left[\left((y - t)+ \sum_{i}w_i\epsilon_i\right)^2\right] \\
 &amp;= (y-t)^2 + \mathbb{E}\left[2(y-t)\sum_iw_i\epsilon_i\right] + \mathbb{E}\left[\left(\sum_iw_i\epsilon_i\right)^2\right] \\
 &amp;= (y-t)^2 + 2(y-t)\sum_iw_i\mathbb{E}[\epsilon_i] + \mathbb{E}\left[\sum_iw_i^2\epsilon_i^2\right] + \mathbb{E}\left[\sum_{i\not= j}w_iw_j\epsilon_i\epsilon_j\right]
 \end{align*}
-\]</span> 由于<span class="math inline">\(\epsilon_i \sim N(0, \sigma_i^2)\)</span>，且对<span class="math inline">\(i\not= j\)</span>，<span class="math inline">\(\epsilon_i\)</span>和<span class="math inline">\(\epsilon_j\)</span>相互独立，因此<span class="math inline">\(\mathbb{E}[\epsilon_i] = 0,\  \mathbb{E}[\epsilon_i\epsilon_j] = \mathbb{E}[\epsilon_i]\mathbb{E}[\epsilon_j] = 0\)</span>。又<span class="math inline">\({\rm Var}[\epsilon_i] = \sigma_i^2 = \mathbb{E}[\epsilon_i^2] - (\mathbb{E}[\epsilon_i])^2 = \mathbb{E}[\epsilon_i^2]\)</span>，因此上式最后可以化简为 <span class="math display">\[
+\]</span> 由于<span class="math inline">\(\epsilon_i \sim N(0, \sigma_i^2)\)</span>，且对<span class="math inline">\(i\not= j\)</span>，<span class="math inline">\(\epsilon_i\)</span>和<span class="math inline">\(\epsilon_j\)</span>相互独立，因此<span class="math inline">\(\mathbb{E}[\epsilon_i] = 0,\ \mathbb{E}[\epsilon_i\epsilon_j] = \mathbb{E}[\epsilon_i]\mathbb{E}[\epsilon_j] = 0\)</span>。又<span class="math inline">\({\rm Var}[\epsilon_i] = \sigma_i^2 = \mathbb{E}[\epsilon_i^2] - (\mathbb{E}[\epsilon_i])^2 = \mathbb{E}[\epsilon_i^2]\)</span>，因此上式最后可以化简为 <span class="math display">\[
 \mathbb{E}\left[(y^{\rm noisy} - t)^2\right] = (y-t)^2 + \sum_iw_i^2\sigma_i^2
 \]</span> 对于更复杂的网络，可以往权重中加入高斯噪声来限制网络的能力。这种做法不再等价于使用L2惩罚项，但是效果却更好，尤其是对于RNN更是这样</p>
 <p>也可以在激活中使用噪声，将其作为一种正则化手段。假设使用反向传播来训练一个多层神经网络，网络的隐藏单元使用logistic函数做激活函数。在做正向传播时，动一些手脚：让隐藏单元随机输出0或者1（输出1的概率就是sigmoid函数的输出），但是反向传播的时候使用的是通过正常正向传播得出的，确定的实数。这种方法会让网络在训练集上的表现变差，而且训练过程变慢。但是如果用在测试集上，效果会有显著提高</p>
@@ -642,7 +642,7 @@ C = E + \frac{\sigma_D^2}{\sigma_W^2}\sum_iw_i^2
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -653,7 +653,7 @@ C = E + \frac{\sigma_D^2}{\sigma_W^2}\sum_iw_i^2
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -664,7 +664,7 @@ C = E + \frac{\sigma_D^2}{\sigma_W^2}\sum_iw_i^2
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

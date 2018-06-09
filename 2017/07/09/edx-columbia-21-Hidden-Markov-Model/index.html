@@ -411,14 +411,14 @@ p(\vec{x}|\pi, A, B) &amp;= \sum_{s_1=1}^S\cdots \sum_{s_T=1}^S p(\vec{x},s_1, \
 \]</span> 其中有 <span class="math display">\[
 \begin{align*}
 p(x_i|s_i, B) &amp;= B_{s_i, x_i} \\
-p(s_i|s_{i-1}, \pi, A) &amp;= A_{s_{i-1}, s_i}\  ({\rm or}\  \pi_{s_1})
+p(s_i|s_{i-1}, \pi, A) &amp;= A_{s_{i-1}, s_i}\ ({\rm or}\ \pi_{s_1})
 \end{align*}
 \]</span></p>
 <p>直接求解非常困难。但是如果把<span class="math inline">\(s_i\)</span>看作是隐变量，可以使用EM算法求解。回顾EM算法可以表示为 <strong>E步</strong>：使用<span class="math inline">\(q(\vec{s}) = p(\vec{s}|\vec{x}, \pi, A, B)\)</span>计算 <span class="math display">\[
 \mathcal{L}(\vec{x}, \pi, A, B) = \mathbb{E}_q[\ln p(\vec{x}, \vec{s}|\pi, A, B)]
 \]</span> <strong>M步</strong>：以<span class="math inline">\(\pi, A, B\)</span>最大化<span class="math inline">\(\mathcal{L}\)</span></p>
 <p>其中 <span class="math display">\[
-\ln p(\vec{x}, \vec{s}|\pi, A, B) = \sum_{i=1}^T\sum_{k=1}^S\underbrace{1(s_i=k)\ln B_{k, x_i}}_{\rm observations} + \sum_{k=1}^S \underbrace{1(s_1=k)\ln \pi_k}_{\rm initial\  state} + \sum_{i=2}^T\sum_{j=1}^S\sum_{k=1}^S\underbrace{1(s_{i=1}=j, s_i=k)\ln A_{j,k}}_{\rm Markov\  chain}
+\ln p(\vec{x}, \vec{s}|\pi, A, B) = \sum_{i=1}^T\sum_{k=1}^S\underbrace{1(s_i=k)\ln B_{k, x_i}}_{\rm observations} + \sum_{k=1}^S \underbrace{1(s_1=k)\ln \pi_k}_{\rm initial\ state} + \sum_{i=2}^T\sum_{j=1}^S\sum_{k=1}^S\underbrace{1(s_{i=1}=j, s_i=k)\ln A_{j,k}}_{\rm Markov\ chain}
 \]</span></p>
 <p><strong>E步</strong> 考虑指示变量的期望等于其对应事件发生的概率，则可以定义两个条件后验概率变量</p>
 <ul>
@@ -599,7 +599,7 @@ p(s_i|s_{i-1}, \pi, A) &amp;= A_{s_{i-1}, s_i}\  ({\rm or}\  \pi_{s_1})
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -610,7 +610,7 @@ p(s_i|s_{i-1}, \pi, A) &amp;= A_{s_{i-1}, s_i}\  ({\rm or}\  \pi_{s_1})
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -621,7 +621,7 @@ p(s_i|s_{i-1}, \pi, A) &amp;= A_{s_{i-1}, s_i}\  ({\rm or}\  \pi_{s_1})
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

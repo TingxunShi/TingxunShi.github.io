@@ -423,9 +423,9 @@ g_{\rm SVM}({\bf x}) = {\rm sign}({\bf w}^\mathsf{T}\boldsymbol{\Phi}({\bf x}) +
 <ol type="1">
 <li><p><span class="math inline">\(q_{n,m} = y_ny_m K({\bf x}_n, {\bf x}_m); {\bf p} = -{\bf 1}_N\)</span> （<span class="math inline">\(\rm A\)</span>和<span class="math inline">\(\bf c\)</span>还是对偶硬边界SVM算法中的对应值）</p></li>
 <li><p><span class="math inline">\(\boldsymbol{\alpha} \leftarrow {\rm QP}({\rm Q_D}, {\bf p}, {\rm A}, {\bf c})\)</span></p></li>
-<li><p>任选一个支持向量<span class="math inline">\(({\bf x}_s, y_s)\)</span>，计算<span class="math inline">\(b \leftarrow \left(y_s - \sum_{\rm SV\  indices}\alpha_ny_nK({\bf x}_n, {\bf x}_s)\right)\)</span></p></li>
+<li><p>任选一个支持向量<span class="math inline">\(({\bf x}_s, y_s)\)</span>，计算<span class="math inline">\(b \leftarrow \left(y_s - \sum_{\rm SV\ indices}\alpha_ny_nK({\bf x}_n, {\bf x}_s)\right)\)</span></p></li>
 <li><p>将所有支持向量、对应的<span class="math inline">\(\alpha_n\)</span>和<span class="math inline">\(b\)</span>返回。对新的<span class="math inline">\(\bf x\)</span>，计算 <span class="math display">\[
-g_{\rm SVM}({\bf x}) = {\rm sign}\left(\sum_{\rm SV\  indices}\alpha_ny_nK({\bf x}_n, {\bf x})+b\right)
+g_{\rm SVM}({\bf x}) = {\rm sign}\left(\sum_{\rm SV\ indices}\alpha_ny_nK({\bf x}_n, {\bf x})+b\right)
 \]</span></p></li>
 </ol>
 </blockquote>
@@ -457,7 +457,7 @@ K_Q({\bf x}, {\bf x}&#39;) &amp;= (\zeta + \gamma {\bf x^\mathsf{T}x}&#39;)^Q
 \begin{align*}
 K(x, x&#39;) &amp;= \exp(-(x-x&#39;)^2) \\
 &amp;= \exp(-(x)^2)\exp(-(x&#39;)^2)\exp(2xx&#39;) \\
-&amp;= \exp(-(x)^2)\exp(-(x&#39;)^2)\left(\sum_{i=0}^\infty\frac{(2xx&#39;)^i}{i!}\right) \hspace{3ex}{\rm Taylor\  expansion} \\
+&amp;= \exp(-(x)^2)\exp(-(x&#39;)^2)\left(\sum_{i=0}^\infty\frac{(2xx&#39;)^i}{i!}\right) \hspace{3ex}{\rm Taylor\ expansion} \\
 &amp;= \sum_{i=0}^\infty\left(\exp(-(x)^2)\exp(-(x&#39;)^2)\sqrt{\frac{2^i}{i!}}\sqrt{\frac{2^i}{i!}} (x)^i(x&#39;)^i\right) \\
 &amp;= \boldsymbol{\Phi}(x)^\mathsf{T}\boldsymbol{\Phi}(x&#39;)
 \end{align*}
@@ -684,7 +684,7 @@ K\langle{\bf x}, {\bf x}&#39;\rangle = \boldsymbol{\Phi}({\bf x})^\mathsf{T}\bol
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -695,7 +695,7 @@ K\langle{\bf x}, {\bf x}&#39;\rangle = \boldsymbol{\Phi}({\bf x})^\mathsf{T}\bol
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -706,7 +706,7 @@ K\langle{\bf x}, {\bf x}&#39;\rangle = \boldsymbol{\Phi}({\bf x})^\mathsf{T}\bol
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

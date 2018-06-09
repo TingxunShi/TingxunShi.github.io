@@ -431,7 +431,7 @@ h({\bf x}) = {\rm Output}\left(\sum_{m=1}^M \beta_m {\rm RBF}({\bf x}, \boldsymb
 <p>前面讲过，RBF网络的目的是找到一些中心，以及将RBF值线性组合起来的系数。在最简单的例子中，可以把看到过的所有数据点都当做中心。这种RBF网络称为全RBF网络，满足<span class="math inline">\(M=N\)</span>以及每个<span class="math inline">\(\boldsymbol{\mu}_m = {\bf x}_m\)</span>。其物理意义可以解释为，训练集中的每条数据<span class="math inline">\({\bf x}_m\)</span>对其周围的数据都应该有一定的影响，而影响力由<span class="math inline">\(\beta_m\)</span>决定。例如，假设每个点的影响力都一样，则对于新点，训练集中的每个点都会根据其到新点距离的远近做投票：总体来讲，一人一票，但是离得越近，系数越大。即<span class="math inline">\(\beta_m = 1 \cdot y_m\)</span>。这种假设函数的形式为 <span class="math display">\[
 g_{\rm uniform}({\bf x}) = {\rm sign}\left(\sum_{m=1}^N y_m\exp(-\gamma \|{\bf x}-{\bf x}_m\|^2)\right)
 \]</span> 即训练集中的每条数据都可以对新数据的所属类别发表意见，模型将所有人的意见收集起来，根据相似性分配票数，加权求和，最后输出。显然，对离新点<span class="math inline">\(\bf x\)</span>最近的数据点，它与新点的高斯函数值最大，说话最有分量。由于高斯函数随距离增大衰减很快，因此实际上往往这个点的标签可以决定最后结果。从这个角度来说，可以避免求和项，只需要找到距离新点最近的那个点就可以了。此时，模型的聚合退化成了模型的选择，假设函数变为 <span class="math display">\[
-g_{\rm nbor}({\bf x}) = y_m {\rm\  such\  that\  }{\bf x}{\rm\  closest\  to\  }{\bf x}_m
+g_{\rm nbor}({\bf x}) = y_m {\rm\ such\ that\ }{\bf x}{\rm\ closest\ to\ }{\bf x}_m
 \]</span> 这种方法称为<strong>最近邻法</strong>。在这种算法的基础上可以做一些扩展：不只找最近的邻居，而是找<span class="math inline">\(k\)</span>个最近的邻居，将它们的结果做聚合。这种扩展的方法称为<span class="math inline">\(k\)</span>-最近邻法（kNN）。kNN是一种比较“懒”的算法，但是却非常符合直觉。不过这种算法在测试时会比较费事</p>
 <p>全RBF有什么好处呢？考虑将这种网络用在回归问题中，误差函数使用平方误差，而且不再指定<span class="math inline">\(\beta_m\)</span>，而是让算法去优化这些系数。那么模型其实就是对经RBF变换过的数据求解线性回归。变换后的数据为 <span class="math display">\[
 {\bf z}_n = [{\rm RBF}({\bf x}_n, {\bf x}_1), {\rm RBF}({\bf x}_n, {\bf x}_2), \ldots, {\rm RBF}({\bf x}_n, {\bf x}_N)] \in \mathbb{R}^N
@@ -654,7 +654,7 @@ E_{\rm in}(S_1, \ldots, S_M; \boldsymbol{\mu}_1, \ldots, \boldsymbol{\mu}_M) = \
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -665,7 +665,7 @@ E_{\rm in}(S_1, \ldots, S_M; \boldsymbol{\mu}_1, \ldots, \boldsymbol{\mu}_M) = \
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -676,7 +676,7 @@ E_{\rm in}(S_1, \ldots, S_M; \boldsymbol{\mu}_1, \ldots, \boldsymbol{\mu}_M) = \
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

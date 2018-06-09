@@ -416,13 +416,13 @@ E_{\rm out}({\bf w}) \le E_{\rm in}({\bf w}) + \Omega(\mathcal{H})
 <p>因此，分类器“越胖”，它与离它最近的数据点<span class="math inline">\({\bf x}_n\)</span>距离越大，鲁棒性越好。我们的目标也就变成了要寻找最胖的分离超平面。假设数据集是线性可分的，那么要解决的最优化问题可以使用如下不严格的语言描述 <span class="math display">\[
 \begin{align*}
 \max_{\bf w} \hspace{3ex}&amp;{\rm fatness}({\bf w}) \\
-{\rm subject\  to}\hspace{3ex} &amp;{\bf w}{\rm\  classifies\  every\  }({\bf x}_n, y_n){\rm\  correctly} \\
+{\rm subject\ to}\hspace{3ex} &amp;{\bf w}{\rm\ classifies\ every\ }({\bf x}_n, y_n){\rm\ correctly} \\
 &amp;{\rm fatness}({\bf w}) = \min_{n=1,\ldots,N}{\rm distance}({\bf x}_n, {\bf w})
 \end{align*}
 \]</span> 文献中，这个“胖度”（fatness）通常称为<strong>间隔</strong>（margin）（有点像排版中“留白”的意味）。另外，“分类正确”意味着<span class="math inline">\({\bf w^\mathsf{T}x}_n\)</span>与<span class="math inline">\(y_n\)</span>同号，也就是对每个样本<span class="math inline">\(n\)</span>有<span class="math inline">\(y_n{\bf w^\mathsf{T}x}_n &gt; 0\)</span>。因此上面的最优化问题可以写成 <span class="math display">\[
 \begin{align*}
 \max_{\bf w} \hspace{3ex}&amp;{\rm margin}({\bf w}) \\
-{\rm subject\  to}\hspace{3ex} &amp;{\rm every\  }y_n{\bf w^\mathsf{T}x}_n &gt; 0 \\
+{\rm subject\ to}\hspace{3ex} &amp;{\rm every\ }y_n{\bf w^\mathsf{T}x}_n &gt; 0 \\
 &amp;{\rm margin}({\bf w}) = \min_{n=1,\ldots,N}{\rm distance}({\bf x}_n, {\bf w})
 \end{align*}
 \]</span> 问题的目标就变成了：<strong>要找到最大间隔分离超平面</strong></p>
@@ -449,27 +449,27 @@ h({\bf x}) = {\rm sign}({\bf w^\mathsf{T}x} + b)
 \]</span> 又考虑到平面上同一条线有不同的表示方式，<span class="math inline">\({\bf w^\mathsf{T}x}+b = 0\)</span>和<span class="math inline">\(3{\bf w^\mathsf{T}x} + 3b=0\)</span>，因此系数可以放缩。如果将其放缩到满足<span class="math inline">\(\min_{n=1,\ldots,N}y_n({\bf w^\mathsf{T}x}_n + b) = 1\)</span>，代入到最开始要求解的最优化问题中的限制条件，就有<span class="math inline">\({\rm margin}(b, {\bf w}) = \frac{1}{|\!|{\bf w}|\!|}\)</span>。因此该最优化问题就可以写为 <span class="math display">\[
 \begin{align*}
 \max_{ {\bf w}, b} \hspace{3ex}&amp;\frac{1}{|\!|{\bf w}|\!|}\\
-{\rm subject\  to}\hspace{3ex} &amp;{\rm every\  }y_n{\bf w^\mathsf{T}x}_n &gt; 0 \\
+{\rm subject\ to}\hspace{3ex} &amp;{\rm every\ }y_n{\bf w^\mathsf{T}x}_n &gt; 0 \\
 &amp;\min_{n=1,\ldots,N}y_n({\bf w^\mathsf{T}x}_n + b) = 1
 \end{align*}
 \]</span> 而且再仔细分析，两个限制条件中第二个条件比第一个严格，所以可以继续化简 <span class="math display">\[
 \begin{align*}
 \max_{ {\bf w}, b} \hspace{3ex}&amp;\frac{1}{|\!|{\bf w}|\!|}\\
-{\rm subject\  to}\hspace{3ex} &amp;\min_{n=1,\ldots,N}y_n({\bf w^\mathsf{T}x}_n + b) = 1
+{\rm subject\ to}\hspace{3ex} &amp;\min_{n=1,\ldots,N}y_n({\bf w^\mathsf{T}x}_n + b) = 1
 \end{align*}
 \]</span> 这个问题是求最大值，而限制条件里又有最小值，还是不太好解。但是限制条件可以进一步放宽，只需要满足<span class="math inline">\(y_n({\bf w^\mathsf{T}x}_n + b) \ge 1\)</span>就可以。这里不用担心出现所有点都<span class="math inline">\(y_n({\bf w^\mathsf{T}x}_n + b) &gt; 1\)</span>的情况，因为如果这种情况发生，假设有<span class="math inline">\(y_n({\bf w^\mathsf{T}x}_n + b) \ge C, C &gt; 1\)</span>，那么对<span class="math inline">\((b, {\bf w})\)</span>缩放，得到<span class="math inline">\((b/C, {\bf w}/C)\)</span>，则还可以满足<span class="math inline">\(y_n({\bf w^\mathsf{T}x}_n + b) \ge 1\)</span>，但是因为<span class="math inline">\(\bf w\)</span>被除了一个大于1的正常数，因此<span class="math inline">\(\frac{1}{|\!|w|\!|}\)</span>会变大，新的解比<span class="math inline">\((b, {\bf w})\)</span>取得的最优解更好，造成矛盾。最后，再做一点简单的变换，可以得到最终要优化的问题为 <span class="math display">\[
 \begin{align*}
 \min_{ {\bf w}, b} \hspace{3ex}&amp;\frac{1}{2}{\bf w^\mathsf{T}w}\\
-{\rm subject\  to}\hspace{3ex} &amp;y_n({\bf w^\mathsf{T}x}_n + b) \ge 1{\rm\  for\  all\  }n
+{\rm subject\ to}\hspace{3ex} &amp;y_n({\bf w^\mathsf{T}x}_n + b) \ge 1{\rm\ for\ all\ }n
 \end{align*}
 \]</span></p>
 <h2 id="支持向量机svm">支持向量机（SVM）</h2>
 <p>上面得到的这个问题通常称为<strong>标准问题</strong>，解这个问题返回的<span class="math inline">\(g\)</span>通常称为<strong>支持向量机</strong>（Support Vector Machine, SVM）。SVM的来源是这样的：通过分析第一节中的例子，可以发现最大间隔分离超平面完全由离该超平面最近的点定义，其它点如果从数据集中删除掉，对最优超平面的选择没有任何影响。这些决定了最大间隔分离超平面的点通常被称为<strong>支持向量</strong>，因此SVM的意思就是使用支持向量学习出最优的超平面</p>
 <p>SVM并不是一个很容易手工解出的问题。由于限制条件的存在，使用梯度下降也不太方便。不过这个问题要最小化的是一个<span class="math inline">\(\bf w\)</span>的二次函数，限制条件又都是<span class="math inline">\({\bf w}\)</span>和<span class="math inline">\(b\)</span>的一次式，因此这个问题其实是凸优化问题里的二次规划问题（简称QP问题）。接下来的问题就是，如何把这个最优化问题改写成二次规划问题的标准形式。假设变量为<span class="math inline">\(\bf u\)</span>，其二次项系数为<span class="math inline">\(\rm Q\)</span>，一次项系数为<span class="math inline">\(\bf p^\mathsf{T}\)</span>，限制条件的每一项系数为<span class="math inline">\({\bf a}_m^\mathsf{T}\)</span>，常数为<span class="math inline">\(c_m\)</span>，则二次规划问题的标准形式就可以写为 <span class="math display">\[
-{\rm optimal\  }{\bf u} \leftarrow {\rm QP}({\rm Q}, {\bf p}, {\rm A}, {\bf c}) \\
+{\rm optimal\ }{\bf u} \leftarrow {\rm QP}({\rm Q}, {\bf p}, {\rm A}, {\bf c}) \\
 \begin{align*}
 \min_{\bf u} &amp; \hspace{3ex}\frac{1}{2}{\bf u}^\mathsf{T}{\rm Q}{\bf u} + {\bf p^\mathsf{T}u} \\
-{\rm subject\  to} &amp; \hspace{3ex}{\bf a}_m^\mathsf{T}{\bf u} \ge c_m, {\rm for\  }m =1,2,\ldots, M
+{\rm subject\ to} &amp; \hspace{3ex}{\bf a}_m^\mathsf{T}{\bf u} \ge c_m, {\rm for\ }m =1,2,\ldots, M
 \end{align*}
 \]</span> 记<span class="math inline">\(\bf w\)</span>的维数为<span class="math inline">\(d\)</span>，则对应关系如下 <span class="math display">\[
 \begin{align*}
@@ -667,7 +667,7 @@ d_{\rm VC}(\mathcal{A}_\rho) \le \min \left(\frac{R^2}{\rho^2}, d\right) + 1 \le
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -678,7 +678,7 @@ d_{\rm VC}(\mathcal{A}_\rho) \le \min \left(\frac{R^2}{\rho^2}, d\right) + 1 \le
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -689,7 +689,7 @@ d_{\rm VC}(\mathcal{A}_\rho) \le \min \left(\frac{R^2}{\rho^2}, d\right) + 1 \le
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

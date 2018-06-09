@@ -419,13 +419,13 @@ p_j = \frac{\exp(s_j)}{\sum_i\exp(s_i)}
 <p>此时softmax的分母会被认为是0，进而抛出异常</p>
 <p>因此，真正计算时，通常会将原始要计算的向量<span class="math inline">\(\boldsymbol{s}\)</span>做一个处理得到向量<span class="math inline">\(\boldsymbol{z}\)</span>，即对<span class="math inline">\(\boldsymbol{s}\)</span>的每个分量<span class="math inline">\(s_i\)</span>都减去<span class="math inline">\(\boldsymbol{s}\)</span>最大的那个分量。即 <span class="math display">\[
 \boldsymbol{z} = \boldsymbol{s} - \max_i s_i
-\]</span> 记<span class="math inline">\(\max_i s_i = c\)</span>，同时<span class="math inline">\(\rm{softmax}(\boldsymbol{z}) = \boldsymbol{q},\  \rm{softmax}(\boldsymbol{s}) = \boldsymbol{p}\)</span>，下面证明有<span class="math inline">\(\boldsymbol{q} = \boldsymbol{p}\)</span>。假设<span class="math inline">\(\boldsymbol{c}\)</span>是维度与<span class="math inline">\(\boldsymbol{z}\)</span>和<span class="math inline">\(\boldsymbol{s}\)</span>的维度均相等的向量，其每个分量<span class="math inline">\(c_i = \max_i s_i = c\)</span>，即<span class="math inline">\(\forall i, j, 1 \le i, j \le {\rm dim}\  \boldsymbol{c} \Rightarrow c_i = c_j = c\)</span>， <span class="math display">\[
+\]</span> 记<span class="math inline">\(\max_i s_i = c\)</span>，同时<span class="math inline">\(\rm{softmax}(\boldsymbol{z}) = \boldsymbol{q},\ \rm{softmax}(\boldsymbol{s}) = \boldsymbol{p}\)</span>，下面证明有<span class="math inline">\(\boldsymbol{q} = \boldsymbol{p}\)</span>。假设<span class="math inline">\(\boldsymbol{c}\)</span>是维度与<span class="math inline">\(\boldsymbol{z}\)</span>和<span class="math inline">\(\boldsymbol{s}\)</span>的维度均相等的向量，其每个分量<span class="math inline">\(c_i = \max_i s_i = c\)</span>，即<span class="math inline">\(\forall i, j, 1 \le i, j \le {\rm dim}\ \boldsymbol{c} \Rightarrow c_i = c_j = c\)</span>， <span class="math display">\[
 \begin{align*}
 &amp;&amp;\boldsymbol{q} = {\rm softmax}(\boldsymbol{z}) &amp;= {\rm softmax}(\boldsymbol{s} - \boldsymbol{c}) \\
 &amp;&amp;\Rightarrow q_i&amp;= \frac{\exp(s_i - c)}{\sum_j \exp(s_j - c)} \\
 &amp;&amp;&amp;= \frac{\exp(s_i)}{\exp(c)\sum_j\left(\exp(s_j) / \exp(c)\right)} \\
 &amp;&amp;&amp; = \frac{\exp(s_i)}{\exp(c) / \exp(c)\sum_j\exp(s_j)} = \frac{\exp(s_i)}{\sum_j\exp(s_j)} = p_i \\
-&amp;&amp; \Rightarrow \boldsymbol{q} &amp;= \boldsymbol{p}\  \blacksquare
+&amp;&amp; \Rightarrow \boldsymbol{q} &amp;= \boldsymbol{p}\ \blacksquare
 \end{align*}
 \]</span> 因此，计算<span class="math inline">\(\rm{softmax}\left(\left[\begin{matrix}1000 \\ 1003\end{matrix}\right]\right)\)</span>等价于计算<span class="math inline">\(\rm{softmax}\left(\left[\begin{matrix}-3 \\ 0\end{matrix}\right]\right)\)</span>，以此类推。这样的处理方法保证所有<span class="math inline">\(\exp\)</span>函数的参数的最大值为0，因此避免了上溢的可能。同时，所有softmax函数的分母里都会有至少一个为1的项，也就避免了分母下溢，被0除的可能。但是，分子仍然存在下溢的可能，因此在计算<span class="math inline">\(\log \rm{softmax}\)</span>的值时仍然需要特别小心</p>
 <h2 id="模型示例">模型示例</h2>
@@ -486,7 +486,7 @@ p_{e_t} = \frac{e^{s_t}}{\sum_ue^{s_u}}
 \]</span> 由标量对向量的求导法则，得出一个同样维度的向量，其中每个分量是标量对原向量中该分量的导数（详细可见Towser大神整理的文章<a href="https://pan.baidu.com/s/1_OUSFaIk2nq7z2mvnzWFLQ" target="_blank" rel="noopener">机器学习中的矩阵、向量求导</a>），即假设<span class="math inline">\(a\)</span>为标量，<span class="math inline">\(\boldsymbol{x}\)</span>为向量，且<span class="math inline">\(\boldsymbol{x} = \left[\begin{array}{ccc}x_1 &amp; \cdots &amp; x_n\end{array}\right]^\mathsf{T}\)</span>，则有 <span class="math display">\[
 \frac{\partial a}{\partial \boldsymbol{x}} = \left[\begin{array}{c}\frac{\partial a}{\partial x_1} \\ \cdots \\ \frac{\partial a}{\partial x_n} \end{array}\right]^\mathsf{T}
 \]</span> 而且有 <span class="math display">\[
-\frac{\partial \ell}{\partial s_v} = \begin{cases}-1 + \frac{e^{s_v}}{\sum_ue^{s_u}} &amp; {\rm if\  }v = t \\ \frac{e^{s_v}}{\sum_ue^{s_u}} &amp; {\rm elsewhere}\end{cases} 
+\frac{\partial \ell}{\partial s_v} = \begin{cases}-1 + \frac{e^{s_v}}{\sum_ue^{s_u}} &amp; {\rm if\ }v = t \\ \frac{e^{s_v}}{\sum_ue^{s_u}} &amp; {\rm elsewhere}\end{cases} 
 \]</span> 进一步简化，可知 <span class="math display">\[
 \frac{\partial \ell}{\partial \boldsymbol{s}} = \boldsymbol{p} - {\rm onehot}(e_t)
 \]</span> 因此， <span class="math display">\[
@@ -583,6 +583,10 @@ p_{e_t} = \frac{e^{s_t}}{\sum_ue^{s_u}}
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2018/04/26/NMT-Tutorial-2a-Loss-Functions/" rel="prev" title="NMT Tutorial 2扩展a. 损失函数">
+                NMT Tutorial 2扩展a. 损失函数 <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -667,7 +671,7 @@ p_{e_t} = \frac{e^{s_t}}{\sum_ue^{s_u}}
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -678,7 +682,7 @@ p_{e_t} = \frac{e^{s_t}}{\sum_ue^{s_u}}
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -689,7 +693,7 @@ p_{e_t} = \frac{e^{s_t}}{\sum_ue^{s_u}}
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

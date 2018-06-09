@@ -431,7 +431,7 @@ D(X|\!|WH) = -\sum_i \sum_j [X_{ij}\ln(WH)_{ij} - (WH)_{ij}]
 <p>NMF算法类似于之前的EM算法，也是引入了一个辅助函数，然后使辅助函数与原函数的KL距离最小（？）。这里不讨论。细节见 D.D. Lee and H.S. Seung (2001). “Algorithms for non-negative matrix factorization.” <em>Advances in Neural Information Processing Systems</em></p>
 <h4 id="最小化平方误差">最小化平方误差</h4>
 <p>其求解问题为 <span class="math display">\[
-\min \sum_{ij}(X_{ij} - (WH)_{ij})^2\  \  \  {\rm subject\  to}\  W_{ik} \ge 0, H_{kj} \ge 0
+\min \sum_{ij}(X_{ij} - (WH)_{ij})^2\ \ \ {\rm subject\ to}\ W_{ik} \ge 0, H_{kj} \ge 0
 \]</span> 算法随机使用非负数初始化<span class="math inline">\(H\)</span>和<span class="math inline">\(W\)</span>，然后迭代下面两个式子直到<span class="math inline">\(|\!|X-WH|\!|^2\)</span>变化量足够小 <span class="math display">\[
 \begin{align*}
 H_{kj} &amp;\leftarrow H_{kj}\frac{(W^\mathsf{T}X)_{kj}}{(W^\mathsf{T}WH)_{kj}} \\
@@ -440,7 +440,7 @@ W_{ik} &amp;\leftarrow W_{ik}\frac{(XH^\mathsf{T})_{ik}}{(WHH^\mathsf{T})_{ik}}
 \]</span></p>
 <h4 id="最小化距离">最小化距离</h4>
 <p>其求解问题为 <span class="math display">\[
-\min \sum_{ij}\left[ X_{ij}\ln\frac{1}{(WH)_{ij}} + (WH)_{ij}\right]\  \  \  {\rm subject\  to}\  W_{ik} \ge 0, H_{kj} \ge 0
+\min \sum_{ij}\left[ X_{ij}\ln\frac{1}{(WH)_{ij}} + (WH)_{ij}\right]\ \ \ {\rm subject\ to}\ W_{ik} \ge 0, H_{kj} \ge 0
 \]</span> 算法随机使用非负数初始化<span class="math inline">\(H\)</span>和<span class="math inline">\(W\)</span>，然后迭代下面两个式子直到<span class="math inline">\(D(X|\!|WH)\)</span>变化量足够小 <span class="math display">\[
 \begin{align*}
 H_{kj} &amp;\leftarrow H_{kj}\frac{\sum_i W_{ik}X_{ij}/(WH)_{ij}}{\sum_i W_{ik}} \\
@@ -448,7 +448,7 @@ W_{ik} &amp;\leftarrow W_{ik}\frac{\sum_j H_{kj}X_{ij} / (WH)_{ij}}{\sum_j H_{kj
 \end{align*}
 \]</span></p>
 <p>最小化距离有一种更好的概率解释（最小化平方误差也可以有，尽管好用但是意义不大），即我们假设<span class="math inline">\(X_{ij}\)</span>服从参数为<span class="math inline">\((WH)_{ij}\)</span>的泊松分布，即 <span class="math display">\[
-X_{ij} \sim {\rm Pois}((WH)_{ij}),\  {\rm Pois}(x|\lambda) = \frac{\lambda^x}{x!}e^{-\lambda},x\in \{0,1,2,\ldots\}
+X_{ij} \sim {\rm Pois}((WH)_{ij}),\ {\rm Pois}(x|\lambda) = \frac{\lambda^x}{x!}e^{-\lambda},x\in \{0,1,2,\ldots\}
 \]</span> 由于独立性，有 <span class="math display">\[
 P(X|W,H) = \prod_{ij}P(X_{ij}|W,H) = \prod_{ij}{\rm Pois}(X_{ij}|(WH)_{ij})
 \]</span> 代入求解就可以得到目标函数</p>
@@ -639,7 +639,7 @@ P(X|W,H) = \prod_{ij}P(X_{ij}|W,H) = \prod_{ij}{\rm Pois}(X_{ij}|(WH)_{ij})
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -650,7 +650,7 @@ P(X|W,H) = \prod_{ij}P(X_{ij}|W,H) = \prod_{ij}{\rm Pois}(X_{ij}|(WH)_{ij})
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -661,7 +661,7 @@ P(X|W,H) = \prod_{ij}P(X_{ij}|W,H) = \prod_{ij}{\rm Pois}(X_{ij}|(WH)_{ij})
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

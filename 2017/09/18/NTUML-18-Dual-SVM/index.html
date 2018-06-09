@@ -111,18 +111,18 @@
 
 
 
-<meta name="description" content="提出对偶SVM的动机 上一讲提到的线性SVM可以很容易地被延展到非线性的情况，只需要引入非线性特征变换\(\boldsymbol{\Phi}\)就可以。引入以后的问题描述为 \[ \begin{align*} \min_{ {\bf w}, b} \hspace{3ex}&amp;amp;\frac{1}{2}{\bf w^\mathsf{T}w}\\ {\rm subject\  to}\hspace{">
+<meta name="description" content="提出对偶SVM的动机 上一讲提到的线性SVM可以很容易地被延展到非线性的情况，只需要引入非线性特征变换\(\boldsymbol{\Phi}\)就可以。引入以后的问题描述为 \[ \begin{align*} \min_{ {\bf w}, b} \hspace{3ex}&amp;amp;\frac{1}{2}{\bf w^\mathsf{T}w}\\ {\rm subject\ to}\hspace{3">
 <meta name="keywords" content="NTUML,SVM">
 <meta property="og:type" content="article">
 <meta property="og:title" content="NTUML 18. 对偶支持向量机">
 <meta property="og:url" content="txshi-mt.com/2017/09/18/NTUML-18-Dual-SVM/index.html">
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
-<meta property="og:description" content="提出对偶SVM的动机 上一讲提到的线性SVM可以很容易地被延展到非线性的情况，只需要引入非线性特征变换\(\boldsymbol{\Phi}\)就可以。引入以后的问题描述为 \[ \begin{align*} \min_{ {\bf w}, b} \hspace{3ex}&amp;amp;\frac{1}{2}{\bf w^\mathsf{T}w}\\ {\rm subject\  to}\hspace{">
+<meta property="og:description" content="提出对偶SVM的动机 上一讲提到的线性SVM可以很容易地被延展到非线性的情况，只需要引入非线性特征变换\(\boldsymbol{\Phi}\)就可以。引入以后的问题描述为 \[ \begin{align*} \min_{ {\bf w}, b} \hspace{3ex}&amp;amp;\frac{1}{2}{\bf w^\mathsf{T}w}\\ {\rm subject\ to}\hspace{3">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:updated_time" content="2017-12-19T12:35:39.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NTUML 18. 对偶支持向量机">
-<meta name="twitter:description" content="提出对偶SVM的动机 上一讲提到的线性SVM可以很容易地被延展到非线性的情况，只需要引入非线性特征变换\(\boldsymbol{\Phi}\)就可以。引入以后的问题描述为 \[ \begin{align*} \min_{ {\bf w}, b} \hspace{3ex}&amp;amp;\frac{1}{2}{\bf w^\mathsf{T}w}\\ {\rm subject\  to}\hspace{">
+<meta name="twitter:description" content="提出对偶SVM的动机 上一讲提到的线性SVM可以很容易地被延展到非线性的情况，只需要引入非线性特征变换\(\boldsymbol{\Phi}\)就可以。引入以后的问题描述为 \[ \begin{align*} \min_{ {\bf w}, b} \hspace{3ex}&amp;amp;\frac{1}{2}{\bf w^\mathsf{T}w}\\ {\rm subject\ to}\hspace{3">
 
 
 
@@ -393,7 +393,7 @@
 <p>上一讲提到的线性SVM可以很容易地被延展到非线性的情况，只需要引入非线性特征变换<span class="math inline">\(\boldsymbol{\Phi}\)</span>就可以。引入以后的问题描述为 <span class="math display">\[
 \begin{align*}
 \min_{ {\bf w}, b} \hspace{3ex}&amp;\frac{1}{2}{\bf w^\mathsf{T}w}\\
-{\rm subject\  to}\hspace{3ex} &amp;y_n({\bf w^\mathsf{T}}\underbrace{ {\bf z}_n}_{\boldsymbol{\Phi}({\bf x}_n)} + b) \ge 1{\rm\  for\  }n = 1,2,\ldots, N
+{\rm subject\ to}\hspace{3ex} &amp;y_n({\bf w^\mathsf{T}}\underbrace{ {\bf z}_n}_{\boldsymbol{\Phi}({\bf x}_n)} + b) \ge 1{\rm\ for\ }n = 1,2,\ldots, N
 \end{align*}
 \]</span> 非线性硬间隔SVM的算法就可以被修改为</p>
 <blockquote>
@@ -406,12 +406,12 @@
 <p>非线性硬间隔SVM的思路是将SVM的优点（间隔大，有效VC维低，鲁棒性强）和特征变换的优点（能够形成非线性的边界）结合起来。但是这里有个问题：<span class="math inline">\(\bf x\)</span>经过非线性特征转换以后，映射到新空间里得到的<span class="math inline">\(\bf z\)</span>通常维度比较高。记映射后向量的维度为<span class="math inline">\(\tilde{d}\)</span>，则求解QP时需要面对<span class="math inline">\(\tilde{d}+1\)</span>个变量和<span class="math inline">\(N\)</span>个限制条件。因此，需要探索一种方法使得SVM不去依赖<span class="math inline">\(\tilde{d}\)</span></p>
 <p>这种方法的核心思路为，将原来的二次规划问题（有<span class="math inline">\(\tilde{d}+1\)</span>个变量和<span class="math inline">\(N\)</span>个限制条件）转换为一个等价的二次规划问题（有<span class="math inline">\(N\)</span>个变量和<span class="math inline">\(N+1\)</span>个限制条件）。这种新的问题被称为<strong>原始SVM的对偶问题</strong></p>
 <p>回顾第14讲介绍正则化时，要求解的原始问题也是带了一个限制条件。当时的做法是进行了一些变换，转而求解一个没有条件，称为“放大误差”的最优化问题。即这两个问题也存在一个等价关系： <span class="math display">\[
-\min_{\bf w} E_{\rm in}({\bf w})\  {\rm s.t.\  }{\bf w^\mathsf{T}w} \le C \Leftrightarrow \min_{\bf w} E_{\rm aug}({\bf w}) = E_{\rm in}({\bf w}) + \frac{\lambda}{N}{\bf w^\mathsf{T}w}
+\min_{\bf w} E_{\rm in}({\bf w})\ {\rm s.t.\ }{\bf w^\mathsf{T}w} \le C \Leftrightarrow \min_{\bf w} E_{\rm aug}({\bf w}) = E_{\rm in}({\bf w}) + \frac{\lambda}{N}{\bf w^\mathsf{T}w}
 \]</span> 这里用到的工具称为<strong>拉格朗日乘子</strong>，也就是<span class="math inline">\(\lambda\)</span>。做法是把限制条件乘上一个<span class="math inline">\(\lambda\)</span>，再加到要求解的式子里。这时，<span class="math inline">\(\lambda\)</span>可以看做是限制条件中参数<span class="math inline">\(C\)</span>的一个对应。同样的思想也可以用来求解前述的非线性硬间隔SVM，不过具体做法会稍微有点不同：此时这些拉格朗日乘子都会被看做是一个变量，去解跟这个变量有关的对偶问题。而每个限制条件都会对应一个拉格朗日乘子，因此最后会有<span class="math inline">\(N\)</span>个未知的<span class="math inline">\(\lambda\)</span></p>
 <p>所以，第一步要做的就是移除原有问题中的条件限制。这一步可以通过引入拉格朗日乘子（这里不再记为<span class="math inline">\(\lambda\)</span>，而是记为<span class="math inline">\(\alpha\)</span>）和定义拉格朗日函数做到。这里的拉格朗日函数为 <span class="math display">\[
 \mathcal{L}(b, {\bf w}, \boldsymbol{\alpha}) = \underbrace{\frac{1}{2}{\bf w^\mathsf{T}w}}_{\rm objective} + \sum_{n=1}^N \alpha_n \underbrace{(1-y_n({\bf w^\mathsf{T}z}_n+b))}_{\rm constraint}
 \]</span> 为什么拉格朗日函数定义是合理的？下面试着进行说明：原有的问题其实等价于 <span class="math display">\[
-{\rm SVM} \equiv \min_{b, {\bf w}} \left(\max_{ {\rm all\  }\alpha_n \ge 0}\mathcal{L}(b, {\bf w}, \boldsymbol{\alpha})\right)
+{\rm SVM} \equiv \min_{b, {\bf w}} \left(\max_{ {\rm all\ }\alpha_n \ge 0}\mathcal{L}(b, {\bf w}, \boldsymbol{\alpha})\right)
 \]</span> 这个式子的意思是</p>
 <ul>
 <li>先考察所有<span class="math inline">\(b\)</span>和<span class="math inline">\(\bf w\)</span>。对于给定的<span class="math inline">\(b\)</span>和<span class="math inline">\(\bf w\)</span>，寻找所有可能的<span class="math inline">\(N\)</span>个非负的<span class="math inline">\(\alpha_n\)</span>，满足<span class="math inline">\(\mathcal{L}\)</span>最大的<span class="math inline">\(\boldsymbol{\alpha}\)</span>是要找的<span class="math inline">\(\boldsymbol{\alpha}\)</span></li>
@@ -419,20 +419,20 @@
 </ul>
 <p>那么问题来了，为什么这个等价关系存在？事实上，对所有的<span class="math inline">\(b\)</span>和<span class="math inline">\(\bf w\)</span>，可以分为两组：</p>
 <ul>
-<li>“坏的”，也就是违反了（某一个）限制条件的<span class="math inline">\(b\)</span>和<span class="math inline">\(\bf w\)</span>（violate）。限制条件要求<span class="math inline">\(y_n({\bf w^\mathsf{T}z}_n + b) \ge 1\)</span>，对应的就是<span class="math inline">\(1 - y_n({\bf w^\mathsf{T}x}_n + b) \le 0\)</span>。如果这组<span class="math inline">\(b\)</span>和<span class="math inline">\(\bf w\)</span>违反了限制条件，那么就会有<span class="math inline">\(1 - y_n({\bf w^\mathsf{T}x}_n + b) &gt; 0\)</span>。将其带入到拉格朗日函数里，求和项中有至少一项的限制条件就会是个正数。前面说，要找到所有可能的<span class="math inline">\(N\)</span>个非负的<span class="math inline">\(\alpha_n\)</span>，满足<span class="math inline">\(\mathcal{L}\)</span>最大。由于目标函数是非负的，限制项中又有至少一个正数，因此只要让限制条件为正数的项的系数随意大就可以无限制地最大化<span class="math inline">\(\mathcal{L}\)</span>。即在此情况下，<span class="math inline">\(\max_{ {\rm all\  }\alpha_n \ge 0}\mathcal{L}(b, {\bf w}, \boldsymbol{\alpha}) \rightarrow +\infty\)</span></li>
-<li>“好的”，也就是遵守全部限制条件的<span class="math inline">\(b\)</span>和<span class="math inline">\(\bf w\)</span>（feasible）。在这种情况下，拉格朗日函数中所有限制项都是非正数。为了让<span class="math inline">\(\mathcal{L}\)</span>尽可能大，最方便的方法就是让所有<span class="math inline">\(\alpha_n=0\)</span>，这个时候<span class="math inline">\(\max_{ {\rm all\  }\alpha_n \ge 0}\mathcal{L}(b, {\bf w}, \boldsymbol{\alpha}) = \frac{1}{2}{\bf w^\mathsf{T}w}\)</span>。再对这些<span class="math inline">\(b\)</span>和<span class="math inline">\(\bf w\)</span>找到最小的<span class="math inline">\(\mathcal{L}\)</span>，其实就是去找到最小的<span class="math inline">\(\frac{1}{2}{\bf w^\mathsf{T}w}\)</span>，跟原来要求解的最优化问题一样</li>
+<li>“坏的”，也就是违反了（某一个）限制条件的<span class="math inline">\(b\)</span>和<span class="math inline">\(\bf w\)</span>（violate）。限制条件要求<span class="math inline">\(y_n({\bf w^\mathsf{T}z}_n + b) \ge 1\)</span>，对应的就是<span class="math inline">\(1 - y_n({\bf w^\mathsf{T}x}_n + b) \le 0\)</span>。如果这组<span class="math inline">\(b\)</span>和<span class="math inline">\(\bf w\)</span>违反了限制条件，那么就会有<span class="math inline">\(1 - y_n({\bf w^\mathsf{T}x}_n + b) &gt; 0\)</span>。将其带入到拉格朗日函数里，求和项中有至少一项的限制条件就会是个正数。前面说，要找到所有可能的<span class="math inline">\(N\)</span>个非负的<span class="math inline">\(\alpha_n\)</span>，满足<span class="math inline">\(\mathcal{L}\)</span>最大。由于目标函数是非负的，限制项中又有至少一个正数，因此只要让限制条件为正数的项的系数随意大就可以无限制地最大化<span class="math inline">\(\mathcal{L}\)</span>。即在此情况下，<span class="math inline">\(\max_{ {\rm all\ }\alpha_n \ge 0}\mathcal{L}(b, {\bf w}, \boldsymbol{\alpha}) \rightarrow +\infty\)</span></li>
+<li>“好的”，也就是遵守全部限制条件的<span class="math inline">\(b\)</span>和<span class="math inline">\(\bf w\)</span>（feasible）。在这种情况下，拉格朗日函数中所有限制项都是非正数。为了让<span class="math inline">\(\mathcal{L}\)</span>尽可能大，最方便的方法就是让所有<span class="math inline">\(\alpha_n=0\)</span>，这个时候<span class="math inline">\(\max_{ {\rm all\ }\alpha_n \ge 0}\mathcal{L}(b, {\bf w}, \boldsymbol{\alpha}) = \frac{1}{2}{\bf w^\mathsf{T}w}\)</span>。再对这些<span class="math inline">\(b\)</span>和<span class="math inline">\(\bf w\)</span>找到最小的<span class="math inline">\(\mathcal{L}\)</span>，其实就是去找到最小的<span class="math inline">\(\frac{1}{2}{\bf w^\mathsf{T}w}\)</span>，跟原来要求解的最优化问题一样</li>
 </ul>
 <p>也就是说，原来的限制条件隐藏在了内层的最大化函数里。即 <span class="math display">\[
-{\rm SVM} \equiv \min_{b, {\bf w}} \left(\max_{ {\rm all\  }\alpha_n \ge 0}\mathcal{L}(b, {\bf w}, \boldsymbol{\alpha})\right) = \min_{b, {\bf w}}\left(\infty {\rm\  if\  violate;\  }\frac{1}{2}{\bf w^\mathsf{T}w}{\rm \  if\  feasible}\right)
+{\rm SVM} \equiv \min_{b, {\bf w}} \left(\max_{ {\rm all\ }\alpha_n \ge 0}\mathcal{L}(b, {\bf w}, \boldsymbol{\alpha})\right) = \min_{b, {\bf w}}\left(\infty {\rm\ if\ violate;\ }\frac{1}{2}{\bf w^\mathsf{T}w}{\rm \ if\ feasible}\right)
 \]</span></p>
 <h2 id="拉格朗日对偶svm">拉格朗日对偶SVM</h2>
-<p>现在的问题是，如何继续对问题做转换。由于内层是一个最大化函数，因此对任意给定的<span class="math inline">\(\boldsymbol{\alpha}&#39; \  (\forall \alpha_n&#39; \ge 0)\)</span>，肯定有 <span class="math display">\[
-\min_{b, {\bf w}} \left(\max_{ {\rm all\  }\alpha_n \ge 0}\mathcal{L}(b, {\bf w}, \boldsymbol{\alpha})\right) \ge \min_{b, {\bf w}}\mathcal{L}(b, {\bf w}, \boldsymbol{\alpha}&#39;)
+<p>现在的问题是，如何继续对问题做转换。由于内层是一个最大化函数，因此对任意给定的<span class="math inline">\(\boldsymbol{\alpha}&#39; \ (\forall \alpha_n&#39; \ge 0)\)</span>，肯定有 <span class="math display">\[
+\min_{b, {\bf w}} \left(\max_{ {\rm all\ }\alpha_n \ge 0}\mathcal{L}(b, {\bf w}, \boldsymbol{\alpha})\right) \ge \min_{b, {\bf w}}\mathcal{L}(b, {\bf w}, \boldsymbol{\alpha}&#39;)
 \]</span> 因为任何函数的最大值肯定比其任意给定参数对应的值要大。进一步地，使得上面不等式右侧式子取得最大值的<span class="math inline">\(\boldsymbol{\alpha}&#39;\)</span>，肯定还有（由于<span class="math inline">\(\boldsymbol{\alpha}&#39;\)</span>的任意性，可以把<span class="math inline">\(\boldsymbol{\alpha}&#39;\)</span>再用<span class="math inline">\(\boldsymbol{\alpha}\)</span>代替） <span class="math display">\[
-\min_{b, {\bf w}} \left(\max_{ {\rm all\  }\alpha_n \ge 0}\mathcal{L}(b, {\bf w}, \boldsymbol{\alpha})\right) \ge \max_{ {\rm all\  }\alpha_n \ge 0}\left(\min_{b, {\bf w}}\mathcal{L}(b, {\bf w}, \boldsymbol{\alpha})\right)
+\min_{b, {\bf w}} \left(\max_{ {\rm all\ }\alpha_n \ge 0}\mathcal{L}(b, {\bf w}, \boldsymbol{\alpha})\right) \ge \max_{ {\rm all\ }\alpha_n \ge 0}\left(\min_{b, {\bf w}}\mathcal{L}(b, {\bf w}, \boldsymbol{\alpha})\right)
 \]</span> （课程中讲的意思大概是说，因为右边不等式是对任意可能的值求极值，肯定不如上来直接求到的极值大。不过这实际上是max-min不等式。化用wiki里的证明方式，可以做简单的证明 <span class="math display">\[
 \begin{align*}
-{\rm Define\  }&amp;g(x) = \min_y f(x, y) \\
+{\rm Define\ }&amp;g(x) = \min_y f(x, y) \\
 \Rightarrow &amp;g(x) \le f(x,y), \forall x, y \\
 \Rightarrow &amp;\max_x g(x) \le \max_x f(x, y), \forall y \\
 \Rightarrow &amp;\max_x\min_y f(x,y) \le \max_x f(x, y), \forall y\\
@@ -447,18 +447,18 @@
 </ul>
 <p>原始SVM问题正好满足上述约束规范，因此等号成立（如果经过多项式变换<span class="math inline">\(\boldsymbol{\Phi}\)</span>数据集在新的空间线性可分，那么原问题就是可解的）。在强对偶关系下，解左边的问题和解右边的问题一样，或者换句话说，使右式最优的<span class="math inline">\((b, {\bf w}, {\boldsymbol{\alpha}})\)</span>也可以使左式最优，反之亦然</p>
 <p>这样，就可以写出对偶问题的完整形式 <span class="math display">\[
-\max_{ {\rm all\  }\alpha_n \ge 0} \left(\min_{b, {\bf w}} \frac{1}{2}{\bf w^\mathsf{T}w} + \sum_{n=1}^N \alpha_n(1-y_n({\bf w^\mathsf{T}z}_n + b))\right)
+\max_{ {\rm all\ }\alpha_n \ge 0} \left(\min_{b, {\bf w}} \frac{1}{2}{\bf w^\mathsf{T}w} + \sum_{n=1}^N \alpha_n(1-y_n({\bf w^\mathsf{T}z}_n + b))\right)
 \]</span> 现在，最小化的这个函数（也就是拉格朗日函数）没有任何限制条件，可以看看能不能化简。由于其没有限制条件，因此最优的<span class="math inline">\(b\)</span>肯定使函数对其的偏导数为0，即 <span class="math display">\[
 \frac{\partial \mathcal{L}(b, {\bf w}, \boldsymbol{\alpha})}{\partial b} = 0 \Rightarrow -\sum_{n=1}^N\alpha_ny_n = 0
 \]</span> 由于最优解必定导致如上的结论，因此把这个结论作为条件加上，并不会改变最优解。而且由于拉格朗日函数展开以后关于<span class="math inline">\(b\)</span>的项是<span class="math inline">\(-\sum_{n=1}^N \alpha_ny_n \cdot b = -b\sum_{n=1}^N \alpha_ny_n\)</span>。由于<span class="math inline">\(\sum_{n=1}^N \alpha_n y_n = 0\)</span>，因此加上这个条件以后，可以直接把关于<span class="math inline">\(b\)</span>的项去掉，即对偶问题可以化简为 <span class="math display">\[
-\max_{ {\rm all\  }\alpha_n \ge 0, \sum y_n\alpha_n=0} \left(\min_{ {\bf w}} \frac{1}{2}{\bf w^\mathsf{T}w} + \sum_{n=1}^N \alpha_n(1-y_n({\bf w^\mathsf{T}z}_n))\right)
+\max_{ {\rm all\ }\alpha_n \ge 0, \sum y_n\alpha_n=0} \left(\min_{ {\bf w}} \frac{1}{2}{\bf w^\mathsf{T}w} + \sum_{n=1}^N \alpha_n(1-y_n({\bf w^\mathsf{T}z}_n))\right)
 \]</span> 同样的道理，现在对<span class="math inline">\(\bf w\)</span>求偏导数，有 <span class="math display">\[
 \frac{\partial \mathcal{L}(b, {\bf w}, \boldsymbol{\alpha})}{\partial {\bf w}} = 0 \Rightarrow {\bf w} = \sum_{n=1}^N\alpha_ny_n{\bf z}_n
 \]</span> 将上面的式子作为约束条件，并将<span class="math inline">\({\bf w} = \sum_{n=1}^N\alpha_ny_n{\bf z}_n\)</span>代入式子，且考虑到<span class="math inline">\({\bf w^\mathsf{T}w} = |\!|{\bf w}|\!|^2\)</span> ，可以得到 <span class="math display">\[
 \begin{align*}
-&amp;\max_{ {\rm all\  }\alpha_n \ge 0, \sum y_n\alpha_n=0} \left(\min_{ {\bf w}} \frac{1}{2}{\bf w^\mathsf{T}w} + \sum_{n=1}^N \alpha_n(1-y_n({\bf w^\mathsf{T}z}_n))\right) \\
-\Leftrightarrow &amp; \max_{ {\rm all\  }\alpha_n \ge 0, \sum y_n\alpha_n=0, {\bf w}=\sum \alpha_ny_n{\bf z}_n} \left(\min_{\bf w} \frac{1}{2} {\bf w^\mathsf{T}w} + \sum_{n=1}^N \alpha_n - {\bf w^\mathsf{T}w}\right) \\
-\Leftrightarrow &amp; \max_{ {\rm all\  }\alpha_n \ge 0, \sum y_n\alpha_n=0, {\bf w}=\sum \alpha_ny_n{\bf z}_n} \left(-\frac{1}{2}\left|\!\left| \sum_{n=1}^N\alpha_ny_n{\bf z}_n\right|\!\right|^2 + \sum_{n=1}^N\alpha_n\right)
+&amp;\max_{ {\rm all\ }\alpha_n \ge 0, \sum y_n\alpha_n=0} \left(\min_{ {\bf w}} \frac{1}{2}{\bf w^\mathsf{T}w} + \sum_{n=1}^N \alpha_n(1-y_n({\bf w^\mathsf{T}z}_n))\right) \\
+\Leftrightarrow &amp; \max_{ {\rm all\ }\alpha_n \ge 0, \sum y_n\alpha_n=0, {\bf w}=\sum \alpha_ny_n{\bf z}_n} \left(\min_{\bf w} \frac{1}{2} {\bf w^\mathsf{T}w} + \sum_{n=1}^N \alpha_n - {\bf w^\mathsf{T}w}\right) \\
+\Leftrightarrow &amp; \max_{ {\rm all\ }\alpha_n \ge 0, \sum y_n\alpha_n=0, {\bf w}=\sum \alpha_ny_n{\bf z}_n} \left(-\frac{1}{2}\left|\!\left| \sum_{n=1}^N\alpha_ny_n{\bf z}_n\right|\!\right|^2 + \sum_{n=1}^N\alpha_n\right)
 \end{align*}
 \]</span> 这就转化成了一个几乎只有<span class="math inline">\(\boldsymbol{\alpha}\)</span>的最优化问题，实际上是简化版的拉格朗日对偶问题。也就是说，最优的<span class="math inline">\(\boldsymbol{\alpha}\)</span>和最优的<span class="math inline">\(b\)</span>和<span class="math inline">\(\bf w\)</span>需要满足一些关系，它们才能同时是原问题和对偶问题的最优解。这些关系统称为KKT条件（Karush-Kuhn-Tucker conditions），包括</p>
 <ul>
@@ -477,15 +477,15 @@
 <p>可以得到硬间隔SVM对偶问题的标准形式： <span class="math display">\[
 \begin{align*}
 \min_{\boldsymbol{\alpha}} \hspace{2ex}&amp;\frac{1}{2}\sum_{n=1}^N\sum_{m=1}^N \alpha_n\alpha_m y_ny_m{\bf z}_n^\mathsf{T}{\bf z}_m - \sum_{n=1}^N\alpha_n \\
-{\rm subject\  to} \hspace{2ex}&amp;\sum_{n=1}^Ny_n\alpha_n = 0; \\
-&amp; \alpha_n \ge 0, {\rm for\  }n=1,2,\ldots,N
+{\rm subject\ to} \hspace{2ex}&amp;\sum_{n=1}^Ny_n\alpha_n = 0; \\
+&amp; \alpha_n \ge 0, {\rm for\ }n=1,2,\ldots,N
 \end{align*}
 \]</span> 这是一个有<span class="math inline">\(N\)</span>个变量和<span class="math inline">\(N+1\)</span>个约束条件的凸二次规划问题，可以将其转换成二次规划的标准形式 <span class="math display">\[
 \begin{align*}
-{\rm optimal\  }\boldsymbol{\alpha} &amp;\leftarrow {\rm QP(Q}, {\bf p}, {\rm A}, {\bf c}) \\
+{\rm optimal\ }\boldsymbol{\alpha} &amp;\leftarrow {\rm QP(Q}, {\bf p}, {\rm A}, {\bf c}) \\
 q_{n, m} &amp;= y_ny_m{\bf z}_n^\mathsf{T}{\bf z}_m \\
 {\bf p } &amp;= -{\bf 1}_N \\
-{\bf a}_\ge  &amp;= {\bf y}, {\bf a}_\le = -{\bf y}; {\bf a}_n^\mathsf{T} = n{\rm th. unit\  direction} \\
+{\bf a}_\ge  &amp;= {\bf y}, {\bf a}_\le = -{\bf y}; {\bf a}_n^\mathsf{T} = n{\rm th. unit\ direction} \\
 c_\ge &amp;=0, c_\le = 0; c_n = 0
 \end{align*}
 \]</span> 记对偶问题的<span class="math inline">\(\rm Q\)</span>为<span class="math inline">\(\rm Q_D\)</span>，由上面的定义可知<span class="math inline">\(\rm Q\)</span>是稠密矩阵。如果<span class="math inline">\(N=30000\)</span>，那<span class="math inline">\(\rm Q\)</span>可以占3G内存！所以要解对偶问题，需要一个特殊的求解器，它不存储整个<span class="math inline">\(\rm Q_D\)</span>或者使用某些特殊的限制，以应付<span class="math inline">\(N\)</span>很大的情况</p>
@@ -496,7 +496,7 @@ c_\ge &amp;=0, c_\le = 0; c_n = 0
 <li>通过判断<span class="math inline">\(\alpha_n\)</span>是否为0可以找出支持向量）</li>
 </ol>
 <h2 id="对偶svm传递的信息">对偶SVM传递的信息</h2>
-<p>在前一讲中曾经得到一个结论，即支持向量机只关注那些在“胖”边界上的点，而其它点则不需要。上一节又证明，如果某个点有<span class="math inline">\(\alpha_n &gt; 0\)</span>，则这个点一定在“胖”边界上。称所有<span class="math inline">\(\alpha_n &gt; 0\)</span>的样本<span class="math inline">\(({\bf z}_n , y_n)\)</span>为<strong>支持向量</strong>。也就是说有<span class="math inline">\({\rm SV(positive\  }\alpha_n) \subseteq {\rm SV\  candidates\  (on\  boundary)}\)</span>。这意味着只需要用支持向量计算<span class="math inline">\(\bf w\)</span>和<span class="math inline">\(b\)</span>（对于那些不是支持向量的点，算出来的<span class="math inline">\(\bf w\)</span>和<span class="math inline">\(b\)</span>也都是0），而SVM也是通过对偶问题的最优解找出支持向量（即有用的向量），进而学到最大间隔超平面的算法</p>
+<p>在前一讲中曾经得到一个结论，即支持向量机只关注那些在“胖”边界上的点，而其它点则不需要。上一节又证明，如果某个点有<span class="math inline">\(\alpha_n &gt; 0\)</span>，则这个点一定在“胖”边界上。称所有<span class="math inline">\(\alpha_n &gt; 0\)</span>的样本<span class="math inline">\(({\bf z}_n , y_n)\)</span>为<strong>支持向量</strong>。也就是说有<span class="math inline">\({\rm SV(positive\ }\alpha_n) \subseteq {\rm SV\ candidates\ (on\ boundary)}\)</span>。这意味着只需要用支持向量计算<span class="math inline">\(\bf w\)</span>和<span class="math inline">\(b\)</span>（对于那些不是支持向量的点，算出来的<span class="math inline">\(\bf w\)</span>和<span class="math inline">\(b\)</span>也都是0），而SVM也是通过对偶问题的最优解找出支持向量（即有用的向量），进而学到最大间隔超平面的算法</p>
 <p>因此，SVM的权重可以写为<span class="math inline">\({\bf w}_{\rm SVM} = \sum_{n=1}^N \alpha_n(y_n{\bf z}_n)\)</span>，其中<span class="math inline">\(\alpha_n\)</span>来自于对偶问题的解。这个形式其实跟之前PLA算法得到的权重类似：PLA的权重可以写为<span class="math inline">\({\bf w}_{\rm PLA} = \sum_{n=1}^N \beta_n(y_n{\bf z}_n)\)</span>，其中<span class="math inline">\(\beta_n\)</span>是对错分样本进行纠正的次数。即SVM和PLA得到的解都是原始数据的线性组合。更广泛地讲，对基于梯度下降的算法，如果设初始的<span class="math inline">\({\bf w}_0 = 0\)</span>，那么最后求出的解还是原始数据的线性组合。称这种现象为<strong>最优的权重<span class="math inline">\(\bf w\)</span>可以被数据表示</strong>。其中SVM更特殊一些，最优的权重只用支持向量就能表示（PLA是用错分点表示）</p>
 <p>这样，到目前为止，一共介绍了两种SVM：</p>
 <ul>
@@ -678,7 +678,7 @@ g_{\rm SVM}({\bf x}) = {\rm sign}({\bf w}^\mathsf{T}{\boldsymbol{\Phi}}({\bf x})
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -689,7 +689,7 @@ g_{\rm SVM}({\bf x}) = {\rm sign}({\bf w}^\mathsf{T}{\boldsymbol{\Phi}}({\bf x})
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -700,7 +700,7 @@ g_{\rm SVM}({\bf x}) = {\rm sign}({\bf w}^\mathsf{T}{\boldsymbol{\Phi}}({\bf x})
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

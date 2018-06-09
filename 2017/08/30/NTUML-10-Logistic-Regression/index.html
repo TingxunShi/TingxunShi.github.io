@@ -100,7 +100,7 @@
 
 
 
-  <meta name="keywords" content="NTUML,Logistic回归," />
+  <meta name="keywords" content="Logistic回归,NTUML," />
 
 
 
@@ -112,7 +112,7 @@
 
 
 <meta name="description" content="Logistic回归问题 二元分类问题，由于误差函数的定义，只关注样本是/否属于某个类别，即\(\mathcal{Y} \in \{-1, +1\}\)，理想的假设函数的形式也是\(f({\bf x}) = {\rm sign}(P(+1|{\bf x}) - \frac{1}{2}) \in \{-1, +1\}\) 我们还会关心一个类似的问题。以医院中的例子为例，给定一个病人，可能不再只关心t">
-<meta name="keywords" content="NTUML,Logistic回归">
+<meta name="keywords" content="Logistic回归,NTUML">
 <meta property="og:type" content="article">
 <meta property="og:title" content="NTUML 10. Logistic回归">
 <meta property="og:url" content="txshi-mt.com/2017/08/30/NTUML-10-Logistic-Regression/index.html">
@@ -424,7 +424,7 @@ h({\bf x}) = \theta({\bf w}^\mathsf{T}{\bf x})
 <li>对于Logistic回归问题，算完得分以后，再做一个logistic变换得到最后的结果。那么这里很自然需要关心的问题是，Logistic回归所使用的误差函数是什么？</li>
 </ul>
 <p>考虑我们的目标函数为<span class="math inline">\(f({\bf x}) = P(+1|{\bf x})\)</span>，可以稍作变化得到给定<span class="math inline">\(\bf x\)</span>时<span class="math inline">\(y\)</span>的概率，即 <span class="math display">\[
-P(y|{\bf x}) = \begin{cases}f({\bf x}) &amp; {\rm for\  }y=+1 \\ 1-f({\bf x}) &amp; {\rm for\  } y = -1\end{cases}
+P(y|{\bf x}) = \begin{cases}f({\bf x}) &amp; {\rm for\ }y=+1 \\ 1-f({\bf x}) &amp; {\rm for\ } y = -1\end{cases}
 \]</span> 假设现在得到的数据集为 <span class="math display">\[
 \mathcal{D} = \{({\bf x}_1, \circ), ({\bf x}_2, \times), \ldots, ({\bf x}_N, \times)\}
 \]</span> 根据前面的设定和贝叶斯定理，可以推出<span class="math inline">\(\mathcal{D}\)</span>由<span class="math inline">\(f\)</span>产生的概率，为 <span class="math display">\[
@@ -434,13 +434,13 @@ P({\bf x}_1)f({\bf x}_1) \times P({\bf x}_2)(1 - f({\bf x}_2) ) \times \ldots \t
 \]</span> 我们无法直接得到<span class="math inline">\(f\)</span>，但是可以通过学习得到一个假设<span class="math inline">\(h\)</span>，因此可以计算<span class="math inline">\(h\)</span>生成同样数据集的概率。这个概率一般称之为<strong>似然</strong>。可以立即得到这个似然值为 <span class="math display">\[
 P({\bf x}_1)h({\bf x}_1) \times P({\bf x}_2)(1 - h({\bf x}_2) ) \times \ldots \times P({\bf x}_N)(1 - h({\bf x}_N) )
 \]</span> 如果有<span class="math inline">\(h \approx f\)</span>，则<span class="math inline">\(h\)</span>对<span class="math inline">\(\mathcal{D}\)</span>的似然应该近似于<span class="math inline">\(f\)</span>产生<span class="math inline">\(\mathcal{D}\)</span>的概率。而通常<span class="math inline">\(f\)</span>产生<span class="math inline">\(\mathcal{D}\)</span>的概率应该非常大，就有 <span class="math display">\[
-{\rm likelihood}(h) \approx ({\rm probability\  using\  }f) \approx {\rm large}
+{\rm likelihood}(h) \approx ({\rm probability\ using\ }f) \approx {\rm large}
 \]</span> 因此可以认为，<span class="math inline">\(\mathcal{H}\)</span>中最好的<span class="math inline">\(g\)</span>应该是似然最大的那一个，即 <span class="math display">\[
 g = \mathop{ {\rm arg}\max}_h {\rm likelihood}(h)
 \]</span> 又因为logistic函数有对称性，即有 <span class="math display">\[
 1 - h({\bf x}) = h(-{\bf x})
 \]</span> 因此 <span class="math display">\[
-{\rm likelihood}( {\rm logistic}\  h) \propto \prod_{n=1}^N h(y_n{\bf x}_n)
+{\rm likelihood}( {\rm logistic}\ h) \propto \prod_{n=1}^N h(y_n{\bf x}_n)
 \]</span> Logistic回归算法的目的就是找到一个<span class="math inline">\(h\)</span>使得上式最大化。同样由于每个<span class="math inline">\(h\)</span>都关联一个<span class="math inline">\({\bf w}\)</span>，因此代入<span class="math inline">\(h\)</span>的定义，目标可以写为 <span class="math display">\[
 \max_{\bf w} {\rm likelihood}({\bf w}) \propto \prod_{n=1}^N \theta(y_n{\bf w}^\mathsf{T}{\bf x}_n)
 \]</span> 又因为<span class="math inline">\(\log (ab) = \log a + \log b\)</span>以及对已有函数取对数不会改变函数的单调性，有 <span class="math display">\[
@@ -449,7 +449,7 @@ g = \mathop{ {\rm arg}\max}_h {\rm likelihood}(h)
 \Leftrightarrow &amp;\max_{\bf w} \ln \prod_{n=1}^N \theta(y_n{\bf w}^\mathsf{T}{\bf x}_n) \\
 \Leftrightarrow &amp; \max_{\bf w} \sum_{n=1}^N \ln \theta(y_n{\bf w}^\mathsf{T}{\bf x}_n) \\
 \Leftrightarrow &amp; \min_{\bf w} \frac{1}{N}  \sum_{n=1}^N -\ln \theta(y_n{\bf w}^\mathsf{T}{\bf x}_n)  \\
-\Leftrightarrow &amp; \min_{\bf w} \frac{1}{N}\sum_{n=1}^N \ln(1 + \exp(-y_n{\bf w}^\mathsf{T}{\bf x}_n))\hspace{3ex}(\rm definition\  of\  logistic\  function)
+\Leftrightarrow &amp; \min_{\bf w} \frac{1}{N}\sum_{n=1}^N \ln(1 + \exp(-y_n{\bf w}^\mathsf{T}{\bf x}_n))\hspace{3ex}(\rm definition\ of\ logistic\ function)
 \end{align*}
 \]</span> 定义 <span class="math display">\[
 {\rm err}({\bf w}, {\bf x}, y) = \ln(1 + \exp(-y{\bf w}^\mathsf{T}{\bf x}))
@@ -560,9 +560,9 @@ E_{\rm in}({\bf w}_t + \eta{\bf v}) \approx E_{\rm in}({\bf w}_t) + \eta {\bf v}
       
         <div class="post-tags">
           
-            <a href="/tags/NTUML/" rel="tag"># NTUML</a>
-          
             <a href="/tags/Logistic回归/" rel="tag"># Logistic回归</a>
+          
+            <a href="/tags/NTUML/" rel="tag"># NTUML</a>
           
         </div>
       
@@ -673,7 +673,7 @@ E_{\rm in}({\bf w}_t + \eta{\bf v}) \approx E_{\rm in}({\bf w}_t) + \eta {\bf v}
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">83</span>
+                  <span class="site-state-item-count">84</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -684,7 +684,7 @@ E_{\rm in}({\bf w}_t + \eta{\bf v}) \approx E_{\rm in}({\bf w}_t) + \eta {\bf v}
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -695,7 +695,7 @@ E_{\rm in}({\bf w}_t + \eta{\bf v}) \approx E_{\rm in}({\bf w}_t) + \eta {\bf v}
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">77</span>
+                  <span class="site-state-item-count">79</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
