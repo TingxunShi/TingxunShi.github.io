@@ -124,7 +124,7 @@
 <meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NMT_TutorialsNMT_Tutoral_2p_loss_funcs_for_regression.png">
 <meta property="og:image" content="https://i.stack.imgur.com/ykDZz.png">
 <meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutoral_2a_loss_funcs_for_classification.png">
-<meta property="og:updated_time" content="2018-06-09T09:36:44.906Z">
+<meta property="og:updated_time" content="2018-06-18T02:09:01.248Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NMT Tutorial 2扩展a. 损失函数">
 <meta name="twitter:description" content="从最抽象的角度来讲，机器学习问题的求解过程就是提出一个损失函数来度量模型预测值与真实值之间的差距，然后通过某种给定的优化方法来调整模型参数，使模型效果提升的过程。在这个过程中，选择正确的损失函数是问题求解的基础，而对于某些特定的问题，设计一个有针对性的，新的损失函数则可以看作是胜负手 常见的损失函数通常都适用于有监督学习问题，其中根据问题的不同类型，损失函数也可以划分为两类：针对回归问题的损失函数">
@@ -508,7 +508,7 @@ y_n \cdot \hat{y}_n \ge 1 - \xi_n \Rightarrow \xi_n \ge 1-y_n\cdot \hat{y}_n
  \end{align*}
 \]</span> 这意味着SVM可以看作是对hinge loss的优化再加一个<span class="math inline">\(\ell_2\)</span>正则项</p>
 <p>Hinge loss的好处是<em>在没有离群点的情况下</em>其对未知数据分类的准确度比较高，因为直观地讲，使用hingle loss训练得到的分类器的目标是尽可能把两类数据分得很开，这样就降低了新数据落在分类器另一边的可能（图例可见之前<a href="http://txshi-mt.com/2017/09/18/NTUML-17-Linear-SVM/">林轩田老师课程笔记</a>）。但是，hinge loss也会比较严重地受到离群点的影响</p>
-<p>以SVM为代表的使用hinge loss为损失函数的模型还有一个比较重要的短板，就是它不能提供一个很好的概率解释（这也是使用sklearn的<code>SGDClassifier</code>做分类器时的一个大坑。因为这个分类器默认的损失函数就是hinge loss，这样得到的模型调用概率预测函数<code>predict_proba</code>时会报错，所以要让该分类器给出概率估计，必须在构造分类器时手动传<code>'log'</code>作为<code>loss</code>这一参数的值）</p>
+<p>以SVM为代表的使用hinge loss为损失函数的模型还有一个比较重要的短板，就是它不能提供一个很好的概率解释（这也是使用sklearn的<code>SGDClassifier</code>做分类器时的一个大坑。因为这个分类器默认的损失函数就是hinge loss，这样得到的模型调用概率预测函数<code>predict_proba</code>时会报错，所以要让该分类器给出概率估计，必须在构造分类器时手动传<code>'log'</code>作为<code>loss</code>这一参数的值）。从原理上讲，MLE和减小KL散度的目的都是经验风险最小化，而hinge loss的目的是结构风险最小化</p>
 <p>此外，hinge loss这一函数在<span class="math inline">\(y\cdot \hat{y} = 1\)</span>时不可导，因此使用基于梯度的优化方法时需要一些额外工作。但是，SVM问题本身是一个凸优化问题，所以求解该问题时通常直接使用二次规划的方法解决</p>
 <h3 id="均方误差函数-1">均方误差函数</h3>
 <p>将MSE纳入本章纯粹是为了顾及内容的完备性。从理论上讲，用MSE来解决分类问题也是可行的，因为MSE也是真实0-1误差的上界（可以参考<a href="http://txshi-mt.com/2017/09/01/NTUML-11-Linear-Models-for-Classification/">林轩田老师课程笔记</a>）。但是真正使用MSE来做分类问题的损失函数是有问题的。理论上讲，MSE假设误差遵循高斯分布，而分类问题的误差一般都是二项分布，两者分布不同。从实际上讲，前面提到过，MSE倾向于惩罚离群点，而对于分类问题中的数据，在MSE看来的“离群点”反而可能是那些离真实边界最远的点。如果使用MSE训练分类器，训练出的分界线会向这些“离群点”靠近，因此反而会错分那些离真实边界比较近的点。参考下图（来自于PRML）</p>
@@ -636,11 +636,6 @@ y_n \cdot \hat{y}_n \ge 1 - \xi_n \Rightarrow \xi_n \ge 1-y_n\cdot \hat{y}_n
           
 
   
-    <div class="comments" id="comments">
-      <div id="uyan_frame"></div>
-    </div>
-
-  
 
 
 
@@ -703,7 +698,7 @@ y_n \cdot \hat{y}_n \ge 1 - \xi_n \Rightarrow \xi_n \ge 1-y_n\cdot \hat{y}_n
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-count">9</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -956,14 +951,6 @@ y_n \cdot \hat{y}_n \ge 1 - \xi_n \Rightarrow \xi_n \ge 1-y_n\cdot \hat{y}_n
 
 
 
-  
-    
-
-    
-      <!-- UY BEGIN -->
-      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2146483"></script>
-      <!-- UY END -->
-    
   
 
 
