@@ -4,6 +4,52 @@
 
     
   <url>
+    <loc>txshi-mt.com/2018/06/09/NMT-Tutorial-2b-Optimization-Methods/</loc>
+    <lastmod>2018-07-18T14:00:58.137Z</lastmod>
+    <data>
+        <display>
+        <title>NMT Tutorial 2扩展b. 优化方法</title>
+        <pubTime>2018-06-09T10:21:24.000Z</pubTime>
+        
+        <tag>优化</tag>
+         
+         
+           
+             
+              <breadCrumb title="机器学习" url="txshi-mt.com/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>txshi-mt.com/2017/12/27/UTNN-6-Optimization-How-to-Make-the-Learning-Go-Faster/</loc>
+    <lastmod>2018-07-06T10:53:14.592Z</lastmod>
+    <data>
+        <display>
+        <title>Hinton神经网络与机器学习 6. 神经网络的优化</title>
+        <pubTime>2017-12-27T15:51:28.000Z</pubTime>
+        
+        <tag>优化</tag>
+         
+        <tag>梯度下降</tag>
+         
+        <tag>UTNN</tag>
+         
+        <tag>动量法</tag>
+         
+         
+           
+             
+              <breadCrumb title="深度学习" url="txshi-mt.com/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>txshi-mt.com/2018/04/26/NMT-Tutorial-2a-Loss-Functions/</loc>
     <lastmod>2018-06-18T02:09:01.248Z</lastmod>
     <data>
@@ -35,9 +81,9 @@
         <title>NMT Tutorial 1. 统计语言模型之N元语法</title>
         <pubTime>2018-03-01T09:08:05.000Z</pubTime>
         
-        <tag>NMT_Tutorial</tag>
-         
         <tag>N元语法</tag>
+         
+        <tag>NMT_Tutorial</tag>
          
          
            
@@ -173,9 +219,9 @@
         
         <tag>UTNN</tag>
          
-        <tag>RBM</tag>
-         
         <tag>玻尔兹曼机</tag>
+         
+        <tag>RBM</tag>
          
          
            
@@ -243,9 +289,9 @@
         
         <tag>UTNN</tag>
          
-        <tag>玻尔兹曼机</tag>
-         
         <tag>Hopfield网</tag>
+         
+        <tag>玻尔兹曼机</tag>
          
         <tag>模拟退火</tag>
          
@@ -449,32 +495,6 @@
 
     
   <url>
-    <loc>txshi-mt.com/2017/12/27/UTNN-6-Optimization-How-to-Make-the-Learning-Go-Faster/</loc>
-    <lastmod>2018-01-07T09:09:22.000Z</lastmod>
-    <data>
-        <display>
-        <title>Hinton神经网络与机器学习 6. 神经网络的优化</title>
-        <pubTime>2017-12-27T15:51:28.000Z</pubTime>
-        
-        <tag>梯度下降</tag>
-         
-        <tag>优化</tag>
-         
-        <tag>UTNN</tag>
-         
-        <tag>动量法</tag>
-         
-         
-           
-             
-              <breadCrumb title="深度学习" url="txshi-mt.com/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>txshi-mt.com/2017/12/23/UTNN-5-Object-Recognition-with-Neural-Nets/</loc>
     <lastmod>2018-01-07T09:09:09.000Z</lastmod>
     <data>
@@ -524,6 +544,26 @@
 
     
   <url>
+    <loc>txshi-mt.com/2017/11/12/UTNN-1-Introduction/</loc>
+    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
+    <data>
+        <display>
+        <title>Hinton神经网络与机器学习 1. 绪论</title>
+        <pubTime>2017-11-12T02:28:56.000Z</pubTime>
+        
+        <tag>UTNN</tag>
+         
+         
+           
+             
+              <breadCrumb title="深度学习" url="txshi-mt.com/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>txshi-mt.com/2017/09/23/NTUML-19-Kernel-SVM/</loc>
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     <data>
@@ -536,28 +576,6 @@
         <tag>SVM</tag>
          
         <tag>核方法</tag>
-         
-         
-           
-             
-              <breadCrumb title="统计机器学习" url="txshi-mt.com/categories/%E7%BB%9F%E8%AE%A1%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>txshi-mt.com/2017/08/03/NTUML-2-Learning-to-Answer-Yes-No/</loc>
-    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
-    <data>
-        <display>
-        <title>NTUML 2. 学习判断是与非</title>
-        <pubTime>2017-08-03T10:24:15.000Z</pubTime>
-        
-        <tag>NTUML</tag>
-         
-        <tag>感知机</tag>
          
          
            
@@ -618,6 +636,28 @@
 
     
   <url>
+    <loc>txshi-mt.com/2017/10/05/NTUML-24-Adaptive-Boosting/</loc>
+    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
+    <data>
+        <display>
+        <title>NTUML 24. 自适应提升算法（Adaptive Boosting）</title>
+        <pubTime>2017-10-05T07:58:11.000Z</pubTime>
+        
+        <tag>NTUML</tag>
+         
+        <tag>Boosting</tag>
+         
+         
+           
+             
+              <breadCrumb title="统计机器学习" url="txshi-mt.com/categories/%E7%BB%9F%E8%AE%A1%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>txshi-mt.com/2017/10/03/NTUML-22-SVR/</loc>
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     <data>
@@ -652,28 +692,6 @@
         <tag>bagging</tag>
          
         <tag>stacking</tag>
-         
-         
-           
-             
-              <breadCrumb title="统计机器学习" url="txshi-mt.com/categories/%E7%BB%9F%E8%AE%A1%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>txshi-mt.com/2017/10/05/NTUML-24-Adaptive-Boosting/</loc>
-    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
-    <data>
-        <display>
-        <title>NTUML 24. 自适应提升算法（Adaptive Boosting）</title>
-        <pubTime>2017-10-05T07:58:11.000Z</pubTime>
-        
-        <tag>NTUML</tag>
-         
-        <tag>Boosting</tag>
          
          
            
@@ -730,28 +748,6 @@
 
     
   <url>
-    <loc>txshi-mt.com/2017/10/19/NTUML-28-Neural-Network/</loc>
-    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
-    <data>
-        <display>
-        <title>NTUML 28. 神经网络</title>
-        <pubTime>2017-10-19T13:20:06.000Z</pubTime>
-        
-        <tag>NTUML</tag>
-         
-        <tag>神经网络入门</tag>
-         
-         
-           
-             
-              <breadCrumb title="深度学习" url="txshi-mt.com/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>txshi-mt.com/2017/10/07/NTUML-25-Decision-Tree/</loc>
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     <data>
@@ -774,21 +770,21 @@
 
     
   <url>
-    <loc>txshi-mt.com/2017/09/14/NTUML-16-Three-Learning-Principles/</loc>
+    <loc>txshi-mt.com/2017/10/19/NTUML-28-Neural-Network/</loc>
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     <data>
         <display>
-        <title>NTUML 16. 三条锦囊妙计</title>
-        <pubTime>2017-09-14T13:55:21.000Z</pubTime>
+        <title>NTUML 28. 神经网络</title>
+        <pubTime>2017-10-19T13:20:06.000Z</pubTime>
         
         <tag>NTUML</tag>
          
-        <tag>机器学习实践经验</tag>
+        <tag>神经网络入门</tag>
          
          
            
              
-              <breadCrumb title="统计机器学习" url="txshi-mt.com/categories/%E7%BB%9F%E8%AE%A1%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+              <breadCrumb title="深度学习" url="txshi-mt.com/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
           
         </display>
     </data>
@@ -845,14 +841,16 @@
 
     
   <url>
-    <loc>txshi-mt.com/2017/08/05/NTUML-3-Types-of-Learning/</loc>
+    <loc>txshi-mt.com/2017/08/06/NTUML-4-Feasibility-of-Learning/</loc>
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     <data>
         <display>
-        <title>NTUML 3. 机器学习的类型</title>
-        <pubTime>2017-08-05T11:30:08.000Z</pubTime>
+        <title>NTUML 4. 机器学习的可行性</title>
+        <pubTime>2017-08-06T03:29:30.000Z</pubTime>
         
         <tag>NTUML</tag>
+         
+        <tag>统计学习理论</tag>
          
          
            
@@ -891,16 +889,14 @@
 
     
   <url>
-    <loc>txshi-mt.com/2017/08/06/NTUML-4-Feasibility-of-Learning/</loc>
+    <loc>txshi-mt.com/2017/08/05/NTUML-3-Types-of-Learning/</loc>
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     <data>
         <display>
-        <title>NTUML 4. 机器学习的可行性</title>
-        <pubTime>2017-08-06T03:29:30.000Z</pubTime>
+        <title>NTUML 3. 机器学习的类型</title>
+        <pubTime>2017-08-05T11:30:08.000Z</pubTime>
         
         <tag>NTUML</tag>
-         
-        <tag>统计学习理论</tag>
          
          
            
@@ -977,6 +973,28 @@
 
     
   <url>
+    <loc>txshi-mt.com/2017/08/16/NTUML-6-Theory-of-Generalization/</loc>
+    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
+    <data>
+        <display>
+        <title>NTUML 6. 一般化理论</title>
+        <pubTime>2017-08-16T06:28:47.000Z</pubTime>
+        
+        <tag>NTUML</tag>
+         
+        <tag>统计学习理论</tag>
+         
+         
+           
+             
+              <breadCrumb title="统计机器学习" url="txshi-mt.com/categories/%E7%BB%9F%E8%AE%A1%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>txshi-mt.com/2017/08/20/NTUML-7-the-VC-Dimension/</loc>
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     <data>
@@ -987,6 +1005,54 @@
         <tag>NTUML</tag>
          
         <tag>统计学习理论</tag>
+         
+         
+           
+             
+              <breadCrumb title="统计机器学习" url="txshi-mt.com/categories/%E7%BB%9F%E8%AE%A1%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>txshi-mt.com/2017/12/09/DLBook-6a-Deep-Feedforward-Networks-notes/</loc>
+    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
+    <data>
+        <display>
+        <title>《深度学习》ch6. 深度前馈网络 注（上）</title>
+        <pubTime>2017-12-09T14:40:42.000Z</pubTime>
+        
+        <tag>神经网络</tag>
+         
+        <tag>DLBook</tag>
+         
+        <tag>交叉熵</tag>
+         
+        <tag>softmax</tag>
+         
+         
+           
+             
+              <breadCrumb title="深度学习" url="txshi-mt.com/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>txshi-mt.com/2017/08/28/NTUML-9-Linear-Regression/</loc>
+    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
+    <data>
+        <display>
+        <title>NTUML 9. 线性回归</title>
+        <pubTime>2017-08-28T11:58:08.000Z</pubTime>
+        
+        <tag>NTUML</tag>
+         
+        <tag>线性回归</tag>
          
          
            
@@ -1021,75 +1087,6 @@
 
     
   <url>
-    <loc>txshi-mt.com/2017/08/16/NTUML-6-Theory-of-Generalization/</loc>
-    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
-    <data>
-        <display>
-        <title>NTUML 6. 一般化理论</title>
-        <pubTime>2017-08-16T06:28:47.000Z</pubTime>
-        
-        <tag>NTUML</tag>
-         
-        <tag>统计学习理论</tag>
-         
-         
-           
-             
-              <breadCrumb title="统计机器学习" url="txshi-mt.com/categories/%E7%BB%9F%E8%AE%A1%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>txshi-mt.com/2017/11/12/UTNN-1-Introduction/</loc>
-    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
-    <data>
-        <display>
-        <title>Hinton神经网络与机器学习 1. 绪论</title>
-        <pubTime>2017-11-12T02:28:56.000Z</pubTime>
-        
-        <tag>UTNN</tag>
-         
-         
-           
-             
-              <breadCrumb title="深度学习" url="txshi-mt.com/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-    
-  <url>
-    <loc>txshi-mt.com/2017/12/09/DLBook-6a-Deep-Feedforward-Networks-notes/</loc>
-    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
-    <data>
-        <display>
-        <title>《深度学习》ch6. 深度前馈网络 注（上）</title>
-        <pubTime>2017-12-09T14:40:42.000Z</pubTime>
-        
-        <tag>神经网络</tag>
-         
-        <tag>DLBook</tag>
-         
-        <tag>交叉熵</tag>
-         
-        <tag>softmax</tag>
-         
-         
-           
-             
-              <breadCrumb title="深度学习" url="txshi-mt.com/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>txshi-mt.com/2017/12/05/DLBook-6a-Deep-Feedforward-Networks-summary/</loc>
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     <data>
@@ -1102,6 +1099,52 @@
         <tag>DLBook</tag>
          
         <tag>激活函数</tag>
+         
+         
+           
+             
+              <breadCrumb title="深度学习" url="txshi-mt.com/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>txshi-mt.com/2017/08/30/NTUML-10-Logistic-Regression/</loc>
+    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
+    <data>
+        <display>
+        <title>NTUML 10. Logistic回归</title>
+        <pubTime>2017-08-30T02:51:06.000Z</pubTime>
+        
+        <tag>NTUML</tag>
+         
+        <tag>Logistic回归</tag>
+         
+         
+           
+             
+              <breadCrumb title="统计机器学习" url="txshi-mt.com/categories/%E7%BB%9F%E8%AE%A1%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>txshi-mt.com/2017/11/21/UTNN-3-the-Backpropagation-Learning-Procedure/</loc>
+    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
+    <data>
+        <display>
+        <title>Hinton神经网络与机器学习 3. 反向传播</title>
+        <pubTime>2017-11-21T14:30:52.000Z</pubTime>
+        
+        <tag>神经网络</tag>
+         
+        <tag>UTNN</tag>
+         
+        <tag>反向传播</tag>
          
          
            
@@ -1156,36 +1199,12 @@
 
     
   <url>
-    <loc>txshi-mt.com/2017/11/21/UTNN-3-the-Backpropagation-Learning-Procedure/</loc>
+    <loc>txshi-mt.com/2017/09/01/NTUML-11-Linear-Models-for-Classification/</loc>
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     <data>
         <display>
-        <title>Hinton神经网络与机器学习 3. 反向传播</title>
-        <pubTime>2017-11-21T14:30:52.000Z</pubTime>
-        
-        <tag>神经网络</tag>
-         
-        <tag>UTNN</tag>
-         
-        <tag>反向传播</tag>
-         
-         
-           
-             
-              <breadCrumb title="深度学习" url="txshi-mt.com/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>txshi-mt.com/2017/08/30/NTUML-10-Logistic-Regression/</loc>
-    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
-    <data>
-        <display>
-        <title>NTUML 10. Logistic回归</title>
-        <pubTime>2017-08-30T02:51:06.000Z</pubTime>
+        <title>NTUML 11. 用于分类问题的线性模型</title>
+        <pubTime>2017-09-01T06:39:18.000Z</pubTime>
         
         <tag>NTUML</tag>
          
@@ -1222,16 +1241,16 @@
 
     
   <url>
-    <loc>txshi-mt.com/2017/09/01/NTUML-11-Linear-Models-for-Classification/</loc>
+    <loc>txshi-mt.com/2017/09/12/NTUML-15-Validation/</loc>
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     <data>
         <display>
-        <title>NTUML 11. 用于分类问题的线性模型</title>
-        <pubTime>2017-09-01T06:39:18.000Z</pubTime>
+        <title>NTUML 15. 验证</title>
+        <pubTime>2017-09-12T12:26:32.000Z</pubTime>
         
         <tag>NTUML</tag>
          
-        <tag>Logistic回归</tag>
+        <tag>验证</tag>
          
          
            
@@ -1266,28 +1285,6 @@
 
     
   <url>
-    <loc>txshi-mt.com/2017/09/12/NTUML-15-Validation/</loc>
-    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
-    <data>
-        <display>
-        <title>NTUML 15. 验证</title>
-        <pubTime>2017-09-12T12:26:32.000Z</pubTime>
-        
-        <tag>NTUML</tag>
-         
-        <tag>验证</tag>
-         
-         
-           
-             
-              <breadCrumb title="统计机器学习" url="txshi-mt.com/categories/%E7%BB%9F%E8%AE%A1%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>txshi-mt.com/2017/09/10/NTUML-14-Regularization/</loc>
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     <data>
@@ -1310,16 +1307,16 @@
 
     
   <url>
-    <loc>txshi-mt.com/2017/09/18/NTUML-18-Dual-SVM/</loc>
+    <loc>txshi-mt.com/2017/09/14/NTUML-16-Three-Learning-Principles/</loc>
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     <data>
         <display>
-        <title>NTUML 18. 对偶支持向量机</title>
-        <pubTime>2017-09-18T15:47:13.000Z</pubTime>
+        <title>NTUML 16. 三条锦囊妙计</title>
+        <pubTime>2017-09-14T13:55:21.000Z</pubTime>
         
         <tag>NTUML</tag>
          
-        <tag>SVM</tag>
+        <tag>机器学习实践经验</tag>
          
          
            
@@ -1354,38 +1351,16 @@
 
     
   <url>
-    <loc>txshi-mt.com/2017/06/29/edx-columbia-11-Maximum-Margin-Classifier-SVM/</loc>
+    <loc>txshi-mt.com/2017/09/18/NTUML-18-Dual-SVM/</loc>
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     <data>
         <display>
-        <title>EdX Columbia ML 11. 最大间隔分类器和支持向量机 (SVM)</title>
-        <pubTime>2017-06-29T08:48:07.000Z</pubTime>
+        <title>NTUML 18. 对偶支持向量机</title>
+        <pubTime>2017-09-18T15:47:13.000Z</pubTime>
         
+        <tag>NTUML</tag>
+         
         <tag>SVM</tag>
-         
-        <tag>EdX-Columbia</tag>
-         
-         
-           
-             
-              <breadCrumb title="统计机器学习" url="txshi-mt.com/categories/%E7%BB%9F%E8%AE%A1%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>txshi-mt.com/2017/06/24/edx-columbia-1-Intro-MLE/</loc>
-    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
-    <data>
-        <display>
-        <title>EdX Columbia ML 1. 概论与最大似然</title>
-        <pubTime>2017-06-24T10:02:00.000Z</pubTime>
-        
-        <tag>EdX-Columbia</tag>
-         
-        <tag>最大似然</tag>
          
          
            
@@ -1410,6 +1385,28 @@
         <tag>EdX-Columbia</tag>
          
         <tag>高斯过程</tag>
+         
+         
+           
+             
+              <breadCrumb title="统计机器学习" url="txshi-mt.com/categories/%E7%BB%9F%E8%AE%A1%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>txshi-mt.com/2017/06/29/edx-columbia-11-Maximum-Margin-Classifier-SVM/</loc>
+    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
+    <data>
+        <display>
+        <title>EdX Columbia ML 11. 最大间隔分类器和支持向量机 (SVM)</title>
+        <pubTime>2017-06-29T08:48:07.000Z</pubTime>
+        
+        <tag>SVM</tag>
+         
+        <tag>EdX-Columbia</tag>
          
          
            
@@ -1448,18 +1445,16 @@
 
     
   <url>
-    <loc>txshi-mt.com/2017/06/29/edx-columbia-13-Boosting/</loc>
+    <loc>txshi-mt.com/2017/06/24/edx-columbia-1-Intro-MLE/</loc>
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     <data>
         <display>
-        <title>EdX Columbia ML 13. Boosting</title>
-        <pubTime>2017-06-29T09:02:47.000Z</pubTime>
+        <title>EdX Columbia ML 1. 概论与最大似然</title>
+        <pubTime>2017-06-24T10:02:00.000Z</pubTime>
         
-        <tag>Boosting</tag>
-         
         <tag>EdX-Columbia</tag>
          
-        <tag>集成方法</tag>
+        <tag>最大似然</tag>
          
          
            
@@ -1472,16 +1467,18 @@
 
     
   <url>
-    <loc>txshi-mt.com/2017/07/03/edx-columbia-15-Maximum-Likelihood-EM-Algorithm/</loc>
+    <loc>txshi-mt.com/2017/06/29/edx-columbia-13-Boosting/</loc>
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     <data>
         <display>
-        <title>EdX Columbia ML 15. 最大似然的EM算法</title>
-        <pubTime>2017-07-03T01:58:12.000Z</pubTime>
+        <title>EdX Columbia ML 13. Boosting</title>
+        <pubTime>2017-06-29T09:02:47.000Z</pubTime>
         
+        <tag>Boosting</tag>
+         
         <tag>EdX-Columbia</tag>
          
-        <tag>EM算法</tag>
+        <tag>集成方法</tag>
          
          
            
@@ -1518,18 +1515,16 @@
 
     
   <url>
-    <loc>txshi-mt.com/2017/07/05/edx-columbia-17-Matrix-Factorization-Collaborative-Filtering/</loc>
+    <loc>txshi-mt.com/2017/07/03/edx-columbia-16-Gaussian-Mixture-Model/</loc>
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     <data>
         <display>
-        <title>Edx Columbia ML 17. 矩阵分解与协同过滤</title>
-        <pubTime>2017-07-05T09:20:53.000Z</pubTime>
+        <title>EdX Columbia ML 16. 高斯混合模型</title>
+        <pubTime>2017-07-03T02:13:56.000Z</pubTime>
         
-        <tag>矩阵分解</tag>
-         
         <tag>EdX-Columbia</tag>
          
-        <tag>协同过滤</tag>
+        <tag>GMM</tag>
          
          
            
@@ -1542,16 +1537,40 @@
 
     
   <url>
-    <loc>txshi-mt.com/2017/07/03/edx-columbia-16-Gaussian-Mixture-Model/</loc>
+    <loc>txshi-mt.com/2017/07/03/edx-columbia-15-Maximum-Likelihood-EM-Algorithm/</loc>
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     <data>
         <display>
-        <title>EdX Columbia ML 16. 高斯混合模型</title>
-        <pubTime>2017-07-03T02:13:56.000Z</pubTime>
+        <title>EdX Columbia ML 15. 最大似然的EM算法</title>
+        <pubTime>2017-07-03T01:58:12.000Z</pubTime>
         
         <tag>EdX-Columbia</tag>
          
-        <tag>GMM</tag>
+        <tag>EM算法</tag>
+         
+         
+           
+             
+              <breadCrumb title="统计机器学习" url="txshi-mt.com/categories/%E7%BB%9F%E8%AE%A1%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>txshi-mt.com/2017/07/05/edx-columbia-17-Matrix-Factorization-Collaborative-Filtering/</loc>
+    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
+    <data>
+        <display>
+        <title>Edx Columbia ML 17. 矩阵分解与协同过滤</title>
+        <pubTime>2017-07-05T09:20:53.000Z</pubTime>
+        
+        <tag>矩阵分解</tag>
+         
+        <tag>EdX-Columbia</tag>
+         
+        <tag>协同过滤</tag>
          
          
            
@@ -1588,50 +1607,6 @@
 
     
   <url>
-    <loc>txshi-mt.com/2017/06/24/edx-columbia-2-Linear-Regression-Least-Squares/</loc>
-    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
-    <data>
-        <display>
-        <title>EdX Columbia ML 2. 线性回归与最小二乘</title>
-        <pubTime>2017-06-24T12:52:00.000Z</pubTime>
-        
-        <tag>线性回归</tag>
-         
-        <tag>EdX-Columbia</tag>
-         
-         
-           
-             
-              <breadCrumb title="统计机器学习" url="txshi-mt.com/categories/%E7%BB%9F%E8%AE%A1%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>txshi-mt.com/2017/07/09/edx-columbia-21-Hidden-Markov-Model/</loc>
-    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
-    <data>
-        <display>
-        <title>EdX Columbia ML 21. 隐马尔科夫模型 (HMM)</title>
-        <pubTime>2017-07-09T02:05:47.000Z</pubTime>
-        
-        <tag>EdX-Columbia</tag>
-         
-        <tag>HMM</tag>
-         
-         
-           
-             
-              <breadCrumb title="统计机器学习" url="txshi-mt.com/categories/%E7%BB%9F%E8%AE%A1%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>txshi-mt.com/2017/07/05/edx-columbia-19-PCA/</loc>
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     <data>
@@ -1644,6 +1619,28 @@
         <tag>EdX-Columbia</tag>
          
         <tag>SVD</tag>
+         
+         
+           
+             
+              <breadCrumb title="统计机器学习" url="txshi-mt.com/categories/%E7%BB%9F%E8%AE%A1%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>txshi-mt.com/2017/06/24/edx-columbia-2-Linear-Regression-Least-Squares/</loc>
+    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
+    <data>
+        <display>
+        <title>EdX Columbia ML 2. 线性回归与最小二乘</title>
+        <pubTime>2017-06-24T12:52:00.000Z</pubTime>
+        
+        <tag>线性回归</tag>
+         
+        <tag>EdX-Columbia</tag>
          
          
            
@@ -1722,6 +1719,28 @@
 
     
   <url>
+    <loc>txshi-mt.com/2017/07/09/edx-columbia-21-Hidden-Markov-Model/</loc>
+    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
+    <data>
+        <display>
+        <title>EdX Columbia ML 21. 隐马尔科夫模型 (HMM)</title>
+        <pubTime>2017-07-09T02:05:47.000Z</pubTime>
+        
+        <tag>EdX-Columbia</tag>
+         
+        <tag>HMM</tag>
+         
+         
+           
+             
+              <breadCrumb title="统计机器学习" url="txshi-mt.com/categories/%E7%BB%9F%E8%AE%A1%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>txshi-mt.com/2017/07/24/edx-columbia-24-Model-Selection/</loc>
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     <data>
@@ -1732,6 +1751,30 @@
         <tag>EdX-Columbia</tag>
          
         <tag>模型选择</tag>
+         
+         
+           
+             
+              <breadCrumb title="统计机器学习" url="txshi-mt.com/categories/%E7%BB%9F%E8%AE%A1%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>txshi-mt.com/2017/06/24/edx-columbia-4-Biases-Variances-Bayes-Rule-MAP-Inference/</loc>
+    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
+    <data>
+        <display>
+        <title>EdX Columbia ML 4. 偏差方差、贝叶斯定律与MAP推断</title>
+        <pubTime>2017-06-24T15:08:52.000Z</pubTime>
+        
+        <tag>EdX-Columbia</tag>
+         
+        <tag>MAP</tag>
+         
+        <tag>贝叶斯定律</tag>
          
          
            
@@ -1792,64 +1835,18 @@
 
     
   <url>
-    <loc>txshi-mt.com/2017/06/27/edx-columbia-8-Linear-Classifier-Perceptron/</loc>
+    <loc>txshi-mt.com/2017/06/27/edx-columbia-7-KNN-Bayes-Classifier/</loc>
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     <data>
         <display>
-        <title>EdX Columbia ML 8. 线性分类器与感知机</title>
-        <pubTime>2017-06-27T09:53:45.000Z</pubTime>
-        
-        <tag>感知机</tag>
-         
-        <tag>EdX-Columbia</tag>
-         
-         
-           
-             
-              <breadCrumb title="统计机器学习" url="txshi-mt.com/categories/%E7%BB%9F%E8%AE%A1%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>txshi-mt.com/2017/06/24/edx-columbia-4-Biases-Variances-Bayes-Rule-MAP-Inference/</loc>
-    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
-    <data>
-        <display>
-        <title>EdX Columbia ML 4. 偏差方差、贝叶斯定律与MAP推断</title>
-        <pubTime>2017-06-24T15:08:52.000Z</pubTime>
+        <title>EdX Columbia ML 7. K-最近邻分类与贝叶斯分类器</title>
+        <pubTime>2017-06-27T02:51:28.000Z</pubTime>
         
         <tag>EdX-Columbia</tag>
          
-        <tag>MAP</tag>
+        <tag>KNN</tag>
          
-        <tag>贝叶斯定律</tag>
-         
-         
-           
-             
-              <breadCrumb title="统计机器学习" url="txshi-mt.com/categories/%E7%BB%9F%E8%AE%A1%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>txshi-mt.com/2017/06/26/edx-columbia-6-Spartial-Linear-Regression/</loc>
-    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
-    <data>
-        <display>
-        <title>EdX Columbia ML 6. 稀疏线性回归</title>
-        <pubTime>2017-06-26T09:00:59.000Z</pubTime>
-        
-        <tag>线性回归</tag>
-         
-        <tag>EdX-Columbia</tag>
-         
-        <tag>LASSO</tag>
+        <tag>贝叶斯分类器</tag>
          
          
            
@@ -1886,18 +1883,18 @@
 
     
   <url>
-    <loc>txshi-mt.com/2017/06/27/edx-columbia-7-KNN-Bayes-Classifier/</loc>
+    <loc>txshi-mt.com/2017/06/26/edx-columbia-6-Spartial-Linear-Regression/</loc>
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     <data>
         <display>
-        <title>EdX Columbia ML 7. K-最近邻分类与贝叶斯分类器</title>
-        <pubTime>2017-06-27T02:51:28.000Z</pubTime>
+        <title>EdX Columbia ML 6. 稀疏线性回归</title>
+        <pubTime>2017-06-26T09:00:59.000Z</pubTime>
         
+        <tag>线性回归</tag>
+         
         <tag>EdX-Columbia</tag>
          
-        <tag>KNN</tag>
-         
-        <tag>贝叶斯分类器</tag>
+        <tag>LASSO</tag>
          
          
            
@@ -1909,19 +1906,39 @@
     </url>
 
     
-    
-    
   <url>
-    <loc>txshi-mt.com/2017/08/28/NTUML-9-Linear-Regression/</loc>
+    <loc>txshi-mt.com/2017/06/27/edx-columbia-8-Linear-Classifier-Perceptron/</loc>
     <lastmod>2017-12-19T12:35:39.000Z</lastmod>
     <data>
         <display>
-        <title>NTUML 9. 线性回归</title>
-        <pubTime>2017-08-28T11:58:08.000Z</pubTime>
+        <title>EdX Columbia ML 8. 线性分类器与感知机</title>
+        <pubTime>2017-06-27T09:53:45.000Z</pubTime>
+        
+        <tag>感知机</tag>
+         
+        <tag>EdX-Columbia</tag>
+         
+         
+           
+             
+              <breadCrumb title="统计机器学习" url="txshi-mt.com/categories/%E7%BB%9F%E8%AE%A1%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>txshi-mt.com/2017/08/03/NTUML-2-Learning-to-Answer-Yes-No/</loc>
+    <lastmod>2017-12-19T12:35:39.000Z</lastmod>
+    <data>
+        <display>
+        <title>NTUML 2. 学习判断是与非</title>
+        <pubTime>2017-08-03T10:24:15.000Z</pubTime>
         
         <tag>NTUML</tag>
          
-        <tag>线性回归</tag>
+        <tag>感知机</tag>
          
          
            
@@ -1932,4 +1949,7 @@
     </data>
     </url>
 
+    
+    
+    
 </urlset>

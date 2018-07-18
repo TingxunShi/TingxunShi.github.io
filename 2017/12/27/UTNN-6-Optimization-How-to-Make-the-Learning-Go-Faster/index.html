@@ -100,7 +100,7 @@
 
 
 
-  <meta name="keywords" content="梯度下降,优化,UTNN,动量法," />
+  <meta name="keywords" content="优化,梯度下降,UTNN,动量法," />
 
 
 
@@ -112,7 +112,7 @@
 
 
 <meta name="description" content="Mini-batch梯度下降概论 本章主要介绍一些关于神经网络优化的方法。但是在介绍优化方法之前先回顾一下关于误差函数/代价函数的内容。如第三章所示，给定某个线性神经元，可以画出其误差表面：其纵轴是误差，横轴是权重值。如果使用的是平方误差，则误差表面的横切面应该是一个椭圆，纵切面是一个双曲线。对多层非线性网络来说，其误差表面更加复杂，但是权重不大时，仍然是光滑的，局部也可以用二次曲线逼近。如果使用">
-<meta name="keywords" content="梯度下降,优化,UTNN,动量法">
+<meta name="keywords" content="优化,梯度下降,UTNN,动量法">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Hinton神经网络与机器学习 6. 神经网络的优化">
 <meta property="og:url" content="txshi-mt.com/2017/12/27/UTNN-6-Optimization-How-to-Make-the-Learning-Go-Faster/index.html">
@@ -123,7 +123,7 @@
 <meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_06_reduce_learning_rate_too_early.png">
 <meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_06_momentum.png">
 <meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_06_nesterov_method.png">
-<meta property="og:updated_time" content="2018-01-07T09:09:22.000Z">
+<meta property="og:updated_time" content="2018-07-06T10:53:14.592Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hinton神经网络与机器学习 6. 神经网络的优化">
 <meta name="twitter:description" content="Mini-batch梯度下降概论 本章主要介绍一些关于神经网络优化的方法。但是在介绍优化方法之前先回顾一下关于误差函数/代价函数的内容。如第三章所示，给定某个线性神经元，可以画出其误差表面：其纵轴是误差，横轴是权重值。如果使用的是平方误差，则误差表面的横切面应该是一个椭圆，纵切面是一个双曲线。对多层非线性网络来说，其误差表面更加复杂，但是权重不大时，仍然是光滑的，局部也可以用二次曲线逼近。如果使用">
@@ -445,7 +445,7 @@
 </ol>
 <h2 id="动量法">动量法</h2>
 <p>在使用梯度下降训练神经网络时，可以使用动量法（momentum）来有效提升学习速度。这一方法适用于full-batch学习，也适用于mini-batch的学习。实际上，将mini-batch梯度下降与动量法结合可能是大规模神经网络最常见的学习方法</p>
-<p>假设在误差表面上放置一个球，球在水平面的位置表示当前的权重向量。由于其最开始是静止的，因此它会先沿着最陡的方向（梯度方向）向下滑，但是当速度起来以后，动量会驱使它沿着之前的方向前进。显然，我们想让球最后停留在误差表面的一个最低点上，所以希望能减少球的能量，因此能引入一些粘性是最好不过的——也就是说，要在每次迭代中都缓慢降低求得速度</p>
+<p>假设在误差表面上放置一个球，球在水平面的位置表示当前的权重向量。由于其最开始是静止的，因此它会先沿着最陡的方向（梯度方向）向下滑，但是当速度起来以后，动量会驱使它沿着之前的方向前进。显然，我们想让球最后停留在误差表面的一个最低点上，所以希望能减少球的能量，因此能引入一些粘性是最好不过的——也就是说，要在每次迭代中都缓慢降低球的速度</p>
 <p>动量法的作用就是在高曲率的地方阻止小球的振动，可以看一下下图的例子</p>
 <figure>
 <img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_06_momentum.png" alt="动量法示意图"><figcaption>动量法示意图</figcaption>
@@ -571,9 +571,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/梯度下降/" rel="tag"># 梯度下降</a>
-          
             <a href="/tags/优化/" rel="tag"># 优化</a>
+          
+            <a href="/tags/梯度下降/" rel="tag"># 梯度下降</a>
           
             <a href="/tags/UTNN/" rel="tag"># UTNN</a>
           
@@ -683,7 +683,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">84</span>
+                  <span class="site-state-item-count">85</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

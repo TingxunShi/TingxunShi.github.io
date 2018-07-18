@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="优化," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="基本优化方法：梯度下降 如正文所提，梯度下降是一般机器学习中应用最多的优化算法，核心思想是让参数朝着梯度的反方向，也就是函数下降最快的方向移动。设定如下记号：  \(\boldsymbol{\theta}\)：模型参数 \(\boldsymbol{x}^{(i)}\)：第\(i\)条数据 \(f\)：模型 \(\boldsymbol{y}^{(i)}\)：第\(i\)条数据对应的标签 \(L\)：">
+<meta name="keywords" content="优化">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NMT Tutorial 2扩展b. 优化方法">
+<meta property="og:url" content="txshi-mt.com/2018/06/09/NMT-Tutorial-2b-Optimization-Methods/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="基本优化方法：梯度下降 如正文所提，梯度下降是一般机器学习中应用最多的优化算法，核心思想是让参数朝着梯度的反方向，也就是函数下降最快的方向移动。设定如下记号：  \(\boldsymbol{\theta}\)：模型参数 \(\boldsymbol{x}^{(i)}\)：第\(i\)条数据 \(f\)：模型 \(\boldsymbol{y}^{(i)}\)：第\(i\)条数据对应的标签 \(L\)：">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutorial_2b_momentum.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutorial_2b_NAG.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutorial_2b_optimizers.png">
+<meta property="og:updated_time" content="2018-07-18T14:00:58.137Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NMT Tutorial 2扩展b. 优化方法">
+<meta name="twitter:description" content="基本优化方法：梯度下降 如正文所提，梯度下降是一般机器学习中应用最多的优化算法，核心思想是让参数朝着梯度的反方向，也就是函数下降最快的方向移动。设定如下记号：  \(\boldsymbol{\theta}\)：模型参数 \(\boldsymbol{x}^{(i)}\)：第\(i\)条数据 \(f\)：模型 \(\boldsymbol{y}^{(i)}\)：第\(i\)条数据对应的标签 \(L\)：">
+<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutorial_2b_momentum.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2018/06/09/NMT-Tutorial-2b-Optimization-Methods/"/>
+
+
+
+
+
+  <title>NMT Tutorial 2扩展b. 优化方法 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2018/06/09/NMT-Tutorial-2b-Optimization-Methods/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NMT Tutorial 2扩展b. 优化方法</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-09T18:21:24+08:00">
+                Jun 9 2018
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="基本优化方法梯度下降">基本优化方法：梯度下降</h2>
+<p>如<a href="http://txshi-mt.com/2018/03/24/NMT-Tutorial-2-Loglinear-LM-and-Optimization/">正文</a>所提，梯度下降是一般机器学习中应用最多的优化算法，核心思想是让参数朝着梯度的反方向，也就是函数下降最快的方向移动。设定如下记号：</p>
+<ul>
+<li><span class="math inline">\(\boldsymbol{\theta}\)</span>：模型参数</li>
+<li><span class="math inline">\(\boldsymbol{x}^{(i)}\)</span>：第<span class="math inline">\(i\)</span>条数据</li>
+<li><span class="math inline">\(f\)</span>：模型</li>
+<li><span class="math inline">\(\boldsymbol{y}^{(i)}\)</span>：第<span class="math inline">\(i\)</span>条数据对应的标签</li>
+<li><span class="math inline">\(L\)</span>：损失函数</li>
+<li><span class="math inline">\(n\)</span>：样本总数量</li>
+<li><span class="math inline">\(\eta\)</span>：学习率</li>
+</ul>
+<p>梯度下降会根据样本求出一个梯度估计<span class="math inline">\(\hat{\boldsymbol{g}}\)</span>，然后根据梯度估计对原始的参数进行修正： <span class="math display">\[
+\boldsymbol{\theta}^{(t)} \leftarrow \boldsymbol{\theta}^{(t-1)} - \eta \hat{\boldsymbol{g}}
+\]</span> 批量梯度下降（batch gradient descent）会使用所有数据的平均梯度来估计<span class="math inline">\(\hat{\boldsymbol{g}}\)</span> <span class="math display">\[
+\hat{\boldsymbol{g}} \leftarrow \frac{1}{n} \sum_{i=1}^n \nabla_\boldsymbol{\theta}L\left(f(\boldsymbol{x}^{(i)};\boldsymbol{\theta}), \boldsymbol{y}^{(i)}\right)
+\]</span> 这种更新方法的缺点是计算起来非常慢，而且如果数据集很大甚至会把内存爆掉。但是，对于凸函数，批量梯度下降会保证算法收敛到最值点；对于非凸函数，可以收敛到极值点</p>
+<p>批量梯度下降对应的极端是随机梯度下降（stochastic gradient descent, SGD），每当该算法接收一条数据，都会计算当前数据的梯度，并使用其更新参数。即 <span class="math display">\[
+\hat{\boldsymbol{g}} \leftarrow \nabla_{\boldsymbol{\theta}}L\left(f(\boldsymbol{x}^{(i)}; \boldsymbol{\theta}), \boldsymbol{y}^{(i)}\right)
+\]</span> SGD的优点是计算比较快，而且可以使用新数据快速更新模型参数。但是，如果保持学习率不变，SGD会使得参数在极值点附近剧烈抖动。不过如果是学习率随着学习的过程缓慢减小，SGD可以达到和批量梯度下降近似的结果</p>
+<p>对这两种方法的一个折中是小批量梯度下降（mini-batch gradient descent），即算法接收<span class="math inline">\(m\ (m &lt;\!\!&lt; n)\)</span>条数据，根据这些数据的梯度信息更新参数 <span class="math display">\[
+\hat{\boldsymbol{g}} \leftarrow \frac{1}{m} \sum_{i=1}^m \nabla_\boldsymbol{\theta}L\left(f(\boldsymbol{x}^{(i)};\boldsymbol{\theta}), \boldsymbol{y}^{(i)}\right)
+\]</span> 这种方法既可以减少每次更新量的方差进而达到一个稳定的收敛过程，也保持了计算的效率（因为现在有很多成熟的库对矩阵计算有很好的优化支持）</p>
+<p>在其它一些文献中，也有些将小批量梯度下降称为SGD，而将这里的SGD称为“基于梯度下降的在线学习”（online learning）</p>
+<p>使用梯度下降法来做优化可能会面临如下问题</p>
+<ul>
+<li>很难选取一个合适的学习率。太小的学习率会导致收敛太慢，太大的学习率会难以收敛，损失函数在极值点附近震荡甚至发散。尽管可以使用诸如模拟退火这样的方法来调整学习率，但是这种做法需要额外的工作量，也难以很好地适配具体训练集的特点</li>
+<li>经典的梯度下降法中，梯度的每一个分量所乘的学习率都相同。如果数据稀疏，特征的频率也不同，那么更好的方法是对不同的特征设计不同的学习率</li>
+<li>相比较于局部最优点，非凸函数更大的问题是存在一些鞍点，在鞍点上某些方向的梯度会变大，某些则会变小。此外，鞍点周围会有大量的平原区域，使得梯度近似于0，权重更新极其缓慢</li>
+</ul>
+<h2 id="基于动量的梯度下降及其扩展">基于动量的梯度下降及其扩展</h2>
+<h3 id="动量法">动量法</h3>
+<p>与传统的梯度下降法相比，<strong>动量法</strong>（momentum）的形式是在每次更新参数时，除了加上<span class="math inline">\(m\)</span>个样本的平均梯度，还要加上一部分上一步的权重更新量。在第<span class="math inline">\(t\)</span>时刻，算法先求出梯度估计<span class="math inline">\(\hat{\boldsymbol{g}}\)</span>，然后使用上一步的权重更新量<span class="math inline">\(\boldsymbol{v}^{(t-1)}\)</span>和<span class="math inline">\(\hat{\boldsymbol{g}}\)</span>求出本步权重更新量<span class="math inline">\(\boldsymbol{v}^{(t)}\)</span>，最后更新权重 <span class="math display">\[
+\begin{align*}
+\hat{\boldsymbol{g}} &amp;\leftarrow \frac{1}{m} \sum_{i=1}^m \nabla_\boldsymbol{\theta}L\left(f(\boldsymbol{x}^{(i)};\boldsymbol{\theta}^{(t-1)}), \boldsymbol{y}^{(i)}\right) \\
+\boldsymbol{v}^{(t)} &amp;\leftarrow \alpha\boldsymbol{v}^{(t-1)} - \eta\hat{\boldsymbol{g}} \\
+\boldsymbol{\theta}^{(t)} &amp;\leftarrow \boldsymbol{\theta}^{(t-1)} + \boldsymbol{v}^{(t)}
+\end{align*}
+\]</span> 可以看出，使用动量法，每次更新权重的时候保留了一些上一次的更新信息，这里引入的新的超参数<span class="math inline">\(\alpha\)</span>就是控制保留多少上次的更新信息。考虑到在没有引入<span class="math inline">\(\boldsymbol{v}\)</span>时<span class="math inline">\(\hat{\boldsymbol{g}}\)</span>给出了每次参数前进的方向，因此动量法的核心是把上一步的前进方向和当前前进方向做一个加权平均。这样的做法在不同的情况下有两个效果</p>
+<ul>
+<li>当每次梯度的方向大致相同时，上一步的前进方向可以看作是对参数变化的助推器，使得参数移动的步长越来越大。因此，随着训练的迭代次数增多，学习率<span class="math inline">\(\eta\)</span>应该逐渐变小</li>
+<li>当每次梯度的方向很不相同时，实际上函数是病态条件的。如果这个代价函数是一个二次函数，画出等高线以后会发现椭圆的一个轴很长，另一个轴很短。如果使用传统的梯度下降，代价函数的值就会沿着椭圆的短轴方向来回振动，而每次振动时沿着长轴方向实际只迈出了微小的一步。在这种情况下，上一步的前进方向实际上起到了平滑的作用，尤其是当<span class="math inline">\(\alpha\)</span>比较大（事实上一般也的确不小）时，实际上更多的是保留原来的前进方向，新的梯度只是一种修正而已。这样就可以减少代价函数振动的程度，使其前进方向更指向极值点</li>
+</ul>
+<p>下图给出了原始SGD与动量法加速的SGD损失函数优化轨迹的比较</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutorial_2b_momentum.png" alt="原始SGD与Momentum的比较"><figcaption>原始SGD与Momentum的比较</figcaption>
+</figure>
+<p>假设每次迭代的梯度<span class="math inline">\(\hat{\boldsymbol{g}}\)</span>相同，那么可以对<span class="math inline">\(\boldsymbol{v}^{(t)}\)</span>展开: <span class="math display">\[
+\begin{align*}
+\boldsymbol{v}^{(t)} &amp;= \alpha\boldsymbol{v}^{(t-1)} - \eta\hat{\boldsymbol{g}} \\
+&amp;= \alpha(\alpha\boldsymbol{v}^{(t-2)}- \eta\hat{\boldsymbol{g}}) - \eta\hat{\boldsymbol{g}} \\
+&amp;= \alpha^2\boldsymbol{v}^{(t-2)} -\alpha\eta\hat{\boldsymbol{g}} - \eta\hat{\boldsymbol{g}} \\
+&amp;= \ldots \\
+&amp;= \alpha^t\boldsymbol{v}^{(0)} - \alpha^{t-1}\eta\hat{\boldsymbol{g}} - \cdots - \eta\hat{\boldsymbol{g}} 
+\end{align*}
+\]</span> 由于第0时刻没有速度，因此上式第一项为0。其余项通过等比数列求和可知 <span class="math display">\[
+\boldsymbol{v}^{(t)} = -\frac{\eta\hat{\boldsymbol{g}}}{1-\alpha}
+\]</span> 故而动量法新引入的超参数<span class="math inline">\(\alpha\)</span>可以看作是加速倍数。当<span class="math inline">\(\alpha = 0.9\)</span>时，可以看做最后步长是普通梯度下降法的1/(1-0.9) = 10倍。所以在使用动量法优化参数时，需要随着迭代次数的增多缩小学习率</p>
+<p>假设把负梯度看作是让粒子在空间中移动的力，那么力的作用会让粒子的移动速度发生改变。如果将粒子看作是单位质量的，那么<span class="math inline">\(\boldsymbol{v} = m\boldsymbol{v} = {\boldsymbol{p}}\)</span>也可以看做是物体的动量。这就是这个算法名称的由来</p>
+<p><a href="https://distill.pub/2017/momentum/" target="_blank" rel="noopener">distill上的这篇文章</a>给出了对动量法更深的讨论。如果对数学细节不感兴趣，至少可以玩玩文章开头的demo来感受一下动量法超参数的意义和如何选取:)</p>
+<h3 id="nesterov动量法">Nesterov动量法</h3>
+<p>动量法加速了参数优化的速度，但是仍然不够智能。如果算法可以在看到陡峭的损失平面时提前减速，效果应该会更好。Sutskever在2013年受Nesterov加速梯度算法启发提出了一种方法，使用如下规则更新参数 <span class="math display">\[
+\begin{align*}
+\tilde{\boldsymbol{\theta}}^{(t-1)} &amp;\leftarrow \boldsymbol{\theta} + \alpha\boldsymbol{v}^{(t-1)} \\
+\hat{\boldsymbol{g}} &amp;\leftarrow  \frac{1}{m}\sum_{i=1}^m\nabla_{\tilde{\boldsymbol{\theta}}}L\left(f(\boldsymbol{x}^{(i)};\tilde{\boldsymbol{\theta}}^{(t-1)}), \boldsymbol{y}^{(i)}\right) \\
+\boldsymbol{v}^{(t)} &amp;\leftarrow  \alpha\boldsymbol{v}^{(t-1)} - \eta\hat{\boldsymbol{g}} \\
+\boldsymbol{\theta}^{(t)} &amp;\leftarrow \boldsymbol{\theta}^{(t-1)} + \boldsymbol{v}^{(t)}
+\end{align*}
+\]</span> 这种算法称为Nesterov动量法，也称为Nesterov加速梯度法（Nesterov Accelarated Gradient, NAG）。相比于传统的动量法，NAG对当前点梯度<span class="math inline">\(\nabla_{\boldsymbol{\theta}}\)</span>的信赖程度没有那么高，而是去看按照速度向量走出一步以后的梯度值<span class="math inline">\(\nabla_{\tilde{\boldsymbol{\theta}}}\)</span>。如果<span class="math inline">\(\nabla_{\boldsymbol{\theta}}\)</span>和<span class="math inline">\(\nabla_{\tilde{\boldsymbol{\theta}}}\)</span>差别不大，那么两者的更新量近似；然而如果两者相差比较大，那么说明目标函数表面可能存在一些弯曲，用之前的梯度可能会走向不希望的方向。这样，NAG收敛更快，也更稳定。下图给出了NAG和原始动量法的比较</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutorial_2b_NAG.png" alt="NAG与原始动量法的比较"><figcaption>NAG与原始动量法的比较</figcaption>
+</figure>
+<p>《<a href="https://zhuanlan.zhihu.com/p/22810533" target="_blank" rel="noopener">比Momentum更快：揭开Nesterov Accelerated Gradient的真面目</a>》一文对NAG的原理给出了更进一步的分析，得出结论是</p>
+<blockquote>
+<p>在原始形式中，Nesterov Accelerated Gradient（NAG）算法相对于Momentum的改进在于，以“向前看”看到的梯度而不是当前位置梯度去更新。经过变换之后的等效形式中，NAG算法相对于Momentum多了一个本次梯度相对上次梯度的变化量，这个变化量本质上是对目标函数二阶导的近似。由于利用了二阶导的信息，NAG算法才会比Momentum具有更快的收敛速度。</p>
+</blockquote>
+<p>[Ruder2016]提到NAG可以显著提升RNN的性能。然而，花书指出，在随机梯度的情况下，NAG没有改进收敛率</p>
+<h2 id="自适应学习率算法">自适应学习率算法</h2>
+<p>基于动量的梯度下降法主要调整<strong>所有</strong>参数收敛的方向和速度，而更多的优化算法致力于使<strong>每个</strong>参数的学习率都能各自动态自适应</p>
+<h3 id="adagrad">AdaGrad</h3>
+<p>定义<span class="math inline">\(\odot\)</span>为两个向量的逐元素乘积，AdaGrad的算法的参数更新规则为 <span class="math display">\[
+\begin{align*}
+\hat{\boldsymbol{g}} &amp;\leftarrow \frac{1}{m} \sum_{i=1}^m \nabla_\boldsymbol{\theta}L\left(f(\boldsymbol{x}^{(i)};\boldsymbol{\theta}^{(t-1)}), \boldsymbol{y}^{(i)}\right) \\
+\boldsymbol{r}^{(t)} &amp;\leftarrow \boldsymbol{r}^{(t-1)} + \hat{\boldsymbol{g}}\odot\hat{\boldsymbol{g}} \\
+\Delta\boldsymbol{\theta}^{(t)} &amp;\leftarrow -\frac{\eta}{\epsilon +\sqrt{\boldsymbol{r}^{(t)}}}\odot \hat{\boldsymbol{g}} \\
+\boldsymbol{\theta}^{(t)} &amp;\leftarrow \boldsymbol{\theta}^{(t-1)} + \Delta\boldsymbol{\theta}^{(t)}
+\end{align*}
+\]</span> 其中第三步计算权重更新量的时候使用的是逐元素开方、加和和被常数除。从这部更新量的计算方法来看，更新量与前面梯度平方的累积量<span class="math inline">\(\boldsymbol{r}​\)</span>成反比。因此如果梯度在某个维度上的分量一直很大，就会使得参数在该分量上的学习率下降更快。但是由于<span class="math inline">\(\boldsymbol{r}​\)</span>单调递增，因此每个元素的学习率一直不会提高，可能会快速收敛到一个不好的解</p>
+<p>使用AdaGrad优化器时，通常把<span class="math inline">\(\epsilon\)</span>设为0.01，<span class="math inline">\(\epsilon\)</span>设为<span class="math inline">\(10^{-8}\)</span>。这里<span class="math inline">\(\epsilon\)</span>是一个为了让分母不为0的稳定值</p>
+<h3 id="adadelta">AdaDelta</h3>
+<p>针对AdaGrad会使学习率单调下降（确切说是不增）的情况，AdaDelta做出了修改，不再单纯累加梯度的平方，而是将过往梯度的平方与当前梯度的平方一起求一个加权平均值 <span class="math display">\[
+\begin{align*}
+\hat{\boldsymbol{g}} &amp;\leftarrow \frac{1}{m} \sum_{i=1}^m \nabla_\boldsymbol{\theta}L\left(f(\boldsymbol{x}^{(i)};\boldsymbol{\theta}^{(t-1)}), \boldsymbol{y}^{(i)}\right) \\
+\boldsymbol{r}^{(t)} &amp;\leftarrow \rho\ \boldsymbol{r}^{(t-1)} + (1-\rho)\ \hat{\boldsymbol{g}}\odot\hat{\boldsymbol{g}} 
+\end{align*}
+\]</span> <span class="math inline">\(\Delta \boldsymbol{\theta}^{(t)}\)</span>与之前的计算方式类似，只不过稳定值<span class="math inline">\(\epsilon\)</span>放在根号内 <span class="math display">\[
+\Delta \boldsymbol{\theta}^{(t)} \leftarrow -\frac{\eta}{\sqrt{\boldsymbol{r}^{(t)} + \epsilon}}\odot \hat{\boldsymbol{g}}
+\]</span> <a href="https://arxiv.org/pdf/1212.5701.pdf" target="_blank" rel="noopener">原始文献</a>指出参数变化量<span class="math inline">\(\Delta \boldsymbol{\theta}\)</span>应该与参数<span class="math inline">\(\boldsymbol{\theta}\)</span>的“单位”匹配。如果仅使用梯度，那么不能满足这个条件，要使用牛顿法才可以。然而若要计算牛顿法，需要计算Hessian矩阵<span class="math inline">\(\boldsymbol{H}\)</span>的逆，时间复杂度太高。而由于 <span class="math display">\[
+{\rm units\ of\ }\Delta \boldsymbol{\theta} \propto {\rm units\ of\ }\boldsymbol{H}^{-1}\boldsymbol{g} \propto \frac{\frac{\partial L}{\partial \theta}}{\frac{\partial^2 L}{\partial \theta^2}} \propto {\rm units\ of\ }\boldsymbol{\theta}
+\]</span> 因此要计算<span class="math inline">\(\boldsymbol{H}^{-1}\)</span>的单位，只要算出<span class="math inline">\(\frac{\Delta \boldsymbol{\theta}}{\boldsymbol{g}}\)</span>就可以。类似上面的做法，引入<span class="math inline">\(\Delta \boldsymbol{\theta}^{(t)}\)</span>的平方并求加权平均值 <span class="math display">\[
+\boldsymbol{s}^{(t)} \leftarrow \rho\ \boldsymbol{s}^{(t-1)} + (1-\rho)\ \Delta\boldsymbol{\theta}^{(t)} \odot \Delta\boldsymbol{\theta}^{(t)}
+\]</span> 则更新规则为 <span class="math display">\[
+\boldsymbol{\theta}^{(t)} \leftarrow \boldsymbol{\theta}^{(t-1)} - \frac{\sqrt{\boldsymbol{s}^{(t-2)}+\epsilon}}{\sqrt{\boldsymbol{r}^{(t-1)}+\epsilon}} \odot \hat{\boldsymbol{g}}
+\]</span> 记 <span class="math display">\[
+\begin{align*}
+E\left(x^{(t)}\right) &amp;=  \rho E\left(x^{(t-1)}\right) + (1-\rho)E\left(x^{(t)}\right) \\
+{\rm RMS}\left(x^{(t)}\right) &amp;= \sqrt{E\left(x^{(t)}\right) + \epsilon}
+\end{align*}
+\]</span> 则上述更新规则也可以写为 <span class="math display">\[
+\boldsymbol{\theta}^{(t)} \leftarrow \boldsymbol{\theta}^{(t-1)} - \frac{ {\rm RMS}\left(\boldsymbol{\theta}^{(t-1)}\right)}{ {\rm RMS}\left(\hat{\boldsymbol{g}}\right)} \odot \hat{\boldsymbol{g}}
+\]</span> 可以看到AdaDelta的更新规则里已经没有学习率这一项了</p>
+<h3 id="rmsprop">RMSProp</h3>
+<p>去掉AdaDelta更新规则中保持参数更新量单位不变的部分，就是RMSProp算法。不过RMSProp和AdaDelta两个算法是独立提出的 <span class="math display">\[
+\begin{align*}
+\hat{\boldsymbol{g}} &amp;\leftarrow \frac{1}{m} \sum_{i=1}^m \nabla_\boldsymbol{\theta}L\left(f(\boldsymbol{x}^{(i)};\boldsymbol{\theta}^{(t-1)}), \boldsymbol{y}^{(i)}\right) \\
+\boldsymbol{r}^{(t)} &amp;\leftarrow \rho\ \boldsymbol{r}^{(t-1)} + (1-\rho)\ \hat{\boldsymbol{g}}\odot\hat{\boldsymbol{g}} \\
+\Delta \boldsymbol{\theta}^{(t)} &amp;\leftarrow -\frac{\eta}{\sqrt{\boldsymbol{r}^{(t)} + \epsilon}}\odot \hat{\boldsymbol{g}} \\
+\boldsymbol{\theta}^{(t)} &amp;\leftarrow \boldsymbol{\theta}^{(t-1)} + \Delta\boldsymbol{\theta}^{(t)}
+\end{align*}
+\]</span> 通常<span class="math inline">\(\rho\)</span>被设置为0.9，<span class="math inline">\(\eta\)</span>设为0.001。RMSProp对RNN效果很好，不过仍然需要设置学习率</p>
+<h3 id="adam">Adam</h3>
+<p>Adam的全称是自适应动量估计法（Adaptive Moment Estimation），可以看作是动量法与RMSprop的结合：一方面，Adam像动量法一样计算梯度的指数衰减平均值（也是梯度的有偏一阶矩估计）<span class="math inline">\(\boldsymbol{s}\)</span>；另一方面，像RMSprop一样计算梯度平方的指数衰减平均值（有偏二阶矩估计）<span class="math inline">\(\boldsymbol{r}\)</span> <span class="math display">\[
+\begin{align*}
+\hat{\boldsymbol{g}} &amp;\leftarrow \frac{1}{m} \sum_{i=1}^m \nabla_\boldsymbol{\theta}L\left(f(\boldsymbol{x}^{(i)};\boldsymbol{\theta}^{(t-1)}), \boldsymbol{y}^{(i)}\right) \\
+\boldsymbol{s}^{(t)} &amp;\leftarrow \rho_1\boldsymbol{s}^{(t-1)} + (1-\rho_1)\hat{\boldsymbol{g}} \\
+\boldsymbol{r}^{(t)} &amp;\leftarrow \rho_2\boldsymbol{r}^{(t-1)} + (1-\rho_2)\hat{\boldsymbol{g}} \odot\hat{\boldsymbol{g}}
+\end{align*}
+\]</span> 由于<span class="math inline">\(\boldsymbol{s}\)</span>和<span class="math inline">\(\boldsymbol{r}\)</span>的初始值都是0向量，因此在最初几步当<span class="math inline">\(\rho_1, \rho_2\)</span>都接近1时，会导致两个矩估计都偏向0。因此每步之后需要做如下修正 <span class="math display">\[
+\begin{align*}
+\hat{\boldsymbol{s}}^{(t)} &amp;\leftarrow \frac{\boldsymbol{s}^{(t)}}{1-\rho_1^t}  \\
+\hat{\boldsymbol{r}}^{(t)} &amp;\leftarrow \frac{\boldsymbol{r}^{(t)}}{1-\rho_2^t}
+\end{align*}
+\]</span> 修正项被用来计算参数更新 <span class="math display">\[
+\begin{align*}
+\Delta\boldsymbol{\theta}^{(t)}  &amp;\leftarrow -\frac{\eta}{\sqrt{\hat{\boldsymbol{r}}^{(t)}} + \epsilon} \odot \hat{\boldsymbol{s}}^{(t)} \\
+\boldsymbol{\theta}^{(t)} &amp;\leftarrow \boldsymbol{\theta}^{(t-1)} + \Delta \boldsymbol{\theta}^{(t)}
+\end{align*}
+\]</span> 通常令<span class="math inline">\(\rho_1 = 0.9, \rho_2 = 0.999, \epsilon=10^{-8}\)</span></p>
+<p>Adam算法还有两种其它扩展。一种是将Adam进一步和Nesterov动量法结合，得到<strong>Nadam算法</strong>；另一种是在更新<span class="math inline">\(\boldsymbol{r}\)</span>时不再使用梯度的二次幂，而是使用无穷次幂 <span class="math display">\[
+\begin{align*}
+\boldsymbol{r}^{(t)} &amp;\leftarrow \rho_2^\infty \boldsymbol{r}^{(t-1)} + (1-\rho_2^\infty)|\hat{\boldsymbol{g}}|^\infty \\
+&amp;= \max(\rho_2\boldsymbol{r}^{(t-1)}, \hat{\boldsymbol{g}})
+\end{align*}
+\]</span> 更新规则也修改为 <span class="math display">\[
+\Delta\boldsymbol{\theta}^{(t)}  \leftarrow -\frac{\eta}{ \boldsymbol{r}^{(t)}} \odot \hat{\boldsymbol{s}}^{(t)} 
+\]</span> 这种算法称为<strong>AdaMax算法</strong></p>
+<p>（一般的文章，包括本文，都将Adam看作是动量法和RMSProp算法的结合。不过按照原始论文的说法，Adam的直接来源是AdaGrad和RMSProp，其中AdaGrad的贡献在于对稀疏梯度的处理）</p>
+<p>Adam算法刚被提出的时候因为其快速收敛的能力得到了人们的广泛关注，但是[Wilson2017]指出Adam（以及其它自适应学习率算法）得到的解虽然在训练集上效果不错，但是泛化能力都比SGD要差（而且经常是明显得差）。[Reddi2018]进一步通过实验指出对某些简单的凸优化问题Adam都不能收敛到最优解，因为某些batch给出的梯度信息可能很重要，但是会被指数衰减的计算方法很快淹没。文章给出了一个解决方案：不再对梯度做有偏二阶矩估计，而是只保留所有二阶矩的最大值。文章将这种新的改进方法称为AMSGrad，并称算法能够取得很好的收敛结果。但是<a href="https://fdlm.github.io/post/amsgrad/" target="_blank" rel="noopener">奥地利一名研究人员的博客</a>通过一些实验表明AMSGrad的效果可能没有[Reddi2018]中提到的这么出色</p>
+<h2 id="结语">结语</h2>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutorial_2b_optimizers.png" alt="优化方法关系图"><figcaption>优化方法关系图</figcaption>
+</figure>
+<p>上图对上文所提到的优化方法之间的关系做了一个梳理。大部分优化器都包含在<code>tf.train</code>这个包中，小部分出现在<code>tf.contrib.opt</code>包。后者包下其它优化器大部分都是由第三方的开发人员提供，这里就不介绍了；前面<code>tf.train</code>包中有一些优化器没有包含在图里，这些主要是针对海量稀疏数据使用，例如<code>tf.train.FtrlOptimizer</code>在计算广告点击率（CTR）时非常常用。[Reddi2018]则是给出了一个更抽象的公式来涵盖上面提出各种算法的计算流程 <span class="math display">\[
+\begin{align*}
+{\boldsymbol{g}^{(t)}} &amp;\leftarrow \nabla L(\boldsymbol{x}^{(t)}) \\
+\boldsymbol{s}^{(t)} &amp;\leftarrow \phi_t(\boldsymbol{g}^{(1)}, \ldots, \boldsymbol{g}^{(t)}) \\
+\boldsymbol{r}^{(t)} &amp;\leftarrow \psi_t(\boldsymbol{g}^{(1)}, \ldots, \boldsymbol{g}^{(t)}) \\
+\Delta \boldsymbol{\theta}^{(t)} &amp;\leftarrow -\frac{\alpha^{(t)}}{\sqrt{\boldsymbol{r}^{(t)}}} \odot \boldsymbol{s}^{(t)} \\
+\boldsymbol{\theta}^{(t+1)} &amp;\leftarrow \boldsymbol{\theta}^{(t)} + \Delta \boldsymbol{\theta}^{(t)}
+\end{align*}
+\]</span> （其中符号有一些修改）上式中<span class="math inline">\(\phi_t\)</span>函数可以看做是对动量（梯度历史）的计算，而<span class="math inline">\(\psi_t\)</span>则是梯度二阶矩估计相关的函数</p>
+<p>所谓“世界上没有免费的午餐”，正如世界上没有一种机器学习模型能够解决所有问题一样，也没有哪个优化器可以在所有问题上能同时满足易于使用、收敛快、能加速通过平原、保证落到最值点这些要求。[Schaul2013]设计了一些类似单元测试的实验，并指出精心调参过的SGD在大多数实验上的效果表现最好，同时自适应学习率系列的算法不太受超参数的影响。[Ruder2016]的实验显示对比较简单的有鞍点的损失函数，SGD和单纯带动量的优化器比较难以找到正确方向，而AdaGrad、RMSProp和AdaDelta可以，其中AdaDelta跑得最快。不过SGD通常可以收敛（尽管需要更长的时间，以及比较小心的初始化+衰减机制），因此大部分论文还是倾向于使用最基础的，不带动量的SGD，同时加一些启发式的衰减，通过一些策略让学习率逐渐变小。[Keskar2017]认为先使用Adam，然后切换到SGD可以达到更好的效果，而[Bahar2017]的实验则是倾向于先使用Adam，再使用学习率不断衰减的Adam</p>
+<h2 id="参考文献">参考文献</h2>
+<p>除已在正文中标明的来源外，本文参考了以下文章/书籍片段</p>
+<h3 id="综述">综述</h3>
+<ul>
+<li><a href="https://zhuanlan.zhihu.com/p/32230623" target="_blank" rel="noopener">知乎专栏：一个框架看懂优化算法</a></li>
+<li><a href="https://blog.slinuxer.com/2016/09/sgd-comparison" target="_blank" rel="noopener">Slinuxer: SGD算法比较</a></li>
+<li>[Ruder2016] Ruder, Sebastian. “An overview of gradient descent optimization algorithms.” <em>arXiv preprint arXiv:1609.04747</em>(2016).</li>
+<li>[Bahar2017] Bahar, Parnia, et al. “Empirical investigation of optimization algorithms in neural machine translation.” <em>The Prague Bulletin of Mathematical Linguistics</em> 108.1 (2017): 13-25.</li>
+<li>花书第八章，8.3、8.5节</li>
+<li>[Schaul2013] Schaul, Tom, Ioannis Antonoglou, and David Silver. “Unit tests for stochastic optimization.” <em>arXiv preprint arXiv:1312.6055</em> (2013).</li>
+<li>[Keskar2017] Keskar, Nitish Shirish, and Richard Socher. “Improving generalization performance by switching from adam to sgd.” <em>arXiv preprint arXiv:1712.07628</em> (2017).</li>
+</ul>
+<h3 id="具体算法">具体算法</h3>
+<h4 id="动量法-1">动量法</h4>
+<ul>
+<li><a href="http://www.willamette.edu/~gorr/classes/cs449/momrate.html" target="_blank" rel="noopener">Willamette大学讲义</a></li>
+</ul>
+<h4 id="nesterov动量法-1">Nesterov动量法</h4>
+<ul>
+<li><a href="http://proceedings.mlr.press/v28/sutskever13.pdf" target="_blank" rel="noopener">原始论文</a> : Sutskever, Ilya, et al. “On the importance of initialization and momentum in deep learning.” <em>International conference on machine learning</em> (2013): 1139-1147</li>
+<li><a href="https://web.stanford.edu/~optas/data/stanford_qual_exams.pdf" target="_blank" rel="noopener">斯坦福大学Panos Achlioptas的资格考试报告</a></li>
+</ul>
+<h4 id="adagrad算法">AdaGrad算法</h4>
+<ul>
+<li><a href="https://zh.gluon.ai/chapter_optimization/adagrad-scratch.html" target="_blank" rel="noopener">gluon文档中关于AdaGrad算法的介绍</a></li>
+</ul>
+<h4 id="adadelta算法">AdaDelta算法</h4>
+<ul>
+<li><a href="http://cpmarkchang.logdown.com/posts/467674-optimization-method-adadelta" target="_blank" rel="noopener">Mark Chang对AdaDelta算法的介绍</a></li>
+</ul>
+<h4 id="adam算法">Adam算法</h4>
+<ul>
+<li><a href="https://arxiv.org/pdf/1412.6980.pdf" target="_blank" rel="noopener">原始论文</a> : Kingma, Diederik P., and Jimmy Ba. “Adam: A method for stochastic optimization.” <em>arXiv preprint arXiv:1412.6980</em>(2014).</li>
+<li><a href="http://papers.nips.cc/paper/7003-the-marginal-value-of-adaptive-gradient-methods-in-machine-learning.pdf" target="_blank" rel="noopener">[Wilson2017]</a> Wilson, Ashia C., et al. “The marginal value of adaptive gradient methods in machine learning.” <em>Advances in Neural Information Processing Systems</em> (2017): 4148-4158</li>
+<li><a href="https://openreview.net/pdf?id=ryQu7f-RZ" target="_blank" rel="noopener">[Reddi2018]</a> Reddi, Sashank J., Satyen Kale, and Sanjiv Kumar. “On the convergence of adam and beyond.” (2018).</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2018/06/09/NMT-Tutorial-2b-Optimization-Methods/" title="NMT Tutorial 2扩展b. 优化方法">txshi-mt.com/2018/06/09/NMT-Tutorial-2b-Optimization-Methods/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/优化/" rel="tag"># 优化</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/04/26/NMT-Tutorial-2a-Loss-Functions/" rel="next" title="NMT Tutorial 2扩展a. 损失函数">
+                <i class="fa fa-chevron-left"></i> NMT Tutorial 2扩展a. 损失函数
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">85</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">79</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本优化方法梯度下降"><span class="nav-number">1.</span> <span class="nav-text">&#x57FA;&#x672C;&#x4F18;&#x5316;&#x65B9;&#x6CD5;&#xFF1A;&#x68AF;&#x5EA6;&#x4E0B;&#x964D;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于动量的梯度下降及其扩展"><span class="nav-number">2.</span> <span class="nav-text">&#x57FA;&#x4E8E;&#x52A8;&#x91CF;&#x7684;&#x68AF;&#x5EA6;&#x4E0B;&#x964D;&#x53CA;&#x5176;&#x6269;&#x5C55;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#动量法"><span class="nav-number">2.1.</span> <span class="nav-text">&#x52A8;&#x91CF;&#x6CD5;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nesterov动量法"><span class="nav-number">2.2.</span> <span class="nav-text">Nesterov&#x52A8;&#x91CF;&#x6CD5;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自适应学习率算法"><span class="nav-number">3.</span> <span class="nav-text">&#x81EA;&#x9002;&#x5E94;&#x5B66;&#x4E60;&#x7387;&#x7B97;&#x6CD5;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#adagrad"><span class="nav-number">3.1.</span> <span class="nav-text">AdaGrad</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#adadelta"><span class="nav-number">3.2.</span> <span class="nav-text">AdaDelta</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#rmsprop"><span class="nav-number">3.3.</span> <span class="nav-text">RMSProp</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#adam"><span class="nav-number">3.4.</span> <span class="nav-text">Adam</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结语"><span class="nav-number">4.</span> <span class="nav-text">&#x7ED3;&#x8BED;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文献"><span class="nav-number">5.</span> <span class="nav-text">&#x53C2;&#x8003;&#x6587;&#x732E;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#综述"><span class="nav-number">5.1.</span> <span class="nav-text">&#x7EFC;&#x8FF0;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#具体算法"><span class="nav-number">5.2.</span> <span class="nav-text">&#x5177;&#x4F53;&#x7B97;&#x6CD5;</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#动量法-1"><span class="nav-number">5.2.1.</span> <span class="nav-text">&#x52A8;&#x91CF;&#x6CD5;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#nesterov动量法-1"><span class="nav-number">5.2.2.</span> <span class="nav-text">Nesterov&#x52A8;&#x91CF;&#x6CD5;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#adagrad算法"><span class="nav-number">5.2.3.</span> <span class="nav-text">AdaGrad&#x7B97;&#x6CD5;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#adadelta算法"><span class="nav-number">5.2.4.</span> <span class="nav-text">AdaDelta&#x7B97;&#x6CD5;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#adam算法"><span class="nav-number">5.2.5.</span> <span class="nav-text">Adam&#x7B97;&#x6CD5;</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
