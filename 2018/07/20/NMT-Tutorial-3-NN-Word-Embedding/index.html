@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="词向量,神经网络,语言模型,深度学习," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="本文主要参考了如下教程  Koehn2017 : 第2、3节，第4节前半部分 Neubig2017 : 第5章 StanfordCS224n : 第2、3、4讲 Goldberg NNMNLP : 第3、4、5、8、9、10、11章  其中主要会以[Neubig2017]和[StanfordCS224n]的内容为主 神经网络 关于神经网络的一些基本细节，例如基本概念、反向传播的思想等等，在博客的其">
+<meta name="keywords" content="词向量,神经网络,语言模型,深度学习">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NMT Tutorial 3. 神经网络语言模型与词向量">
+<meta property="og:url" content="txshi-mt.com/2018/07/20/NMT-Tutorial-3-NN-Word-Embedding/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="本文主要参考了如下教程  Koehn2017 : 第2、3节，第4节前半部分 Neubig2017 : 第5章 StanfordCS224n : 第2、3、4讲 Goldberg NNMNLP : 第3、4、5、8、9、10、11章  其中主要会以[Neubig2017]和[StanfordCS224n]的内容为主 神经网络 关于神经网络的一些基本细节，例如基本概念、反向传播的思想等等，在博客的其">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutorial_3_NN_example.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutorial_3_CBOW_skip_gram.png">
+<meta property="og:updated_time" content="2018-09-06T14:35:37.410Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NMT Tutorial 3. 神经网络语言模型与词向量">
+<meta name="twitter:description" content="本文主要参考了如下教程  Koehn2017 : 第2、3节，第4节前半部分 Neubig2017 : 第5章 StanfordCS224n : 第2、3、4讲 Goldberg NNMNLP : 第3、4、5、8、9、10、11章  其中主要会以[Neubig2017]和[StanfordCS224n]的内容为主 神经网络 关于神经网络的一些基本细节，例如基本概念、反向传播的思想等等，在博客的其">
+<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutorial_3_NN_example.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2018/07/20/NMT-Tutorial-3-NN-Word-Embedding/"/>
+
+
+
+
+
+  <title>NMT Tutorial 3. 神经网络语言模型与词向量 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2018/07/20/NMT-Tutorial-3-NN-Word-Embedding/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NMT Tutorial 3. 神经网络语言模型与词向量</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-20T19:15:23+08:00">
+                Jul 20 2018
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/NLP/" itemprop="url" rel="index">
+                    <span itemprop="name">NLP</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文主要参考了如下教程</p>
+<ul>
+<li><a href="https://arxiv.org/abs/1709.07809" target="_blank" rel="noopener">Koehn2017</a> : 第2、3节，第4节前半部分</li>
+<li><a href="https://arxiv.org/abs/1703.01619" target="_blank" rel="noopener">Neubig2017</a> : 第5章</li>
+<li><a href="http://web.stanford.edu/class/cs224n/" target="_blank" rel="noopener">StanfordCS224n</a> : 第2、3、4讲</li>
+<li><a href="https://book.douban.com/subject/27032271/" target="_blank" rel="noopener">Goldberg NNMNLP</a> : 第3、4、5、8、9、10、11章</li>
+</ul>
+<p>其中主要会以[Neubig2017]和[StanfordCS224n]的内容为主</p>
+<h2 id="神经网络">神经网络</h2>
+<p>关于神经网络的一些基本细节，例如基本概念、反向传播的思想等等，在博客的其它文章里（如<a href="http://txshi-mt.com/2017/10/19/NTUML-28-Neural-Network/">林轩田老师的机器学习技法</a>、<a href="http://txshi-mt.com/2017/11/21/UTNN-3-the-Backpropagation-Learning-Procedure/">Hinton的Coursera课程</a>）有过介绍，这里就不赘述了。这里想就着<a href="http://web.stanford.edu/class/cs224n/lectures/lecture4.pdf" target="_blank" rel="noopener">斯坦福大学CS224n第四讲</a>的内容从矩阵的层面上给出反向传播梯度的计算方法</p>
+<h3 id="一个示例结构">一个示例结构</h3>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutorial_3_NN_example.png" alt="神经网络结构示意图"><figcaption>神经网络结构示意图</figcaption>
+</figure>
+<p>上图给出了一个示例神经网络，各层参数与输入、输出及其它记号如下</p>
+<ul>
+<li>输入向量<span class="math inline">\(\boldsymbol{x} \in \mathbb{R}^{3 \times 1}\)</span></li>
+<li>输入层到隐藏层的权重<span class="math inline">\(\boldsymbol{W} \in \mathbb{R}^{2 \times 3}\)</span>，同时还包括一个偏置向量<span class="math inline">\(\boldsymbol{b} \in \mathbb{R}^{2 \times 1}\)</span></li>
+<li>隐藏层向量在激活前是<span class="math inline">\(\boldsymbol{z}\in \mathbb{R}^{2 \times 1}\)</span>，激活函数是<span class="math inline">\(f\)</span>，向量激活后为<span class="math inline">\(\boldsymbol{a} \in \mathbb{R}^{2 \times 1}\)</span></li>
+<li>隐藏层到输出层的权重<span class="math inline">\(\boldsymbol{U} \in \mathbb{R}^{2 \times 1}\)</span> （按照约定的记法，向量用小写粗体，矩阵用大写粗体，这里应该写为<span class="math inline">\(\boldsymbol{u}\)</span>。不过为了与原课件对应，这里没有这样做）</li>
+<li>神经网络的输出结果为一个标量 <span class="math inline">\(s\)</span></li>
+</ul>
+<p>按照如上约定， <span class="math inline">\(s\)</span> 的计算过程向量化表示如下 <span class="math display">\[
+\begin{align*}
+s &amp;= \boldsymbol{U}^\mathsf{T}\boldsymbol{a} \\
+&amp;= \boldsymbol{U}^\mathsf{T}f(\boldsymbol{z}) \\
+&amp;= \boldsymbol{U}^\mathsf{T}f(\boldsymbol{Wx}+\boldsymbol{b})
+\end{align*}
+\]</span> 或者分变量写出，成为如下形式 <span class="math display">\[
+\begin{align*}
+s &amp;= \boldsymbol{U}^\mathsf{T}\boldsymbol{a} \\
+\boldsymbol{a} &amp;= f(\boldsymbol{z}) \\
+\boldsymbol{z} &amp;= \boldsymbol{Wx} + \boldsymbol{b}
+\end{align*}
+\]</span></p>
+<p>按照梯度下降的原理，训练模型时需要得到损失函数<span class="math inline">\(J\)</span>对每个参数的梯度。例如，对于参数<span class="math inline">\(\boldsymbol{W}\)</span>，需要计算<span class="math inline">\(\frac{\partial J}{\partial \boldsymbol{W}}\)</span>。根据反向传播算法和导数的链式法则，有 <span class="math display">\[
+\frac{\partial J}{\partial \boldsymbol{W}} = \frac{\partial J}{\partial s}\cdot \frac{\partial s}{\partial \boldsymbol{W}}
+\]</span> 其中，第一项<span class="math inline">\(\frac{\partial J}{\partial s}\)</span>如何计算应该视具体的损失函数计算方法而定，与参数本身无关。因此对任意参数，只需要关注网络输出<span class="math inline">\(s\)</span>对该参数的偏导即可</p>
+<h3 id="从矩阵元素看如何计算梯度">从矩阵元素看如何计算梯度</h3>
+<p>（这一部分讲得比较详细但是也很繁琐，不感兴趣的可以跳过）</p>
+<p>要计算<span class="math inline">\(\frac{\partial s}{\partial \boldsymbol{W}}\)</span>，可以首先考虑如何计算<span class="math inline">\(\frac{\partial s}{\partial W_{ij}}\)</span> 。由<span class="math inline">\(s\)</span> 的计算方法，有 <span class="math display">\[
+\frac{\partial s}{\partial W_{ij}} = \frac{\partial}{\partial W_{ij}}\boldsymbol{U}^\mathsf{T}\boldsymbol{a}
+\]</span> 由前图，每个<span class="math inline">\(\boldsymbol{W}_{i\cdot}\)</span>只与<span class="math inline">\(a_i\)</span> 相关，<span class="math inline">\(a_i\)</span>又只与<span class="math inline">\(U_ia_i\)</span>相关，因此 <span class="math display">\[
+\frac{\partial}{\partial W_{ij}}\boldsymbol{U}^\mathsf{T}\boldsymbol{a} = \frac{\partial }{\partial W_{ij}}U_ia_i
+\]</span></p>
+<p>由于<span class="math inline">\(U_i\)</span>与<span class="math inline">\(W_{ij}\)</span>无关，因此可以提出来。代入其它变量定义，并将<span class="math inline">\(f\)</span>的导数记作<span class="math inline">\(f&#39;\)</span>（因为可选的激活函数有很多种），可以得到 <span class="math display">\[
+\begin{align*}
+\frac{\partial}{\partial W_{ij}}U_ia_i &amp;= U_i \frac{\partial}{\partial W_{ij}}a_i \\
+&amp;= U_i \frac{\partial a_i}{\partial z_i} \frac{\partial z_i}{\partial W_{ij}} \\
+&amp;= U_i \frac{\partial f(z_i)}{\partial z_i}\frac{\partial z_i}{\partial W_{ij}} \\
+&amp;= U_i f&#39;(z_i)\frac{\partial z_i}{\partial W_{ij}} \\
+&amp;= U_i f&#39;(z_i)\frac{\partial (\boldsymbol{W}_{i\cdot}\boldsymbol{x} + b_i)}{\partial W_{ij}} \\
+&amp;= U_i f&#39;(z_i) \frac{\partial }{\partial W_{ij}}\sum_kW_{ik}x_k \\
+&amp;= U_i f&#39;(z_i) x_j
+\end{align*}
+\]</span> 如果将<span class="math inline">\(U_if&#39;(z_i)\)</span>看做一个整体，记作<span class="math inline">\(\delta_i\)</span>，那么有 <span class="math display">\[
+\frac{\partial s}{\partial W_{ij}} = \delta_ix_j
+\]</span> 由于标量<span class="math inline">\(y\)</span>对矩阵<span class="math inline">\(\boldsymbol{X} \in \mathbb{R}^{m \times n}\)</span>的求导法则为 <span class="math display">\[
+\frac{\partial y}{\partial \boldsymbol{X}} = \left[\begin{matrix}\frac{\partial y}{\partial X_{11}} &amp; \cdots &amp; \frac{\partial y}{\partial X_{1n}} \\ \vdots &amp; \ddots &amp; \vdots \\ \frac{\partial y}{\partial X_{m1}} &amp; \cdots &amp;\frac{\partial y}{\partial X_{mn}}\end{matrix}\right]
+\]</span> 因此 <span class="math display">\[
+\begin{align*}
+\frac{\partial s}{\partial \boldsymbol{W}} &amp;= \left[\begin{matrix}\frac{\partial s}{\partial W_{11}} &amp; \frac{\partial s}{\partial W_{12}} &amp; \frac{\partial s}{\partial W_{13}} \\ \frac{\partial s}{\partial W_{21}} &amp; \frac{\partial s}{\partial W_{22}} &amp; \frac{\partial s}{\partial W_{23}}\end{matrix}\right] \\
+&amp;= \left[\begin{matrix} \delta_1x_1 &amp; \delta_1x_2 &amp; \delta_1x_3 \\ \delta_2x_1 &amp; \delta_2x_2 &amp; \delta_2x_3\end{matrix}\right] \\
+&amp;= \boldsymbol{\delta}\boldsymbol{x}^\mathsf{T}
+\end{align*}
+\]</span> 其中<span class="math inline">\(\boldsymbol{\delta} \in \mathbb{R}^{2\times 1}\)</span>可以看作是来自激活<span class="math inline">\(\boldsymbol{a}\)</span>的误差信号</p>
+<p>将上面的推导过程换做对<span class="math inline">\(b_i\)</span>求导，不难得出 <span class="math display">\[
+\frac{\partial s}{\partial \boldsymbol{b}} = \boldsymbol{\delta}
+\]</span> 在NLP应用中，<span class="math inline">\(\boldsymbol{x}\)</span>通常是一个词向量，因此也需要被训练（具体介绍在本文后面的小节中）。在计算<span class="math inline">\(\frac{\partial s}{\partial x_1}\)</span>的过程中，要注意的是<span class="math inline">\(x_1\)</span>与两个激活值都相连，因此要做一个求和。为了更直白地说明为什么需要做求和，可以想象一个最简单的神经网络，该网络的输入层只有一个节点<span class="math inline">\(x_1\)</span>，也没有偏置项；隐藏层和输出层与上图一样。那么，为了求<span class="math inline">\(s\)</span>，就有<span class="math inline">\(s = U_1f(z_1) + U_2f(z_2) = U_1f(W_{11}x_1) + U_2f(W_{21}x_1)\)</span>，两个求和项里都出现了变量<span class="math inline">\(x_1\)</span>，因此求偏导时需要有一个加和的过程</p>
+<p>具体计算与上面求<span class="math inline">\(\frac{\partial s}{\partial W_{ij}}\)</span> 类似，这里略过。最后可以得到 <span class="math display">\[
+\begin{align*}
+\frac{\partial s}{\partial x_j} &amp;= \sum_{i=1}^2U_if&#39;(z_i)W_{ij} = \sum_{i=1}^2\delta_iW_{ij} \\
+&amp;= \boldsymbol{W}_{\cdot j}^\mathsf{T}\boldsymbol{\delta}
+\end{align*}
+\]</span> 那么按照前面标量对向量/矩阵的求导法则有 <span class="math display">\[
+\frac{\partial s}{\partial \boldsymbol{x}} = \boldsymbol{W}^\mathsf{T}\boldsymbol{\delta}
+\]</span></p>
+<h3 id="从矩阵微分看如何计算梯度">从矩阵微分看如何计算梯度</h3>
+<p>如果对矩阵/向量的微分法则记得比较清楚，就可以不用上述比较繁琐的推导过程。具体规则表可以见<a href="https://en.wikipedia.org/wiki/Matrix_calculus" target="_blank" rel="noopener">Wiki词条：Matrix calculus</a>，或者参考Towser大神的<a href="https://zhuanlan.zhihu.com/p/25063314" target="_blank" rel="noopener">《机器学习中的矩阵/向量求导》</a> 。求导过程中，时刻检查各变量的维度，并记住标量对矩阵/向量求导，最后得到同维度的矩阵/向量就可以。由 <span class="math display">\[
+\begin{align*}
+s &amp;= \boldsymbol{U}^\mathsf{T}\boldsymbol{a} \\
+\boldsymbol{a} &amp;= f(\boldsymbol{z}) \\
+\boldsymbol{z} &amp;= \boldsymbol{Wx} + \boldsymbol{b}
+\end{align*}
+\]</span> 可知 <span class="math display">\[
+\begin{align*}
+\frac{\partial s}{\partial \boldsymbol{a}} &amp;= \boldsymbol{U} = \boldsymbol{\delta}_1\\
+\frac{\partial s}{\partial \boldsymbol{z}} &amp;= \frac{\partial s}{\partial \boldsymbol{a}}\cdot \frac{\partial \boldsymbol{a}}{\partial \boldsymbol{z}} = \boldsymbol{\delta_1} \odot f&#39;(\boldsymbol{z}) = \boldsymbol{\delta} \\
+\frac{\partial s}{\partial \boldsymbol{W}} &amp;= \frac{\partial s}{\partial \boldsymbol{z}}\cdot \frac{\partial \boldsymbol{z}}{\partial \boldsymbol{W}} = \boldsymbol{\delta}\boldsymbol{x}^{\mathsf{T}} \\
+\frac{\partial s}{\partial \boldsymbol{b}} &amp;= \frac{\partial s}{\partial \boldsymbol{z}}\cdot \frac{\partial \boldsymbol{z}}{\partial \boldsymbol{b}} = \boldsymbol{\delta} \\
+\frac{\partial s}{\partial \boldsymbol{x}} &amp;= \frac{\partial s}{\partial \boldsymbol{z}}\cdot \frac{\partial \boldsymbol{z}}{\partial \boldsymbol{x}} = \boldsymbol{W}^\mathsf{T}\boldsymbol{\delta}
+\end{align*}
+\]</span></p>
+<h3 id="激活函数">激活函数</h3>
+<p>本小节对激活函数的比较部分来自于<a href="http://cs231n.github.io/neural-networks-1/" target="_blank" rel="noopener">CS231n讲义</a></p>
+<p>神经网络的精髓在于激活函数的使用。激活函数通常是非线性的，否则堆叠多个线性隐藏层的网络效果等同于一个线性模型。假设对于某个隐藏层节点，该节点与前面一层所有节点都连接（称为全连接，例如前面示例图中的<span class="math inline">\(a_1\)</span>节点。如果这一层中所有节点都是全连接的，那么这一层可以称为<strong>全连接层</strong>），那么该节点的输入权重可以看作是对前一层所有节点的组合。而非线性激活函数的效果可以非形式化地理解为，给定前一层节点的输入和权重，该节点被“打开”的程度。因此，使用非线性激活函数以后，神经网络每一个隐藏层的节点都可以看做是一个组合特征的提取器：对某些输入，节点打开，该组合特征有效；对某些输入，节点关闭，该组合特征无效；对某些输入，节点半开，该组合特征起一定作用</p>
+<p>常见的激活函数包括以下几种：</p>
+<ul>
+<li><p>sigmoid激活函数，形式为<span class="math inline">\(\sigma(x) = (1+e^{-x})^{-1}\)</span>，值域为<span class="math inline">\((0, 1)\)</span>。这个激活函数非常经典，但是存在一些比较严重的问题：</p>
+<ul>
+<li>容易饱和（saturate），进而杀死梯度。当sigmoid函数值接近0或1时，由于其导数为<span class="math inline">\(\sigma&#39;(x) = \sigma(x)(1-\sigma(x))\)</span>，所以梯度接近0。而反向传播实际上会对多个梯度做连乘（参见上面的推导过程），因此当激活函数的梯度为0时，很容易将梯度“杀死”，使得底层神经元接收不到更新信号。此外，如果初始化不当使得权重的初始值比较大，那么使用sigmoid函数会非常容易出现饱和的现象，神经网络几轮之后就学不到东西了</li>
+<li>输出不以零为中心。使用sigmoid激活函数会让网络靠近输出层部分的神经元接收到的数据不以0为中心。如果神经元的输入总是大于0的，那么权重的梯度在反向传播中要么全都是正的，要么全都是负的，因此会造成学习过程中权重更新量的抖动。当然，如果用的是小批量梯度下降更新权重，那么一个批次内这样的更新量会正负抵消一些，因此会有些为正有些为负，所以这个问题相比而言不是那么严重了</li>
+</ul></li>
+<li><p>双曲正切函数，形式为<span class="math inline">\(\tanh(x) = (e^x-e^{-x})/(e^x+e^{-x})\)</span>，值域为<span class="math inline">\((-1, 1)\)</span>。这种激活函数也存在饱和问题，但是输出会以0为中心。因此在应用时，<strong>总是应该优先考虑tanh而不是sigmoid</strong>。此外，tanh也可以看作是经过缩放的sigmoid函数，因为<span class="math inline">\(\tanh(x) = 2\sigma(2x) - 1\)</span></p></li>
+<li><p>整流线性单元，形式为<span class="math inline">\({\rm ReLU}(x) = \max(0, x)\)</span>。这种激活函数在近几年受到了广泛的重视和应用，效果很好</p>
+<ul>
+<li>相比于sigmoid/tanh，ReLU可以加速SGD的收敛。怀疑是因为其线性、非饱和的性质</li>
+<li>ReLU的计算特别简单</li>
+<li>但是，当<span class="math inline">\(x&lt;0\)</span>时，ReLU的前向传播结果和梯度都为0，因此这个神经元就永远不会被激活了。如果适当地设置学习率，这种情况发生的频率可能会低一些</li>
+</ul></li>
+<li><p>Leaky ReLU，形式为 <span class="math display">\[
+{\rm LeakyReLU}(x) = \begin{cases}\alpha x &amp; {\rm if\ }x &lt; 0 \\ x &amp; {\rm elsewhere}\end{cases}
+\]</span> 其中<span class="math inline">\(\alpha\)</span>通常是一个特别小的值，例如0.01。Leaky ReLU提出的初衷是为了解决ReLU单元容易死掉的问题，一些人的工作中也表明能观察到这样的效果，但是并没有系统研究表明这种做法总是奏效的。何恺明等人提出的<a href="https://arxiv.org/abs/1502.01852" target="_blank" rel="noopener">PReLU</a>是让每个神经元都有不同的<span class="math inline">\(\alpha\)</span>，不过也没有证据说明其它任务能有同样好的效果</p></li>
+<li><p>maxout，形式为<span class="math inline">\(\max(\boldsymbol{W}_1^\mathsf{T}\boldsymbol{x}, \boldsymbol{W}_2^\mathsf{T}\boldsymbol{x}, \ldots)\)</span>。原有的两层之间只有一组参数，maxout则是训练<span class="math inline">\(k\)</span>组参数，这样可以得到<span class="math inline">\(k\)</span>组向量。然后，在每个维度上，选择最大的那一个。这种做法取了ReLU的精华（方便计算，没有饱和问题），弃了ReLU的糟粕（不会有神经元死亡），不过要学习的参数成倍增加</p></li>
+</ul>
+<p>原始讲义推荐使用ReLU，不过要小心设置学习率。如果神经元死亡是个问题，转用Leaky ReLU或者maxout。永远不要尝试sigmoid，可以试试tanh，但是tanh一般要比ReLU及其变种差。不过花书指出RNN、许多概率模型和一些自编码器会有一些额外要求因此不能使用分段线性激活函数（例如ReLU），因此可以尝试sigmoid</p>
+<p>更多的激活函数比较可以参见<a href="https://en.wikipedia.org/wiki/Activation_function" target="_blank" rel="noopener">相关维基词条</a></p>
+<h3 id="自动微分">自动微分</h3>
+<p>由于反向传播的过程中涉及大量梯度的计算，计算起来会比较复杂，容易出错。而且有一些值会重复计算，如果每次都重新算一遍，效率也是问题。一般来讲，编程框架会把计算过程组织成一个计算图，然后使用<strong>自动微分</strong>的方法完成两个步骤：第一个步骤是通过拓扑顺序遍历节点做一个前向计算，得出实际结果；第二个步骤是以“反拓扑”的顺序做一个后向计算，得到梯度</p>
+<p>关于自动微分的具体细节将在之后的补充文章中介绍</p>
+<h3 id="神经网络语言模型">神经网络语言模型</h3>
+<p>假设词汇表大小为<span class="math inline">\(|V|\)</span>，要训练一个三元Loglinear语言模型，那么通常会训练两个<span class="math inline">\(|V| \times |V|\)</span>的权重矩阵<span class="math inline">\(\boldsymbol{W}^{(1)}\)</span>和<span class="math inline">\(\boldsymbol{W}^{(2)}\)</span>（也可以看作是一个<span class="math inline">\(|V| \times 2|V|\)</span>的权重矩阵），然后根据上文两个单词的ID从矩阵中选出对应的列，将两者与训练出来的截距<span class="math inline">\(\boldsymbol{b}\)</span>求和，最后计算一个softmax得到下一个词的概率分布，即 <span class="math display">\[
+\begin{align*}
+\boldsymbol{s} &amp;= \boldsymbol{W}^{(1)}_{\cdot,{\rm ID}_1} + \boldsymbol{W}^{(2)}_{\cdot ,{\rm ID}_2} + \boldsymbol{b} \\
+\boldsymbol{p} &amp;= {\rm softmax}(\boldsymbol{s})
+\end{align*}
+\]</span></p>
+<p>神经网络语言模型也要训练权重和偏置，不过通常来讲，需要至少一个隐藏层和一个非线性变换（激活函数），也就是要训练两套权重，以及一个词嵌入矩阵。最简单的含有一个隐藏层的网络结构如下： <span class="math display">\[
+\begin{align*}
+\boldsymbol{m} &amp;= {\rm concat}(\boldsymbol{M}_{\cdot, {\rm ID}_1}, \boldsymbol{M}_{\cdot, {\rm ID}_2}) \\
+\boldsymbol{h} &amp;= \tanh (\boldsymbol{W}_{mh}\boldsymbol{m} + \boldsymbol{b}_h) \\
+\boldsymbol{s} &amp;= \boldsymbol{W}_{hs}\boldsymbol{h} + \boldsymbol{b}_s \\
+\boldsymbol{p} &amp;= {\rm softmax}(\boldsymbol{s})
+\end{align*}
+\]</span> 其中<span class="math inline">\(\boldsymbol{M}\)</span>是词嵌入矩阵，形状为<span class="math inline">\(L_m \times |V|\)</span>，<span class="math inline">\(L_m\)</span> 是一个超参数。<span class="math inline">\(\rm concat\)</span>是向量的拼接操作，适用于位置信息重要的情况（如果位置信息不重要，也可以考虑引入加权求和）。尽管直觉上<span class="math inline">\(L_m\)</span>应该越大越好，但是[Britz2017]通过实验指出在机器翻译领域128维的词向量已经足以给出不错的效果。这样，矩阵的每一列都是词表<span class="math inline">\(V\)</span>中一个单词的向量表示，或者说是嵌入，其中词向量的每个维度可以看作是数值表示了单词某个特征（不过并不好说具体是什么特征，可以说，每个特征都是魔幻的）</p>
+<p>回忆前面介绍的独热编码方式，可以看出那是一种<strong>稀疏表示</strong>：每个词的编码长度都是 <span class="math inline">\(|V|\)</span>，但是只有一个维度是1其余维度都是0。在这种方式下，所有单词都是独立的——对于两个向量<span class="math inline">\(\boldsymbol{u}, \boldsymbol{v}\)</span>，通常使用余弦距离来衡量两个向量的相似度： <span class="math display">\[
+{\rm sim}(\boldsymbol{u}, \boldsymbol{v}) = \cos \theta = \frac{\boldsymbol{u} \cdot \boldsymbol{v}}{\|\boldsymbol{u}\|\cdot\|\boldsymbol{v}\|}
+\]</span> 显然，如果使用独热编码表示单词，那么任意两个单词的内积都是0，所以此时词向量构成的空间里所有词向量都是两两正交的。但是使用神经网络语言模型训练出的词向量是一种<strong>稠密表示</strong>，向量的每个维度都是一个实数，并代表了一定的意义（尽管是什么意义很难解释）。而且，词向量训练的结果会使得意思相近的词对应的向量的距离也比较小，因此使得模型对上下文的泛化能力更强。例如，假设模型在预测阶段见到的上文是horses consume，这个词组在训练阶段没有见过，但是训练集里有大量类似于cow eats grass这样的词组，那么传统的N元语法就会束手无策。然而对于神经网络语言模型来说，一方面cow-cows, cows-horses, eats-eat, eat-consume这些单词对的词向量存在着某种相似性，另一方面隐藏单元实际上起到了特征提取器的效果，隐含做了特征组合（线性模型无法学到这些知识，除非手动表示特征之间的交互并建立成新特征送给模型），因此模型就会推断出来后面应该是grass。此外，模型甚至可以学到非相邻词之间的关系（例如中心词可能是受到倒数第二个和倒数第五个单词的影响，与倒数第一、三、四个单词无关）。因此，神经网络语言模型兼具了更好的鲁棒性和灵活性</p>
+<p>不过，泛化是一把双刃剑，在某些情况下，过度的泛化能力会造成意想不到的不好的后果。例如，假设训练集里有很多brown horse, white horse, black horse的搭配，而评测时要给blue horse一个概率。传统的N元语法倾向打个低分，但是神经网络语言模型可能会因为blue与其他颜色词的相似性给出一个不太低的分数，从而偏离人们的预期。因此，机器翻译中如果同时使用统计语言模型（例如Kneser-Ney平滑的模型）和神经模型，可以提高翻译质量：神经模型提供泛化能力，处理训练时没见到的情况，而传统模型对过于泛化的情况进行惩罚</p>
+<p>尽管在多数情况下，使用稠密表示的单词向量比稀疏表示的独热编码效果要好，但是两者之间也有一个潜在的联系：大部分情况下，神经网络接受的输入还是一个独热编码，但是会使用该独热编码从嵌入矩阵中获得对应的词向量（这个过程也称为“查找过程”，是TensorFlow里<code>tf.nn.embedding_lookup</code>这个函数所完成的功能）。此外，不仅是单词可以做嵌入表示，其它在传统方法里使用独热编码的元素，例如POSTAG等，也都可以使用类似的思想做成稠密向量</p>
+<h2 id="经典词向量算法">经典词向量算法</h2>
+<p>尽管神经网络语言模型在2003年就被[Bengio2003]首先提出，词的稠密向量表示方法也在2010年被[Turian2010]讨论，但是词向量真正受到广泛关注还是在2013年Mikolov的标志性论文提出以后。本篇文章接下来将介绍Mikolov 2013年提出的经典的词向量算法word2vec，以及CS224n里提到的GloVe。近几年涌现的新的算法将在后续补充文章中介绍</p>
+<h3 id="word2vec">Word2Vec</h3>
+<p>在最初始的Word2Vec论文[Mikolov2013a]中，神经网络语言模型和词向量两者是分开训练的。其中，词向量的训练并没有用到隐藏层，所以实际上就是根据中心词和上下文单词训练一个loglinear模型。这里背后蕴含的思想是，词的意思可以由语境确定，如果你能预测出这个单词在什么语境下出现，你就理解了这个单词的意思</p>
+<p>文章提出了两种不同的模型结构</p>
+<ul>
+<li>连续词袋模型（Continuous Bag-of-Words Model, CBOW）的输入是某个单词上下文共<span class="math inline">\(N\)</span>个词（文章中给出的是前四个词和后四个词）。模型从词嵌入矩阵中找到这8个单词id对应的向量，做一个简单求和，然后用和向量去预测中间词，因此模型的参数数量为<span class="math inline">\(Q = N \times D + D \times \log_2(V)\)</span>，其中<span class="math inline">\(D\)</span>为词向量长度，<span class="math inline">\(V\)</span>为词表大小。取对数的原因是因为投影层作者没有使用普通的softmax，而是采用了分层softmax的方法。这个方法在后面介绍 可以注意到，上下文单词的顺序对模型没有影响，因为模型使用了一个求和过程，该过程与顺序无关。这也是模型里”词袋“一词的意义</li>
+<li>连续Skip-Gram模型（Continuous Skip-gram Model）的输入是某个单词本身。<strong>不同于CBOW使用上下文单词预测中心词的做法，Skip-Gram的核心思想是利用中心词预测一定范围内的上下文单词</strong>。由于距离越远的词与中心词关系也越远，因此通常在采样时减少取到这些单词的概率。该模型的参数数量为<span class="math inline">\(Q = 2R \times (D+D\times \log_2(V))\)</span>。假设<span class="math inline">\(C\)</span>是上下文单词数量，则<span class="math inline">\(R = {\rm randrange}(1, C + 1)\)</span>。文中给出的<span class="math inline">\(C=10\)</span></li>
+</ul>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutorial_3_CBOW_skip_gram.png" alt="CBOW和Skip-Gram算法示意图(来自[Mikolov2013a])"><figcaption>CBOW和Skip-Gram算法示意图(来自[Mikolov2013a])</figcaption>
+</figure>
+<p>上图给出了CBOW和skip-gram的示意图</p>
+<p>在提出CBOW和skip-gram两种词向量训练方法以后，Mikolov等人又在[Mikolov2013b]中对skip-gram做了一些扩展。文章首先更加形式化定义了skip-gram模型训练时用到的目标函数：给定一串训练时用到的单词序列<span class="math inline">\(w_1, w_2, \ldots, w_T\)</span>，skip-gram模型是要最大化概率对数值的平均值，即 <span class="math display">\[
+\frac{1}{T}\sum_{t=1}^T\sum_{-c \le j \le c, j\not=0} \log p(w_{t+j}|w_t)
+\]</span> 其中<span class="math inline">\(c\)</span>是训练时上下文单词的个数（可以是中心词<span class="math inline">\(w_t\)</span>的一个函数）。<span class="math inline">\(c\)</span>越大，模型的准确率越高，但是训练时间越长。原始的skip-gram模型里将<span class="math inline">\(p(w_{t+j}|w_t)\)</span>定义为一个softmax函数 <span class="math display">\[
+p(w_O|w_I) = \frac{\exp\left(\boldsymbol{v}_{w_O}&#39;^\mathsf{T}\boldsymbol{v}_{w_I}\right)}{\sum_{w=1}^W\exp\left(\boldsymbol{v}_{w}&#39;^\mathsf{T}\boldsymbol{v}_{w_I}\right)}
+\]</span> 其中<span class="math inline">\(\boldsymbol{v}_w\)</span>和<span class="math inline">\(\boldsymbol{v}_w&#39;\)</span>是<span class="math inline">\(w\)</span>的”输入向量表示“和”输出向量表示“，<span class="math inline">\(W\)</span>是词表大小。通常情况下因为<span class="math inline">\(W\)</span>很大（<span class="math inline">\(10^5\)</span>到<span class="math inline">\(10^7\)</span>项）且梯度的计算量正比于<span class="math inline">\(W\)</span>，因此不会直接这么做，会引入一些优化</p>
+<h4 id="分层softmax">分层Softmax</h4>
+<p>采用分层softmax（hierarchical softmax）可以把算法的复杂度从<span class="math inline">\(O(W)\)</span>降低到<span class="math inline">\(O(\log W)\)</span>，方法是在输出层构建一棵二叉树，把每个单词当做是叶子节点，并在构建树时隐含地表示子节点之间的相对概率关系：每个单词<span class="math inline">\(w\)</span>都存在唯一一条可以到达树根的路径，那么令<span class="math inline">\(n(w, j)\)</span>是从根到单词<span class="math inline">\(w\)</span>路径上的第<span class="math inline">\(j\)</span>个节点，<span class="math inline">\(L(w)\)</span>是路径的长度（因此<span class="math inline">\(n(w, 1) = {\rm root}\)</span>，<span class="math inline">\(n(w, L(w)) = w\)</span>）。对所有内部结点<span class="math inline">\(n\)</span>，令<span class="math inline">\({\rm ch}(n)\)</span>为其某个孩子，并令<span class="math inline">\([\![x]\!]\)</span>在<span class="math inline">\(x\)</span>为真时为1否则为-1，则使用分层softmax方法，<span class="math inline">\(p(w_O|w_I)\)</span>定义为 <span class="math display">\[
+p(w|w_I) = \prod_{j=1}^{L(w)-1}\sigma\left([\![n(w, j+1) = {\rm ch}(n(w, j))]\!] \cdot \boldsymbol{v}_{n(w,j)}&#39;^\mathsf{T}\boldsymbol{v}_{w_I}\right)
+\]</span> 其中<span class="math inline">\(\sigma\)</span>是sigmoid函数。使用分层softmax的方法可以使得<span class="math inline">\(\log p(w_O|w_I)\)</span>和<span class="math inline">\(\nabla \log p(w_O|w_I)\)</span>的计算代价都正比于<span class="math inline">\(L(w_O)\)</span>，平均情况下不会大于<span class="math inline">\(\log W\)</span>。而且对一般的softmax方法，每个单词会对应两个不同的嵌入表示<span class="math inline">\(\boldsymbol{v}_w\)</span>和<span class="math inline">\(\boldsymbol{v}_w&#39;\)</span>，而分层softmax只有一个<span class="math inline">\(\boldsymbol{v}_w\)</span>，另外对二叉树的每个内部结点<span class="math inline">\(n\)</span>会有一个嵌入表示<span class="math inline">\(\boldsymbol{v}_n&#39;\)</span>。文章使用的二叉树为Huffman树</p>
+<h4 id="负采样">负采样</h4>
+<p>Gutmann和Hyvärinen曾经在[Gutmann2012]中提出过一种“噪声对比估计”（Noise Contrastive Estimation, NCE）的方法，思想是好的模型应该能够通过logistic回归这些手段将数据从噪声中分辨出来。Skip-gram采用了这种方法的简化形式，称为负采样（Negative sampling, NEG），并将其作为分层softmax的一种替代方案。采用负采样的算法将skip-gram目标函数中所有<span class="math inline">\(\log P(w_O|w_I)\)</span>替换成如下形式 <span class="math display">\[
+\log \sigma(\boldsymbol{v}_{w_O}&#39;^\mathsf{T}\boldsymbol{v}_{w_I}) + \sum_{i=1}^k \mathbb{E}_{w_i \sim P_n(w)}\left[\log \sigma(-\boldsymbol{v}_{w_i}&#39;^\mathsf{T}\boldsymbol{v}_{w_I})\right]
+\]</span> 也就是要把目标单词<span class="math inline">\(w_O\)</span>与使用噪声分布<span class="math inline">\(P_n(w)\)</span>生成的其它词利用logistic回归方法来分开，其中对每条数据使用<span class="math inline">\(k\)</span>个负样本。对小数据集，<span class="math inline">\(k\)</span>一般取5到20，而大数据可以是2到5。NEG与NCE最大的区别是NCE在需要噪声分布的样本的同时还需要概率值，但是NEG只需要负样本。实验中给出最好的<span class="math inline">\(P_n(w)\)</span>是一元词概率的3/4次方，即<span class="math inline">\(U(w)^{3/4}/Z\)</span>（文章中没有指明<span class="math inline">\(Z\)</span>的意义，应该是归一化项）</p>
+<p>[Goldberg2014]对负采样的过程做了更详细的解释。首先需要再次明确的是，使用负采样的skip-gram实际上优化的是一个不同的目标函数。记<span class="math inline">\(w\)</span>为一个中心词，<span class="math inline">\(c\)</span>是一个目标词，<span class="math inline">\(D\)</span>是从语料库中抽取的所有单词-上下文对，令<span class="math inline">\(p(D=1|w, c)\)</span>是<span class="math inline">\((w, c)\)</span>出现在训练语料中的概率，<span class="math inline">\(p(D=0|w,c)=1-p(D=1|w,c)\)</span>是<span class="math inline">\((w, c)\)</span>没有出现在训练语料中的概率，模型参数为<span class="math inline">\(\boldsymbol{\theta}\)</span>，那么新的目标是找到最好的参数<span class="math inline">\(\boldsymbol{\theta}\)</span>，满足 <span class="math display">\[
+\begin{align*}
+&amp;\mathop{ {\rm arg}\max}_\boldsymbol{\theta} \prod_{(w,c) \in D}p(D=1|w,c;\boldsymbol{\theta}) \\
+= &amp;\mathop{ {\rm arg}\max \log}_\boldsymbol{\theta} \prod_{(w,c) \in D}p(D=1|w,c;\boldsymbol{\theta}) \\
+= &amp;\mathop{ {\rm arg}\max}_\boldsymbol{\theta} \sum_{(w,c) \in D} \log p(D=1|w,c;\boldsymbol{\theta}) \\
+\end{align*}
+\]</span> 其中 <span class="math display">\[
+p(D=1|w,c;\boldsymbol{\theta}) = \frac{1}{1+\exp\{-\boldsymbol{v}_c^\mathsf{T}\boldsymbol{v}_w\}}
+\]</span> 因此新的目标函数就是 <span class="math display">\[
+\mathop{ {\rm arg}\max}_\boldsymbol{\theta} \sum_{(w,c) \in D}\log \frac{1}{1+\exp\{-\boldsymbol{v}_c^\mathsf{T}\boldsymbol{v}_w\}}
+\]</span> 对于这个目标函数，如果找到一个参数<span class="math inline">\(\boldsymbol{\theta}\)</span>，使得对每个单词对<span class="math inline">\((w, c)\)</span>都有<span class="math inline">\(p(D=1|w,c;\boldsymbol{\theta})\)</span>，那么效果肯定特别好。具体地，只要这个<span class="math inline">\(\boldsymbol{\theta}\)</span>使得对所有<span class="math inline">\(\boldsymbol{v}_c\)</span>和<span class="math inline">\(\boldsymbol{v}_w\)</span>有<span class="math inline">\(\boldsymbol{v}_c = \boldsymbol{v}_w\)</span>且<span class="math inline">\(\boldsymbol{v}_c^\mathsf{T}\boldsymbol{v}_w = K\)</span>（其中<span class="math inline">\(K\)</span>是一个足够大的数，40就可以），那么就能达到前面说的效果。但是，肯定不希望所有向量都相等，因此需要加入一些方法来做限制，比如禁掉某些单词对，即告诉模型对某些<span class="math inline">\((w,c)\)</span>，<span class="math inline">\(p(D=1|w,c;\boldsymbol{\theta})\)</span>一定非常低，这样的单词对一定不会在数据集中出现。因此，可以通过随机生成一些<span class="math inline">\((w, c)\)</span>对，构成新的数据集<span class="math inline">\(D&#39;\)</span>，并假设<span class="math inline">\(D&#39;\)</span>这里的数据都是“不正确的”。这样，模型的目标变为 <span class="math display">\[
+\begin{align*}
+&amp;\mathop{ {\rm arg}\max}_\boldsymbol{\theta} \prod_{(w,c) \in D}p(D=1|w,c;\boldsymbol{\theta}) \prod_{(w,c) \in D&#39;}p(D=0|w,c;\boldsymbol{\theta}) \\
+= &amp;\mathop{ {\rm arg}\max}_\boldsymbol{\theta} \prod_{(w,c) \in D}p(D=1|w,c;\boldsymbol{\theta}) \prod_{(w,c) \in D&#39;}(1-p(D=1|w,c;\boldsymbol{\theta})) \\
+= &amp;\mathop{ {\rm arg}\max}_\boldsymbol{\theta} \sum_{(w,c) \in D} \log p(D=1|w,c;\boldsymbol{\theta}) + \sum_{(w,c) \in D&#39;}(1-p(D=1|w,c;\boldsymbol{\theta})) \\
+= &amp;\mathop{ {\rm arg}\max}_\boldsymbol{\theta} \sum_{(w,c) \in D}\log \frac{1}{1+\exp\{-\boldsymbol{v}_c^\mathsf{T}\boldsymbol{v}_w\}} + \sum_{(w,c) \in D&#39;}\log \left(1 - \frac{1}{1+\exp\{-\boldsymbol{v}_c^\mathsf{T}\boldsymbol{v}_w\}}\right) \\
+=&amp;\mathop{ {\rm arg}\max}_\boldsymbol{\theta} \sum_{(w,c) \in D}\log \frac{1}{1+\exp\{-\boldsymbol{v}_c^\mathsf{T}\boldsymbol{v}_w\}} + \sum_{(w,c) \in D&#39;}\log \left(1 + \frac{1}{1+\exp\{\boldsymbol{v}_c^\mathsf{T}\boldsymbol{v}_w\}}\right)
+\end{align*}
+\]</span> 引入sigmoid符号，则最后目标变为 <span class="math display">\[
+\mathop{ {\rm arg}\max}_\boldsymbol{\theta} \sum_{(w,c) \in D}\log \sigma(\boldsymbol{v}_c^\mathsf{T}\boldsymbol{v}_w)+ \sum_{(w,c) \in D&#39;}\log \sigma(-\boldsymbol{v}_c^\mathsf{T}\boldsymbol{v}_w)
+\]</span> 如果引入Mikolov原文构建<span class="math inline">\(D&#39;\)</span>的方法，并对每个正样本引入<span class="math inline">\(k\)</span>个负样本，就可以得到前面的目标函数 <span class="math display">\[
+\log \sigma(\boldsymbol{v}_{w_O}&#39;^\mathsf{T}\boldsymbol{v}_{w_I}) + \sum_{i=1}^k \mathbb{E}_{w_i \sim P_n(w)}\left[\log \sigma(-\boldsymbol{v}_{w_i}&#39;^\mathsf{T}\boldsymbol{v}_{w_I})\right]
+\]</span> 可以看出，使用负采样的skip-gram模型建模的不是<span class="math inline">\(p(c|w)\)</span>，而是<span class="math inline">\(w\)</span>和<span class="math inline">\(c\)</span>的联合分布。如果固定所有中心词的词向量，只学习上下文的词向量；或者固定上下文的词向量，只学习中心词的词向量，问题都会退化成logistic回归，进而可以使用凸优化方法求解。但是，由于模型中是联合学习两个向量，因此问题是非凸的</p>
+<h4 id="频繁词的降采样">频繁词的降采样</h4>
+<p>在非常大规模的语料库中，某些频繁词（例如“the”、“a”等）可能会出现上百万次，而且这些词提供的信息有限，反而是罕见词传递的信息更多。为了在频繁词与罕见词之间做个平衡，可以使用一种简单的降采样方法，即训练集中的每个单词以概率<span class="math inline">\(P(w_i)\)</span>被丢弃，其中 <span class="math display">\[
+P(w_i) = 1-\sqrt{\frac{t}{f(w_i)}}
+\]</span> 其中<span class="math inline">\(f(w_i)\)</span>是单词<span class="math inline">\(w_i\)</span>出现的频率，<span class="math inline">\(t\)</span>是给定的阈值（通常是<span class="math inline">\(10^{-5}\)</span>）</p>
+<h3 id="glove">GloVe</h3>
+<p>在word2vec之后，[Pennington2014]提出了一种新式的词嵌入训练方法GloVe（Global Vectors），期望综合两种模型的优点：潜在语义分析模型（latent semantic analysis, LSA）丰富的统计信息，和word2vec隐含的语言学性质（即word2vec可以蕴含king - queen = man - woman的规律）。GloVe背后蕴含的思想是，词与词之间的共现信息不应该被忽视，不应该仅依赖词窗口所传递的知识（word2vec关注的就是一个长度为<span class="math inline">\(2R\)</span>的窗口），而要把握语料库的全局统计信息</p>
+<p>假设单词共现的信息存在矩阵<span class="math inline">\(\boldsymbol{X}\)</span>中，其中<span class="math inline">\(X_{ij}\)</span>代表单词<span class="math inline">\(j\)</span>在单词<span class="math inline">\(i\)</span>的上下文中出现的次数。令<span class="math inline">\(X_i = \sum_k X_{ik}\)</span>为单词<span class="math inline">\(i\)</span>上下文中所有单词出现的总次数，<span class="math inline">\(P_{ij} = P(j|i) = X_{ij} / X_i\)</span>为单词<span class="math inline">\(j\)</span>出现在单词<span class="math inline">\(i\)</span>上下文中的概率。这些共现数据就可以传递很多信息：假设对单词<span class="math inline">\(i = {\rm ice}, j ={\rm steam}\)</span>，对不同类型的词<span class="math inline">\(k\)</span>，<span class="math inline">\(P_{ik}/P_{jk}\)</span>应该不同：</p>
+<ul>
+<li>若<span class="math inline">\(k\)</span>与ice相关但不与steam相关，例如<span class="math inline">\(k={\rm solid}\)</span>，那么<span class="math inline">\(P_{ik}/P_{jk}\)</span>会很大</li>
+<li>若<span class="math inline">\(k\)</span>与steam相关但不与ice相关，例如<span class="math inline">\(k={\rm gas}\)</span>，那么<span class="math inline">\(P_{ik}/P_{jk}\)</span>会很小</li>
+<li>若<span class="math inline">\(k\)</span>与steam相关也与ice相关，例如<span class="math inline">\(k={\rm water}\)</span>；或者与两者都不相关，例如<span class="math inline">\(k={\rm fashion}\)</span>，那么<span class="math inline">\(P_{ik}/P_{jk}\)</span>会接近于1</li>
+</ul>
+<p>由于这种概率比可以很好地找出相关词，而且可以对不同的相关词做出区分，因此词向量学习的切入点应该是共现概率，而不是单词概率本身。因此，模型本身应该满足如下形式： <span class="math display">\[
+F(\boldsymbol{w}_i, \boldsymbol{w}_j, \tilde{\boldsymbol{w}}_k) = \frac{P_{ik}}{P_{jk}}
+\]</span> 其中，<span class="math inline">\(\boldsymbol{w} \in \mathbb{R}^d\)</span>是词向量，<span class="math inline">\(\tilde{\boldsymbol{w}} \in \mathbb{R}^d\)</span>是上下文词向量。由于<span class="math inline">\(F\)</span>要能在词向量空间里编码<span class="math inline">\(P_{ik}/P_{jk}\)</span>所蕴含的信息，而向量空间有线性结构，因此可以使用向量的差，即 <span class="math display">\[
+F(\boldsymbol{w}_i - \boldsymbol{w}_j, \tilde{\boldsymbol{w}}_k) = \frac{P_{ik}}{P_{jk}}
+\]</span> 接下来，因为要把向量映射为标量，因此可以直接使用内积，即 <span class="math display">\[
+F\left((\boldsymbol{w}_i -\boldsymbol{w}_j)^\mathsf{T}\tilde{\boldsymbol{w}}_k\right) = \frac{P_{ik}}{P_{jk}}
+\]</span> 由于词共现信息矩阵是一个对称矩阵，因此也需要模型有这种对称性。首先要求<span class="math inline">\(F\)</span>是<span class="math inline">\((\mathbb{R}, +)\)</span>和<span class="math inline">\((\mathbb{R}_{&gt;0}, \times)\)</span>两个群的群同构。先回顾一下群同构的概念：给定两个群<span class="math inline">\((G, \ast)\)</span>和<span class="math inline">\((H, \odot)\)</span>，群同构<span class="math inline">\(f\)</span>是双射函数<span class="math inline">\(f: G \rightarrow H\)</span>使得对<span class="math inline">\(G\)</span>中所有的<span class="math inline">\(u\)</span>和<span class="math inline">\(v\)</span>有<span class="math inline">\(f(u \ast v) = f(u) \odot f(v)\)</span>。那么，由于<span class="math inline">\(F\)</span>是群同构，且“在加法群里a减b相当于a加b的逆元；在乘法群里a除以b相当于a乘以b的逆元”，所以有（这里感谢<a href="https://datascience.stackexchange.com/questions/27042/glove-vector-representation-homomorphism-question" target="_blank" rel="noopener">stackexchange的回答</a>） <span class="math display">\[
+\begin{align*}
+F\left((\boldsymbol{w}_i - \boldsymbol{w}_j)^\mathsf{T}\tilde{\boldsymbol{w}}_k\right) &amp;= F(\boldsymbol{w}_i^\mathsf{T}\tilde{\boldsymbol{w}}_k - \boldsymbol{w}_j^\mathsf{T}\tilde{\boldsymbol{w}}_k) \\
+&amp;= F(\boldsymbol{w}_i^\mathsf{T}\tilde{\boldsymbol{w}}_k + (- \boldsymbol{w}_j^\mathsf{T}\tilde{\boldsymbol{w}}_k)) \\
+&amp;= F(\boldsymbol{w}_i^\mathsf{T}\tilde{\boldsymbol{w}}_k) \times F( - \boldsymbol{w}_j^\mathsf{T}\tilde{\boldsymbol{w}}_k) \\
+&amp;= F(\boldsymbol{w}_i^\mathsf{T}\tilde{\boldsymbol{w}}_k) \times F( \boldsymbol{w}_j^\mathsf{T}\tilde{\boldsymbol{w}}_k)^{-1} \\
+&amp;= \frac{F(\boldsymbol{w}_i^\mathsf{T}\tilde{\boldsymbol{w}}_k)}{F( \boldsymbol{w}_j^\mathsf{T}\tilde{\boldsymbol{w}}_k)}
+\end{align*}
+\]</span> 联立上式，有 <span class="math display">\[
+F(\boldsymbol{w}_i^\mathsf{T}\tilde{\boldsymbol{w}}_k) = P_{ik} = \frac{X_{ik}}{X_i}
+\]</span> 因此需要<span class="math inline">\(F\)</span>是指数函数，或者 <span class="math display">\[
+\boldsymbol{w}_i^\mathsf{T}\tilde{\boldsymbol{w}}_k = \log(P_{ik}) = \log(X_{ik}) - \log(X_i)
+\]</span> 这里<span class="math inline">\(X_{ik}\)</span>是对称的，而<span class="math inline">\(\log(X_i)\)</span>独立于<span class="math inline">\(k\)</span>，因此可以引入一个偏置<span class="math inline">\(b_i\)</span>，再引入一个<span class="math inline">\(\tilde{b}_k\)</span>就能彻底得到对称性 <span class="math display">\[
+\boldsymbol{w}_i^\mathsf{T}\tilde{\boldsymbol{w}}_k + b_i + \tilde{b}_k = \log(X_{ik})
+\]</span> 由于对数函数在<span class="math inline">\(X_{ik}=0\)</span>时无定义，因此需要加一个小的偏移量：<span class="math inline">\(\log(X_{ik}) \rightarrow \log(1+X_{ik})\)</span>。考虑<span class="math inline">\(X_{ik}=0\)</span>时加了偏移量以后对数值为0，因此这样的做法是合理的</p>
+<p>这个模型的问题是，所有共现词组的权重都是相等的，但是罕见的共现实际上应该被看做是噪声。如果把之前的模型看作是一个最小二乘问题，并在代价函数中引入一个权重函数<span class="math inline">\(f(X_{ij})\)</span>，那么可以得到问题求解的最终目标函数 <span class="math display">\[
+J = \sum_{i,j=1}^V f(X_{ij})\left(\boldsymbol{w}_i^\mathsf{T}\tilde{\boldsymbol{w}}_j + b_i + \tilde{b}_j - \log X_{ij}\right)^2
+\]</span> 其中<span class="math inline">\(V\)</span>是词表大小，<span class="math inline">\(f\)</span>应该满足如下性质</p>
+<ul>
+<li><span class="math inline">\(f(0) = 0\)</span>，且当<span class="math inline">\(x\)</span>接近于0时<span class="math inline">\(f(x)\)</span>快速接近于0</li>
+<li><span class="math inline">\(f(x)\)</span>是非减的，使得罕见共现词组不会被给一个过高的权重</li>
+<li><span class="math inline">\(f(x)\)</span>对太大的<span class="math inline">\(x\)</span>反而应该较小，因此高频共现词组也不会被给一个过高的权重</li>
+</ul>
+<p>经过考量发现<span class="math inline">\(f\)</span>应该满足如下形式 <span class="math display">\[
+f(x) = \begin{cases}(x/x_{\max})^\alpha &amp; {\rm if\ }x&lt;x_{\max} \\ {\phantom-\phantom-}1 &amp; {\rm elsewhere}\end{cases}
+\]</span> 两个超参数的经验值为<span class="math inline">\(x_{\max} = 100, \alpha=3/4\)</span></p>
+<p>论文接下来讨论了GloVe和word2vec之间的联系，以及算法的复杂度。这里就不做介绍了</p>
+<h3 id="词向量的评估">词向量的评估</h3>
+<p>由于词向量的训练本质上是一种无监督的方法，因此需要一些直观有效的方法来对训练出的词向量的效果作出评估。[Schnabel2015]首先做出了这方面比较系统的研究，该文献将词向量的评估方法分成两块，分别是内涵评估和外延评估：</p>
+<p>在<strong>外延评估</strong>（extrinsic evaluation）中，词向量被用作下游任务的输入特征。好的词向量应该对使用其的任务（例如词性标注POSTAG、命名实体识别NER等）有正面影响（但是这种影响为什么存在人们并不是很清楚），但是不同的任务对词向量的偏好可能是不同的，因此也应该为特定的目标训练特定的词向量。此外，使用词向量再为其它任务训练一个模型的时间也比较长，因此外延评估是否有效一直是一个争论点</p>
+<p>在<strong>内涵评估</strong>（intrinsic evaluation）中，可以观察词向量承载了多少词之间语义上的联系。做内涵评估通常需要一个查询库（query inventory），同时需要一些人工标注。[Schnabel2015]对内涵评估分成了两类，但是这两类方法都是为比较不同方法训练出的词向量而设计，尤其是<em>比较评估法</em>是直接让人来选哪种词向量更容易接受，因此这里暂时不做讨论；绝对评估法是对每种词向量单独评估，又可以划分为四项评估方式</p>
+<ul>
+<li>相关性（relatedness）：对于一对相关度比较高的词，它们的词向量的余弦相似度也很高吗？这里作为标准的相关度评分由人工给出。其中，文章提出了一种新的方法，称为一致性检查：给出一组单词，看词向量能否找出类别不同的那一个</li>
+<li>类比性（analogy）：对给定的词<span class="math inline">\(y\)</span>，能否找到一个对应的词<span class="math inline">\(x\)</span>，使<span class="math inline">\(x\)</span>与<span class="math inline">\(y\)</span>的关系能够类比另两个已知词<span class="math inline">\(a\)</span>与<span class="math inline">\(b\)</span>之间的关系。例如比较经典的king-queen与man-woman之间的关系</li>
+<li>类别化（categorization）：对词向量进行聚类，看每个簇与有标记数据集各类相比纯度如何</li>
+<li>选择倾向（selectional preference）：判断某些名词是更倾向做某个动词的主语还是宾语，例如一般顺序是people eat而不是eat people</li>
+</ul>
+<p>[Bakarov2018] 做了进一步的分类，也是分为四组</p>
+<ul>
+<li>有意识评估（conscious evaluation）</li>
+<li>潜意识评估（subconscious evaluation）</li>
+<li>基于词典的评估（thesaurus-based evaluation）</li>
+<li>语言驱动的评估（language-driven evaluation）</li>
+</ul>
+<p>其中后三种评估方法或者缺少数据集，或者有点像神经科学/生物学的方法，需要人的配合，很难用代码直接解决，这里就不介绍了。有意识评估方法又可以细分为如下几类</p>
+<ul>
+<li>语义相似度。这种做法最常见，但主观性太强，不同人对不同单词对给出的相似度可能不同</li>
+<li>类比测试。这种方法的问题是缺乏一个准确的评估标准</li>
+<li>主题拟合。对于给定的动词和一个角色，能否找出最符合这个角色的名词？另外一些该类别下的评估方法更像是前面提到的“选择倾向”方法</li>
+<li>概念分类，或称为单词聚类。但是聚类问题本身就不太好评估效果</li>
+<li>同义词检测。给定一个单词和另一个单词列表，从单词列表中找到与给定单词意思最近的词。这种方法的问题类似于语义相似度的问题，而且评估集的构造更复杂</li>
+<li>离群词检测，类似前面提到的“一致性检查”</li>
+</ul>
+<p>最后，可以参考<a href="https://github.com/kudkudak/word-embeddings-benchmarks" target="_blank" rel="noopener">GitHub上一套公开的benchmark</a>，这个仓库不仅提供了评估代码，也提供了原始数据集做检查</p>
+<h3 id="词向量的陷阱与缺陷">词向量的陷阱与缺陷</h3>
+<p>尽管词向量现在得到了非常广泛的应用，但是嵌入表示方法仍然存在一些自身的局限性：</p>
+<ul>
+<li>相似性的度量。如前面所述，相似性存在一定主观性。例如，猫、狗、虎这三个词，即可以说“猫”和“狗”相似性更高（因为两者都是宠物），也可以说“猫”和“虎”相似性更高（因为两者都是猫科动物）。嵌入表示法（有时候也称为分布式训练法）并不能控制引入的相似性是哪个层面的</li>
+<li>“black sheep现象”。有一些“平凡”的意思并不能在文本中表现出来，因此可能不会被嵌入表示捕捉到。人们在沟通过程中可能更不会去提到已知的信息：当人们提到“white sheep”（败类中的规矩人）的时候，更多倾向于“sheep”传递的意思；当人们提到“black sheep”（害群之马）的时候，更多倾向于“black”传递的意思。这些信息会对词向量造成误导</li>
+<li>反义词的处理。反义词出现的语境通常相似，因此分布表示训出的向量可能会导致一组反义词的词向量反而很接近</li>
+<li>语料偏见。用来训练的文本里通常会引入一些隐含的偏见，例如欧美人名字可能与褒义词关系更近，而黑人的名字会更偏向于贬义。有时候，把“医生”和“男性”关联和把“护士”和“女性”关联可能是期望的，但是有时候需要消除这种偏见</li>
+<li>语境的缺乏。词向量的学习会考虑单词的所有语境，最后学出的向量反而是语境无关的。然而，单词的具体含义往往与语境相关，尤其是当有些单词传递多个意思的时候，例如“bank”</li>
+</ul>
+<p>此外，尽管现在有很多开放的、训练好的词向量可以下载，但是仍然建议不要盲目下下来以后当做黑盒使用，因为训练用的语料和其他参数都会对结果造成影响。最好将下下来的结果在验证集上做些实验，同时使用同样的tokenization方法和规范化方法</p>
+<h2 id="参考文献">参考文献</h2>
+<p>[Britz2017] Britz D, Goldie A, Luong M T, et al. Massive exploration of neural machine translation architectures. <em>arXiv preprint arXiv:1703.03906</em>, 2017.</p>
+<p>[Bengio2003] Bengio, Y., Ducharme, R., Vincent, P., &amp; Jauvin, C. (2003). A neural probabilistic language model. <em>Journal of machine learning research</em>, <em>3</em>(Feb), 1137-1155.</p>
+<p>[Turian2010] Turian, J., Ratinov, L., &amp; Bengio, Y. Word representations: a simple and general method for semi-supervised learning. In <em>Proceedings of the 48th annual meeting of the association for computational linguistics</em> (pp. 384-394). Association for Computational Linguistics. 2010</p>
+<p>[Mikolov2013a] Mikolov T, Chen K, Corrado G, et al. Efficient estimation of word representations in vector space. <em>arXiv preprint arXiv:1301.3781</em>, 2013.</p>
+<p>[Mikolov2013b] Mikolov, T., Sutskever, I., Chen, K., Corrado, G. S., &amp; Dean, J. Distributed representations of words and phrases and their compositionality. In <em>Advances in neural information processing systems</em> (NIPS) (pp. 3111-3119). 2013</p>
+<p>[Gutmann2012] Gutmann, M. and Hyvärinen, A. Noise-contrastive estimation of unnormalized statistical models, with applications to natural image statistics. <em>The Journal of Machine Learning Research</em>, 13 (pp. 307–361). 2012</p>
+<p>[Goldberg2014] Goldberg, Y., &amp; Levy, O. word2vec Explained: deriving Mikolov et al.’s negative-sampling word-embedding method. <em>arXiv preprint arXiv:1402.3722</em>. 2014</p>
+<p>[Pennington2014] Pennington, J., Socher, R., &amp; Manning, C. Glove: Global vectors for word representation. In <em>Proceedings of the 2014 conference on empirical methods in natural language processing (EMNLP)</em> (pp. 1532-1543). 2014</p>
+<p>[Schnabel2015] Schnabel, T., Labutov, I., Mimno, D., &amp; Joachims, T. Evaluation methods for unsupervised word embeddings. In <em>Proceedings of the 2015 Conference on Empirical Methods in Natural Language Processing (EMNLP)</em> (pp. 298-307). 2015</p>
+<p>[Bakarov2018] Bakarov, Amir. “A Survey of Word Embeddings Evaluation Methods.” <em>arXiv preprint arXiv:1801.09536</em>. 2018</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2018/07/20/NMT-Tutorial-3-NN-Word-Embedding/" title="NMT Tutorial 3. 神经网络语言模型与词向量">txshi-mt.com/2018/07/20/NMT-Tutorial-3-NN-Word-Embedding/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/词向量/" rel="tag"># 词向量</a>
+          
+            <a href="/tags/神经网络/" rel="tag"># 神经网络</a>
+          
+            <a href="/tags/语言模型/" rel="tag"># 语言模型</a>
+          
+            <a href="/tags/深度学习/" rel="tag"># 深度学习</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/06/09/NMT-Tutorial-2b-Optimization-Methods/" rel="next" title="NMT Tutorial 2扩展b. 优化方法">
+                <i class="fa fa-chevron-left"></i> NMT Tutorial 2扩展b. 优化方法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/08/28/Building-Moses-on-Mac/" rel="prev" title="在Mac上编译构建Moses">
+                在Mac上编译构建Moses <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">87</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">85</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#神经网络"><span class="nav-number">1.</span> <span class="nav-text">&#x795E;&#x7ECF;&#x7F51;&#x7EDC;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#一个示例结构"><span class="nav-number">1.1.</span> <span class="nav-text">&#x4E00;&#x4E2A;&#x793A;&#x4F8B;&#x7ED3;&#x6784;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#从矩阵元素看如何计算梯度"><span class="nav-number">1.2.</span> <span class="nav-text">&#x4ECE;&#x77E9;&#x9635;&#x5143;&#x7D20;&#x770B;&#x5982;&#x4F55;&#x8BA1;&#x7B97;&#x68AF;&#x5EA6;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#从矩阵微分看如何计算梯度"><span class="nav-number">1.3.</span> <span class="nav-text">&#x4ECE;&#x77E9;&#x9635;&#x5FAE;&#x5206;&#x770B;&#x5982;&#x4F55;&#x8BA1;&#x7B97;&#x68AF;&#x5EA6;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#激活函数"><span class="nav-number">1.4.</span> <span class="nav-text">&#x6FC0;&#x6D3B;&#x51FD;&#x6570;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自动微分"><span class="nav-number">1.5.</span> <span class="nav-text">&#x81EA;&#x52A8;&#x5FAE;&#x5206;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#神经网络语言模型"><span class="nav-number">1.6.</span> <span class="nav-text">&#x795E;&#x7ECF;&#x7F51;&#x7EDC;&#x8BED;&#x8A00;&#x6A21;&#x578B;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#经典词向量算法"><span class="nav-number">2.</span> <span class="nav-text">&#x7ECF;&#x5178;&#x8BCD;&#x5411;&#x91CF;&#x7B97;&#x6CD5;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#word2vec"><span class="nav-number">2.1.</span> <span class="nav-text">Word2Vec</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#分层softmax"><span class="nav-number">2.1.1.</span> <span class="nav-text">&#x5206;&#x5C42;Softmax</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#负采样"><span class="nav-number">2.1.2.</span> <span class="nav-text">&#x8D1F;&#x91C7;&#x6837;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#频繁词的降采样"><span class="nav-number">2.1.3.</span> <span class="nav-text">&#x9891;&#x7E41;&#x8BCD;&#x7684;&#x964D;&#x91C7;&#x6837;</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#glove"><span class="nav-number">2.2.</span> <span class="nav-text">GloVe</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#词向量的评估"><span class="nav-number">2.3.</span> <span class="nav-text">&#x8BCD;&#x5411;&#x91CF;&#x7684;&#x8BC4;&#x4F30;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#词向量的陷阱与缺陷"><span class="nav-number">2.4.</span> <span class="nav-text">&#x8BCD;&#x5411;&#x91CF;&#x7684;&#x9677;&#x9631;&#x4E0E;&#x7F3A;&#x9677;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文献"><span class="nav-number">3.</span> <span class="nav-text">&#x53C2;&#x8003;&#x6587;&#x732E;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
