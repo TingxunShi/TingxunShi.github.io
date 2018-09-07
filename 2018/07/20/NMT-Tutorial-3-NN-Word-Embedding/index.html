@@ -121,7 +121,7 @@
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutorial_3_NN_example.png">
 <meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutorial_3_CBOW_skip_gram.png">
-<meta property="og:updated_time" content="2018-09-06T14:35:37.410Z">
+<meta property="og:updated_time" content="2018-09-07T14:59:53.838Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NMT Tutorial 3. 神经网络语言模型与词向量">
 <meta name="twitter:description" content="本文主要参考了如下教程  Koehn2017 : 第2、3节，第4节前半部分 Neubig2017 : 第5章 StanfordCS224n : 第2、3、4讲 Goldberg NNMNLP : 第3、4、5、8、9、10、11章  其中主要会以[Neubig2017]和[StanfordCS224n]的内容为主 神经网络 关于神经网络的一些基本细节，例如基本概念、反向传播的思想等等，在博客的其">
@@ -538,13 +538,13 @@ s &amp;= \boldsymbol{U}^\mathsf{T}\boldsymbol{a} \\
 <p>在最初始的Word2Vec论文[Mikolov2013a]中，神经网络语言模型和词向量两者是分开训练的。其中，词向量的训练并没有用到隐藏层，所以实际上就是根据中心词和上下文单词训练一个loglinear模型。这里背后蕴含的思想是，词的意思可以由语境确定，如果你能预测出这个单词在什么语境下出现，你就理解了这个单词的意思</p>
 <p>文章提出了两种不同的模型结构</p>
 <ul>
-<li>连续词袋模型（Continuous Bag-of-Words Model, CBOW）的输入是某个单词上下文共<span class="math inline">\(N\)</span>个词（文章中给出的是前四个词和后四个词）。模型从词嵌入矩阵中找到这8个单词id对应的向量，做一个简单求和，然后用和向量去预测中间词，因此模型的参数数量为<span class="math inline">\(Q = N \times D + D \times \log_2(V)\)</span>，其中<span class="math inline">\(D\)</span>为词向量长度，<span class="math inline">\(V\)</span>为词表大小。取对数的原因是因为投影层作者没有使用普通的softmax，而是采用了分层softmax的方法。这个方法在后面介绍 可以注意到，上下文单词的顺序对模型没有影响，因为模型使用了一个求和过程，该过程与顺序无关。这也是模型里”词袋“一词的意义</li>
-<li>连续Skip-Gram模型（Continuous Skip-gram Model）的输入是某个单词本身。<strong>不同于CBOW使用上下文单词预测中心词的做法，Skip-Gram的核心思想是利用中心词预测一定范围内的上下文单词</strong>。由于距离越远的词与中心词关系也越远，因此通常在采样时减少取到这些单词的概率。该模型的参数数量为<span class="math inline">\(Q = 2R \times (D+D\times \log_2(V))\)</span>。假设<span class="math inline">\(C\)</span>是上下文单词数量，则<span class="math inline">\(R = {\rm randrange}(1, C + 1)\)</span>。文中给出的<span class="math inline">\(C=10\)</span></li>
+<li>连续词袋模型（Continuous Bag-of-Words Model, CBOW）的输入是某个单词上下文共<span class="math inline">\(N\)</span>个词（文章中给出的是前四个词和后四个词）。模型从词嵌入矩阵中找到这8个单词id对应的向量，做一个简单求和，然后用和向量去预测中间词，因此模型的计算复杂度为<span class="math inline">\(Q = N \times D + D \times \log_2(V)\)</span>，其中<span class="math inline">\(D\)</span>为词向量长度，<span class="math inline">\(V\)</span>为词表大小。取对数的原因是因为投影层作者没有使用普通的softmax，而是采用了分层softmax的方法。这个方法在后面介绍。 可以注意到，上下文单词的顺序对模型没有影响，因为模型使用了一个求和过程，该过程与顺序无关。这也是模型里”词袋“一词的意义</li>
+<li>连续skip-gram模型（Continuous skip-gram Model）的输入是某个单词本身。<strong>不同于CBOW使用上下文单词预测中心词的做法，skip-gram的做法是利用中心词预测一定范围内的上下文单词。CBOW利用的是多个单词，skip-gram用的是一个单词</strong>。由于距离越远的词与中心词关系也越远，因此通常在采样时减少取到这些单词的概率。该模型的计算复杂度为<span class="math inline">\(Q = 2R \times (D+D\times \log_2(V))\)</span>。假设<span class="math inline">\(C\)</span>是上下文单词数量，则<span class="math inline">\(R = {\rm randrange}(1, C + 1)\)</span>。文中给出的<span class="math inline">\(C=10\)</span></li>
 </ul>
 <figure>
 <img src="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutorial_3_CBOW_skip_gram.png" alt="CBOW和Skip-Gram算法示意图(来自[Mikolov2013a])"><figcaption>CBOW和Skip-Gram算法示意图(来自[Mikolov2013a])</figcaption>
 </figure>
-<p>上图给出了CBOW和skip-gram的示意图</p>
+<p>上图给出了CBOW和skip-gram的示意图。注意前面计算的<span class="math inline">\(Q\)</span>都是<strong>计算复杂度</strong>，而不是参数数量。两个算法的参数数量都是<span class="math inline">\(2VD\)</span>，其中一半是输入单词的词向量表示，一半是输出单词</p>
 <p>在提出CBOW和skip-gram两种词向量训练方法以后，Mikolov等人又在[Mikolov2013b]中对skip-gram做了一些扩展。文章首先更加形式化定义了skip-gram模型训练时用到的目标函数：给定一串训练时用到的单词序列<span class="math inline">\(w_1, w_2, \ldots, w_T\)</span>，skip-gram模型是要最大化概率对数值的平均值，即 <span class="math display">\[
 \frac{1}{T}\sum_{t=1}^T\sum_{-c \le j \le c, j\not=0} \log p(w_{t+j}|w_t)
 \]</span> 其中<span class="math inline">\(c\)</span>是训练时上下文单词的个数（可以是中心词<span class="math inline">\(w_t\)</span>的一个函数）。<span class="math inline">\(c\)</span>越大，模型的准确率越高，但是训练时间越长。原始的skip-gram模型里将<span class="math inline">\(p(w_{t+j}|w_t)\)</span>定义为一个softmax函数 <span class="math display">\[
