@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="矩阵微积分," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="写在前面：矩阵微积分是深度学习的数学基础之一，但是这部分内容在大学计算机系（及相关非数学类专业）本科几乎没有介绍，想要了解全凭自学。我之前看过的比较好的资料有三个：维基百科的Matrix Calculus词条、The Matrix Cookbook和Towser的《机器学习中的矩阵/向量求导》。然而前两个都是英文资料，而且主要重视结论，可以当做字典用，但是看完总有点“知其然不知其所以然”的感觉（维">
+<meta name="keywords" content="矩阵微积分">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NMT Tutorial 3扩展a. 深度学习的矩阵微积分基础">
+<meta property="og:url" content="txshi-mt.com/2018/09/09/NMT-Tutorial-3a-Matrix-Calculus-for-Deep-Learning/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="写在前面：矩阵微积分是深度学习的数学基础之一，但是这部分内容在大学计算机系（及相关非数学类专业）本科几乎没有介绍，想要了解全凭自学。我之前看过的比较好的资料有三个：维基百科的Matrix Calculus词条、The Matrix Cookbook和Towser的《机器学习中的矩阵/向量求导》。然而前两个都是英文资料，而且主要重视结论，可以当做字典用，但是看完总有点“知其然不知其所以然”的感觉（维">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-09-29T12:44:55.373Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NMT Tutorial 3扩展a. 深度学习的矩阵微积分基础">
+<meta name="twitter:description" content="写在前面：矩阵微积分是深度学习的数学基础之一，但是这部分内容在大学计算机系（及相关非数学类专业）本科几乎没有介绍，想要了解全凭自学。我之前看过的比较好的资料有三个：维基百科的Matrix Calculus词条、The Matrix Cookbook和Towser的《机器学习中的矩阵/向量求导》。然而前两个都是英文资料，而且主要重视结论，可以当做字典用，但是看完总有点“知其然不知其所以然”的感觉（维">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2018/09/09/NMT-Tutorial-3a-Matrix-Calculus-for-Deep-Learning/"/>
+
+
+
+
+
+  <title>NMT Tutorial 3扩展a. 深度学习的矩阵微积分基础 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2018/09/09/NMT-Tutorial-3a-Matrix-Calculus-for-Deep-Learning/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NMT Tutorial 3扩展a. 深度学习的矩阵微积分基础</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-09-09T22:55:54+08:00">
+                Sep 9 2018
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/深度学习/" itemprop="url" rel="index">
+                    <span itemprop="name">深度学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>写在前面：矩阵微积分是深度学习的数学基础之一，但是这部分内容在大学计算机系（及相关非数学类专业）本科几乎没有介绍，想要了解全凭自学。我之前看过的比较好的资料有三个：<a href="https://en.wikipedia.org/wiki/Matrix_calculus" target="_blank" rel="noopener">维基百科的Matrix Calculus词条</a>、<a href="https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf" target="_blank" rel="noopener">The Matrix Cookbook</a>和<a href="https://zhuanlan.zhihu.com/p/25063314" target="_blank" rel="noopener">Towser的《机器学习中的矩阵/向量求导》</a>。然而前两个都是英文资料，而且主要重视结论，可以当做字典用，但是看完总有点“知其然不知其所以然”的感觉（维基词条似乎有简单的计算过程介绍，但是还是有点简略）；Towser大神的文章写得很不错，但是我数学较差，看到张量相关的部分还是觉得有点脑子转不过来</p>
+<p>最近这几天我整理自己的微博收藏时，无意间发现北邮陈光老师（爱可可爱生活@微博）曾经推荐过一篇文章：Terence Parr和Jeremy Howard合作的<a href="https://arxiv.org/pdf/1802.01528.pdf" target="_blank" rel="noopener"><em>The Matrix Calculus You Need For Deep Learning</em></a>，感觉比较符合我的需求（再次证明收藏过的东西如果不回顾就是白收藏），相对Towser的文章更基础一点。这篇博客就是我阅读该论文的一些摘要</p>
+<h2 id="预备知识">预备知识</h2>
+<p>对于一元函数的导数，存在如下几条规则（以下均认为<span class="math inline">\(x\)</span>是自变量）：</p>
+<ul>
+<li>常数函数的导数为0：<span class="math inline">\(f(x) = c \rightarrow df/dx = 0\)</span></li>
+<li>常量相乘法则：<span class="math inline">\((cf(x))&#39; = c\frac{df}{dx}\)</span></li>
+<li>幂函数求导法则：<span class="math inline">\(f(x) = x^n \rightarrow \frac{df}{dx} = nx^{n-1}\)</span></li>
+<li>加法法则：<span class="math inline">\(\frac{d}{dx}(f(x) + g(x)) = \frac{df}{dx} + \frac{dg}{dx}\)</span></li>
+<li>减法法则：<span class="math inline">\(\frac{d}{dx}(f(x) - g(x)) = \frac{df}{dx} - \frac{dg}{dx}\)</span></li>
+<li>乘法法则：<span class="math inline">\(\frac{d}{dx}(f(x)\cdot g(x)) = f(x)\cdot \frac{dg}{dx} + \frac{df}{dx}\cdot g(x)\)</span></li>
+<li>链式法则：<span class="math inline">\(\frac{d}{dx}(f(g(x))) = \frac{df(u)}{du}\cdot \frac{du}{dx}\)</span>，若令<span class="math inline">\(u=g(x)\)</span></li>
+</ul>
+<p>对于二元函数，需要引入偏导数的概念。假设函数为<span class="math inline">\(f(x,y)\)</span>，求函数对<span class="math inline">\(x\)</span>或<span class="math inline">\(y\)</span>的偏导数时，将另一个变量看作是常量（对于多元函数，求对某个变量的偏导数时，将其它所有变量都视为常量）。求得的偏导数可以组合成为梯度，记为<span class="math inline">\(\nabla f(x,y)\)</span>。即 <span class="math display">\[
+\nabla f(x,y) = \left[\begin{matrix}\frac{\partial f(x,y)}{\partial x} \\ \frac{\partial f(x,y)}{\partial y}\end{matrix}\right]
+\]</span> (<strong>注意：原文里梯度表示成了一个行向量，并说明他们使用了numerator layout。但是这样会使得标量对向量的微分结果与该向量形状相异，也与主流记法相左。因此本文记录时做了转换，使用主流的denominator layout记法</strong>)</p>
+<h2 id="矩阵微积分">矩阵微积分</h2>
+<p>同一个函数对不同变量求偏导的结果可以组成称为梯度，多个函数对各变量求偏导的结果则可以组合成一个矩阵，称为雅可比矩阵（Jacobian matrix）。例如如果有函数<span class="math inline">\(f, g\)</span>，两者各自的梯度可以组合为 <span class="math display">\[
+J = \left[\begin{matrix}\nabla^\mathsf{T} f(x,y) \\ \nabla^\mathsf{T} g(x, y)\end{matrix}\right]
+\]</span></p>
+<h3 id="雅可比矩阵的泛化">雅可比矩阵的泛化</h3>
+<p>可以将多元变量组合成一个向量：<span class="math inline">\(f(x_1, x_2, \ldots, x_n) = f(\boldsymbol{x})\)</span>（本文认为所有向量都是<span class="math inline">\(n \times 1\)</span>维的，即 <span class="math display">\[
+\boldsymbol{x} = \left[\begin{matrix}x_1 \\ x_2 \\ \vdots \\ x_n\end{matrix}\right]
+\]</span> ）假设有<span class="math inline">\(m\)</span>个函数分别向量<span class="math inline">\(\boldsymbol{x}\)</span>计算得出一个标量，即 <span class="math display">\[
+\begin{align*}
+y_1 &amp;= f_1(\boldsymbol{x}) \\
+y_2 &amp;= f_2(\boldsymbol{x}) \\
+&amp;\vdots \\
+y_m &amp;= f_m(\boldsymbol{x})
+\end{align*}
+\]</span> 可以简记为 <span class="math display">\[
+\boldsymbol{y} = \boldsymbol{f}(\boldsymbol{x})
+\]</span> <span class="math inline">\(\boldsymbol{y}\)</span>对<span class="math inline">\(\boldsymbol{x}\)</span>求导的结果就是将每个函数对<span class="math inline">\(\boldsymbol{x}\)</span>的导数堆叠起来得到的雅可比矩阵： <span class="math display">\[
+\frac{\partial \boldsymbol{y}}{\partial \boldsymbol{x}} = \left[\begin{matrix}\frac{\partial}{\partial x_1}f_1(\boldsymbol{x}) &amp; \frac{\partial}{\partial x_2}f_1(\boldsymbol{x}) &amp; \cdots &amp; \frac{\partial}{\partial x_n}f_1(\boldsymbol{x})\\ \frac{\partial}{\partial x_1}f_2(\boldsymbol{x}) &amp; \frac{\partial}{\partial x_2}f_2(\boldsymbol{x}) &amp; \cdots &amp; \frac{\partial}{\partial x_n}f_2(\boldsymbol{x})\\ \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\ \frac{\partial}{\partial x_1}f_m(\boldsymbol{x}) &amp; \frac{\partial}{\partial x_2}f_m(\boldsymbol{x}) &amp; \cdots &amp; \frac{\partial}{\partial x_n}f_m(\boldsymbol{x})\\ \end{matrix}\right]
+\]</span></p>
+<h3 id="两向量间逐元素运算的导数">两向量间逐元素运算的导数</h3>
+<p>假设<span class="math inline">\(\bigcirc\)</span>是一个对两向量逐元素进行计算的操作符（例如<span class="math inline">\(\bigoplus\)</span>是向量加法，就是两个向量逐元素相加），则对于<span class="math inline">\(\boldsymbol{y} = \boldsymbol{f}(\boldsymbol{w}) \bigcirc \boldsymbol{g}(\boldsymbol{x})\)</span>，假设<span class="math inline">\(n = m = |y| = |w| = |x|\)</span>，可以做如下展开 <span class="math display">\[
+\left[\begin{matrix}y_1 \\ y_2 \\ \vdots \\ y_n\end{matrix}\right] = \left[\begin{matrix} f_1(\boldsymbol{w}) \bigcirc g_1(\boldsymbol{x}) \\ f_2(\boldsymbol{w}) \bigcirc g_2(\boldsymbol{x}) \\ \vdots \\ f_n(\boldsymbol{w}) \bigcirc g_n(\boldsymbol{x})\end{matrix}\right]
+\]</span> <span class="math inline">\(\boldsymbol{y}\)</span>分别对<span class="math inline">\(\boldsymbol{w}\)</span>和<span class="math inline">\(\boldsymbol{x}\)</span>求导可以得到两个方阵 <span class="math display">\[
+J_{\boldsymbol{w}} = \frac{\partial \boldsymbol{y}}{\partial \boldsymbol{w}} = \left[\begin{matrix}\frac{\partial }{\partial w_1}(f_1(\boldsymbol{w}) \bigcirc g_1(\boldsymbol{x})) &amp; \frac{\partial }{\partial w_2}(f_1(\boldsymbol{w}) \bigcirc g_1(\boldsymbol{x})) &amp; \cdots &amp; \frac{\partial }{\partial w_n}(f_1(\boldsymbol{w}) \bigcirc g_1(\boldsymbol{x})) \\ \frac{\partial }{\partial w_1}(f_2(\boldsymbol{w}) \bigcirc g_2(\boldsymbol{x})) &amp; \frac{\partial }{\partial w_2}(f_2(\boldsymbol{w}) \bigcirc g_2(\boldsymbol{x})) &amp; \cdots &amp; \frac{\partial }{\partial w_n}(f_2(\boldsymbol{w}) \bigcirc g_2(\boldsymbol{x})) \\ \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\ \frac{\partial }{\partial w_1}(f_n(\boldsymbol{w}) \bigcirc g_n(\boldsymbol{x})) &amp; \frac{\partial }{\partial w_2}(f_n(\boldsymbol{w}) \bigcirc g_n(\boldsymbol{x})) &amp; \cdots &amp; \frac{\partial }{\partial w_n}(f_n(\boldsymbol{w}) \bigcirc g_n(\boldsymbol{x})) \\ \end{matrix}\right]
+\]</span></p>
+<p><span class="math display">\[
+J_{\boldsymbol{x}} = \frac{\partial \boldsymbol{y}}{\partial \boldsymbol{x}} = \left[\begin{matrix}\frac{\partial }{\partial x_1}(f_1(\boldsymbol{w}) \bigcirc g_1(\boldsymbol{x})) &amp; \frac{\partial }{\partial x_2}(f_1(\boldsymbol{w}) \bigcirc g_1(\boldsymbol{x})) &amp; \cdots &amp; \frac{\partial }{\partial x_n}(f_1(\boldsymbol{w}) \bigcirc g_1(\boldsymbol{x})) \\ \frac{\partial }{\partial x_1}(f_2(\boldsymbol{w}) \bigcirc g_2(\boldsymbol{x})) &amp; \frac{\partial }{\partial x_2}(f_2(\boldsymbol{w}) \bigcirc g_2(\boldsymbol{x})) &amp; \cdots &amp; \frac{\partial }{\partial x_n}(f_2(\boldsymbol{w}) \bigcirc g_2(\boldsymbol{x})) \\ \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\ \frac{\partial }{\partial x_1}(f_n(\boldsymbol{w}) \bigcirc g_n(\boldsymbol{x})) &amp; \frac{\partial }{\partial x_2}(f_n(\boldsymbol{w}) \bigcirc g_n(\boldsymbol{x})) &amp; \cdots &amp; \frac{\partial }{\partial x_n}(f_n(\boldsymbol{w}) \bigcirc g_n(\boldsymbol{x})) \\ \end{matrix}\right]
+\]</span></p>
+<p>由于<span class="math inline">\(\bigcirc\)</span>是逐元素操作，因此<span class="math inline">\(f_i\)</span>是一个关于<span class="math inline">\(w_i\)</span>的函数，<span class="math inline">\(g_i\)</span>也是一个关于<span class="math inline">\(x_i\)</span>的函数。因此当<span class="math inline">\(j \not= i\)</span>时，<span class="math inline">\(\frac{\partial }{\partial w_j}f_i(w_i) = \frac{\partial }{\partial w_j}g_i(x_i) = 0\)</span>，而且$ 0 0 = 0$，因此上述两个雅可比矩阵都是对角矩阵，可以简记为 <span class="math display">\[
+\frac{\partial \boldsymbol{y}}{\partial \boldsymbol{w}} = {\rm diag}\left(\frac{\partial}{\partial w_1}(f_1(w_1) \bigcirc g_1(x_1)), \frac{\partial}{\partial w_2}(f_2(w_2) \bigcirc g_2(x_2)), \ldots, \frac{\partial}{\partial w_n}(f_n(w_n) \bigcirc g_n(x_n))\right)
+\]</span></p>
+<p><span class="math display">\[
+\frac{\partial \boldsymbol{y}}{\partial \boldsymbol{x}} = {\rm diag}\left(\frac{\partial}{\partial x_1}(f_1(x_1) \bigcirc g_1(x_1)), \frac{\partial}{\partial x_2}(f_2(x_2) \bigcirc g_2(x_2)), \ldots, \frac{\partial}{\partial x_n}(f_n(x_n) \bigcirc g_n(x_n))\right)
+\]</span></p>
+<p>如果只考虑最简单的向量计算，不妨令<span class="math inline">\(\boldsymbol{f}(\boldsymbol{w}) = \boldsymbol{w}, \boldsymbol{g}(\boldsymbol{x}) = \boldsymbol{x}\)</span>，因此有<span class="math inline">\(f_i(w_i) = w_i\)</span>。假设<span class="math inline">\(\bigcirc\)</span>为逐元素相加，那么会有 <span class="math display">\[
+\frac{\partial }{\partial w_i}(f_i(w_i) + g_i(x_i)) = 1 = \frac{\partial}{\partial x}(f_i(w_i) + g_i(x_i))
+\]</span> 其它减、乘、除同理，可以得到如下式子（由于向量加法<span class="math inline">\(+\)</span>的法则就是<span class="math inline">\(\oplus\)</span>，因此<span class="math inline">\(\oplus\)</span>简写为<span class="math inline">\(+\)</span>。减法同理） <span class="math display">\[
+\begin{align*}
+\frac{\partial (\boldsymbol{w} + \boldsymbol{x})}{\partial \boldsymbol{w}} &amp;= \boldsymbol{I} = \frac{\partial (\boldsymbol{w} + \boldsymbol{x})}{\partial \boldsymbol{x}}\\
+\frac{\partial (\boldsymbol{w} - \boldsymbol{x})}{\partial \boldsymbol{w}} &amp;= \boldsymbol{I} \\
+\frac{\partial (\boldsymbol{w} - \boldsymbol{x})}{\partial \boldsymbol{x}} &amp;= -\boldsymbol{I} \\
+\frac{\partial (\boldsymbol{w} \otimes \boldsymbol{x})}{\partial \boldsymbol{w}} &amp;= {\rm diag}(\boldsymbol{x}) \\
+\frac{\partial (\boldsymbol{w} \otimes \boldsymbol{x})}{\partial \boldsymbol{x}} &amp;= {\rm diag}(\boldsymbol{w}) \\
+\frac{\partial (\boldsymbol{w} \oslash \boldsymbol{x})}{\partial \boldsymbol{w}} &amp;= {\rm diag}\left(\cdots \frac{1}{x_i}\cdots\right)\\
+\frac{\partial (\boldsymbol{w} \oslash \boldsymbol{x})}{\partial \boldsymbol{x}} &amp;= {\rm diag}\left(\cdots -\frac{w_i}{x_i^2}\cdots\right)
+\end{align*}
+\]</span></p>
+<h3 id="向量与标量运算的导数">向量与标量运算的导数</h3>
+<p>向量与标量之间的运算，可以把标量扩展成一个同维度的向量，然后对两个向量做逐元素的运算。标量的扩展一般是将其乘以一个全为1的向量，例如计算<span class="math inline">\(\boldsymbol{y} = \boldsymbol{x} + z\)</span>实际上是<span class="math inline">\(\boldsymbol{y} = \boldsymbol{f}(\boldsymbol{x}) + \boldsymbol{g}(z)\)</span>，其中<span class="math inline">\(\boldsymbol{f}(\boldsymbol{x}) = \boldsymbol{x}, \boldsymbol{g}(z) = \boldsymbol{1}z\)</span></p>
+<p>因此可以得到 <span class="math display">\[
+\begin{align*}
+\frac{\partial}{\partial \boldsymbol{x}}(\boldsymbol{x} + z) &amp;= \boldsymbol{I} \\
+\frac{\partial}{\partial \boldsymbol{x}}(\boldsymbol{x}z) &amp;= \boldsymbol{I}z \\
+\frac{\partial}{\partial z}(\boldsymbol{x} + z) &amp;= \boldsymbol{1} \\
+\frac{\partial}{\partial z}(\boldsymbol{x}z) &amp;= \boldsymbol{x}
+\end{align*}
+\]</span></p>
+<h3 id="向量的求和规约操作">向量的求和规约操作</h3>
+<p>求和规约，原文是sum reduce，实际上就是把一个向量的所有元素求和</p>
+<p>令<span class="math inline">\(y = {\rm sum}(\boldsymbol{f}(\boldsymbol{x})) = \sum_{i=1}^n f_i(\boldsymbol{x})\)</span>，展开可得 <span class="math display">\[
+\begin{align*}
+\frac{\partial y}{\partial \boldsymbol{x}} &amp;= \left[\begin{matrix}\frac{\partial y}{\partial x_1} &amp; \frac{\partial y}{\partial x_2} &amp; \cdots &amp; \frac{\partial y}{\partial x_n} \end{matrix}\right]^\mathsf{T} \\
+&amp;= \left[\begin{matrix}\frac{\partial }{\partial x_1}\sum_i f_i(\boldsymbol{x}) &amp; \frac{\partial }{\partial x_2}\sum_i f_i(\boldsymbol{x}) &amp; \cdots &amp; \frac{\partial }{\partial x_n}\sum_i f_i(\boldsymbol{x}) \end{matrix}\right]^\mathsf{T} \\
+&amp;= \left[\begin{matrix}\sum_i \frac{\partial f_i(\boldsymbol{x})}{\partial x_1} &amp; \sum_i \frac{\partial f_i(\boldsymbol{x})}{\partial x_2} &amp; \cdots &amp; \sum_i \frac{\partial f_i(\boldsymbol{x})}{\partial x_n}\end{matrix}\right]^\mathsf{T}
+\end{align*}
+\]</span> 讨论一个最简单的情况，就是<span class="math inline">\(y={\rm sum}(\boldsymbol{x})\)</span>。由之前的讨论，有<span class="math inline">\(f_i(\boldsymbol{x}) = x_i\)</span>。将定义代入上式，并考虑对<span class="math inline">\(i \not= j\)</span>有<span class="math inline">\(\frac{\partial }{\partial x_j}x_i = 0\)</span>，易得 <span class="math display">\[
+y = {\rm sum}(\boldsymbol{x}) \rightarrow \nabla y = \boldsymbol{1}
+\]</span></p>
+<h3 id="链式法则">链式法则</h3>
+<p>对复杂表达式（各种表达式组合嵌套得到的表达式），需要使用链式法则求导。本文将链式法则分为了三种</p>
+<h4 id="单变量链式法则">单变量链式法则</h4>
+<p>其实就是高数里学到的。假设<span class="math inline">\(y = f(g(x))\)</span>，令<span class="math inline">\(g(x) = u\)</span>，则单变量链式法则为 <span class="math display">\[
+\frac{dy}{dx} = \frac{dy}{du}\frac{du}{dx}
+\]</span></p>
+<h4 id="单变量全微分链式法则">单变量全微分链式法则</h4>
+<p>在最简单的单变量链式法则里，所有中间变量都是单变量函数。对于<span class="math inline">\(y = f(x) = x+x^2\)</span>这种函数，情况会复杂一些。如果引入中间变量<span class="math inline">\(u_1\)</span>和<span class="math inline">\(u_2\)</span>，有 <span class="math display">\[
+\begin{align*}
+&amp;u_1(x) &amp;&amp;= x^2 \\
+&amp;u_2(x, u_1) &amp;&amp;= x + u_1 &amp;&amp; (y=f(x)=u_2(x, u_1))
+\end{align*}
+\]</span> 如果只使用前面的单变量链式法则，那么<span class="math inline">\(du_2/du_1 = 1, du_1/dx = 2x\)</span>，所以<span class="math inline">\(dy/dx = du_2/dx = du_2/du_1 \cdot du_1/dx = 2x\)</span>，跟结果（<span class="math inline">\(2x+1\)</span>）对不上。如果因为<span class="math inline">\(u_2\)</span>有两个变量而引入偏导数，那么 <span class="math display">\[
+\begin{align*}
+\frac{\partial u_1(x)}{\partial x} &amp;= 2x \\
+\frac{\partial u_2(x, u_1)}{\partial u_1} &amp;= 1
+\end{align*}
+\]</span> <strong>注意此时不能直接说<span class="math inline">\(\partial u_2 / \partial x = 1\)</span>！</strong>因为对<span class="math inline">\(x\)</span>求偏导数的时候限定了其它变量不会随着<span class="math inline">\(x\)</span>的变化而变化，但是<span class="math inline">\(u_1\)</span>实际上还是关于<span class="math inline">\(x\)</span>的函数。因此应该使用单变量全微分链式法则：假设<span class="math inline">\(u_1, \ldots, u_n\)</span>（可能）都与<span class="math inline">\(x\)</span>有关，则 <span class="math display">\[
+\frac{\partial f(x, u_1, \ldots, u_n)}{\partial x} = \frac{\partial f}{\partial x} + \sum_{i=1}^n \frac{\partial f}{\partial u_i}\frac{\partial u_i}{\partial x}
+\]</span> 将上面的例子代入，可知 <span class="math display">\[
+\frac{\partial f(x, u_1)}{\partial x} = \frac{\partial f}{\partial x} + \frac{\partial f}{\partial u_1}\frac{\partial u_1}{\partial x} = 1 + 2x
+\]</span> 注意全微分公式在任何时候都是算偏导数的加和，并不是因为例子里存在求和操作，而是因为它表示的是各个<span class="math inline">\(x\)</span>对<span class="math inline">\(y\)</span>的变化量的加权求和。考虑式子<span class="math inline">\(y = f(x) = x \cdot x^2\)</span>，那么 <span class="math display">\[
+\begin{align*}
+&amp;u_1(x) &amp;&amp; = x^2 \\ 
+&amp;u_2(x, u_1) &amp;&amp; = xu_1 \\
+&amp;\frac{\partial u_1}{\partial x} &amp;&amp; = 2x \\
+&amp;\frac{\partial u_2}{\partial x} &amp;&amp; = u_1 \\
+&amp;\frac{\partial u_2}{\partial u_1} &amp;&amp; = x
+\end{align*}
+\]</span> 使用全微分公式，可知 <span class="math display">\[
+\frac{dy}{dx} = \frac{\partial u_2}{\partial x} + \frac{\partial u_2}{\partial u_1}\frac{\partial u_1}{\partial x} = u_1 + x \cdot 2x = x^2 + 2x^2 = 3x^2
+\]</span> 对前面介绍的全微分链式法则，如果引入一个新的变量<span class="math inline">\(u_{n+1} = x\)</span>，则可以得到一个更简洁的公式 <span class="math display">\[
+\frac{\partial f(u_1, \ldots, u_{n+1})}{\partial x} = \sum_{i=1}^{n+1}\frac{\partial f}{\partial u_i}\frac{\partial u_i}{\partial x}
+\]</span> 这看上去很像两个向量的内积： <span class="math display">\[
+\frac{\partial f}{\partial \boldsymbol{u}} \frac{\partial \boldsymbol{u}}{\partial x}
+\]</span></p>
+<h4 id="向量的链式法则">向量的链式法则</h4>
+<p>为了引出向量的链式法则，可以先看一个例子。假设<span class="math inline">\(\boldsymbol{y} = \boldsymbol{f}(x)\)</span>，其中 <span class="math display">\[
+\left[ \begin{matrix}y_1(x) \\ y_2(x)\end{matrix} \right] = \left[ \begin{matrix}f_1(x) \\ f_2(x)\end{matrix} \right] = \left[ \begin{matrix}\ln(x^2) \\ \sin (3x)\end{matrix} \right]
+\]</span> 引入两个中间变量<span class="math inline">\(g_1\)</span>和<span class="math inline">\(g_2\)</span>，使得<span class="math inline">\(\boldsymbol{y} = \boldsymbol{f}(\boldsymbol{g}(x))\)</span>，其中 <span class="math display">\[
+\begin{align*}
+\left[ \begin{matrix}g_1(x) \\ g_2(x)\end{matrix} \right] &amp;= \left[ \begin{matrix}x^2 \\ 3x\end{matrix} \right] \\
+\left[ \begin{matrix}f_1(\boldsymbol{g}) \\ f_2(\boldsymbol{g})\end{matrix} \right] &amp;= \left[ \begin{matrix}\ln (g_1) \\ \sin (g_2)\end{matrix} \right]
+\end{align*}
+\]</span> 那么<span class="math inline">\(\partial \boldsymbol{y}/\partial x\)</span>就可以使用全微分链式法则： <span class="math display">\[
+\frac{\partial \boldsymbol{y}}{\partial x} = \left[ \begin{matrix}\frac{\partial f_1(\boldsymbol{g})}{\partial x} \\ \frac{\partial f_2(\boldsymbol{g})}{\partial x}\end{matrix} \right] = \left[\begin{matrix}\frac{\partial f_1}{\partial g_1} \frac{\partial g_1}{\partial x} + \frac{\partial f_1}{\partial g_2}\frac{\partial g_2}{\partial x} \\ \frac{\partial f_2}{\partial g_1}\frac{\partial g_1}{\partial x} + \frac{\partial f_2}{\partial g_2}\frac{\partial g_2}{\partial x}\end{matrix}\right]
+\]</span> 这个向量可以写成矩阵与向量相乘的形式 <span class="math display">\[
+\left[\begin{matrix}\frac{\partial f_1}{\partial g_1} \frac{\partial g_1}{\partial x} + \frac{\partial f_1}{\partial g_2}\frac{\partial g_2}{\partial x} \\ \frac{\partial f_2}{\partial g_1}\frac{\partial g_1}{\partial x} + \frac{\partial f_2}{\partial g_2}\frac{\partial g_2}{\partial x}\end{matrix}\right] = \left[\begin{matrix}\frac{\partial f_1}{\partial g_1} &amp; \frac{\partial f_1}{\partial g_2} \\ \frac{\partial f_2}{\partial g_1} &amp; \frac{\partial f_2}{\partial g_2}\end{matrix}\right]\left[\begin{matrix}\frac{\partial g_1}{\partial x} \\ \frac{\partial g_2}{\partial x}\end{matrix}\right]
+\]</span> 可以看到这个矩阵是雅可比矩阵，向量同理，即 <span class="math display">\[
+\left[\begin{matrix}\frac{\partial f_1}{\partial g_1} &amp; \frac{\partial f_1}{\partial g_2} \\ \frac{\partial f_2}{\partial g_1} &amp; \frac{\partial f_2}{\partial g_2}\end{matrix}\right]\left[\begin{matrix}\frac{\partial g_1}{\partial x} \\ \frac{\partial g_2}{\partial x}\end{matrix}\right] = \frac{\partial \boldsymbol{f}}{\partial \boldsymbol{g}}\frac{\partial \boldsymbol{g}}{\partial x}
+\]</span> 当<span class="math inline">\(x\)</span>不是标量而是向量<span class="math inline">\(\boldsymbol{x}\)</span>时，同样的法则也成立，这意味着我们可以得到一个向量的链式法则 <span class="math display">\[
+\boldsymbol{y} = \boldsymbol{f}(\boldsymbol{g}(\boldsymbol{x})) \rightarrow \frac{\partial \boldsymbol{y}}{\partial \boldsymbol{x}} = \frac{\partial \boldsymbol{f}}{\partial \boldsymbol{g}}\frac{\partial \boldsymbol{g}}{\partial \boldsymbol{x}}
+\]</span> 事实上，这个公式可以更加简洁。对很多应用，雅可比矩阵都是对角方阵，此时<span class="math inline">\(f_i\)</span>是一个只与<span class="math inline">\(g_i\)</span>有关的函数，而<span class="math inline">\(g_i\)</span>是一个只与<span class="math inline">\(x_i\)</span>有关的函数。即 <span class="math display">\[
+\begin{align*}
+\frac{\partial \boldsymbol{f}}{\partial \boldsymbol{g}} &amp;= {\rm diag}\left(\frac{\partial f_i}{\partial g_i}\right) \\
+\frac{\partial \boldsymbol{g}}{\partial \boldsymbol{x}} &amp;= {\rm diag}\left(\frac{\partial g_i}{\partial x_i}\right) 
+\end{align*}
+\]</span> 因此在这种情况下，向量的链式法则可以简化为 <span class="math display">\[
+\frac{\partial }{\partial \boldsymbol{x}}\boldsymbol{f}(\boldsymbol{g}(\boldsymbol{x})) = {\rm diag}\left(\frac{\partial f_i}{\partial g_i}\right){\rm diag}\left(\frac{\partial g_i}{\partial x_i}\right) = {\rm diag}\left(\frac{\partial f_i}{\partial g_i}\frac{\partial g_i}{\partial x_i}\right) 
+\]</span></p>
+<h2 id="激活函数的梯度">激活函数的梯度</h2>
+<p>假设网络是全连接前馈神经网络（即这里不考虑卷积、RNN等），激活函数为ReLU，那么有 <span class="math display">\[
+{\rm activation}(\boldsymbol{x}) = \max(0, \boldsymbol{w} \cdot \boldsymbol{x} + b)
+\]</span> 要计算的是<span class="math inline">\(\frac{\partial }{\partial \boldsymbol{w}}(\boldsymbol{w} \cdot \boldsymbol{x} + b)\)</span>和<span class="math inline">\(\frac{\partial }{\partial b}(\boldsymbol{w} \cdot \boldsymbol{x} + b)\)</span>。尽管之前没讨论过向量内积对向量的偏导数，但是考虑 <span class="math display">\[
+\boldsymbol{w} \cdot \boldsymbol{x} = \sum_{i}^n (w_ix_i) = {\rm sum}(\boldsymbol{w} \otimes \boldsymbol{x})
+\]</span> 而之前讨论过<span class="math inline">\({\rm sum}(\boldsymbol{x})\)</span>和<span class="math inline">\(\boldsymbol{w} \otimes \boldsymbol{x}\)</span>的偏导数和向量的链式法则，那么引入中间变量 <span class="math display">\[
+\begin{align*}
+\boldsymbol{u} &amp;= \boldsymbol{w} \otimes \boldsymbol{x} \\
+y &amp;= {\rm sum}(\boldsymbol{u})
+\end{align*}
+\]</span> 根据上面的推导，有 <span class="math display">\[
+\begin{align*}
+\frac{\partial \boldsymbol{u}}{\partial \boldsymbol{w}} &amp;= {\rm diag}(\boldsymbol{x}) \\
+\frac{\partial y}{\partial \boldsymbol{u}} &amp;= \boldsymbol{1}
+\end{align*}
+\]</span> 因此 <span class="math display">\[
+\frac{\partial y}{\partial \boldsymbol{w}} = \frac{\partial y}{\partial \boldsymbol{u}}\frac{\partial \boldsymbol{u}}{\partial \boldsymbol{w}} = \boldsymbol{1}\cdot {\rm diag}(\boldsymbol{x}) = \boldsymbol{x}
+\]</span> 再令<span class="math inline">\(y = \boldsymbol{w} \cdot \boldsymbol{x} + b\)</span>，不难得出 <span class="math display">\[
+\frac{\partial y}{\partial \boldsymbol{w}} = \boldsymbol{x},\ \ \  \frac{\partial y}{\partial b} = 1
+\]</span> 激活函数是一个分段函数，且在0点不连续。分段求导可得 <span class="math display">\[
+\begin{align*}
+\frac{\partial }{\partial z}\max(0, z) = \begin{cases}0 &amp; z \le 0 \\ \frac{dz}{dz} = 1 &amp; z &gt; 0\end{cases}
+\end{align*}
+\]</span> 因此 <span class="math display">\[
+\frac{\partial}{\partial \boldsymbol{x}}\max(0, \boldsymbol{x}) = \left[\begin{matrix}\frac{\partial }{\partial x_1}\max(0, x_1) \\ \frac{\partial }{\partial x_2}\max(0, x_2) \\ \vdots \\ \frac{\partial }{\partial x_n}\max(0, x_n)\end{matrix}\right]
+\]</span> 综合起来，对激活函数，引入中间变量<span class="math inline">\(z\)</span>来表示仿射变换，有 <span class="math display">\[
+\begin{align*}
+z(\boldsymbol{w}, b, \boldsymbol{x}) &amp;= \boldsymbol{w} \cdot \boldsymbol{x} + b \\
+{\rm activation}(z) &amp;= \max(0, z)
+\end{align*}
+\]</span> 通过链式法则 <span class="math display">\[
+\frac{\partial {\rm activation}}{\partial \boldsymbol{w}} = \frac{\partial {\rm activation}}{\partial z} \frac{\partial z}{\partial \boldsymbol{w}}
+\]</span> 代入前面的推导，有 <span class="math display">\[
+\begin{align*}
+\frac{\partial {\rm activation}}{\partial \boldsymbol{w}} &amp;= \begin{cases}0\frac{\partial z}{\partial \boldsymbol{w}} = \boldsymbol{0} &amp; z \le 0\\ 1\frac{\partial z}{\partial \boldsymbol{w}} = \boldsymbol{x} &amp; z &gt; 0\end{cases} \\
+\frac{\partial {\rm activation}}{\partial b} &amp;= \begin{cases}0 &amp; z \le 0 \\ 1 &amp; z &gt; 0 \end{cases} 
+\end{align*}
+\]</span></p>
+<h2 id="神经网络损失函数的梯度">神经网络损失函数的梯度</h2>
+<p>最后考虑一个完整的例子。假设模型的输入是<span class="math inline">\(\boldsymbol{X}\)</span>，且 <span class="math display">\[
+\boldsymbol{X} = [\boldsymbol{x}_1,\boldsymbol{x}_2, \ldots, \boldsymbol{x}_N]^\mathsf{T}
+\]</span> 样本个数为<span class="math inline">\(N = |\boldsymbol{X}|\)</span>，令结果向量为 <span class="math display">\[
+\boldsymbol{y} = [{\rm target}(\boldsymbol{x}_1), {\rm target}(\boldsymbol{x}_2), \ldots, {\rm target}(\boldsymbol{x}_N)]^\mathsf{T}
+\]</span> 其中每个<span class="math inline">\(y_i\)</span>都是一个标量。假设损失函数使用平方误差函数，那么损失函数<span class="math inline">\(C\)</span>为 <span class="math display">\[
+\begin{align*}
+C(\boldsymbol{w}, b, \boldsymbol{X}, \boldsymbol{y}) &amp;= \frac{1}{N}\sum_{i=1}^N(y_i - {\rm activation}(\boldsymbol{x}_i))^2 \\
+&amp;= \frac{1}{N}\sum_{i=1}^N(y_i - \max(0, \boldsymbol{w} \cdot \boldsymbol{x}_i + b))^2
+\end{align*}
+\]</span> 引入中间变量，有 <span class="math display">\[
+\begin{align*}
+u(\boldsymbol{w}, b, \boldsymbol{x}) &amp;= \max(0, \boldsymbol{w} \cdot \boldsymbol{x} + b) \\
+v(y, u) &amp;= y -u\\
+C(v) &amp;= \frac{1}{N}\sum_{i=1}^N v^2
+\end{align*}
+\]</span> 这里主要说明如何计算权重的梯度。偏置<span class="math inline">\(b\)</span>的计算方法同理。由前面的推导可知 <span class="math display">\[
+\frac{\partial }{\partial \boldsymbol{w}} u(\boldsymbol{w}, b, \boldsymbol{x}) = \begin{cases}\boldsymbol{0} &amp; \boldsymbol{w} \cdot \boldsymbol{x} + b \le 0 \\ \boldsymbol{x} &amp; \boldsymbol{w}\cdot \boldsymbol{x} + b &gt; 0\end{cases}
+\]</span> 而 <span class="math display">\[
+\frac{\partial v(y, u)}{\partial \boldsymbol{w}} = \frac{\partial }{\partial \boldsymbol{w}}(y - u) = \boldsymbol{0} - \frac{\partial u}{\partial \boldsymbol{w}} = -\frac{\partial u}{\partial \boldsymbol{w}} = \begin{cases}\boldsymbol{0} &amp; \boldsymbol{w} \cdot \boldsymbol{x} + b \le 0 \\ -\boldsymbol{x} &amp; \boldsymbol{w}\cdot \boldsymbol{x} + b &gt; 0\end{cases}
+\]</span> 因此，整个梯度的计算过程为 <span class="math display">\[
+\begin{align*}
+\frac{\partial C(v)}{\partial \boldsymbol{w}} &amp;= \frac{\partial}{\partial \boldsymbol{w}}\frac{1}{N}\sum_{i=1}^N v^2 \\
+&amp;= \frac{1}{N}\sum_{i=1}^N\frac{\partial v^2}{\partial v}\frac{\partial v}{\partial \boldsymbol{w}} \\
+&amp;= \frac{1}{N}\sum_{i=1}^N2v\frac{\partial v}{\partial \boldsymbol{w}}
+\end{align*}
+\]</span> 中间展开过程略，最后可得 <span class="math display">\[
+\frac{\partial C(v)}{\partial \boldsymbol{w}} = \begin{cases}\boldsymbol{0} &amp; \boldsymbol{w}\cdot \boldsymbol{x}_i + b \le 0 \\ \frac{2}{N}\sum_{i=1}^N (\boldsymbol{w}\cdot \boldsymbol{x}_i + b - y_i)\boldsymbol{x}_i &amp; \boldsymbol{w}\cdot \boldsymbol{x}_i + b &gt; 0\end{cases}
+\]</span> 后面关于梯度下降的讨论略</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2018/09/09/NMT-Tutorial-3a-Matrix-Calculus-for-Deep-Learning/" title="NMT Tutorial 3扩展a. 深度学习的矩阵微积分基础">txshi-mt.com/2018/09/09/NMT-Tutorial-3a-Matrix-Calculus-for-Deep-Learning/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/矩阵微积分/" rel="tag"># 矩阵微积分</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/28/Building-Moses-on-Mac/" rel="next" title="在Mac上编译构建Moses">
+                <i class="fa fa-chevron-left"></i> 在Mac上编译构建Moses
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">88</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">86</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#预备知识"><span class="nav-number">1.</span> <span class="nav-text">&#x9884;&#x5907;&#x77E5;&#x8BC6;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#矩阵微积分"><span class="nav-number">2.</span> <span class="nav-text">&#x77E9;&#x9635;&#x5FAE;&#x79EF;&#x5206;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#雅可比矩阵的泛化"><span class="nav-number">2.1.</span> <span class="nav-text">&#x96C5;&#x53EF;&#x6BD4;&#x77E9;&#x9635;&#x7684;&#x6CDB;&#x5316;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#两向量间逐元素运算的导数"><span class="nav-number">2.2.</span> <span class="nav-text">&#x4E24;&#x5411;&#x91CF;&#x95F4;&#x9010;&#x5143;&#x7D20;&#x8FD0;&#x7B97;&#x7684;&#x5BFC;&#x6570;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#向量与标量运算的导数"><span class="nav-number">2.3.</span> <span class="nav-text">&#x5411;&#x91CF;&#x4E0E;&#x6807;&#x91CF;&#x8FD0;&#x7B97;&#x7684;&#x5BFC;&#x6570;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#向量的求和规约操作"><span class="nav-number">2.4.</span> <span class="nav-text">&#x5411;&#x91CF;&#x7684;&#x6C42;&#x548C;&#x89C4;&#x7EA6;&#x64CD;&#x4F5C;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#链式法则"><span class="nav-number">2.5.</span> <span class="nav-text">&#x94FE;&#x5F0F;&#x6CD5;&#x5219;</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#单变量链式法则"><span class="nav-number">2.5.1.</span> <span class="nav-text">&#x5355;&#x53D8;&#x91CF;&#x94FE;&#x5F0F;&#x6CD5;&#x5219;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#单变量全微分链式法则"><span class="nav-number">2.5.2.</span> <span class="nav-text">&#x5355;&#x53D8;&#x91CF;&#x5168;&#x5FAE;&#x5206;&#x94FE;&#x5F0F;&#x6CD5;&#x5219;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#向量的链式法则"><span class="nav-number">2.5.3.</span> <span class="nav-text">&#x5411;&#x91CF;&#x7684;&#x94FE;&#x5F0F;&#x6CD5;&#x5219;</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#激活函数的梯度"><span class="nav-number">3.</span> <span class="nav-text">&#x6FC0;&#x6D3B;&#x51FD;&#x6570;&#x7684;&#x68AF;&#x5EA6;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#神经网络损失函数的梯度"><span class="nav-number">4.</span> <span class="nav-text">&#x795E;&#x7ECF;&#x7F51;&#x7EDC;&#x635F;&#x5931;&#x51FD;&#x6570;&#x7684;&#x68AF;&#x5EA6;</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
