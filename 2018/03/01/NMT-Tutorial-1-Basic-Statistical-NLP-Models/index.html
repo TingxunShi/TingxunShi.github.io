@@ -431,10 +431,10 @@ P(E) = P(|E|=T, e_1^T)
 P(E) = \prod_{t=1}^{T+1}P(e_t|e_1^{t-1})
 \]</span> 那么，问题转化为，如何在已知前面单词的情况下，有效计算<span class="math inline">\(P(e_t|e_1^{t-1})\)</span></p>
 <h2 id="基于记数的n元语法">基于记数的n元语法</h2>
-<p>计算该概率的方法比较简单：准备一份训练数据，然后先数出<span class="math inline">\(e_1, e_2, \ldots, e_t\)</span>的数量，再数出<span class="math inline">\(e_1, e_2, \ldots, e_{t-1}\)</span>的数量。例如，对句子“you are from Beijing”，先数出所有“you are from Beijing”开头的字符串的数量，再数出“you are from”开头的字符串的数量，两者相除，就得到了要求的概率值。形式化地说，为 <span class="math display">\[
+<p>计算该概率的方法比较简单：准备一份训练数据，然后先数出<span class="math inline">\(e_1, e_2, \ldots, e_t\)</span>的数量，再数出<span class="math inline">\(e_1, e_2, \ldots, e_{t-1}\)</span>的数量。例如，对句子&quot;you are from Beijing&quot;，先数出所有&quot;you are from Beijing&quot;开头的字符串的数量，再数出&quot;you are from&quot;开头的字符串的数量，两者相除，就得到了要求的概率值。形式化地说，为 <span class="math display">\[
 P_{\rm ML}(e_t|e_1^{t-1}) = \frac{c_{\rm prefix}(e_1^t)}{c_{\rm prefix}(e_1^{t-1})}
 \]</span> 这里<span class="math inline">\(c_{\rm prefix}(\cdot)\)</span>是指定字符串在训练数据中句首出现的次数，这种方法称为<strong>最大似然法</strong></p>
-<p>这种方法的问题是，不是所有句子都能在训练集出现。例如，训练集中可能有很多句“you are from Shanghai”或者“they are from Beijing”，但是就是没有“you are from Beijing”。按照上面列出的原始的概率算法，“you are from Beijing”这句话的概率为0——推而广之，语言模型会给每句没有在训练集中出现的句子的概率都给成0，因此不是特别有意义</p>
+<p>这种方法的问题是，不是所有句子都能在训练集出现。例如，训练集中可能有很多句&quot;you are from Shanghai&quot;或者&quot;they are from Beijing&quot;，但是就是没有&quot;you are from Beijing&quot;。按照上面列出的原始的概率算法，&quot;you are from Beijing&quot;这句话的概率为0——推而广之，语言模型会给每句没有在训练集中出现的句子的概率都给成0，因此不是特别有意义</p>
 <p>为了避免这样的问题出现，可以使用一种退而求其次的方法来近似估计某句话在语言里出现的概率，即不再看以某个字符串开头的句子，而是设置一个固定大小的窗口，限定单词上下文（或称为语境）的长度。例如，假设将语境限制为目标单词的前<span class="math inline">\(n-1\)</span>个单词，那么就有 <span class="math display">\[
 P(e_t|e_1^{t-1}) \approx P_{\rm ML}(e_t|e_{t-n+1}^{t-1})
 \]</span> 这种模型称为<strong>n元语法模型</strong>。N元语法模型的参数<span class="math inline">\(\theta\)</span>包含了所有给定<span class="math inline">\(n-1\)</span>个单词时，出现下一个单词的概率 <span class="math display">\[
@@ -484,7 +484,7 @@ P(e_t)  = (1-\alpha_1)P_{\rm ML}(e_t) + \alpha_1P_{\rm unk}(e_t)
 <h2 id="n元语法的扩展">N元语法的扩展</h2>
 <p>关于N元语法更详细的描述，可以参考[Goodman2001]。其它一些扩展的研究方向包括</p>
 <ul>
-<li>大规模语言模型，可以参考<a href="http://www.cs.cmu.edu/~tbergkir/11711fa17/" target="_blank" rel="noopener">CMU 11-711 “Algorithms for NLP”</a> Language Modeling 部分的课件和扩展阅读</li>
+<li>大规模语言模型，可以参考<a href="http://www.cs.cmu.edu/~tbergkir/11711fa17/" target="_blank" rel="noopener">CMU 11-711 &quot;Algorithms for NLP&quot;</a> Language Modeling 部分的课件和扩展阅读</li>
 <li>专门领域的语言模型，例如[Bellegarda2004]</li>
 <li>长距离的语言模型，例如cache LM [DeMori1990]、主题模型</li>
 <li>基于语法的语言模型，例如[Weischedel2008]</li>
@@ -663,7 +663,7 @@ P(e_t)  = (1-\alpha_1)P_{\rm ML}(e_t) + \alpha_1P_{\rm unk}(e_t)
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">88</span>
+                  <span class="site-state-item-count">89</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -685,7 +685,7 @@ P(e_t)  = (1-\alpha_1)P_{\rm ML}(e_t) + \alpha_1P_{\rm unk}(e_t)
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">86</span>
+                  <span class="site-state-item-count">87</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -742,7 +742,7 @@ P(e_t)  = (1-\alpha_1)P_{\rm ML}(e_t) + \alpha_1P_{\rm unk}(e_t)
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#统计机器翻译问题的形式化定义"><span class="nav-number">1.</span> <span class="nav-text">&#x7EDF;&#x8BA1;&#x673A;&#x5668;&#x7FFB;&#x8BD1;&#x95EE;&#x9898;&#x7684;&#x5F62;&#x5F0F;&#x5316;&#x5B9A;&#x4E49;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#逐词计算概率"><span class="nav-number">2.</span> <span class="nav-text">&#x9010;&#x8BCD;&#x8BA1;&#x7B97;&#x6982;&#x7387;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于记数的n元语法"><span class="nav-number">3.</span> <span class="nav-text">&#x57FA;&#x4E8E;&#x8BB0;&#x6570;&#x7684;n&#x5143;&#x8BED;&#x6CD5;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#语言模型的评估"><span class="nav-number">4.</span> <span class="nav-text">&#x8BED;&#x8A00;&#x6A21;&#x578B;&#x7684;&#x8BC4;&#x4F30;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#处理未知词"><span class="nav-number">5.</span> <span class="nav-text">&#x5904;&#x7406;&#x672A;&#x77E5;&#x8BCD;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#n元语法的扩展"><span class="nav-number">6.</span> <span class="nav-text">N&#x5143;&#x8BED;&#x6CD5;&#x7684;&#x6269;&#x5C55;</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#统计机器翻译问题的形式化定义"><span class="nav-number">1.</span> <span class="nav-text">统计机器翻译问题的形式化定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#逐词计算概率"><span class="nav-number">2.</span> <span class="nav-text">逐词计算概率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于记数的n元语法"><span class="nav-number">3.</span> <span class="nav-text">基于记数的n元语法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#语言模型的评估"><span class="nav-number">4.</span> <span class="nav-text">语言模型的评估</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#处理未知词"><span class="nav-number">5.</span> <span class="nav-text">处理未知词</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#n元语法的扩展"><span class="nav-number">6.</span> <span class="nav-text">N元语法的扩展</span></a></li></ol></div>
             
 
           </div>

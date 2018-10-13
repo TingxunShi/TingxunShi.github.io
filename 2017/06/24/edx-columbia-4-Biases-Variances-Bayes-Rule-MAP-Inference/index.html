@@ -477,7 +477,7 @@ p(\pi|x_1, \ldots, x_n) &amp;\propto \left[\prod_{i=1}^n \pi^{x_i}(1-\pi)^{1-x_i
 &amp; \propto \pi^{\sum_{i=1}^n x_i + a - 1}(1-\pi)^{\sum_{i=1}^n (1-x_i) + b - 1}
 \end{align*}\]</span></p>
 <p>即<span class="math inline">\(p(\pi|x_1, \ldots, x_n) = Beta(\sum_{i=1}^n x_i + a, \sum_{i=1}^n (1-x_i) + b)\)</span></p>
-<h2 id="最大后验maximum-a-priori-map">最大后验（Maximum A Priori – MAP）</h2>
+<h2 id="最大后验maximum-a-priori----map">最大后验（Maximum A Priori -- MAP）</h2>
 <p>之前最小二乘的<span class="math inline">\(w​\)</span>可以通过MLE得到，那么岭回归也可以使用概率解释。沿用之前的似然模型，<span class="math inline">\(y\sim N(Xw, \sigma^2I)​\)</span>，不同的是这里我们还要为<span class="math inline">\(w​\)</span>提出一个先验模型。假设这个模型满足高斯分布，<span class="math inline">\(w\sim N(0, \lambda^{-1}I)​\)</span>，那么 <span class="math display">\[
 p(w) = \left(\frac{\lambda}{2\pi}\right)^{\frac{d}{2}} {\rm e}^{-\frac{\lambda}{2}w^\mathsf{T}w}
 \]</span></p>
@@ -666,7 +666,7 @@ w_{\rm ML} = w_{\rm LS}
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">88</span>
+                  <span class="site-state-item-count">89</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -688,7 +688,7 @@ w_{\rm ML} = w_{\rm LS}
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">86</span>
+                  <span class="site-state-item-count">87</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -745,7 +745,7 @@ w_{\rm ML} = w_{\rm LS}
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#偏差-方差均衡"><span class="nav-number">1.</span> <span class="nav-text">&#x504F;&#x5DEE;-&#x65B9;&#x5DEE;&#x5747;&#x8861;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#贝叶斯定律"><span class="nav-number">2.</span> <span class="nav-text">&#x8D1D;&#x53F6;&#x65AF;&#x5B9A;&#x5F8B;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#最大后验maximum-a-priori-map"><span class="nav-number">3.</span> <span class="nav-text">&#x6700;&#x5927;&#x540E;&#x9A8C;&#xFF08;Maximum A Priori &#x2013; MAP&#xFF09;</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#偏差-方差均衡"><span class="nav-number">1.</span> <span class="nav-text">偏差-方差均衡</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#贝叶斯定律"><span class="nav-number">2.</span> <span class="nav-text">贝叶斯定律</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#最大后验maximum-a-priori----map"><span class="nav-number">3.</span> <span class="nav-text">最大后验（Maximum A Priori -- MAP）</span></a></li></ol></div>
             
 
           </div>

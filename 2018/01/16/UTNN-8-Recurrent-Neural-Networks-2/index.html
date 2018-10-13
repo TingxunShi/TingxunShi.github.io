@@ -453,7 +453,7 @@
 <li>很少产生英语单词表里没有的词。即便是产生了，这个词也很像英语单词，例如ephemerable</li>
 <li>尽管有时候会产生不匹配的括号，但是它也会匹配长距离的括号和引号</li>
 </ul>
-<p>另一个有趣的实验是，给一个自造词，看看会有什么结果。Hinton选择了thrunge这个词，它不存在于词典里，但是看着像是一个动词。如果前面给的是Sheila，那么对于Sheila thrunge模型会预测接下来的字母是s，这意味着它能发现主语是单数，前面有点像动词。如果前面给People，那么对于People thrunge模型预测接下来的字符是空格，说明它能掌握people是复数这个特征。如果前面给Shiela, 并将t大写，那么对于“Shiela, Thrunge”它会补成“Shiela, Thrungelini del Rey”，即一个人名——而且这个人名还不错</p>
+<p>另一个有趣的实验是，给一个自造词，看看会有什么结果。Hinton选择了thrunge这个词，它不存在于词典里，但是看着像是一个动词。如果前面给的是Sheila，那么对于Sheila thrunge模型会预测接下来的字母是s，这意味着它能发现主语是单数，前面有点像动词。如果前面给People，那么对于People thrunge模型预测接下来的字符是空格，说明它能掌握people是复数这个特征。如果前面给Shiela, 并将t大写，那么对于&quot;Shiela, Thrunge&quot;它会补成&quot;Shiela, Thrungelini del Rey&quot;，即一个人名——而且这个人名还不错</p>
 <p>经过实验观察，可以肯定的是，模型能够学到以下知识</p>
 <ul>
 <li>能够知道什么是词，长什么样。它产生的词绝大部分都是英语单词，而且知道句首字母大写，产生出的日期格式也没什么问题。即便是产生了虚构的，非英语的单词，也很难看出来。它可以产生专有名词，也知道日期和数字应该出现的语境</li>
@@ -638,7 +638,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">88</span>
+                  <span class="site-state-item-count">89</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -660,7 +660,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">86</span>
+                  <span class="site-state-item-count">87</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -717,7 +717,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#无hessian矩阵hessian-free-hf优化法及其应用"><span class="nav-number">1.</span> <span class="nav-text">&#x65E0;Hessian&#x77E9;&#x9635;&#xFF08;Hessian-Free, HF&#xFF09;&#x4F18;&#x5316;&#x6CD5;&#x53CA;&#x5176;&#x5E94;&#x7528;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#hf优化原理"><span class="nav-number">1.1.</span> <span class="nav-text">HF&#x4F18;&#x5316;&#x539F;&#x7406;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用hf的字符模型"><span class="nav-number">2.</span> <span class="nav-text">&#x4F7F;&#x7528;HF&#x7684;&#x5B57;&#x7B26;&#x6A21;&#x578B;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#字符模型"><span class="nav-number">2.1.</span> <span class="nav-text">&#x5B57;&#x7B26;&#x6A21;&#x578B;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#乘性连接multiplicative-connection"><span class="nav-number">2.2.</span> <span class="nav-text">&#x4E58;&#x6027;&#x8FDE;&#x63A5;&#xFF08;multiplicative connection&#xFF09;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用hf优化器预测下一个字符"><span class="nav-number">2.3.</span> <span class="nav-text">&#x4F7F;&#x7528;HF&#x4F18;&#x5316;&#x5668;&#x9884;&#x6D4B;&#x4E0B;&#x4E00;&#x4E2A;&#x5B57;&#x7B26;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#回声状态网络"><span class="nav-number">3.</span> <span class="nav-text">&#x56DE;&#x58F0;&#x72B6;&#x6001;&#x7F51;&#x7EDC;</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#无hessian矩阵hessian-free-hf优化法及其应用"><span class="nav-number">1.</span> <span class="nav-text">无Hessian矩阵（Hessian-Free, HF）优化法及其应用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#hf优化原理"><span class="nav-number">1.1.</span> <span class="nav-text">HF优化原理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用hf的字符模型"><span class="nav-number">2.</span> <span class="nav-text">使用HF的字符模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#字符模型"><span class="nav-number">2.1.</span> <span class="nav-text">字符模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#乘性连接multiplicative-connection"><span class="nav-number">2.2.</span> <span class="nav-text">乘性连接（multiplicative connection）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用hf优化器预测下一个字符"><span class="nav-number">2.3.</span> <span class="nav-text">使用HF优化器预测下一个字符</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#回声状态网络"><span class="nav-number">3.</span> <span class="nav-text">回声状态网络</span></a></li></ol></div>
             
 
           </div>

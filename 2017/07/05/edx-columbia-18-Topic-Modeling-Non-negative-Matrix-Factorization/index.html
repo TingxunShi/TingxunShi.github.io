@@ -438,7 +438,7 @@ P(x_{dn} = i | \beta, \theta) &amp;= \sum_{k=1}^K P(x_{dn} = i, c_{dn} = k|\beta
 D(X|\!|WH) = -\sum_i \sum_j [X_{ij}\ln(WH)_{ij} - (WH)_{ij}]
 \]</span></li>
 </ol>
-<p>NMF算法类似于之前的EM算法，也是引入了一个辅助函数，然后使辅助函数与原函数的KL距离最小（？）。这里不讨论。细节见 D.D. Lee and H.S. Seung (2001). “Algorithms for non-negative matrix factorization.” <em>Advances in Neural Information Processing Systems</em></p>
+<p>NMF算法类似于之前的EM算法，也是引入了一个辅助函数，然后使辅助函数与原函数的KL距离最小（？）。这里不讨论。细节见 D.D. Lee and H.S. Seung (2001). &quot;Algorithms for non-negative matrix factorization.&quot; <em>Advances in Neural Information Processing Systems</em></p>
 <h4 id="最小化平方误差">最小化平方误差</h4>
 <p>其求解问题为 <span class="math display">\[
 \min \sum_{ij}(X_{ij} - (WH)_{ij})^2\ \ \ {\rm subject\ to}\ W_{ik} \ge 0, H_{kj} \ge 0
@@ -644,7 +644,7 @@ P(X|W,H) = \prod_{ij}P(X_{ij}|W,H) = \prod_{ij}{\rm Pois}(X_{ij}|(WH)_{ij})
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">88</span>
+                  <span class="site-state-item-count">89</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -666,7 +666,7 @@ P(X|W,H) = \prod_{ij}P(X_{ij}|W,H) = \prod_{ij}{\rm Pois}(X_{ij}|(WH)_{ij})
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">86</span>
+                  <span class="site-state-item-count">87</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -723,7 +723,7 @@ P(X|W,H) = \prod_{ij}P(X_{ij}|W,H) = \prod_{ij}{\rm Pois}(X_{ij}|(WH)_{ij})
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#lda"><span class="nav-number">1.</span> <span class="nav-text">LDA</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#dirichlet分布"><span class="nav-number">1.1.</span> <span class="nav-text">Dirichlet&#x5206;&#x5E03;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lda与矩阵分解"><span class="nav-number">1.2.</span> <span class="nav-text">LDA&#x4E0E;&#x77E9;&#x9635;&#x5206;&#x89E3;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#非负矩阵分解-nmf"><span class="nav-number">2.</span> <span class="nav-text">&#x975E;&#x8D1F;&#x77E9;&#x9635;&#x5206;&#x89E3; (NMF)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#目标函数"><span class="nav-number">2.1.</span> <span class="nav-text">&#x76EE;&#x6807;&#x51FD;&#x6570;</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#最小化平方误差"><span class="nav-number">2.1.1.</span> <span class="nav-text">&#x6700;&#x5C0F;&#x5316;&#x5E73;&#x65B9;&#x8BEF;&#x5DEE;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#最小化距离"><span class="nav-number">2.1.2.</span> <span class="nav-text">&#x6700;&#x5C0F;&#x5316;&#x8DDD;&#x79BB;</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用nmf求解主题建模问题"><span class="nav-number">3.</span> <span class="nav-text">&#x4F7F;&#x7528;NMF&#x6C42;&#x89E3;&#x4E3B;&#x9898;&#x5EFA;&#x6A21;&#x95EE;&#x9898;</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#lda"><span class="nav-number">1.</span> <span class="nav-text">LDA</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#dirichlet分布"><span class="nav-number">1.1.</span> <span class="nav-text">Dirichlet分布</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lda与矩阵分解"><span class="nav-number">1.2.</span> <span class="nav-text">LDA与矩阵分解</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#非负矩阵分解-nmf"><span class="nav-number">2.</span> <span class="nav-text">非负矩阵分解 (NMF)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#目标函数"><span class="nav-number">2.1.</span> <span class="nav-text">目标函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#最小化平方误差"><span class="nav-number">2.1.1.</span> <span class="nav-text">最小化平方误差</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#最小化距离"><span class="nav-number">2.1.2.</span> <span class="nav-text">最小化距离</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用nmf求解主题建模问题"><span class="nav-number">3.</span> <span class="nav-text">使用NMF求解主题建模问题</span></a></li></ol></div>
             
 
           </div>

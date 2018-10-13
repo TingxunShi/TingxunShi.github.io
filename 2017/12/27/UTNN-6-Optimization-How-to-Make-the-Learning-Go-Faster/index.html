@@ -516,7 +516,7 @@
 <li>将其与标准的动量法相结合。不过Hinton组当年做的实验发现引入动量法带来的改进比较有限，需要进一步观察</li>
 <li>将其与Nesterov动量法相结合。Ilya Sutskever的实验发现这样做效果不错，尤其是用最近几次梯度的rms去除校正项（而不是跳跃项）时</li>
 <li>将其与分连接自适应学习率法相结合，这样的算法更像rprop，不过需要进一步的研究</li>
-<li>其它方法，可以参看Yann LeCun组<em>No More Pesky Learning Rates</em> (ICML 2013, pp. 343 - 351)</li>
+<li>其它方法，可以参看Yann LeCun组<em>No More Pesky Learning Rates</em> (ICML 2013, pp. 343 - 351)</li>
 </ul>
 <h2 id="神经网络学习方法小结">神经网络学习方法小结</h2>
 <p>所以，总体来看，如果数据集比较小，例如只有不到10000条数据，或者是不太冗余的更大一些的数据集，可以考虑使用full batch的方法。对于这类问题，一些从优化理论领域扩展来的方法，例如非线性共轭梯度法、LBFGS法都比较适用，而且这些方法都有比较成熟的实现。或者也可以使用自适应学习率法或rprop，它们算是专为神经网络所设计</p>
@@ -693,7 +693,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">88</span>
+                  <span class="site-state-item-count">89</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -715,7 +715,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">86</span>
+                  <span class="site-state-item-count">87</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -772,7 +772,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#mini-batch梯度下降概论"><span class="nav-number">1.</span> <span class="nav-text">Mini-batch&#x68AF;&#x5EA6;&#x4E0B;&#x964D;&#x6982;&#x8BBA;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关于mini-batch梯度下降的一些技巧"><span class="nav-number">2.</span> <span class="nav-text">&#x5173;&#x4E8E;mini-batch&#x68AF;&#x5EA6;&#x4E0B;&#x964D;&#x7684;&#x4E00;&#x4E9B;&#x6280;&#x5DE7;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#权重的初始化"><span class="nav-number">2.1.</span> <span class="nav-text">&#x6743;&#x91CD;&#x7684;&#x521D;&#x59CB;&#x5316;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#输入平移"><span class="nav-number">2.2.</span> <span class="nav-text">&#x8F93;&#x5165;&#x5E73;&#x79FB;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#输入缩放"><span class="nav-number">2.3.</span> <span class="nav-text">&#x8F93;&#x5165;&#x7F29;&#x653E;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#去相关性"><span class="nav-number">2.4.</span> <span class="nav-text">&#x53BB;&#x76F8;&#x5173;&#x6027;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其它常见问题"><span class="nav-number">2.5.</span> <span class="nav-text">&#x5176;&#x5B83;&#x5E38;&#x89C1;&#x95EE;&#x9898;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#加快学习的四种方法"><span class="nav-number">2.6.</span> <span class="nav-text">&#x52A0;&#x5FEB;&#x5B66;&#x4E60;&#x7684;&#x56DB;&#x79CD;&#x65B9;&#x6CD5;</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#动量法"><span class="nav-number">3.</span> <span class="nav-text">&#x52A8;&#x91CF;&#x6CD5;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为每个连接设置自适应学习率"><span class="nav-number">4.</span> <span class="nav-text">&#x4E3A;&#x6BCF;&#x4E2A;&#x8FDE;&#x63A5;&#x8BBE;&#x7F6E;&#x81EA;&#x9002;&#x5E94;&#x5B66;&#x4E60;&#x7387;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#rmsprop"><span class="nav-number">5.</span> <span class="nav-text">Rmsprop</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#神经网络学习方法小结"><span class="nav-number">6.</span> <span class="nav-text">&#x795E;&#x7ECF;&#x7F51;&#x7EDC;&#x5B66;&#x4E60;&#x65B9;&#x6CD5;&#x5C0F;&#x7ED3;</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#mini-batch梯度下降概论"><span class="nav-number">1.</span> <span class="nav-text">Mini-batch梯度下降概论</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关于mini-batch梯度下降的一些技巧"><span class="nav-number">2.</span> <span class="nav-text">关于mini-batch梯度下降的一些技巧</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#权重的初始化"><span class="nav-number">2.1.</span> <span class="nav-text">权重的初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#输入平移"><span class="nav-number">2.2.</span> <span class="nav-text">输入平移</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#输入缩放"><span class="nav-number">2.3.</span> <span class="nav-text">输入缩放</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#去相关性"><span class="nav-number">2.4.</span> <span class="nav-text">去相关性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其它常见问题"><span class="nav-number">2.5.</span> <span class="nav-text">其它常见问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#加快学习的四种方法"><span class="nav-number">2.6.</span> <span class="nav-text">加快学习的四种方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#动量法"><span class="nav-number">3.</span> <span class="nav-text">动量法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为每个连接设置自适应学习率"><span class="nav-number">4.</span> <span class="nav-text">为每个连接设置自适应学习率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#rmsprop"><span class="nav-number">5.</span> <span class="nav-text">Rmsprop</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#神经网络学习方法小结"><span class="nav-number">6.</span> <span class="nav-text">神经网络学习方法小结</span></a></li></ol></div>
             
 
           </div>

@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="自动微分," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="本文无说明的部分（包括配图）均是翻译/演绎自： Baydin, A. G., Pearlmutter, B. A., Radul, A. A., &amp;amp; Siskind, J. M. (2017). Automatic differentiation in machine learning: a survey. Journal of machine learning research, 18(">
+<meta name="keywords" content="自动微分">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NMT Tutorial 3扩展b. 自动微分">
+<meta property="og:url" content="txshi-mt.com/2018/10/04/NMT-Tutorial-3b-Autodiff/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="本文无说明的部分（包括配图）均是翻译/演绎自： Baydin, A. G., Pearlmutter, B. A., Radul, A. A., &amp;amp; Siskind, J. M. (2017). Automatic differentiation in machine learning: a survey. Journal of machine learning research, 18(">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutoral_3b_numerical_diff_errors.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutoral_3b_expression_swell.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutoral_3b_computational_graph.png">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutoral_3b_AD_forward_mode.png">
+<meta property="og:updated_time" content="2018-10-13T08:29:36.605Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NMT Tutorial 3扩展b. 自动微分">
+<meta name="twitter:description" content="本文无说明的部分（包括配图）均是翻译/演绎自： Baydin, A. G., Pearlmutter, B. A., Radul, A. A., &amp;amp; Siskind, J. M. (2017). Automatic differentiation in machine learning: a survey. Journal of machine learning research, 18(">
+<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutoral_3b_numerical_diff_errors.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2018/10/04/NMT-Tutorial-3b-Autodiff/"/>
+
+
+
+
+
+  <title>NMT Tutorial 3扩展b. 自动微分 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2018/10/04/NMT-Tutorial-3b-Autodiff/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NMT Tutorial 3扩展b. 自动微分</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-04T10:18:38+08:00">
+                Oct 4 2018
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/深度学习/" itemprop="url" rel="index">
+                    <span itemprop="name">深度学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文无说明的部分（包括配图）均是翻译/演绎自：</p>
+<p>Baydin, A. G., Pearlmutter, B. A., Radul, A. A., &amp; Siskind, J. M. (2017). <a href="http://www.jmlr.org/papers/volume18/17-468/17-468.pdf" target="_blank" rel="noopener">Automatic differentiation in machine learning: a survey</a>. <em>Journal of machine learning research</em>, <em>18</em>(153), 1-43.</p>
+<p>不过没有包含自动微分前向模式中“对偶数”这一小小节</p>
+<p>其它引用会单独注明</p>
+<hr>
+<h2 id="引言">引言</h2>
+<p>如前所示，在训练神经网络时，需要计算损失函数对网络参数的梯度，其中会涉及到很多次导数的计算。一般来讲，编程计算导数有四种做法</p>
+<ul>
+<li><p>手动微分（manual differentiation），手动推出导数是什么样，然后硬编码。这种做法既耗时也容易出错，还没有灵活性</p></li>
+<li><p>数值微分（numerical differentiation），利用数值代数方法逼近函数的导数值。这种方法存在舍入误差和截断误差，而且扩展性差，在深度学习需要计算百万量级参数的梯度时不适用</p></li>
+<li><p>符号微分（symbolic differentiation）。通常是计算机代数系统采用，例如Mathematica, Maxima和Maple等等。这种方法试图给出给定表达式导数的代数形式，但是会导致表达式爆炸的现象。而且其底层依赖一个封闭的表达式库，给方法求解问题的范畴施加了局限</p></li>
+<li><p>自动微分（automatic differentiation），或者也被称为算法微分（algorithmic differentiation），是本文的主题</p></li>
+</ul>
+<h2 id="自动微分不是什么">自动微分不是什么</h2>
+<h3 id="自动微分不是数值微分">自动微分不是数值微分</h3>
+<p>这里先介绍一下数值微分的计算思想。考虑到导数的定义，如果一个函数<span class="math inline">\(y=f(x)\)</span>在点<span class="math inline">\(x_0\)</span>处可导，那么其在该点处的导数为 <span class="math display">\[
+f&#39;(x_0) = \lim_{\Delta x\rightarrow 0}\frac{\Delta y}{\Delta x} = \lim_{\Delta x\rightarrow 0} \frac{f(x_0 + \Delta x) - f(x_0)}{\Delta x}
+\]</span> 因此可以使用导数的定义，使用一个特别小的<span class="math inline">\(\Delta x\)</span>（例如<span class="math inline">\(10^{-6}\)</span>）来计算导数。但是这种做法会产生偏差。假设以<span class="math inline">\(h\)</span>代替<span class="math inline">\(\Delta x\)</span>，那么近似计算<span class="math inline">\(f\)</span>在<span class="math inline">\(x\)</span>点处的导数为 <span class="math display">\[
+f&#39;(x) \approx \frac{f(x+h) - f(x)}{h}
+\]</span> 而<span class="math inline">\(f(x+h)\)</span>关于<span class="math inline">\(x\)</span>的泰勒展开为 <span class="math display">\[
+f(x+h) = f(x) + hf&#39;(x) + \frac{h^2}{2}f&#39;&#39;(\xi),\ \ \ \xi \in (x, x+h)
+\]</span> 因此会存在一个<span class="math inline">\(-\frac{h}{2}f&#39;&#39;(\xi)\)</span>的误差，该误差称为截断误差（truncation error）。这种方法称为前向差分法（forward differencing），注意其截断误差是<span class="math inline">\(O(h)\)</span>的 对于前向微分法，有一种改进的方法可以提高估计的准确率，称为中心差分法（centered differencing） <span class="math display">\[
+f&#39;(x) \approx \frac{f(x+h) - f(x-h)}{2h}
+\]</span> （验证内容来自于马里兰大学学院市分校（UMD）数值分析课<a href="http://www2.math.umd.edu/~dlevy/classes/amsc466/lecture-notes/differentiation-chap.pdf" target="_blank" rel="noopener">AMSC466的讲义</a>）下面验证该式有更好的准确度。该式右侧的泰勒展开为 <span class="math display">\[
+\begin{align*}
+f(x+h) &amp;= f(x) + hf&#39;(x) + \frac{h^2}{2}f&#39;&#39;(x) + \frac{h^3}{6}f&#39;&#39;&#39;(\xi_1) \\
+f(x-h) &amp;= f(x) - hf&#39;(x) + \frac{h^2}{2}f&#39;&#39;(x) - \frac{h^3}{6}f&#39;&#39;&#39;(\xi_1)
+\end{align*}
+\]</span> 其中<span class="math inline">\(\xi_1 \in (x, x+h), \xi_2 \in (x-h, x)\)</span>。因此 <span class="math display">\[
+f&#39;(x) = \frac{f(x+h) - f(x-h)}{2h} - \frac{h^2}{12}[f&#39;&#39;&#39;(\xi_1) + f&#39;&#39;&#39;(x_2)]
+\]</span> 即中心差分法的截断误差是<span class="math inline">\(-\frac{h^2}{12}[f&#39;&#39;&#39;(\xi_1) + f&#39;&#39;&#39;(\xi_2)]\)</span>。假设三阶导数在区间<span class="math inline">\([x-h, x+h]\)</span>连续，那么由介值定理，存在点<span class="math inline">\(\xi \in (x-h, x+h)\)</span>使得 <span class="math display">\[
+f&#39;&#39;&#39;(\xi) = \frac{1}{2}[f&#39;&#39;&#39;(\xi_1) + f&#39;&#39;&#39;(\xi_2)]
+\]</span> 因此 <span class="math display">\[
+f&#39;(x) = \frac{f(x+h) - f(x-h)}{2h}-\frac{h^2}{6}f&#39;&#39;&#39;(\xi)
+\]</span> 即中心差分法的截断误差是<span class="math inline">\(O(h^2)\)</span>的。当<span class="math inline">\(h\)</span>很小时，该误差小于前向差分法的误差 <span class="math inline">\(\blacksquare\)</span></p>
+<p><strong>数值微分的缺点是存在截断误差和舍入误差，同时计算太慢。</strong>比较不幸的是，随着<span class="math inline">\(h\)</span>大小的变化，截断误差和舍入误差的变化趋势相反：当<span class="math inline">\(h\)</span>趋近于0时，截断误差也趋近于0，但是舍入误差会慢慢增大，反之相反。下图给出了函数<span class="math inline">\(f(x) = 64x(1-x)(1-2x)^2(1-8x+8x^2)^2\)</span>使用数值微分计算在点<span class="math inline">\(x_0 = 0.2\)</span>的导数时误差随<span class="math inline">\(h\)</span>变化的图像。</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutoral_3b_numerical_diff_errors.png" alt="数值微分误差与h的关系"><figcaption>数值微分误差与h的关系</figcaption>
+</figure>
+<p>此外还需注意一点：当参数是标量时，前向差分法和中心差分法的计算代价相同。不过当参数是向量时，使用中心差分法计算函数<span class="math inline">\(f: \mathbb{R}^n \rightarrow \mathbb{R}^m\)</span>的雅可比矩阵需要额外<span class="math inline">\(mn\)</span>个计算量。尤其在深度学习领域，对于<span class="math inline">\(n\)</span>维向量，这种<span class="math inline">\(O(n)\)</span>的计算量是算法的主要瓶颈，而误差已经不重要了</p>
+<h3 id="自动微分不是符号微分">自动微分不是符号微分</h3>
+<p>符号微分将输入式子表达为一个表达式树，然后对每个节点使用一些预先设置好的规则做转换。符号微分可以帮助人们更深入地了解问题域的结构，有时候还能给出极值条件的解析解，不过它们会产生指数量级的表达式，因此计算起来效率很低。考虑函数<span class="math inline">\(h(x) = f(x)g(x)\)</span>和微分的乘法法则 <span class="math display">\[
+\frac{d}{dx}(f(x)g(x)) \rightsquigarrow \left(\frac{d}{dx}f(x)\right)g(x) + f(x)\left(\frac{d}{dx}g(x)\right)
+\]</span> 由于<span class="math inline">\(h\)</span>是两个函数的乘积，因此<span class="math inline">\(h(x)\)</span>和<span class="math inline">\(\frac{d}{dx}h(x)\)</span>有相同的成分，分别是<span class="math inline">\(f(x)\)</span>和<span class="math inline">\(g(x)\)</span>。此外，注意乘法法则的右式，<span class="math inline">\(f(x)\)</span>和<span class="math inline">\(\frac{d}{dx}f(x)\)</span>分别出现在不同的位置，因此如果继续符号微分<span class="math inline">\(f(x)\)</span>，然后将导数代入，那么就会出现很多冗余的表达式，它们既出现在<span class="math inline">\(f(x)\)</span>的位置，也出现在<span class="math inline">\(\frac{d}{dx}f(x)\)</span>的位置。下图给出了对表达式<span class="math inline">\(l_{n+1} = 4l_n(1-l_n), l_1 =x\)</span>在<span class="math inline">\(n=\{1,2,3,4\}\)</span>时的结果，可以注意在<span class="math inline">\(n=4\)</span>时，表达式<span class="math inline">\((1-8x+8x^2)\)</span>在<span class="math inline">\(\frac{d}{dx}l_n\)</span>中出现了多少次</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutoral_3b_expression_swell.png" alt="符号微分的表达式膨胀"><figcaption>符号微分的表达式膨胀</figcaption>
+</figure>
+<p>从图中可以看到，符号微分可以很容易产生指数量级的符号表达式，因此需要很长时间来求值。这种问题称为<strong>表达式膨胀</strong>（expression swell）</p>
+<p>当我们只需要得到微分结果一个准确的数值表示，而不关心它具体的代数形式时，理论上可以把中间子表达式的结果存在内存里，这样就可以极大化简计算过程。更进一步地，可以将微分操作和化简操作交替进行，这样效率更高。这种交替操作的思想构成了自动微分的基础：在基本操作的层面上使用符号微分，保留中间的数值结果，同步计算主函数——这其实就是自动微分的前向累积模式，将在下一节介绍</p>
+<h2 id="自动微分及其主要模式">自动微分及其主要模式</h2>
+<p>自动微分的所有数值计算最终都是一些有限原子操作的组合，而这些基本操作的导数通常是已知的。自动微分会通过链式法则，将原子表达式的微分结果捏合起来，给出整个表达式的求导结果。对于给定的表达式，总可以将其整理成原子操作的<strong>计算序列</strong>（evaluation trace），或者称为Wengert序列。对于函数<span class="math inline">\(f: \mathbb{R}^n \rightarrow \mathbb{R}^m\)</span>，假设其输入为<span class="math inline">\(x_1, \ldots, x_n\)</span>，输出为<span class="math inline">\(y_1, \ldots, y_m\)</span>，那么变量<span class="math inline">\(v_i\)</span>分属于以下三种情况</p>
+<ul>
+<li>变量<span class="math inline">\(v_{i-n} = x_i, i= 1, 2, \ldots, n\)</span>是输入变量</li>
+<li>变量<span class="math inline">\(v_i, i=1,2,\ldots, l\)</span>是工作（中间）变量</li>
+<li>变量<span class="math inline">\(y_{m-i} = v_{l-i}, i = m-1, \ldots, 0\)</span>是输出变量</li>
+</ul>
+<p>下图给出了表达式<span class="math inline">\(y=f(x_1, x_2) = \ln(x_1) + x_1x_2 - \sin(x_2)\)</span>的计算序列所对应的计算图，计算图可以清楚表示中间变量之间的依赖关系</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutoral_3b_computational_graph.png" alt="计算序列的计算图形式表示"><figcaption>计算序列的计算图形式表示</figcaption>
+</figure>
+<p>其中各个变量的定义参见下表（假设输入<span class="math inline">\((x_1, x_2) = (2, 5)\)</span>）</p>
+<table>
+<thead>
+<tr class="header">
+<th>变量</th>
+<th>计算方式</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><span class="math inline">\(v_{-1}\)</span></td>
+<td><span class="math inline">\(x_1\)</span></td>
+<td>2</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(v_0\)</span></td>
+<td><span class="math inline">\(x_2\)</span></td>
+<td>5</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(v_1\)</span></td>
+<td><span class="math inline">\(\ln v_{-1}\)</span></td>
+<td><span class="math inline">\(\ln 2\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(v_2\)</span></td>
+<td><span class="math inline">\(v_{-1} \times v_0\)</span></td>
+<td><span class="math inline">\(2 \times 5\)</span></td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(v_3\)</span></td>
+<td><span class="math inline">\(\sin v_0\)</span></td>
+<td><span class="math inline">\(\sin 5\)</span></td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(v_4\)</span></td>
+<td><span class="math inline">\(v_1 + v_2\)</span></td>
+<td>0.693 + 10</td>
+</tr>
+<tr class="odd">
+<td><span class="math inline">\(v_5\)</span></td>
+<td><span class="math inline">\(v_4 - v_3\)</span></td>
+<td>10.693 + 0.959</td>
+</tr>
+<tr class="even">
+<td><span class="math inline">\(y\)</span></td>
+<td><span class="math inline">\(v_5\)</span></td>
+<td>11.652</td>
+</tr>
+</tbody>
+</table>
+<p>计算序列是自动微分的基础。注意自动微分不只可以计算闭合形式表达式的微分，对使用了分支、循环、递归、函数调用的算法也适用，其原因就是任何有关数值计算的逻辑最后都可以表达成一个基于数值的计算序列，包含确定的输入、中间变量和输出。而只要有了这些信息，就可以使用链式法则计算导数</p>
+<h3 id="前向模式forward-mode">前向模式（Forward mode）</h3>
+<p>前向模式是一种比较简单的自动微分方法。对上面给出的例子，若要计算<span class="math inline">\(f\)</span>对<span class="math inline">\(x_1\)</span>的导数，先要计算所有中间变量对<span class="math inline">\(x_1\)</span>的导数，记为 <span class="math display">\[
+\dot{v}_i = \frac{\partial v_i}{\partial x_1}
+\]</span> 这样，在向前计算每个<span class="math inline">\(v_i\)</span>的值时，也能同时计算对应的<span class="math inline">\(\dot{v}_i\)</span>，如下表所示</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutoral_3b_AD_forward_mode.png" alt="自动微分的前向模式"><figcaption>自动微分的前向模式</figcaption>
+</figure>
+<p>这种做法可以很容易推广到函数<span class="math inline">\(f:\mathbb{R}^n \rightarrow \mathbb{R}^m\)</span>的雅可比矩阵的计算，其输入是<span class="math inline">\(n\)</span>个独立变量<span class="math inline">\(x_i\)</span>，输出是<span class="math inline">\(m\)</span>个独立变量<span class="math inline">\(y_j\)</span>。此时，计算前向微分的每一趟都是先初始化一个独热向量，其中只有<span class="math inline">\(\dot{x}_i=1\)</span>，其它都是0。对给定输入<span class="math inline">\(\boldsymbol{x} = \boldsymbol{a}\)</span>，代码计算 <span class="math display">\[
+\left.\dot{y}_j = \frac{\partial y_j}{\partial x_i}\right\vert_{\boldsymbol{x}=\boldsymbol{a}}, j =1,\ldots, m
+\]</span> 这样会得到雅可比矩阵 <span class="math display">\[
+\boldsymbol{J}_f=\left.\left[\begin{matrix}\frac{\partial y_1}{\partial x_1} &amp; \cdots &amp; \frac{\partial y_1}{\partial x_n} \\ \vdots &amp; \ddots &amp; \vdots \\ \frac{\partial y_m}{\partial x_1} &amp; \cdots &amp; \frac{\partial y_m}{\partial x_n}\end{matrix}\right]\right\vert_{_{\boldsymbol{x}=\boldsymbol{a}}}
+\]</span> 的一列，因此对<span class="math inline">\(n\)</span>维变量需要计算<span class="math inline">\(n\)</span>次</p>
+<p>前向模式计算自动微分的好处是给出了一种简便的方法来计算雅可比-向量乘积 <span class="math display">\[
+\boldsymbol{J}_f\boldsymbol{r} = \left[\begin{matrix}\frac{\partial y_1}{\partial x_1} &amp; \cdots &amp; \frac{\partial y_1}{\partial x_n} \\ \vdots &amp; \ddots &amp; \vdots \\ \frac{\partial y_m}{\partial x_1} &amp; \cdots &amp; \frac{\partial y_m}{\partial x_n}\end{matrix}\right]\left[\begin{matrix}r_1 \\ \vdots\\ r_n\end{matrix}\right]
+\]</span> 只需要设置<span class="math inline">\(\dot{\boldsymbol{x}} = \boldsymbol{r}\)</span>即可，而且这种做法不牵扯额外的矩阵计算。对于比较特殊的情况<span class="math inline">\(f: \mathbb{R}^n \rightarrow \mathbb{R}\)</span>，只需要设置<span class="math inline">\(\dot{\boldsymbol{x}} = \boldsymbol{r}\)</span>就可以算出沿着给定向量<span class="math inline">\(\boldsymbol{r}\)</span>的方向导数<span class="math inline">\(\nabla f \cdot \boldsymbol{r}\)</span></p>
+<p>前向模式适用于输入向量维度<span class="math inline">\(n\)</span>小于输出向量维度<span class="math inline">\(m\)</span>的情况，但是如果<span class="math inline">\(n &gt;\!\!&gt; m\)</span>，例如神经网络里输入向量成百万维，而最后的损失函数是一个标量，这种计算方法就太慢了（因为要迭代<span class="math inline">\(n\)</span>次），需要后向模式计算</p>
+<h3 id="后向模式backward-mode">后向模式（Backward mode）</h3>
+<p>后向模式的自动微分对应于一种更泛化的反向传播算法，其从一个给定的输出开始向后传播导数。具体做法是对每个中间值<span class="math inline">\(v_i\)</span>计算一个伴随值 <span class="math display">\[
+\bar{v}_i = \frac{\partial y_j}{\partial v_i}
+\]</span> 代表了输出<span class="math inline">\(y_j\)</span>对<span class="math inline">\(v_i\)</span>变化量的敏感度。在反向传播中，<span class="math inline">\(y\)</span>通常是一个标量，对应误差<span class="math inline">\(E\)</span></p>
+<p>后向模式的自动微分计算过程分为两个阶段：</p>
+<ul>
+<li>第一个阶段是前向计算原始函数中的每个中间值<span class="math inline">\(v_i\)</span>，记录计算图中的依赖关系</li>
+<li>第二个阶段是后向传播伴随值<span class="math inline">\(\bar{v}_i\)</span>，计算导数</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2018/10/04/NMT-Tutorial-3b-Autodiff/" title="NMT Tutorial 3扩展b. 自动微分">txshi-mt.com/2018/10/04/NMT-Tutorial-3b-Autodiff/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/自动微分/" rel="tag"># 自动微分</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/09/NMT-Tutorial-3a-Matrix-Calculus-for-Deep-Learning/" rel="next" title="NMT Tutorial 3扩展a. 深度学习的矩阵微积分基础">
+                <i class="fa fa-chevron-left"></i> NMT Tutorial 3扩展a. 深度学习的矩阵微积分基础
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">89</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">87</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自动微分不是什么"><span class="nav-number">2.</span> <span class="nav-text">自动微分不是什么</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#自动微分不是数值微分"><span class="nav-number">2.1.</span> <span class="nav-text">自动微分不是数值微分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自动微分不是符号微分"><span class="nav-number">2.2.</span> <span class="nav-text">自动微分不是符号微分</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自动微分及其主要模式"><span class="nav-number">3.</span> <span class="nav-text">自动微分及其主要模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#前向模式forward-mode"><span class="nav-number">3.1.</span> <span class="nav-text">前向模式（Forward mode）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#后向模式backward-mode"><span class="nav-number">3.2.</span> <span class="nav-text">后向模式（Backward mode）</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

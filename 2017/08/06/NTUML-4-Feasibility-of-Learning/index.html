@@ -443,7 +443,7 @@
 <p>事已至此，需要开动脑筋，想一想是否有工具可以帮助我们从已知推断未知。这里再看一个例子：假设有一个很大的罐子，里面装了不计其数的橙球和绿球，则是否有可能知道橙球的比例？由于无法一颗一颗地数，因此直接求这个问题很难，但是可以通过随机取样的方法来推断这个比例。例如假设从里面抓了10颗球出来，里面有3颗是橙色的，那么橙球的比例就可以估计为30%。</p>
 <p>推而广之，假设罐子中橙球的比例为<span class="math inline">\(\mu\)</span>，绿球的比例为<span class="math inline">\(1-\mu\)</span>，这里<span class="math inline">\(\mu\)</span>是一个未知数。通过某种随机独立程序取样后观测到橙球的比例为<span class="math inline">\(\nu\)</span>，绿球的比例为<span class="math inline">\(1-\nu\)</span>，这里<span class="math inline">\(\nu\)</span>是一个已知数，那么<span class="math inline">\(\mu\)</span>和<span class="math inline">\(\nu\)</span>有没有联系？这时，无法<strong>确定的</strong>说<span class="math inline">\(\nu\)</span>就是<span class="math inline">\(\mu\)</span>，因为也许罐子里只有5颗绿球，却有几百颗橙球，而这次随机抽样只拿到了这5颗绿球——这种情况是可能发生的。但是可以退而求其次地说，<span class="math inline">\(\mu\)</span>和<span class="math inline">\(\nu\)</span>在<strong>大部分情况下非常接近</strong>。准确地说，两者之间的关系可以用Hoeffding不等式来描述。即假设采样大小为<span class="math inline">\(N\)</span>，<span class="math inline">\(\epsilon\)</span>为一个比较小的数，那么有 <span class="math display">\[
 P[|\nu - \mu| &gt; \epsilon] \le 2\exp(-2\epsilon^2 N)
-\]</span> 即“<span class="math inline">\(\nu = \mu\)</span>”这个结论“大概差不多是对的”（probably approximately correct, PAC）</p>
+\]</span> 即&quot;<span class="math inline">\(\nu = \mu\)</span>&quot;这个结论“大概差不多是对的”（probably approximately correct, PAC）</p>
 <p>Hoeffding不等式对任何<span class="math inline">\(N\)</span>和<span class="math inline">\(\epsilon\)</span>都成立，而且不需要知道真实的<span class="math inline">\(\mu\)</span>值。抽样样本越多（即<span class="math inline">\(N\)</span>越大），或者界限越松（即<span class="math inline">\(\epsilon\)</span>越大），则<span class="math inline">\(\mu \approx \nu\)</span>的概率越大</p>
 <p>Fun time中，已知<span class="math inline">\(\mu = 0.4\)</span>，取样数<span class="math inline">\(N=10\)</span>，求取样后<span class="math inline">\(\nu \le 0.1\)</span>的概率上界。这时可以把<span class="math inline">\(\epsilon\)</span>设为0.3，代入Hoeffding不等式右侧可知上界为<span class="math inline">\(2\exp(-2 \times 0.3^2 \times 10) \approx 0.3306\)</span>。但是如果实际计算可知这个概率应该为<span class="math inline">\(0.6 ^ {10} + 10 \times 0.6 ^ 9 \times 0.4 \approx 0.04636\)</span>。即Hoeffding不等式只能提供一个上界，并不能对概率做出准确预估</p>
 <h2 id="概率与机器学习的联系">概率与机器学习的联系</h2>
@@ -716,7 +716,7 @@ P[|E_{\rm in}(h) - E_{\rm out}(h)| &gt; \epsilon] \le 2\exp(-2\epsilon^2 N)
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">88</span>
+                  <span class="site-state-item-count">89</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -738,7 +738,7 @@ P[|E_{\rm in}(h) - E_{\rm out}(h)| &gt; \epsilon] \le 2\exp(-2\epsilon^2 N)
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">86</span>
+                  <span class="site-state-item-count">87</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -795,7 +795,7 @@ P[|E_{\rm in}(h) - E_{\rm out}(h)| &gt; \epsilon] \le 2\exp(-2\epsilon^2 N)
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#不可能学习的情况"><span class="nav-number">1.</span> <span class="nav-text">&#x4E0D;&#x53EF;&#x80FD;&#x5B66;&#x4E60;&#x7684;&#x60C5;&#x51B5;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#概率成为救世主"><span class="nav-number">2.</span> <span class="nav-text">&#x6982;&#x7387;&#x6210;&#x4E3A;&#x6551;&#x4E16;&#x4E3B;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#概率与机器学习的联系"><span class="nav-number">3.</span> <span class="nav-text">&#x6982;&#x7387;&#x4E0E;&#x673A;&#x5668;&#x5B66;&#x4E60;&#x7684;&#x8054;&#x7CFB;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#概率与真正学习的联系"><span class="nav-number">4.</span> <span class="nav-text">&#x6982;&#x7387;&#x4E0E;&#x771F;&#x6B63;&#x5B66;&#x4E60;&#x7684;&#x8054;&#x7CFB;</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#不可能学习的情况"><span class="nav-number">1.</span> <span class="nav-text">不可能学习的情况</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#概率成为救世主"><span class="nav-number">2.</span> <span class="nav-text">概率成为救世主</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#概率与机器学习的联系"><span class="nav-number">3.</span> <span class="nav-text">概率与机器学习的联系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#概率与真正学习的联系"><span class="nav-number">4.</span> <span class="nav-text">概率与真正学习的联系</span></a></li></ol></div>
             
 
           </div>

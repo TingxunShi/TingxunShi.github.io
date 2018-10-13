@@ -422,7 +422,7 @@
 </figure>
 <p>需要注意的是，对于上面这段程序，其输出并不是8，而是</p>
 <blockquote>
-<p>Tensor(“Add:0”, shape=(), dtype=int32)</p>
+<p>Tensor(&quot;Add:0&quot;, shape=(), dtype=int32)</p>
 </blockquote>
 <p>这是因为，此时计算图刚刚被定义，而计算是通过会话<code>Session</code>来执行。只有在会话里，才能拿到<code>a</code>的值。更严格地说，<code>Session</code>对象封装了一个环境，在这个环境里执行<code>Operation</code>对象，并计算<code>Tensor</code>对象的值。既然是封装了一个环境，那么它就可能会拥有自己的资源，所以最佳实践是像操作文件那样，也使用上下文管理器（context manager），即一个<code>with</code>语句块来保证在退出语句块时会话所拥有的资源被自动释放（当然也可以不用<code>with</code>，但是代价是需要使用<code>tf.Session.close</code>来显式手动释放资源）</p>
 <p>接下来的问题是如何将一个<code>Graph</code>对象和一个<code>Session</code>对象绑定。<code>Session</code>对象初始化时，可以接收一个<code>Graph</code>对象作为参数。但是如果不传递这个参数，则该对象与当前系统默认的图绑定，也只能运行系统默认图中的操作。对于上面定义的计算图，由于使用的是系统默认图，因此可以直接使用如下的方式来运行会话</p>
@@ -613,7 +613,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">88</span>
+                  <span class="site-state-item-count">89</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -635,7 +635,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">86</span>
+                  <span class="site-state-item-count">87</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -692,7 +692,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#张量"><span class="nav-number">1.</span> <span class="nav-text">&#x5F20;&#x91CF;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#图与会话"><span class="nav-number">2.</span> <span class="nav-text">&#x56FE;&#x4E0E;&#x4F1A;&#x8BDD;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基本操作"><span class="nav-number">2.1.</span> <span class="nav-text">&#x57FA;&#x672C;&#x64CD;&#x4F5C;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#指定设备"><span class="nav-number">2.2.</span> <span class="nav-text">&#x6307;&#x5B9A;&#x8BBE;&#x5907;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#定义多个计算图"><span class="nav-number">2.3.</span> <span class="nav-text">&#x5B9A;&#x4E49;&#x591A;&#x4E2A;&#x8BA1;&#x7B97;&#x56FE;</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#张量"><span class="nav-number">1.</span> <span class="nav-text">张量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#图与会话"><span class="nav-number">2.</span> <span class="nav-text">图与会话</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基本操作"><span class="nav-number">2.1.</span> <span class="nav-text">基本操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#指定设备"><span class="nav-number">2.2.</span> <span class="nav-text">指定设备</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#定义多个计算图"><span class="nav-number">2.3.</span> <span class="nav-text">定义多个计算图</span></a></li></ol></li></ol></div>
             
 
           </div>

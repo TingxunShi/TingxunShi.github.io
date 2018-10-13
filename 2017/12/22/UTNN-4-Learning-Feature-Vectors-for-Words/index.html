@@ -519,8 +519,8 @@ t_i = \begin{cases} 1 &amp; {\rm if\ }i=k \\ 0 &amp; \rm{elsewhere}\end{cases}
 <p>Collobert和Weston提出了一种更简单的学习词向量的方案。他们做的不是预测下一个单词，而是只是学出一些词向量，然后将这些词向量用在一些不同的NLP任务中。此外，他们不只使用上文信息，还是用下文信息，因此实际使用的是一个长度为11的词窗口，其中有5个词出现在上文，5个出现在下文。窗口中间位置他们选择放一个正确的单词（的确出现在这个语境里）或者放一个随机挑选的单词。训练出来的神经网络应该对正确的单词输出高分，对随机的单词输出低分。训练预料均来自于wiki，大概有6亿条数据。得到的词向量使用t-sne降维到二维空间并做出图以后可以展现出令人吃惊的效果，语义上相近的词在空间中也聚集在一起。这意味着上下文信息实际上能够透露很多关于单词意义的信息，事实上，有些人认为这也是人类学习词语意义的主要方式。例如，假如你从未听说过scrommed这个单词，但是看到she scrommed him with the frying pan这句话，应该也能猜出来这是什么意思</p>
 <p>（后面具体例子略，毕竟现在词向量已经为人所熟知了:) ）</p>
 <p><strong>参考文献</strong></p>
-<p>Collobert, Ronan, and Jason Weston. “A unified architecture for natural language processing: Deep neural networks with multitask learning.” <em>Proceedings of the 25th international conference on Machine learning (ICML)</em>. ACM, 2008. (pp. 160-167)</p>
-<p>Mnih, Andriy, and Geoffrey E. Hinton. “A scalable hierarchical distributed language model.” <em>Advances in neural information processing systems (NIPS)</em>. 2009. (pp. 1081-1088)</p>
+<p>Collobert, Ronan, and Jason Weston. &quot;A unified architecture for natural language processing: Deep neural networks with multitask learning.&quot; <em>Proceedings of the 25th international conference on Machine learning (ICML)</em>. ACM, 2008. (pp. 160-167)</p>
+<p>Mnih, Andriy, and Geoffrey E. Hinton. &quot;A scalable hierarchical distributed language model.&quot; <em>Advances in neural information processing systems (NIPS)</em>. 2009. (pp. 1081-1088)</p>
 
       
     </div>
@@ -690,7 +690,7 @@ t_i = \begin{cases} 1 &amp; {\rm if\ }i=k \\ 0 &amp; \rm{elsewhere}\end{cases}
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">88</span>
+                  <span class="site-state-item-count">89</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -712,7 +712,7 @@ t_i = \begin{cases} 1 &amp; {\rm if\ }i=k \\ 0 &amp; \rm{elsewhere}\end{cases}
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">86</span>
+                  <span class="site-state-item-count">87</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -769,7 +769,7 @@ t_i = \begin{cases} 1 &amp; {\rm if\ }i=k \\ 0 &amp; \rm{elsewhere}\end{cases}
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#学习预测下一个单词"><span class="nav-number">1.</span> <span class="nav-text">&#x5B66;&#x4E60;&#x9884;&#x6D4B;&#x4E0B;&#x4E00;&#x4E2A;&#x5355;&#x8BCD;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对家族树例子的简明神经科学解释"><span class="nav-number">2.</span> <span class="nav-text">&#x5BF9;&#x5BB6;&#x65CF;&#x6811;&#x4F8B;&#x5B50;&#x7684;&#x7B80;&#x660E;&#x795E;&#x7ECF;&#x79D1;&#x5B66;&#x89E3;&#x91CA;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#softmax输出函数"><span class="nav-number">3.</span> <span class="nav-text">softmax&#x8F93;&#x51FA;&#x51FD;&#x6570;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#神经概率语言模型"><span class="nav-number">4.</span> <span class="nav-text">&#x795E;&#x7ECF;&#x6982;&#x7387;&#x8BED;&#x8A00;&#x6A21;&#x578B;</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#处理神经概率语言模型的大量输出"><span class="nav-number">5.</span> <span class="nav-text">&#x5904;&#x7406;&#x795E;&#x7ECF;&#x6982;&#x7387;&#x8BED;&#x8A00;&#x6A21;&#x578B;&#x7684;&#x5927;&#x91CF;&#x8F93;&#x51FA;</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#学习预测下一个单词"><span class="nav-number">1.</span> <span class="nav-text">学习预测下一个单词</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对家族树例子的简明神经科学解释"><span class="nav-number">2.</span> <span class="nav-text">对家族树例子的简明神经科学解释</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#softmax输出函数"><span class="nav-number">3.</span> <span class="nav-text">softmax输出函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#神经概率语言模型"><span class="nav-number">4.</span> <span class="nav-text">神经概率语言模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#处理神经概率语言模型的大量输出"><span class="nav-number">5.</span> <span class="nav-text">处理神经概率语言模型的大量输出</span></a></li></ol></div>
             
 
           </div>

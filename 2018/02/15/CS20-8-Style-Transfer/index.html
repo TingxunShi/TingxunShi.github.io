@@ -413,9 +413,9 @@
 <h3 id="理论">理论</h3>
 <p>风格迁移的目标可以简单说为，要生成一张新的图片，使得其内容接近“内容图片”的内容，风格接近“风格图片”的风格。既然有两种图片，那么就会有相应的两种损失函数（这也就是问题的关键点）：“内容损失”和“风格损失”。从直观上来讲，“内容损失”衡量生成图片的内容和“内容图片”的内容之间的差距，而“风格损失”定义类似</p>
 <p>接下来的问题就是，对于一张图片，怎么提取内容，又怎么提取风格？前面提到的卷积神经网络CNN一般都有很多层，实际上，每一层都是一个提取特定特征的函数，只不过我们不知道具体能学到什么特征。但是从宏观来看，底层（靠近输入的层）倾向提取和内容相关的特征，高层（靠近输出的层）倾向提取和风格相关的特征。因此，损失函数可以进一步理解为，“内容损失”衡量的是生成图片“内容层”特征映射与“内容图片”之间的差别，“风格损失”定义类似，不过比较的是生成图片“风格层”特征映射的Gram矩阵和“风格图片”的Gram矩阵之间的差别。其中Gram矩阵是某个矩阵与其转置的乘积。按照<a href="https://medium.com/artists-and-machine-intelligence/neural-artistic-style-transfer-a-comprehensive-look-f54d8649c199" target="_blank" rel="noopener">一篇博客</a>的讲解，由于矩阵中每一列都有每一行做内积，可以把这个过程看做是将原始图片的空间信息分布化，因此得到的矩阵会得到图片的非局部特征，包括纹理、形状等等，这些就是图片的风格</p>
-<p>特征提取可以使用预训练好的网络来做，例如VGG、AlexNet、GoogleNet等等。按照<a href="https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Gatys_Image_Style_Transfer_CVPR_2016_paper.pdf" target="_blank" rel="noopener">原始论文</a>(Image Style Transfer Using Convolutional Neural Networks, Gatys et al., CVPR 2016, pp. 2414-2423)的定义，输入图像<span class="math inline">\(\vec{x}\)</span>在CNN的每一层都会被对应的滤波器（卷积核）编码，假设在第<span class="math inline">\(l\)</span>层有<span class="math inline">\(N_l\)</span>个卷积核，每个卷积核大小都是<span class="math inline">\(M_l \times M_l\)</span>的，那么第<span class="math inline">\(l\)</span>层编码的信息会存在矩阵<span class="math inline">\(F^l \in \mathcal{R}^{N_l \times M_l}\)</span>中，其中<span class="math inline">\(F_{ij}^l\)</span>是层<span class="math inline">\(l\)</span>位置<span class="math inline">\(j\)</span>被第<span class="math inline">\(i\)</span>个卷积核激活的值。令<span class="math inline">\(\vec{p}\)</span>为原始内容图像，<span class="math inline">\(\vec{x}\)</span>为生成图像，<span class="math inline">\(P^l\)</span>和<span class="math inline">\(F^l\)</span>为各自在第<span class="math inline">\(l\)</span>层得到的特征表示，则“内容损失”可以定义为 <span class="math display">\[
+<p>特征提取可以使用预训练好的网络来做，例如VGG、AlexNet、GoogleNet等等。按照<a href="https://www.cv-foundation.org/openaccess/content_cvpr_2016/papers/Gatys_Image_Style_Transfer_CVPR_2016_paper.pdf" target="_blank" rel="noopener">原始论文</a>(Image Style Transfer Using Convolutional Neural Networks, Gatys et al., CVPR 2016, pp. 2414-2423)的定义，输入图像<span class="math inline">\(\vec{x}\)</span>在CNN的每一层都会被对应的滤波器（卷积核）编码，假设在第<span class="math inline">\(l\)</span>层有<span class="math inline">\(N_l\)</span>个卷积核，每个卷积核大小都是<span class="math inline">\(M_l \times M_l\)</span>的，那么第<span class="math inline">\(l\)</span>层编码的信息会存在矩阵<span class="math inline">\(F^l \in \mathcal{R}^{N_l \times M_l}\)</span>中，其中<span class="math inline">\(F_{ij}^l\)</span>是层<span class="math inline">\(l\)</span>位置<span class="math inline">\(j\)</span>被第<span class="math inline">\(i\)</span>个卷积核激活的值。令<span class="math inline">\(\vec{p}\)</span>为原始内容图像，<span class="math inline">\(\vec{x}\)</span>为生成图像，<span class="math inline">\(P^l\)</span>和<span class="math inline">\(F^l\)</span>为各自在第<span class="math inline">\(l\)</span>层得到的特征表示，则“内容损失”可以定义为 <span class="math display">\[
 \mathcal{L}_{\rm content}(\vec{p}, \vec{x}, l) = \frac{1}{2}\sum_{i, j}(F_{ij}^l - P_{ij}^l)^2
-\]</span> “内容损失”对层<span class="math inline">\(l\)</span>的激活值的偏导数为 <span class="math display">\[
+\]</span> &quot;内容损失&quot;对层<span class="math inline">\(l\)</span>的激活值的偏导数为 <span class="math display">\[
 \frac{\partial \mathcal{L}_{\rm content}}{\partial F_{ij}^l} = \begin{cases}(F^l-P^l)_{ij} &amp; {\rm if\ }F_{ij}^l &gt; 0 \\ 0 &amp; {\rm if\ }F_{ij}^l &lt; 0 \end{cases}
 \]</span> 因此<span class="math inline">\(\vec{x}\)</span>的梯度可以使用反向传播得出，经过反向传播可以将原始随机生成的图像一点一点调整为和<span class="math inline">\(\vec{p}\)</span>内容相近的图像。<strong>所以这里要优化的是生成的图像，而不是网络的权重！</strong></p>
 <p>为了获得图像的风格表示，原始论文使用前面提到的Gram矩阵，通过特征相关性来达到目的。更形式化地，对第<span class="math inline">\(l\)</span>层，假设有<span class="math inline">\(N_l\)</span>个卷积核，那么对应的Gram矩阵<span class="math inline">\(G^l \in \mathcal{R}^{N_l \times N_l}\)</span>的每个元素是特征映射向量化后的内积 <span class="math display">\[
@@ -604,7 +604,7 @@ E_l = \frac{1}{4N_l^2M_l^2}\sum_{i,j}(G_{ij}^l - A_{ij}^l)^2
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">88</span>
+                  <span class="site-state-item-count">89</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -626,7 +626,7 @@ E_l = \frac{1}{4N_l^2M_l^2}\sum_{i,j}(G_{ij}^l - A_{ij}^l)^2
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">86</span>
+                  <span class="site-state-item-count">87</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -683,7 +683,7 @@ E_l = \frac{1}{4N_l^2M_l^2}\sum_{i,j}(G_{ij}^l - A_{ij}^l)^2
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#tfrecord"><span class="nav-number">1.</span> <span class="nav-text">TFRecord</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#风格迁移"><span class="nav-number">2.</span> <span class="nav-text">&#x98CE;&#x683C;&#x8FC1;&#x79FB;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#理论"><span class="nav-number">2.1.</span> <span class="nav-text">&#x7406;&#x8BBA;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对作业的一点贴士"><span class="nav-number">2.2.</span> <span class="nav-text">&#x5BF9;&#x4F5C;&#x4E1A;&#x7684;&#x4E00;&#x70B9;&#x8D34;&#x58EB;</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#tfrecord"><span class="nav-number">1.</span> <span class="nav-text">TFRecord</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#风格迁移"><span class="nav-number">2.</span> <span class="nav-text">风格迁移</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#理论"><span class="nav-number">2.1.</span> <span class="nav-text">理论</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对作业的一点贴士"><span class="nav-number">2.2.</span> <span class="nav-text">对作业的一点贴士</span></a></li></ol></li></ol></div>
             
 
           </div>
