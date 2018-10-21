@@ -124,7 +124,7 @@
 <meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutoral_3b_computational_graph.png">
 <meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutoral_3b_AD_forward_mode.png">
 <meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutoral_3b_backward_AD.png">
-<meta property="og:updated_time" content="2018-10-21T16:52:17.665Z">
+<meta property="og:updated_time" content="2018-10-21T17:00:36.309Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NMT Tutorial 3扩展b. 自动微分">
 <meta name="twitter:description" content="本文无说明的部分（包括配图）均是翻译/演绎自： Baydin, A. G., Pearlmutter, B. A., Radul, A. A., &amp;amp; Siskind, J. M. (2017). Automatic differentiation in machine learning: a survey. Journal of machine learning research, 18(">
@@ -677,7 +677,7 @@ e^x = \sum_{n=0}^\infty \frac{x^n}{n!} = 1+x+\frac{x^2}{2!} + \frac{x^3}{3!} + \
 <p>（不过这里似乎说明TensorFlow是自动微分和符号微分混用的）</p>
 <p>该操作符处理以后，会更新所有未经过处理的操作符的出度和<code>queue</code>（实际上就是一个拓扑排序的过程）。这样，当<code>queue</code>为空的时候，整个计算图处理完毕，可以得到每个参数的梯度</p>
 <p>静态图模式下梯度计算的调用过程大致如下所示</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Optimizer.minimize</span><br><span class="line">|---Optimizer.compute_gradients</span><br><span class="line">    |---gradients (gradients_impl.py)</span><br><span class="line">        |----_GradientsHelper (gradients_impl.py)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Optimizer.minimize</span><br><span class="line">|---Optimizer.compute_gradients</span><br><span class="line">    |---gradients (gradients_impl.py)</span><br><span class="line">        |---_GradientsHelper (gradients_impl.py)</span><br></pre></td></tr></table></figure>
 <h5 id="梯度计算函数">梯度计算函数</h5>
 <p>前面提到，在<code>_GradientsHelper</code>函数里要调用一个<code>grad_fn</code>函数，该函数用来计算给定操作符的梯度。在TensorFlow里，每个计算图都可以分解到操作符（op）层级，每个操作符都会定义一个对应的梯度计算函数。例如，在python/ops/math_grad.py里定义的Log函数的梯度</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ops.RegisterGradient("Log")</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_LogGrad</span><span class="params">(op, grad)</span>:</span></span><br><span class="line">  <span class="string">"""Returns grad * (1/x)."""</span></span><br><span class="line">  x = op.inputs[<span class="number">0</span>]</span><br><span class="line">  <span class="keyword">with</span> ops.control_dependencies([grad]):</span><br><span class="line">    x = math_ops.conj(x)</span><br><span class="line">    <span class="keyword">return</span> grad * math_ops.reciprocal(x)</span><br></pre></td></tr></table></figure>
