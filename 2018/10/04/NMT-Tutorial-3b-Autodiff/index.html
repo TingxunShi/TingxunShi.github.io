@@ -123,7 +123,8 @@
 <meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutoral_3b_expression_swell.png">
 <meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutoral_3b_computational_graph.png">
 <meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutoral_3b_AD_forward_mode.png">
-<meta property="og:updated_time" content="2018-10-13T08:29:36.605Z">
+<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutoral_3b_backward_AD.png">
+<meta property="og:updated_time" content="2018-10-21T16:52:17.665Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NMT Tutorial 3扩展b. 自动微分">
 <meta name="twitter:description" content="本文无说明的部分（包括配图）均是翻译/演绎自： Baydin, A. G., Pearlmutter, B. A., Radul, A. A., &amp;amp; Siskind, J. M. (2017). Automatic differentiation in machine learning: a survey. Journal of machine learning research, 18(">
@@ -406,7 +407,7 @@
       
         <p>本文无说明的部分（包括配图）均是翻译/演绎自：</p>
 <p>Baydin, A. G., Pearlmutter, B. A., Radul, A. A., &amp; Siskind, J. M. (2017). <a href="http://www.jmlr.org/papers/volume18/17-468/17-468.pdf" target="_blank" rel="noopener">Automatic differentiation in machine learning: a survey</a>. <em>Journal of machine learning research</em>, <em>18</em>(153), 1-43.</p>
-<p>不过没有包含自动微分前向模式中“对偶数”这一小小节</p>
+<p>不过没有包含若干偏理论的内容</p>
 <p>其它引用会单独注明</p>
 <hr>
 <h2 id="引言">引言</h2>
@@ -533,6 +534,33 @@ f&#39;(x) = \frac{f(x+h) - f(x-h)}{2h}-\frac{h^2}{6}f&#39;&#39;&#39;(\xi)
 \boldsymbol{J}_f\boldsymbol{r} = \left[\begin{matrix}\frac{\partial y_1}{\partial x_1} &amp; \cdots &amp; \frac{\partial y_1}{\partial x_n} \\ \vdots &amp; \ddots &amp; \vdots \\ \frac{\partial y_m}{\partial x_1} &amp; \cdots &amp; \frac{\partial y_m}{\partial x_n}\end{matrix}\right]\left[\begin{matrix}r_1 \\ \vdots\\ r_n\end{matrix}\right]
 \]</span> 只需要设置<span class="math inline">\(\dot{\boldsymbol{x}} = \boldsymbol{r}\)</span>即可，而且这种做法不牵扯额外的矩阵计算。对于比较特殊的情况<span class="math inline">\(f: \mathbb{R}^n \rightarrow \mathbb{R}\)</span>，只需要设置<span class="math inline">\(\dot{\boldsymbol{x}} = \boldsymbol{r}\)</span>就可以算出沿着给定向量<span class="math inline">\(\boldsymbol{r}\)</span>的方向导数<span class="math inline">\(\nabla f \cdot \boldsymbol{r}\)</span></p>
 <p>前向模式适用于输入向量维度<span class="math inline">\(n\)</span>小于输出向量维度<span class="math inline">\(m\)</span>的情况，但是如果<span class="math inline">\(n &gt;\!\!&gt; m\)</span>，例如神经网络里输入向量成百万维，而最后的损失函数是一个标量，这种计算方法就太慢了（因为要迭代<span class="math inline">\(n\)</span>次），需要后向模式计算</p>
+<h4 id="二元数">二元数</h4>
+<p>从数学角度讲，前向模式自动微分可以看做是使用<strong>二元数</strong>（dual number）对某个函数求值，而二元数可以定义为被截断的泰勒级数，形式为 <span class="math display">\[
+v + \dot{v}\epsilon
+\]</span> 其中<span class="math inline">\(v, \dot{v} \in \mathbb{R}\)</span>，<span class="math inline">\(\epsilon\)</span>是一个幂零数（<span class="math inline">\(\epsilon ^2 = 0, \epsilon \not= 0\)</span>）。根据幂零数的性质，可以得到 <span class="math display">\[
+\begin{align*}
+(v+\dot{v}\epsilon) + (u + \dot{u}\epsilon) &amp;= (v+u) + (\dot{v} + \dot{u})\epsilon \\
+(v+\dot{v}\epsilon)(u+\dot{u}\epsilon) &amp;= (vu) + (v\dot{u}+\dot{v}u)\epsilon
+\end{align*}
+\]</span> 这里<span class="math inline">\(\epsilon\)</span>的系数可以对应到微分的加法和乘法法则。注意到对偶数的表示可以类似于实数的表示，对实数<span class="math inline">\(x+yi\)</span>，计算机可以只存储<span class="math inline">\((x, y)\)</span>，而对偶数也可以只存储<span class="math inline">\((x, \dot{x})\)</span>。如果使用<span class="math inline">\(\langle v, \dot{v}\rangle\)</span>来代表<span class="math inline">\(v+\dot{v}\epsilon\)</span>，有 <span class="math display">\[
+\begin{align*}
+\langle v, \dot{v}\rangle + \langle u, \dot{u}\rangle &amp;= \langle (v+u), (\dot{v} +\dot{u})\rangle = \langle (v+u), \dot{(v+u)}\rangle \\
+\langle v, \dot{v}\rangle \cdot \langle u, \dot{u} \rangle &amp;= \langle vu, \dot{v}u+v\dot{u} \rangle = \langle vu, \dot{(vu)} \rangle
+\end{align*}
+\]</span> 利用这一点，在<span class="math inline">\(f\)</span>对<span class="math inline">\(v\)</span>做泰勒展开有效的区域， <span class="math display">\[
+f(v+\dot{v}\epsilon) = f(v) + f&#39;(v)\dot{v}\epsilon
+\]</span> 也就是 <span class="math display">\[
+f(\langle v, \dot{v}\rangle) = \langle f(v) + \dot{(f(v))}\rangle
+\]</span> 使用二元数做数据结构就能同时得到原值和导数值（此时泰勒展开的部分可以看做是一个二维空间，基分别是1和<span class="math inline">\(\epsilon\)</span>，系数是<span class="math inline">\(v\)</span>和<span class="math inline">\(\dot{v}\)</span>——感谢sakigami_yang的总结）</p>
+<p>上述结论对链式法则也适用：连续使用两次上式结论，有 <span class="math display">\[
+\begin{align*}
+f(g(v+\dot{v}\epsilon)) &amp;= f(g(v) + g&#39;(v)\dot{v}\epsilon) \\
+&amp;= f(g(v)) + f&#39;(g(v))g&#39;(v)\dot{v}\epsilon
+\end{align*}
+\]</span> 此时<span class="math inline">\(\epsilon\)</span>的系数就是<span class="math inline">\(f\)</span>和<span class="math inline">\(g\)</span>组合的导数，因此只要使基本操作满足不变性<span class="math inline">\(f(v+\dot{v}\epsilon) = f(v) + f&#39;(v)\dot{v}\epsilon\)</span>，那么它们的组合也会满足。这意味着将任何数<span class="math inline">\(v\)</span>记为<span class="math inline">\(v+0\epsilon\)</span>，并在求值时令<span class="math inline">\(\epsilon\)</span>的系数为1，就可以得到函数的导数 <span class="math display">\[
+\left.\frac{df(x)}{dx}\right|_{x=v} = {\rm epsilon&#39;s\text{-}coefficient}({\rm dual\text{-}version}(f)(v+1\epsilon))
+\]</span> 这个结论可以扩展到任意程序结构，不只局限于函数<span class="math inline">\(f\)</span>，因为二元数作为一个数据类型可以包含在任意其它数据结构中。对数据结构中的任意一个二元数，只要不对其做算术操作，它就不会变；如果做了操作，微分也会随之改变</p>
+<p>实践中，使用某种语言实现的<span class="math inline">\(f\)</span>会被送进某个自动微分工具，工具会自动对其增强，加入额外代码以处理二元操作，因此可以同时计算函数和函数的导数。具体实现可能是自动修改代码或进行运算符重载，因此这个增强操作是对用户透明的</p>
 <h3 id="后向模式backward-mode">后向模式（Backward mode）</h3>
 <p>后向模式的自动微分对应于一种更泛化的反向传播算法，其从一个给定的输出开始向后传播导数。具体做法是对每个中间值<span class="math inline">\(v_i\)</span>计算一个伴随值 <span class="math display">\[
 \bar{v}_i = \frac{\partial y_j}{\partial v_i}
@@ -542,6 +570,150 @@ f&#39;(x) = \frac{f(x+h) - f(x-h)}{2h}-\frac{h^2}{6}f&#39;&#39;&#39;(\xi)
 <li>第一个阶段是前向计算原始函数中的每个中间值<span class="math inline">\(v_i\)</span>，记录计算图中的依赖关系</li>
 <li>第二个阶段是后向传播伴随值<span class="math inline">\(\bar{v}_i\)</span>，计算导数</li>
 </ul>
+<p>仍以前图计算过程为例，假设需要计算<span class="math inline">\(\bar{v}_0\)</span>，从图中可以看到它是通过产生<span class="math inline">\(v_2\)</span>和<span class="math inline">\(v_3\)</span>来影响<span class="math inline">\(y\)</span>，根据全微分定理，它对<span class="math inline">\(y\)</span>变化量的贡献可以如下计算 <span class="math display">\[
+\frac{\partial y}{\partial v_0} = \frac{\partial y}{\partial v_2}\frac{\partial v_2}{\partial v_0} + \frac{\partial y}{\partial v_3}\frac{\partial v_3}{\partial v_0}
+\]</span> 或者引入前面<span class="math inline">\(\bar{v}_i\)</span>的记法，上式也可以写为 <span class="math display">\[
+\bar{v}_0 = \bar{v}_2 \frac{\partial v_2}{\partial v_0} + \bar{v}_3\frac{\partial v_3}{\partial v_0}
+\]</span> 计算梯度时则可以采用如下更新方式 <span class="math display">\[
+\begin{align*}
+\bar{v}_0 &amp;= \bar{v}_3 \frac{\partial v_3}{\partial v_0} \\
+\bar{v}_0 &amp;= \bar{v}_0 + \bar{v}_2\frac{\partial v_2}{\partial v_0}
+\end{align*}
+\]</span> 所有变量的更新方式如下图所示</p>
+<figure>
+<img src="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutoral_3b_backward_AD.png" alt="自动微分的后向模式"><figcaption>自动微分的后向模式</figcaption>
+</figure>
+<p>后向模式的最大优势是对于诸如<span class="math inline">\(f: \mathbb{R}^n \rightarrow \mathbb{R}\)</span>这样的函数，一次后向模式就可以得到全部梯度<span class="math inline">\(\nabla f\)</span>。由于机器学习问题大部分都是要求标量目标函数对高维参数的梯度，因此在这样的场景下后向模式的效率比前向模式的效率要高很多</p>
+<p>与前向模式类似，后向模式通过设置<span class="math inline">\(\bar{\boldsymbol{y}} = \boldsymbol{r}\)</span>来计算雅可比矩阵转置与向量的乘积 <span class="math display">\[
+\boldsymbol{J}_f^\mathsf{T}\boldsymbol{r} = \left[\begin{matrix}\frac{\partial y_1}{\partial x_1} &amp; \cdots &amp; \frac{\partial y_m}{\partial x_1} \\ \vdots &amp; \ddots &amp; \vdots \\ \frac{\partial y_1}{\partial x_n} &amp; \cdots &amp; \frac{\partial y_m}{\partial x_n}\end{matrix}\right]\left[\begin{matrix}r_1 \\ \vdots\\ r_n\end{matrix}\right]
+\]</span> 后向模式自动微分的代价是在计算过程中所需存储空间与函数操作数的数量成正比，而如何减少存储空间的利用也是学界研究的一个方向</p>
+<h2 id="自动微分与机器学习">自动微分与机器学习</h2>
+<h3 id="基于梯度的优化">基于梯度的优化</h3>
+<p>基于梯度的优化是机器学习的基石之一，问题形式是对目标函数<span class="math inline">\(f:\mathbb{R}^n \rightarrow \mathbb{R}\)</span>通过更新参数<span class="math inline">\(\Delta \boldsymbol{w} = -\eta \nabla f\)</span>求解极小值<span class="math inline">\(\boldsymbol{w}^\ast = {\rm arg}\min_{\boldsymbol{w}}f(\boldsymbol{w})\)</span>，基本思想是当沿着梯度的反方向移动时，目标函数<span class="math inline">\(f\)</span>的值减小得最快。可以看出对于比较大的<span class="math inline">\(n\)</span>，后向模式的自动微分提供了非常有效的计算梯度的方法。一些基于牛顿法的二阶方法会使用梯度<span class="math inline">\(\nabla f\)</span>和Hessian矩阵<span class="math inline">\(\boldsymbol{H}_f\)</span>，此时参数的更新方式是<span class="math inline">\(\Delta \boldsymbol{w} = -\eta \boldsymbol{H}_f^{-1}\nabla f\)</span>，这种方法收敛更快，但是计算量会变大，因此通常会使用Hessian矩阵的数值逼近，即诸如BFGS和L-BFGS这样的伪牛顿法。有时可能不需要计算完整的Hessian矩阵，只需要计算Hessian矩阵与向量的内积，这时就可以将自动微分的前向计算和后向计算综合利用：对函数<span class="math inline">\(f: \mathbb{R}^n \rightarrow \mathbb{R}\)</span>，假设要求<span class="math inline">\(\boldsymbol{x}\)</span>处的值，向量为<span class="math inline">\(\boldsymbol{v}\)</span>，那么首先设置<span class="math inline">\(\dot{\boldsymbol{x}} = \boldsymbol{v}\)</span>，利用前向模式计算方向导数<span class="math inline">\(\nabla f \cdot \boldsymbol{v}\)</span>，然后对结果使用后向模式，就可以得到<span class="math inline">\(\nabla ^2 f\cdot \boldsymbol{v} = \boldsymbol{H}_f\boldsymbol{v}\)</span>。一些比较成熟的自动微分库会对大规模机器学习问题做更复杂的优化</p>
+<h3 id="神经网络深度学习与可微分编程">神经网络、深度学习与可微分编程</h3>
+<p>训练神经网络的基本方法是反向传播算法，而反向传播算法只是自动微分的一种特殊情况而已，其基本过程就是利用自动微分的后向模式计算目标函数对参数的梯度。时下流行的深度学习框架都会提供自动计算微分的方法，不过底层机制通常都会混用诸如“autodiff”、“自动微分”和“符号微分”等术语。主流的深度学习框架分为两个流派</p>
+<ul>
+<li>Theano、TensorFlow、Caffe和CNTK都使用了静态计算图。开发者需要首先构建一个计算图模型，然后框架在执行时解释这个模型。这种做法的优点是框架可以对图做出优化，但是控制流会显得不直观，难以调试。“静态”的意思是图的结构不会随输入的变化和改变</li>
+<li>Autograd、Chainer和PyTorch都使用了真正的、通用的后向自动微分算法，因此不需要额外的解释器，可以随意编写控制流相关的代码，调试起来更简单，程序也更直观。“动态”的意思是图的结构在运行时构建，而且在每个迭代都可能变化</li>
+</ul>
+<p><strong>可微分编程</strong>是另一个新出现的名词，其背景是一些人认识到对某个问题来说，深度学习模型本质上是可能解决方案的可微程序模板，这些模板的表现形式是可微的有向图，由各种功能块组成。模板的参数是通过对任务相关的目标函数做基于梯度的优化学习得出。在此范式下，神经网络本质上就是一类参数化的可微程序，由一些代码块组成（例如前馈元素、卷积元素、循环元素等），而这些代码块又是由算法结构拼接而成。以此为基础，研究人员又提出了一些新的可微分体系结构，例如神经图灵机以及其它可微数据结构，而通用的自动微分可以极大简化这类模型的实现</p>
+<p>（本节后面分别介绍了自动微分在计算机视觉、NLP和概率建模中的应用，讲得比较专，而且对NLP涉及不多，就不记在这里了。当前NLP的解决方案大部分是使用深度学习，这一点在上面这一小节有所介绍。而传统的方法单独使用自动微分的不多，文章中介绍的两个方案一个是用在CRF，一个是用在HMM）</p>
+<h2 id="实现">实现</h2>
+<h3 id="陷阱">陷阱</h3>
+<h4 id="性能">性能</h4>
+<p>由于自动微分计算过程中要记录所有产生的中间变量，因此自动微分编程框架实现时最主要的关注点是这种“记账操作”和算数过程带来的性能负载。自动微分保证计算量的增量是一个很小的常数倍数，不过如果不精心管理计算过程，会带来严重的负载问题。比如，如果使用最直接的方法为二元数分配数据结构，可能会造成频繁的内存分配/访问，这种操作在当代计算机上带来的性能代价要比单纯算数操作的代价要高。而如果使用运算符重载，也会降低效率</p>
+<h4 id="扰动混淆">扰动混淆</h4>
+<p>自动微分算法在实现时还要避免出现“扰动混淆”（perturbation confusion）的bug：如果两路微分操作会影响同一块代码，那么这两路微分所引入的<span class="math inline">\(\epsilon\)</span>需要被区分开。当自动微分出现嵌套（计算有微分操作函数的微分）时，也要注意避免这样的问题</p>
+<p><a href="http://www.bcl.hamilton.ie/~barak/papers/ifl2005.pdf" target="_blank" rel="noopener">[Siskind2005]</a>给出了一个扰动混淆的例子。首先引入如下记号： <span class="math display">\[
+\mathcal{D}\ f\ c = \left.\frac{d}{dx}f(x)\right|_{x=c}
+\]</span> 引入之前的二元数的记法，并定义操作 <span class="math display">\[
+\mathcal{E}(x+x&#39;\epsilon) \triangleq x&#39;
+\]</span> 因此 <span class="math display">\[
+\mathcal{D}\ f\ c \triangleq \mathcal{E}(f(c+\epsilon))
+\]</span> 例如 <span class="math display">\[
+\begin{align*}
+\left.\frac{d}{dx}x^2+x+1\right|_{x=3} &amp;= \mathcal{D}\ (\lambda x\ .\ x\times x + x + 1)\ 3 \\
+&amp;= \mathcal{E}((\lambda x\ . \ x\times x + x + 1)(3+\epsilon)) \\
+&amp;= \mathcal{E}((3+\epsilon) \times (3+\epsilon) + (3+\epsilon) + 1) \\
+&amp;= \mathcal{E}(9 + 6\epsilon + 3 + \epsilon + 1) \\
+&amp;= \mathcal{E}(13+7\epsilon) \\
+&amp;= 7
+\end{align*}
+\]</span> 那么使用如上记法，如何计算 <span class="math display">\[
+\left.\frac{d}{dx}\left(x\left(\left.\frac{d}{dy}x+y\right|_{y=1}\right)\right)\right|_{x=1}
+\]</span> 这个式子如果直接计算不难看出应该是1，但是如果使用如上的操作 <span class="math display">\[
+\begin{align*}
+&amp;\mathcal{D}\ (\lambda x\ .\ x\times(\mathcal{D}\ (\lambda y\ .\ x+y)\ 1))\ 1 \\
+= &amp;\mathcal{E}((\lambda x\ .\ x\times(\mathcal{D}\ (\lambda y\ .\ x+y)\ 1))(1+\epsilon))   \\
+= &amp;\mathcal{E}((1+\epsilon) \times(\mathcal{D}\ (\lambda y\ .\ (1+\epsilon)+y)\ 1))\\
+= &amp;\mathcal{E}((1+\epsilon) \times (\mathcal{E}((\lambda y\ .\ (1+\epsilon) + y)(1+\epsilon))))\tag{1} \\
+= &amp;\mathcal{E}((1+\epsilon) \times(\mathcal{E}((1+\epsilon) + (1+\epsilon))))  \\
+= &amp;\mathcal{E}((1+\epsilon) \times (\mathcal{E}(2+2\epsilon)))   \\
+= &amp;\mathcal{E}((1+\epsilon) \times 2)  \\
+= &amp;\mathcal{E}(2+2\epsilon)  \\
+= &amp;2 \not= 1 
+\end{align*}
+\]</span> 为什么会出现这样的问题呢？这是因为在上面(1)式中乘数里，对<span class="math inline">\(\mathcal{E}\)</span>所包含的函数，其参数中的<span class="math inline">\(\epsilon\)</span>是<span class="math inline">\(y\)</span>的<span class="math inline">\(\epsilon\)</span>，而函数体中的<span class="math inline">\(\epsilon\)</span>是<span class="math inline">\(x\)</span>的<span class="math inline">\(\epsilon\)</span>，两者是对<span class="math inline">\(\mathcal{D}\)</span>的不同调用，不能混为一谈</p>
+<h4 id="数值计算的陷阱">数值计算的陷阱</h4>
+<p>将数学公式翻译成代码时，还要注意数值计算的问题。例如</p>
+<ul>
+<li><span class="math inline">\(\log(1+x)\)</span>应该使用<code>log1p(x)</code>，而不是<code>log(1+x)</code>。假设<code>x = 1e-99</code>，前者得到<code>1e-99</code>，后者则是<code>0.0</code></li>
+<li><span class="math inline">\(\sqrt{x^2+y^2+z^2}\)</span>应该使用<code>hypot(x, hypot(y, z))</code>，因为任何一个数的平方都可能会造成上溢或下溢</li>
+<li><span class="math inline">\({\tan}^{-1}(y/x)\)</span>应该使用<code>atan2(y, x)</code>，而不应该使用<code>atan(y/x)</code>，因为要考虑<span class="math inline">\(x\le 0\)</span>的若干种情况</li>
+</ul>
+<p>与机器学习有关的一个典型问题是，对<span class="math inline">\(\log \sum \exp\{x_n\}\)</span>，需要直接使用<code>logsumexp</code>这样的函数来避免softmax可能的上溢/下溢情况</p>
+<h4 id="近似问题">近似问题</h4>
+<p>如果编写一个方法，其目的只是为了<strong>逼近</strong>某个理想函数，那么这个方法的自动微分求出的是实际写出的过程的微分，而不是理想函数的微分。例如对于<span class="math inline">\(e^x\)</span>，老式系统可能会使用一个麦克劳林级数做逼近 <span class="math display">\[
+e^x = \sum_{n=0}^\infty \frac{x^n}{n!} = 1+x+\frac{x^2}{2!} + \frac{x^3}{3!} + \cdots
+\]</span> 对这个展开做自动微分的结果是求出每个求和项的自动微分然后再求和。尽管问题也不大，但是直接使用原式是最保险的。因此，实现自动微分时，要<strong>逼近导数，而非微分近似值</strong></p>
+<h3 id="实现方法">实现方法</h3>
+<p>本文最后罗列了一些实现，并且将这些实现分成了三个类别</p>
+<ul>
+<li>基本库。实现一个库，暴露一些方法供其他函数调用。代表作是<a href="https://github.com/alexshtf/autodiff" target="_blank" rel="noopener">AutoDiff</a></li>
+<li>编译器/源代码转换。可以看做是一个预处理器，将代码作为输入，输出同语言的，自动微分版的新代码。代表作是<a href="https://github.com/google/tangent" target="_blank" rel="noopener">tangent</a></li>
+<li>运算符重载。代表作是<a href="https://pypi.org/project/ad/" target="_blank" rel="noopener">ad</a>和<a href="https://github.com/HIPS/autograd" target="_blank" rel="noopener">autograd</a>，chainer和PyTorch的实现也属于这一类</li>
+</ul>
+<p>一些课程也提供了一些关于自动微分的作业，包括</p>
+<ul>
+<li><a href="https://github.com/dlsys-course/assignment1" target="_blank" rel="noopener">华盛顿大学CSE599W（陈天奇主讲）</a></li>
+<li>CMU 10-605的<a href="http://www.cs.cmu.edu/~wcohen/10-605/notes/autodiff.pdf" target="_blank" rel="noopener">讲义</a>和<a href="http://www.cs.cmu.edu/~wcohen/10-605/assignments/2016-fall/hw-5-autodiff/" target="_blank" rel="noopener">作业</a></li>
+</ul>
+<h3 id="tensorflow的实现">TensorFlow的实现</h3>
+<p>（本小节没有出现在前面所说的综述中，参考了知乎问题<a href="https://www.zhihu.com/question/66200879" target="_blank" rel="noopener">TensorFlow是如何求导的</a>、StackOverflow问题<a href="%5BDoes%20tensorflow%20use%20automatic%20or%20symbolic%20gradients?%5D(https://stackoverflow.com/questions/36370129/does-tensorflow-use-automatic-or-symbolic-gradients)">Does tensorflow use automatic or symbolic gradients</a>和<a href="">TensorFlow关于eager execution模式的官方文档</a>）</p>
+<p>为了了解TensorFlow中自动微分的实现，需要先找到如何计算梯度。考虑到梯度常见的用处是最小化损失函数，因此可以先从损失函数如何优化的方向上探索，即从<code>Optimizer</code>类的<code>minimize</code>方法入手。这个方法调用了<code>compute_gradients</code>方法以获得参数的梯度（然后会调用<code>apply_gradients</code>以利用梯度更新参数，与本文讨论的内容暂时没有什么关系，所以先略去了）。由于TensorFlow有两种计算梯度的方法：一种是经典的静态图模式，一种是新加入的动态图模式（官方说法是eager execution模式），因此对于不同模式，<code>compute_gradients</code>采取了不同的实现逻辑</p>
+<h4 id="静态图模式">静态图模式</h4>
+<p>TensorFlow的经典模式是先建立一个静态图，然后这个静态图在一个会话里执行。在这种模式下，<code>compute_gradients</code>方法进一步调用<code>tensorflow.python.ops.gradients_impl</code>里的<code>gradients</code>方法</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">grads = gradients.gradients(</span><br><span class="line">        loss, var_refs, grad_ys=grad_loss,</span><br><span class="line">        gate_gradients=(gate_gradients == Optimizer.GATE_OP),</span><br><span class="line">        aggregation_method=aggregation_method,</span><br><span class="line">        colocate_gradients_with_ops=colocate_gradients_with_ops)</span><br></pre></td></tr></table></figure>
+<p>其中<code>loss</code>是计算损失值的张量，<code>var_refs</code>是变量列表，<code>grad_ys</code>存储计算出的梯度，<code>gate_gradients</code>是一个布尔变量，指示所有梯度是否在使用前被算出，如果设为<code>True</code>，可以避免竞争条件。不过<code>gradients</code>方法在实现上用途更广泛一些，简单说，它就是为了计算一组输出张量<code>ys = [y0, y1, ...]</code>对输入张量<code>xs = [x0, x1, ...]</code>的梯度，对每个<code>xi</code>有<code>grad_i = sum[dy_j/dx_i for y_j in ys]</code>。默认情况下，<code>grad_loss</code>是<code>None</code>，此时<code>grad_ys</code>被初始化为全1向量</p>
+<p><code>gradients</code>实际上直接调用内部方法<code>_GradientsHelper</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@tf_export("gradients")</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">gradients</span><span class="params">(ys,</span></span></span><br><span class="line"><span class="function"><span class="params">              xs,</span></span></span><br><span class="line"><span class="function"><span class="params">              grad_ys=None,</span></span></span><br><span class="line"><span class="function"><span class="params">              name=<span class="string">"gradients"</span>,</span></span></span><br><span class="line"><span class="function"><span class="params">              colocate_gradients_with_ops=False,</span></span></span><br><span class="line"><span class="function"><span class="params">              gate_gradients=False,</span></span></span><br><span class="line"><span class="function"><span class="params">              aggregation_method=None,</span></span></span><br><span class="line"><span class="function"><span class="params">              stop_gradients=None)</span>:</span></span><br><span class="line">  <span class="comment"># Creating the gradient graph for control flow mutates Operations.</span></span><br><span class="line">  <span class="comment"># _mutation_lock ensures a Session.run call cannot occur between creating and</span></span><br><span class="line">  <span class="comment"># mutating new ops.</span></span><br><span class="line">  <span class="keyword">with</span> ops.get_default_graph()._mutation_lock():  <span class="comment"># pylint: disable=protected-access</span></span><br><span class="line">    <span class="keyword">return</span> _GradientsHelper(ys, xs, grad_ys, name, colocate_gradients_with_ops,</span><br><span class="line">                            gate_gradients, aggregation_method, stop_gradients)</span><br></pre></td></tr></table></figure>
+<p>这个方法会维护两个重要变量</p>
+<ul>
+<li>一个队列<code>queue</code>，队列里存放计算图里所有出度为0的操作符</li>
+<li>一个字典<code>grads</code>，字典的键是操作符本身，值是该操作符每个输出端收到的梯度列表</li>
+</ul>
+<p>反向传播求梯度时，每从队列中弹出一个操作符，都会把它输出变量的梯度加起来（对应全微分定理）得到<code>out_grads</code>，然后获取对应的梯度计算函数<code>grad_fn</code>。操作符<code>op</code>本身和<code>out_grads</code>会传递给<code>grad_fn</code>做参数，求出输入的梯度</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> grad_fn:</span><br><span class="line">  <span class="comment"># If grad_fn was found, do not use SymbolicGradient even for</span></span><br><span class="line">  <span class="comment"># functions.</span></span><br><span class="line">  in_grads = _MaybeCompile(grad_scope, op, func_call,</span><br><span class="line">                           <span class="keyword">lambda</span>: grad_fn(op, *out_grads))</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">  <span class="comment"># For function call ops, we add a 'SymbolicGradient'</span></span><br><span class="line">  <span class="comment"># node to the graph to compute gradients.</span></span><br><span class="line">  in_grads = _MaybeCompile(grad_scope, op, func_call,</span><br><span class="line">                           <span class="keyword">lambda</span>: _SymGrad(op, out_grads, xs))</span><br></pre></td></tr></table></figure>
+<p>（不过这里似乎说明TensorFlow是自动微分和符号微分混用的）</p>
+<p>该操作符处理以后，会更新所有未经过处理的操作符的出度和<code>queue</code>（实际上就是一个拓扑排序的过程）。这样，当<code>queue</code>为空的时候，整个计算图处理完毕，可以得到每个参数的梯度</p>
+<p>静态图模式下梯度计算的调用过程大致如下所示</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Optimizer.minimize</span><br><span class="line">|---Optimizer.compute_gradients</span><br><span class="line">    |---gradients (gradients_impl.py)</span><br><span class="line">        |----_GradientsHelper (gradients_impl.py)</span><br></pre></td></tr></table></figure>
+<h5 id="梯度计算函数">梯度计算函数</h5>
+<p>前面提到，在<code>_GradientsHelper</code>函数里要调用一个<code>grad_fn</code>函数，该函数用来计算给定操作符的梯度。在TensorFlow里，每个计算图都可以分解到操作符（op）层级，每个操作符都会定义一个对应的梯度计算函数。例如，在python/ops/math_grad.py里定义的Log函数的梯度</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ops.RegisterGradient("Log")</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_LogGrad</span><span class="params">(op, grad)</span>:</span></span><br><span class="line">  <span class="string">"""Returns grad * (1/x)."""</span></span><br><span class="line">  x = op.inputs[<span class="number">0</span>]</span><br><span class="line">  <span class="keyword">with</span> ops.control_dependencies([grad]):</span><br><span class="line">    x = math_ops.conj(x)</span><br><span class="line">    <span class="keyword">return</span> grad * math_ops.reciprocal(x)</span><br></pre></td></tr></table></figure>
+<p>返回的就是已有梯度和<code>x</code>倒数的积，对应于 <span class="math display">\[
+\frac{df(g(x))}{dx} = \frac{df(u)}{du}\frac{du}{dx} \rightarrow f&#39;(\log(x))\cdot \frac{1}{x}\ {\rm\ if}\ u(x) = \log(x)
+\]</span> 注意每个函数都使用了装饰器<code>RegisterGradient</code>包装，对有m个输入，n个输出的操作符，相应的梯度函数需要传入两个参数</p>
+<ul>
+<li>操作符本身</li>
+<li>n个张量对象，代表对每个输出的梯度</li>
+</ul>
+<p>返回m个张量对象，代表对每个输入的梯度</p>
+<p>大部分操作符的梯度计算方式已经由框架给出，但是也可以自定义操作和对应的梯度计算函数。假设要定义一个<code>Sub</code>操作，接受两个输入<code>x</code>和<code>y</code>，输出一个<code>x-y</code>，那么这个函数是 <span class="math display">\[
+{\rm Sub}(x, y) = x-y
+\]</span> 显然有 <span class="math display">\[
+\frac{\partial {\rm Sub}}{\partial x} = 1,\ \frac{\partial {\rm Sub}}{\partial y} = -1
+\]</span> 那么对应的代码就是</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@tf.RegisterGradient("Sub")</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">_sub_grad</span><span class="params">(unused_op, grad)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> grad, tf.negative(grad)</span><br></pre></td></tr></table></figure>
+<h4 id="动态图模式">动态图模式</h4>
+<p>在动态图模式下，TensorFlow不需要预先定义好完整的计算图，每个操作也可以返回具体的值，方便调试。下面给出了一个使用动态图求解线性回归的例子（改动自官方示例代码）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line">tf.enable_eager_execution()</span><br><span class="line"></span><br><span class="line">NUM_EXAMPLES = <span class="number">1000</span></span><br><span class="line">training_inputs = tf.random_normal([NUM_EXAMPLES])</span><br><span class="line">noise = tf.random_normal([NUM_EXAMPLES])</span><br><span class="line">training_outputs = training_inputs * <span class="number">3</span> + <span class="number">2</span> + noise</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">prediction</span><span class="params">(x, w, b)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> x * w + b</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># A loss function using mean-squared error</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">loss</span><span class="params">(weights, biases)</span>:</span></span><br><span class="line">    error = prediction(training_inputs, weights, biases) - training_outputs</span><br><span class="line">    <span class="keyword">return</span> tf.reduce_mean(tf.square(error))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">train_steps = <span class="number">200</span></span><br><span class="line">learning_rate = <span class="number">0.1</span></span><br><span class="line"><span class="comment"># Start with arbitrary values for W and B on the same batch of data</span></span><br><span class="line">weight = tf.Variable(<span class="number">5.</span>)</span><br><span class="line">bias = tf.Variable(<span class="number">10.</span>)</span><br><span class="line">optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">20</span>):</span><br><span class="line">    print(<span class="string">"Initial loss: &#123;:.3f&#125;"</span>.format(loss(weight, bias)))</span><br><span class="line">    optimizer.minimize(<span class="keyword">lambda</span>: loss(weight, bias))</span><br><span class="line"></span><br><span class="line">print(<span class="string">"Final loss: &#123;:.3f&#125;"</span>.format(loss(weight, bias)))</span><br><span class="line">print(<span class="string">"W = &#123;&#125;, B = &#123;&#125;"</span>.format(weight.numpy(), bias.numpy()))</span><br></pre></td></tr></table></figure>
+<p>仍然以<code>Optimizer</code>类的<code>minimize</code>方法为入口，跟进到<code>compute_gradients</code>方法，可以看到在动态图模式下，相关代码比较简短</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> callable(loss):</span><br><span class="line">  <span class="keyword">with</span> backprop.GradientTape() <span class="keyword">as</span> tape:</span><br><span class="line">    <span class="keyword">if</span> var_list <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</span><br><span class="line">      tape.watch(var_list)</span><br><span class="line">    loss_value = loss()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Scale loss if using a "mean" loss reduction and multiple towers.</span></span><br><span class="line">    <span class="comment"># Have to be careful to call distribute_lib.get_loss_reduction()</span></span><br><span class="line">    <span class="comment"># *after* loss() is evaluated, so we know what loss reduction it uses.</span></span><br><span class="line">    <span class="comment"># TODO(josh11b): Test that we handle weight decay in a reasonable way.</span></span><br><span class="line">    <span class="keyword">if</span> (distribute_lib.get_loss_reduction() ==</span><br><span class="line">        variable_scope.VariableAggregation.MEAN):</span><br><span class="line">      num_towers = distribution_strategy_context.get_distribution_strategy(</span><br><span class="line">      ).num_towers</span><br><span class="line">      <span class="keyword">if</span> num_towers &gt; <span class="number">1</span>:</span><br><span class="line">        loss_value *= (<span class="number">1.</span> / num_towers)</span><br><span class="line">        </span><br><span class="line">  <span class="keyword">if</span> var_list <span class="keyword">is</span> <span class="keyword">None</span>:</span><br><span class="line">    var_list = tape.watched_variables()</span><br><span class="line">  grads = tape.gradient(loss_value, var_list, grad_loss)</span><br><span class="line">  <span class="keyword">return</span> list(zip(grads, var_list))</span><br></pre></td></tr></table></figure>
+<p>之前看到过一个比喻：自动微分的工作原理就像是录制一盘磁带：前向计算所有操作的时候，实际上是在录制正在进行的操作。等到录制结束，倒带播放，就得到了梯度。TensorFlow也遵循了这样的比喻，所以在动态图模式下自动微分的灵魂是一个<code>GradientTape</code>（“磁带”）类的对象，通过这个对象记录数据，求出梯度</p>
+<p>在该方法的第一步里，<code>GradientTape</code>类对象<code>tape</code>会在自己的context下“观察”所有需要被记录的对象。默认情况下，使用<code>tf.Variable</code> 或<code>tf.get_variable()</code>创建的对象都是<code>trainable</code>的，也是会被观察的（自动放在<code>watched_variables</code>里）。然后，调用<code>gradient</code>方法来计算所有被观察对象的梯度，核心代码为</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">flat_grad = imperative_grad.imperative_grad(</span><br><span class="line">        _default_vspace, self._tape, nest.flatten(target), flat_sources,</span><br><span class="line">        output_gradients=output_gradients)</span><br></pre></td></tr></table></figure>
+<p>这个函数最后会调用一个C++实现的<code>ComputeGradient</code>函数，其伪代码大致如下</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> Gradient, <span class="keyword">typename</span> BackwardFunction, <span class="keyword">typename</span> TapeTensor&gt;</span><br><span class="line"><span class="comment">// 使用了传统C的约定，返回一个状态码，结果保存在result变量里</span></span><br><span class="line"><span class="comment">// 核心思想还是对有向图使用拓扑排序，找到出度为0的点，聚合上游梯度，求出下游梯度</span></span><br><span class="line">Status GradientTape&lt;Gradient, BackwardFunction, TapeTensor&gt;::ComputeGradient(</span><br><span class="line">    <span class="keyword">const</span> VSpace&lt;Gradient, BackwardFunction, TapeTensor&gt;&amp; vspace,</span><br><span class="line">    gtl::ArraySlice&lt;int64&gt; target_tensor_ids,</span><br><span class="line">    gtl::ArraySlice&lt;int64&gt; source_tensor_ids,</span><br><span class="line">    gtl::ArraySlice&lt;Gradient*&gt; output_gradients,</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;Gradient*&gt;* result) &#123;</span><br><span class="line">  <span class="comment">// 构建一个输入张量的集合</span></span><br><span class="line">  gtl::FlatSet&lt;int64&gt; sources_set(source_tensor_ids.begin(),</span><br><span class="line">                                  source_tensor_ids.end());</span><br><span class="line">  <span class="comment">// 初始化，找到所有与输出张量有关的op，计算它们的出度、引用数等</span></span><br><span class="line">  BackpropInitialState&lt;BackwardFunction, TapeTensor&gt; state = PrepareBackprop(</span><br><span class="line">      target_tensor_ids, tensor_tape_, &amp;op_tape_, sources_set, persistent_);</span><br><span class="line">  <span class="comment">// 找到所有出度为0的op</span></span><br><span class="line">  <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;int64&gt; op_stack =</span><br><span class="line">      InitialStack(state.op_tape, state.op_missing_tensor);</span><br><span class="line">  gtl::FlatMap&lt;int64, <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;Gradient*&gt;&gt; gradients;</span><br><span class="line">  <span class="comment">// 将所有最终输出的输出梯度设为1</span></span><br><span class="line">  Status s = InitialGradients(vspace, target_tensor_ids, output_gradients,</span><br><span class="line">                              tensor_tape_, state.op_tape, &amp;gradients);</span><br><span class="line">  <span class="keyword">while</span> (!op_stack.empty()) &#123;</span><br><span class="line">    获得一个op，从state.op_tape擦除之</span><br><span class="line">    获取输出的梯度（上游梯度）</span><br><span class="line">    计算输入的梯度（下游梯度）。大部分操作是使用CallBackwardFunction来完成</span><br><span class="line">    对每个输入张量，看它是哪些op的输出张量，将该op“未计算梯度的输出张量”的计数减<span class="number">1</span>。当该计数降为<span class="number">0</span>时，这个op相当于出度为<span class="number">0</span>，可以放入op_stack</span><br><span class="line">  &#125;</span><br><span class="line">  聚合所有源向量的梯度</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看出核心计算梯度的方法是调用<code>CallBackwardFunction</code>。这个方法调用了操作符对应的反向传播函数<code>backward_function</code>，而操作符和反向传播函数的对应关系会在“录制磁带”时记录</p>
+<p>（这里有一个疑点，怀疑TensorFlow是如下逻辑：</p>
+<ul>
+<li>若某op有自己的grad_op，那么在导入包时就会建立联系（参见前面静态图模式下对“梯度计算函数”的定义）</li>
+<li>有一些函数会用户自己定义对应的梯度实现，这个对应关系在“录制磁带”时记录</li>
+</ul>
+<p>只是猜想，不是很确定，欢迎证明/证伪）</p>
+<p>动态计算图下梯度计算的调用过程大致如下所示</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Optimizer.minimize</span><br><span class="line">|---Optimizer.compute_gradients</span><br><span class="line">    |---GradientTape.gradient</span><br><span class="line">        |---imperative_grad</span><br><span class="line">            |---TFE_Py_TapeGradient (python/eager/pywrap_tfe_src.cc)</span><br><span class="line">                |---GradientTape&lt;&gt;::ComputeGradient (c/eager/tape.h)</span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -725,7 +897,7 @@ f&#39;(x) = \frac{f(x+h) - f(x-h)}{2h}-\frac{h^2}{6}f&#39;&#39;&#39;(\xi)
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">87</span>
+                  <span class="site-state-item-count">89</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -782,7 +954,7 @@ f&#39;(x) = \frac{f(x+h) - f(x-h)}{2h}-\frac{h^2}{6}f&#39;&#39;&#39;(\xi)
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自动微分不是什么"><span class="nav-number">2.</span> <span class="nav-text">自动微分不是什么</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#自动微分不是数值微分"><span class="nav-number">2.1.</span> <span class="nav-text">自动微分不是数值微分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自动微分不是符号微分"><span class="nav-number">2.2.</span> <span class="nav-text">自动微分不是符号微分</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自动微分及其主要模式"><span class="nav-number">3.</span> <span class="nav-text">自动微分及其主要模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#前向模式forward-mode"><span class="nav-number">3.1.</span> <span class="nav-text">前向模式（Forward mode）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#后向模式backward-mode"><span class="nav-number">3.2.</span> <span class="nav-text">后向模式（Backward mode）</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自动微分不是什么"><span class="nav-number">2.</span> <span class="nav-text">自动微分不是什么</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#自动微分不是数值微分"><span class="nav-number">2.1.</span> <span class="nav-text">自动微分不是数值微分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自动微分不是符号微分"><span class="nav-number">2.2.</span> <span class="nav-text">自动微分不是符号微分</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自动微分及其主要模式"><span class="nav-number">3.</span> <span class="nav-text">自动微分及其主要模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#前向模式forward-mode"><span class="nav-number">3.1.</span> <span class="nav-text">前向模式（Forward mode）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#二元数"><span class="nav-number">3.1.1.</span> <span class="nav-text">二元数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#后向模式backward-mode"><span class="nav-number">3.2.</span> <span class="nav-text">后向模式（Backward mode）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自动微分与机器学习"><span class="nav-number">4.</span> <span class="nav-text">自动微分与机器学习</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#基于梯度的优化"><span class="nav-number">4.1.</span> <span class="nav-text">基于梯度的优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#神经网络深度学习与可微分编程"><span class="nav-number">4.2.</span> <span class="nav-text">神经网络、深度学习与可微分编程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现"><span class="nav-number">5.</span> <span class="nav-text">实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#陷阱"><span class="nav-number">5.1.</span> <span class="nav-text">陷阱</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#性能"><span class="nav-number">5.1.1.</span> <span class="nav-text">性能</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#扰动混淆"><span class="nav-number">5.1.2.</span> <span class="nav-text">扰动混淆</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数值计算的陷阱"><span class="nav-number">5.1.3.</span> <span class="nav-text">数值计算的陷阱</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#近似问题"><span class="nav-number">5.1.4.</span> <span class="nav-text">近似问题</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现方法"><span class="nav-number">5.2.</span> <span class="nav-text">实现方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tensorflow的实现"><span class="nav-number">5.3.</span> <span class="nav-text">TensorFlow的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#静态图模式"><span class="nav-number">5.3.1.</span> <span class="nav-text">静态图模式</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#梯度计算函数"><span class="nav-number">5.3.1.1.</span> <span class="nav-text">梯度计算函数</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#动态图模式"><span class="nav-number">5.3.2.</span> <span class="nav-text">动态图模式</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>
