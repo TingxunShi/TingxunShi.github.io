@@ -100,7 +100,7 @@
 
 
 
-  <meta name="keywords" content="UTNN,RBM,玻尔兹曼机," />
+  <meta name="keywords" content="UTNN,玻尔兹曼机,RBM," />
 
 
 
@@ -112,20 +112,20 @@
 
 
 <meta name="description" content="（视频和讲义中的第二节“More efficient ways to get the statistics”由于是可选章节，被略去了） 玻尔兹曼机学习 玻尔兹曼机学习算法不是一个有监督学习算法，没有期望输出。给定一个输入向量（实际上更应该是看做输出向量），算法试图构造一个模型，模型会为训练集中每个二进制向量计算一个概率，而学习的目标是让这些概率的乘积最大化，也就是让概率的对数和最大化。此外，这个概">
-<meta name="keywords" content="UTNN,RBM,玻尔兹曼机">
+<meta name="keywords" content="UTNN,玻尔兹曼机,RBM">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Hinton神经网络与机器学习 12. 受限玻尔兹曼机">
 <meta property="og:url" content="txshi-mt.com/2018/02/10/UTNN-12-Restricted-Boltzmann-Machines/index.html">
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="（视频和讲义中的第二节“More efficient ways to get the statistics”由于是可选章节，被略去了） 玻尔兹曼机学习 玻尔兹曼机学习算法不是一个有监督学习算法，没有期望输出。给定一个输入向量（实际上更应该是看做输出向量），算法试图构造一个模型，模型会为训练集中每个二进制向量计算一个概率，而学习的目标是让这些概率的乘积最大化，也就是让概率的对数和最大化。此外，这个概">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_12_a_simple_rbm.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_12_contrastive_divergence_learning.png">
-<meta property="og:updated_time" content="2018-02-13T06:59:37.705Z">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_12_a_simple_rbm.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_12_contrastive_divergence_learning.png">
+<meta property="og:updated_time" content="2018-11-17T10:59:49.940Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hinton神经网络与机器学习 12. 受限玻尔兹曼机">
 <meta name="twitter:description" content="（视频和讲义中的第二节“More efficient ways to get the statistics”由于是可选章节，被略去了） 玻尔兹曼机学习 玻尔兹曼机学习算法不是一个有监督学习算法，没有期望输出。给定一个输入向量（实际上更应该是看做输出向量），算法试图构造一个模型，模型会为训练集中每个二进制向量计算一个概率，而学习的目标是让这些概率的乘积最大化，也就是让概率的对数和最大化。此外，这个概">
-<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_12_a_simple_rbm.png">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_12_a_simple_rbm.png">
 
 
 
@@ -407,7 +407,7 @@
 <p>玻尔兹曼机学习算法不是一个有监督学习算法，没有期望输出。给定一个输入向量（实际上更应该是看做输出向量），算法试图构造一个模型，模型会为训练集中每个二进制向量计算一个概率，而学习的目标是让这些概率的乘积最大化，也就是让概率的对数和最大化。此外，这个概率也是通过如下方式得到训练集里所有<span class="math inline">\(N\)</span>条训练数据的概率：令网络在没有外部输入的情况下进入稳定状态，对可见向量做一次抽样，如此重复<span class="math inline">\(N\)</span>次</p>
 <p>玻尔兹曼机的学习过程是比较难的，这里以一个简单模型来做一个示例。模型结构如下图所示</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_12_a_simple_rbm.png" alt="一个简单的玻尔兹曼机示意图"><figcaption>一个简单的玻尔兹曼机示意图</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_12_a_simple_rbm.png" alt="一个简单的玻尔兹曼机示意图"><figcaption>一个简单的玻尔兹曼机示意图</figcaption>
 </figure>
 <p>这里，四个隐藏单元链式相连，两端各自接一个可见单元。给这个网络的训练集是(0, 1)和(1, 0)，也就是说，我们希望两个可见单元处于各自相反的状态——这就要求所有权重的乘积为负。因为，比如说所有权重都是正的，让<span class="math inline">\(w_1\)</span>为正就会让第一个隐藏单元为正，这会使第二个隐藏单元也为正，以此类推，因此第四个隐藏单元会让另一个可见单元也为正</p>
 <p>（这里我试图展开一点来讲这个事情。由于前面学得不是太扎实，因此可能存在偏差。如果我的想法的确有问题，请及时纠正我！</p>
@@ -453,7 +453,7 @@ p(h_j = 1) = \frac{1}{1+\exp\{-\left(b_j + \sum_{i \in {\rm vis}}v_iw_{ij}\right
 \Delta w_{ij} = \epsilon(\langle v_ih_j \rangle^0 - \langle v_ih_j \rangle^1)
 \]</span> 这种做法肯定不是最大似然法，因为负统计数据是错的，不过这种方法在实践中可用。这是为什么呢？马尔可夫链会以给定数据为起点开始向着平衡分布游走，因此经过少数几步以后就可以看到游走的方向。如果初始权重不好，走到平衡态实际就是浪费时间。我们不用等系统进入平衡态就能知道如何修改权重来防止它走到错误的方向，要做的就是降低在完整一步之后生成“虚构（confabulation）”的概率，提升数据的概率，这样模型就不会走错了。一旦数据和模型走了完整一步以后达到的区域有相同的分布，学习过程就会停止</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_12_contrastive_divergence_learning.png" alt="对比差异学习算法示意图"><figcaption>对比差异学习算法示意图</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_12_contrastive_divergence_learning.png" alt="对比差异学习算法示意图"><figcaption>对比差异学习算法示意图</figcaption>
 </figure>
 <p>这里给出了一个全局配置空间中的能量表面示意图，用以解释前面介绍的“对比差异学习算法”（contrastive divergence learning，又称为对比散度学习）。绿色的点是一个数据点，也就是可见向量和通过随机更新隐藏单元得到的隐藏向量。从这个点开始，让马尔可夫链经过一个完整的更新步骤，可以得到新的可见向量和相对应的隐藏向量，也就是红色的重构点。然后，修改权重会降低数据点的能量，增大重构点的能量，得到一个经过局部拉伸的新表面。可以看到这样实际上是在数据点创建一个能量最小值，同时让远离数据点的部分保持不变</p>
 <p>因此，这种取巧做法对远离数据点的部分会失效，我们需要小心那些里数据空间很远，但是模型很喜欢的区域。这些低能量的孔洞可以导致正则项变得很大，而且如果使用上述取巧法无法感知到。如果使用持久粒子（即它们的状态会被记忆，而且在每次更新以后会被多次更新），这些粒子会找到这些孔洞，掉进去，学习过程变成补洞的过程。所以，更平衡的方法是先使用一些小的权重，然后以CD1算法开始（在一次完整的步骤之后就获取负统计数据），过一段时间，变成使用CD3，再过一段时间，使用CD5……以此类推</p>
@@ -525,9 +525,9 @@ p(h_j = 1) = \frac{1}{1+\exp\{-\left(b_j + \sum_{i \in {\rm vis}}v_iw_{ij}\right
           
             <a href="/tags/UTNN/" rel="tag"># UTNN</a>
           
-            <a href="/tags/RBM/" rel="tag"># RBM</a>
-          
             <a href="/tags/玻尔兹曼机/" rel="tag"># 玻尔兹曼机</a>
+          
+            <a href="/tags/RBM/" rel="tag"># RBM</a>
           
         </div>
       

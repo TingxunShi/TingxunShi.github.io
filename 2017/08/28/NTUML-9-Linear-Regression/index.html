@@ -119,15 +119,15 @@
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="线性回归问题 回顾之前举的银行信用卡问题，如果要关注的问题不再是“给不给发卡”而是“发多大的额度”，那么这就不再是一个二元分类问题，而输出空间已经是实数集（这里实际上是实数集的一个子集）了，因此是一个回归问题。 回归问题的假设函数应该是什么样的？假设已经提取好了\(d\)个特征\(x_1, x_2, \ldots, x_d\)，可以像感知机问题那样再加入一个新的常数项\(x_0\)组成输入向量\(">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML09_hat_matrix.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUMLNTUML09_linear_regression_err_in.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML09_learning_curve.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML09_error_functions.png">
-<meta property="og:updated_time" content="2017-12-19T12:35:39.000Z">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML09_hat_matrix.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUMLNTUML09_linear_regression_err_in.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML09_learning_curve.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML09_error_functions.png">
+<meta property="og:updated_time" content="2018-11-17T10:59:49.926Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NTUML 9. 线性回归">
 <meta name="twitter:description" content="线性回归问题 回顾之前举的银行信用卡问题，如果要关注的问题不再是“给不给发卡”而是“发多大的额度”，那么这就不再是一个二元分类问题，而输出空间已经是实数集（这里实际上是实数集的一个子集）了，因此是一个回归问题。 回归问题的假设函数应该是什么样的？假设已经提取好了\(d\)个特征\(x_1, x_2, \ldots, x_d\)，可以像感知机问题那样再加入一个新的常数项\(x_0\)组成输入向量\(">
-<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML09_hat_matrix.png">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML09_hat_matrix.png">
 
 
 
@@ -475,7 +475,7 @@ E_{\rm in}({\bf w}_{\rm LIN}) &amp;= \frac{1}{N}|\!|{\bf y} - \hat{\bf y}|\!|^2 
 \end{align*}
 \]</span> 称<span class="math inline">\({\rm XX}^\dagger\)</span>为“帽子矩阵”，记为<span class="math inline">\(\rm H\)</span> ，因为真实值<span class="math inline">\(\bf y\)</span>与之相乘会得到预测值<span class="math inline">\(\hat{\bf y}\)</span>。帽子矩阵的几何意义可以通过下图解释</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML09_hat_matrix.png" alt="帽子矩阵的几何意义"><figcaption>帽子矩阵的几何意义</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML09_hat_matrix.png" alt="帽子矩阵的几何意义"><figcaption>帽子矩阵的几何意义</figcaption>
 </figure>
 <p>该图中，<span class="math inline">\({\bf y} \in \mathbb{R}^N\)</span>，而<span class="math inline">\(\hat{\bf y}\)</span>是<span class="math inline">\(\rm X\)</span>中每个列的线性组合，因此<span class="math inline">\(\hat{\bf y}\)</span>属于<span class="math inline">\(\rm X\)</span>的列空间。线性回归要让<span class="math inline">\(\bf y\)</span>和<span class="math inline">\(\hat{\bf y}\)</span>尽可能小，而<span class="math inline">\(\hat{\bf y}\)</span>实际上是<span class="math inline">\(\bf y\)</span>在<span class="math inline">\(\rm X\)</span>列空间（下面简记为<span class="math inline">\(\rm span\)</span> ）中的投影，为了让两者的残差<span class="math inline">\({\bf y}-\hat{\bf y}\)</span>尽可能小，即让<span class="math inline">\(\bf y\)</span>到<span class="math inline">\(\rm span\)</span>的距离最短，因此只能有<span class="math inline">\({\bf y}-\hat{\bf y}\)</span> 垂直于 <span class="math inline">\({\rm span}\)</span>。所以<span class="math inline">\(\rm H\)</span>起到的就是投影的作用，将任意向量<span class="math inline">\(\bf y\)</span>投影到<span class="math inline">\(\rm X\)</span>的列空间中，投影成<span class="math inline">\(\hat{\bf y}\)</span>，而<span class="math inline">\({\rm I} - {\rm H}\)</span>则是计算残差<span class="math inline">\({\bf y}-\hat{\bf y}\)</span>，它有一个很好的性质： <span class="math display">\[
 {\rm trace}({\rm I}- {\rm H}) = N - (d + 1)
@@ -492,7 +492,7 @@ E_{\rm in}({\bf w}_{\rm LIN}) &amp;= \frac{1}{N}|\!|{\bf y} - \hat{\bf y}|\!|^2 
 \end{align*}
 \]</span> 对<span class="math inline">\(\bf y\)</span>引入误差，情况会略有变化，见下图</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUMLNTUML09_linear_regression_err_in.png" alt="线性回归训练集内误差均值的计算"><figcaption>线性回归训练集内误差均值的计算</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUMLNTUML09_linear_regression_err_in.png" alt="线性回归训练集内误差均值的计算"><figcaption>线性回归训练集内误差均值的计算</figcaption>
 </figure>
 <p>假设现在有一个理想的目标函数<span class="math inline">\(f\)</span>，那么<span class="math inline">\(f({\rm X})\)</span>肯定会落在<span class="math inline">\(\rm X\)</span>的列空间中。现在，可以把观察到的<span class="math inline">\(\bf y\)</span>看作是理想目标函数值与噪声的加和，即<span class="math inline">\({\bf y} = f({\rm X}) + {\rm noise}\)</span>。由于要考察的残差仍然是<span class="math inline">\({\bf y} - \hat{\bf y}\)</span>，因此这个残差可以看作是噪声经过矩阵<span class="math inline">\(\rm I-H\)</span>的转换，即<span class="math inline">\(E_{\rm in}\)</span>就是把<span class="math inline">\(\rm I-H\)</span>用在噪声上。将这个关系代入到残差的表达式中，有： <span class="math display">\[
 \begin{align*}
@@ -506,7 +506,7 @@ E_{\rm in}({\bf w}_{\rm LIN}) = \frac{1}{N} |\!|{\bf y} - \hat{\bf y}|\!|^2 &amp
 \end{align*}
 \]</span> 哲学上的意义是，噪声的存在使得模型的学习过程中也对噪声数据进行了学习，学到的<span class="math inline">\(\bf w\)</span>可能偏向了某个方向。由于测试数据是新鲜的，没看到过的，没用在学习过程中的数据，因此此消彼长，误差对偏向的方向惩罚更多。这样可以得到一个学习曲线图</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML09_learning_curve.png" alt="学习曲线"><figcaption>学习曲线</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML09_learning_curve.png" alt="学习曲线"><figcaption>学习曲线</figcaption>
 </figure>
 <p>可以看到，随着样本数量<span class="math inline">\(N\)</span>的增大，<span class="math inline">\(E_{\rm in}\)</span>增大，<span class="math inline">\(E_{\rm out}\)</span>减小。但是最后随着<span class="math inline">\(N \rightarrow \infty\)</span>，两者都会收敛到<span class="math inline">\(\sigma^2\)</span>，即noise level。因此一般化误差（即<span class="math inline">\(E_{\rm in}\)</span>与<span class="math inline">\(E_{\rm out}\)</span>平均情况下相差多少）为<span class="math inline">\(\frac{2(d+1)}{N}\)</span></p>
 <p>综上所述，当<span class="math inline">\(N\)</span>尽可能大，噪声不影响时，学习是已经发生了的</p>
@@ -523,7 +523,7 @@ E_{\rm in}({\bf w}_{\rm LIN}) = \frac{1}{N} |\!|{\bf y} - \hat{\bf y}|\!|^2 &amp
 </ul>
 <p>可以画出两个函数的曲线（横轴为<span class="math inline">\({\bf w}^\mathsf{T}{\bf x}\)</span>，纵轴为<span class="math inline">\(\rm err\)</span>），分情况讨论（期望<span class="math inline">\(y=1\)</span>还是<span class="math inline">\(y=-1\)</span>）</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML09_error_functions.png" alt="0/1误差函数与最小平方误差函数的图像比较。左为期望样本为正例的情况，右为期望样本为负例的情况"><figcaption>0/1误差函数与最小平方误差函数的图像比较。左为期望样本为正例的情况，右为期望样本为负例的情况</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML09_error_functions.png" alt="0/1误差函数与最小平方误差函数的图像比较。左为期望样本为正例的情况，右为期望样本为负例的情况"><figcaption>0/1误差函数与最小平方误差函数的图像比较。左为期望样本为正例的情况，右为期望样本为负例的情况</figcaption>
 </figure>
 <p>先看左边数据为正例的情况。由于此时数据为正例，因此其标签为1。最小平方误差函数以<span class="math inline">\({\bf w}^\mathsf{T}{\bf x}\)</span>为自变量时，函数图像是一个抛物线，在<span class="math inline">\({\bf w}^\mathsf{T}{\bf x} = y = 1\)</span>时取得最低点0。此时0/1分类误差函数也取得0，因为此时<span class="math inline">\({\bf w}^\mathsf{T}{\bf x}\)</span>的符号与<span class="math inline">\(y\)</span>相同，不等号不成立，因此两函数交于<span class="math inline">\((1, 0)\)</span>点。此外，当<span class="math inline">\({\bf w}^\mathsf{T}{\bf x} = 0\)</span>时，该点正好处在0/1分类误差函数变化的阶梯点上。但是由于<span class="math inline">\({\bf w}^\mathsf{T}{\bf x}\)</span>的符号跟<span class="math inline">\(y\)</span>的符号不一致，因此0/1误差函数取1。而最小平方差函数在此时的值也为1（<span class="math inline">\((0-1)^2 = 1\)</span>），因此两函数还交于<span class="math inline">\((0, 1)\)</span>点。画出所有图像以后，可以发现在<span class="math inline">\(\mathbb{R}\)</span>上总有<span class="math inline">\({\rm err}_{\rm sqrt} \ge {\rm err}_{0/1}\)</span>。同样的结论也可以用在右边数据为负例的情况。因此，由VC维的理论可以有 <span class="math display">\[
 \begin{align*}

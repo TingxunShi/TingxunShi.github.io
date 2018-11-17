@@ -119,13 +119,13 @@
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="核技巧 前面提到，对偶问题最后也能写成二次规划问题的标准形式。乍一看，问题的变量数为\(N\)，条件数为\(N+1\)，跟数据的维度\(\tilde{d}\)无关，但是需要注意的是，\(\rm Q_D\)中的每一项计算方式为两个\(y\)相乘再乘上两个\(\bf z\)的内积（\(q_{n, m} = y_ny_m{\bf z}_n^\mathsf{T}{\bf z}_m\)}），这个内积就跟\(">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML18_poly2.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML19_gaussian_svm.png">
-<meta property="og:updated_time" content="2017-12-19T12:35:39.000Z">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML18_poly2.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML19_gaussian_svm.png">
+<meta property="og:updated_time" content="2018-11-17T10:59:49.850Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NTUML 19. 核支持向量机">
 <meta name="twitter:description" content="核技巧 前面提到，对偶问题最后也能写成二次规划问题的标准形式。乍一看，问题的变量数为\(N\)，条件数为\(N+1\)，跟数据的维度\(\tilde{d}\)无关，但是需要注意的是，\(\rm Q_D\)中的每一项计算方式为两个\(y\)相乘再乘上两个\(\bf z\)的内积（\(q_{n, m} = y_ny_m{\bf z}_n^\mathsf{T}{\bf z}_m\)}），这个内积就跟\(">
-<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML18_poly2.png">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML18_poly2.png">
 
 
 
@@ -450,7 +450,7 @@ g_{\rm SVM}({\bf x}) = {\rm sign}\left(\sum_{\rm SV\ indices}\alpha_ny_nK({\bf x
 \]</span> 可以看到<span class="math inline">\(K_2\)</span>的计算比<span class="math inline">\(K_{\boldsymbol{\Phi}_2}\)</span>更简单一些，而能力相同（两者映射到的空间相同）。但是要注意的是，转换不同，内积就不同。内积不同，距离就不同。而SVM是由距离决定的，因此会得到不同的边界。实际上<span class="math inline">\(K_2\)</span>更常用</p>
 <p>下图中给出了使用不同的核和同一个核使用不同<span class="math inline">\(\gamma\)</span>的效果。其中带方框的点是支持向量</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML18_poly2.png" alt="使用不同的核和同一个核使用不同gamma的SVM。其中带方框的点是支持向量"><figcaption>使用不同的核和同一个核使用不同gamma的SVM。其中带方框的点是支持向量</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML18_poly2.png" alt="使用不同的核和同一个核使用不同gamma的SVM。其中带方框的点是支持向量"><figcaption>使用不同的核和同一个核使用不同gamma的SVM。其中带方框的点是支持向量</figcaption>
 </figure>
 <p>由上图可知，不同的<span class="math inline">\(g_{\rm SVM}\)</span>会使用不同的支持向量，也就会产生的不同的边界。而使用什么核和<span class="math inline">\(\gamma\)</span>也是很难在学习之前就能判断出来的。究竟哪个核，这个核的哪个<span class="math inline">\(\gamma\)</span>最合适，也得通过交叉验证的方法来判断</p>
 <p>进一步地，可以加入两个新的变量<span class="math inline">\(\zeta\)</span>和多项式次数<span class="math inline">\(Q\)</span>，得到一个更广义的多项式核，即（均设定<span class="math inline">\(\gamma &gt; 0, \zeta \ge 0\)</span>） <span class="math display">\[
@@ -483,7 +483,7 @@ g_{\rm SVM}({\bf x}) &amp;= {\rm sign}\left(\sum_{\rm SV}\alpha_ny_n K({\bf x}_n
 \end{align*}
 \]</span> 此时SVM实际上是以各支持向量<span class="math inline">\({\bf x}_n\)</span>为中心的高斯函数的线性组合。考虑到“线性组合”的意义，高斯核通常也称为径向基函数核（Radial Basis Function kernel, RBF kernel）。高斯核函数的使用进一步展示了核SVM的强大：不需要太多的数据点（仅使用支持向量），也不需要太多的计算（仅在原始<span class="math inline">\(d\)</span>维空间做向量运算），就能得到特别复杂的边界（因为高斯核实际上隐含地将原始数据映射到了无限维空间），而且很鲁棒（SVM本身最大边界的性质）。核函数的简洁性使得我们也不需要去显式地把转换<span class="math inline">\(\boldsymbol{\Phi}\)</span>写出来，对偶SVM的性质使得我们不需要去存储最优的<span class="math inline">\(\bf w\)</span>，只需要存好哪些是支持向量以及这些支持向量对应的<span class="math inline">\(\alpha_n\)</span>就可以</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML19_gaussian_svm.png" alt="使用不同gamma的高斯核的比较"><figcaption>使用不同gamma的高斯核的比较</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML19_gaussian_svm.png" alt="使用不同gamma的高斯核的比较"><figcaption>使用不同gamma的高斯核的比较</figcaption>
 </figure>
 <p>上图给出了使用不同<span class="math inline">\(\gamma\)</span>的高斯核SVM的示意图。可以看出，<span class="math inline">\(\gamma\)</span>越大，对应的高斯函数越尖锐，模型越容易过拟合。这里也说明SVM是不容易过拟合，但是不会永远不过拟合。使用高斯核时，<span class="math inline">\(\gamma\)</span>的选取仍然是需要仔细考虑的。当<span class="math inline">\(\gamma\rightarrow \infty\)</span>时，如果<span class="math inline">\(K\)</span>是高斯核函数，则<span class="math inline">\(K({\bf x, x}&#39;) = [\![{\bf x} = {\bf x}&#39;]\!]\)</span></p>
 <h2 id="核的比较">核的比较</h2>

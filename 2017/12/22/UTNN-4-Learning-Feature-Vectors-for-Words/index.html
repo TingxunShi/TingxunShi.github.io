@@ -119,15 +119,15 @@
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="学习预测下一个单词 本讲将介绍反向传播算法的一个有趣的应用，即可以用它来学出对单词意义的一种特征表示。这种做法可以追溯到20世纪80年代，那时人们使用神经网络来理解家族树（family tree）中所包含的信息。下图给出了家族树的一个示意图  家族树的示意图  家族树中包含了大量的人名，同时可以定义一些谓词来表示这些人之间的关系，包括父子关系、夫妻关系、叔侄关系/姑侄关系等等。其中，在给定了某些关">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_04_family_tree.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_04_name_vecs.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_04_Bengio_neural_language_model.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_04_predict_by_tree.png">
-<meta property="og:updated_time" content="2018-01-07T09:08:58.000Z">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_04_family_tree.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_04_name_vecs.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_04_Bengio_neural_language_model.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_04_predict_by_tree.png">
+<meta property="og:updated_time" content="2018-11-17T10:59:49.962Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hinton神经网络与机器学习 4. 神经语言模型与词向量">
 <meta name="twitter:description" content="学习预测下一个单词 本讲将介绍反向传播算法的一个有趣的应用，即可以用它来学出对单词意义的一种特征表示。这种做法可以追溯到20世纪80年代，那时人们使用神经网络来理解家族树（family tree）中所包含的信息。下图给出了家族树的一个示意图  家族树的示意图  家族树中包含了大量的人名，同时可以定义一些谓词来表示这些人之间的关系，包括父子关系、夫妻关系、叔侄关系/姑侄关系等等。其中，在给定了某些关">
-<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_04_family_tree.png">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_04_family_tree.png">
 
 
 
@@ -418,7 +418,7 @@
         <h2 id="学习预测下一个单词">学习预测下一个单词</h2>
 <p>本讲将介绍反向传播算法的一个有趣的应用，即可以用它来学出对单词意义的一种特征表示。这种做法可以追溯到20世纪80年代，那时人们使用神经网络来理解家族树（family tree）中所包含的信息。下图给出了家族树的一个示意图</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_04_family_tree.png" alt="家族树的示意图"><figcaption>家族树的示意图</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_04_family_tree.png" alt="家族树的示意图"><figcaption>家族树的示意图</figcaption>
 </figure>
 <p>家族树中包含了大量的人名，同时可以定义一些谓词来表示这些人之间的关系，包括父子关系、夫妻关系、叔侄关系/姑侄关系等等。其中，在给定了某些关系的前提下，一些关系可以推导出来。例如： <span class="math display">\[
 ({\rm colin}\ has{\text{-}}father\ {\rm james}) \land ({\rm colin}\ has\text-mother\ {\rm victoria}) \rightarrow ({\rm james}\ has\text-wife\ {\rm victoria})
@@ -427,7 +427,7 @@
 <p>接下来，对人名部分，会有6个神经元与之相连。因为这一层的神经元数小于输入层神经元数目，因此每个神经元不可能只对应于一个人名。这样，神经网络需要把每个人名表示成这6个神经元的某种行为模式。换句话说，这一层实际上可以学出来每个人名的分布式编码（输入的独热编码则对应地被称为局部编码）</p>
 <p>学习到的结果如下图所示</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_04_name_vecs.png" alt="人名的分布式表示（向量表示）示意图"><figcaption>人名的分布式表示（向量表示）示意图</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_04_name_vecs.png" alt="人名的分布式表示（向量表示）示意图"><figcaption>人名的分布式表示（向量表示）示意图</figcaption>
 </figure>
 <p>这里一共有6个灰色块，对应着6个神经单元。每一个灰色块里包含了24个大小不一的黑白色块，其中大小表示了权重的绝对值大小，黑色表示负值，白色表示正值。每个灰色块里的第一行对应于英语人名，第二行对应于意大利语人名。图中已经给出了各个英语人名分别对应于第几个色块</p>
 <p>从图中可以发现一些学习到的有趣事实</p>
@@ -504,7 +504,7 @@ t_i = \begin{cases} 1 &amp; {\rm if\ }i=k \\ 0 &amp; \rm{elsewhere}\end{cases}
 <p>为了突破N元语法的种种限制，一种解决思路是把单词转化成包含语义和语法特征的向量，然后使用前面若干词的特征来预测后面单词的特征。使用这种特征表示法可以把更大的上文利用起来，例如可以使用前十个词的特征</p>
 <p>Bengio等人提出了一种神经网络结构来预测下一个单词，这个结构如图所示</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_04_Bengio_neural_language_model.png" alt="Bengio等人提出的神经网络，用来预测下一个单词"><figcaption>Bengio等人提出的神经网络，用来预测下一个单词</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_04_Bengio_neural_language_model.png" alt="Bengio等人提出的神经网络，用来预测下一个单词"><figcaption>Bengio等人提出的神经网络，用来预测下一个单词</figcaption>
 </figure>
 <p>网络的最底层可以看作是单词索引，也可以看作是一组神经元，只是每时每刻都只有一个神经元被激活。这个被激活的神经元会决定接下来这个隐藏层的行为模式，也就是其所对应的单词的分布式表示（即这个单词的词向量）。由于索引和词向量一一对应，因此整个过程等价于查表，但是这个词向量可以通过学习过程来修改</p>
 <p>有了词向量，就可以通过另一个隐藏层和softmax层来得出所有单词出现在下一个位置上的概率。不过，更好的做法是是直接用学到的词向量连接到softmax层，因为词向量本身就包含了足够的信息来预测下一个单词</p>
@@ -513,7 +513,7 @@ t_i = \begin{cases} 1 &amp; {\rm if\ }i=k \\ 0 &amp; \rm{elsewhere}\end{cases}
 <p>为了避免在输出层设置十万个输出单元，一种比较有效的方法是使用序列结构。也就是说，前面还是上文单词，但是最后放置要输出单词的一个候选词，这样，神经网络的输出是这个候选词的分对数得分。这种做法的问题是当候选词有多个词的时候需要把神经网络跑好几遍。在得到所有可能候选词的得分以后，可以把这些得分单独送进softmax函数，得到每个单词的概率。使用这个预测概率和目标概率（实际通常是一个某维度为1其余为0的向量）可以计算两者的交叉熵，利用这个误差函数可以反向传播梯度更新权重。如果候选词集合比较小（例如先用N元语法筛一遍），这种做法还是很有效的</p>
 <p>另一种做法是使用二叉树，树的叶子节点是所有单词。使用前面单词的上文信息可以得到一个预测向量<span class="math inline">\(\boldsymbol{v}\)</span>，然后将<span class="math inline">\(\boldsymbol{v}\)</span>与树中的每个内部节点学到的向量<span class="math inline">\(\boldsymbol{u}_i\)</span>做内积，对得到的内积计算一次logistic函数，则走向右子树的概率为<span class="math inline">\(\sigma(\boldsymbol{v}^\mathsf{T}\boldsymbol{u}_i)\)</span>，走向左子树的概率为<span class="math inline">\(1-\sigma(\boldsymbol{v}^\mathsf{T}\boldsymbol{u}_i)\)</span>。这样沿着某条确定的路径走下去就可以找到期望的单词。具体做的时候，只需要把上文中单词的词向量加起来就能得到预测向量<span class="math inline">\(\boldsymbol{v}\)</span>。接下来，对于某个已知的期望单词，要做的就是让从根节点走向这个单词的路径概率尽可能大。例如下图中就要让红色的路径（<span class="math inline">\(i\rightarrow j\rightarrow m\)</span>）的概率尽可能大</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_04_predict_by_tree.png" alt="使用树结构帮助预测单词并减少输出层大小"><figcaption>使用树结构帮助预测单词并减少输出层大小</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_04_predict_by_tree.png" alt="使用树结构帮助预测单词并减少输出层大小"><figcaption>使用树结构帮助预测单词并减少输出层大小</figcaption>
 </figure>
 <p>因此，为了让选中正确目标单词的概率最大化，就需要试着最大化选中通向正确单词路径的对数概率和。因此在学习时，只需要关注正确路径上的节点。相比于原来<span class="math inline">\(O(N)\)</span>的复杂度，这种做法在学习时的复杂度降低到了<span class="math inline">\(O(\log N)\)</span>。对每个节点，由于知道下一个单词是什么，因此知道正确的路径。而且，通过将预测向量与每个节点的学习向量求内急，可以知道选择每条路径的概率。因此，可以求得误差函数关于<span class="math inline">\(\boldsymbol{u}_i\)</span>和<span class="math inline">\(\boldsymbol{v}\)</span>的梯度，所以训练起来会非常快。不过这种做法的问题是测试时仍然很慢，因为此时需要考虑很多单词的概率，所以不能只专注于一条路径</p>
 <p>Collobert和Weston提出了一种更简单的学习词向量的方案。他们做的不是预测下一个单词，而是只是学出一些词向量，然后将这些词向量用在一些不同的NLP任务中。此外，他们不只使用上文信息，还是用下文信息，因此实际使用的是一个长度为11的词窗口，其中有5个词出现在上文，5个出现在下文。窗口中间位置他们选择放一个正确的单词（的确出现在这个语境里）或者放一个随机挑选的单词。训练出来的神经网络应该对正确的单词输出高分，对随机的单词输出低分。训练预料均来自于wiki，大概有6亿条数据。得到的词向量使用t-sne降维到二维空间并做出图以后可以展现出令人吃惊的效果，语义上相近的词在空间中也聚集在一起。这意味着上下文信息实际上能够透露很多关于单词意义的信息，事实上，有些人认为这也是人类学习词语意义的主要方式。例如，假如你从未听说过scrommed这个单词，但是看到she scrommed him with the frying pan这句话，应该也能猜出来这是什么意思</p>

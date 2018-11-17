@@ -119,14 +119,14 @@
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="核岭回归 由上一讲提到的表示定理可知，任何带有L2正则项的线性模型都能被核化。那么如何把回归模型核化呢？而且回想之前讲岭回归（带有L2正则项的线性回归）时，曾经说过该模型可以得到一个闭合的解析解，那么使用了核方法以后的模型是否能同样有解析解？ 首先，将原始岭回归的问题写出 \[ \min_{\bf w}\hspace{2ex}\frac{\lambda}{N}{\bf w^\mathsf{T}w}">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML22_LSSVM.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML22_tube_regression.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML22_all_kernel_models.png">
-<meta property="og:updated_time" content="2017-12-19T12:35:39.000Z">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML22_LSSVM.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML22_tube_regression.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML22_all_kernel_models.png">
+<meta property="og:updated_time" content="2018-11-17T10:59:49.865Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NTUML 22. 支持向量回归（SVR）">
 <meta name="twitter:description" content="核岭回归 由上一讲提到的表示定理可知，任何带有L2正则项的线性模型都能被核化。那么如何把回归模型核化呢？而且回想之前讲岭回归（带有L2正则项的线性回归）时，曾经说过该模型可以得到一个闭合的解析解，那么使用了核方法以后的模型是否能同样有解析解？ 首先，将原始岭回归的问题写出 \[ \min_{\bf w}\hspace{2ex}\frac{\lambda}{N}{\bf w^\mathsf{T}w}">
-<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML22_LSSVM.png">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML22_LSSVM.png">
 
 
 
@@ -417,12 +417,12 @@
 <h2 id="支持向量回归的原始问题">支持向量回归的原始问题</h2>
 <p>前面说到，线性回归（及其带正则化的变种）也可以用来解决分类问题。使用了核方法的核岭回归也可以解决同样的问题，此时这个模型被称为最小二乘支持向量机（Least-Squares SVM, LSSVM）。高斯LSSVM和软间隔高斯核SVM的对比可见下图</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML22_LSSVM.png" alt="软间隔高斯核SVM和高斯LSSVM的对比"><figcaption>软间隔高斯核SVM和高斯LSSVM的对比</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML22_LSSVM.png" alt="软间隔高斯核SVM和高斯LSSVM的对比"><figcaption>软间隔高斯核SVM和高斯LSSVM的对比</figcaption>
 </figure>
 <p>可见两者的边界差别不是很大，但是对LSSVM，几乎所有点都是支持向量，而对软间隔SVM，只有少数点是支持向量。支持向量越多，预测的时间就越长，效率就越低。那么有没有办法得到这样一种模型：它既可以解决回归问题，又可以像标准SVM那样有稀疏的<span class="math inline">\(\boldsymbol{\beta}\)</span>呢？</p>
 <p>首先考虑一个“管道回归”问题（tube regression）：之前讲线性回归的时候，对模型误差的判定非常严苛：对某个点<span class="math inline">\(({\bf x}_n, y_n)\)</span>，只有当它完全落在学习出的超平面上时，它的误差才是0。只要出现一点偏差，就要负责任。但是在管道回归问题里，错误评判的标准宽松了一些：在标线的基础上，拓展出来一部分“中立区”。即便是某些点没有落在超平面上，只要落在中立区里，误差就不计算了。对于落在中立区外的点，其误差计算也不是看它到超平面的距离，而是看它离中立区的距离。下图给出了一个示例</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML22_tube_regression.png" alt="管道回归（tube regression）"><figcaption>管道回归（tube regression）</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML22_tube_regression.png" alt="管道回归（tube regression）"><figcaption>管道回归（tube regression）</figcaption>
 </figure>
 <p>上图中，蓝色线是学习出的超平面，蓝色带是划分出的“中立区”，红线表明了各点误差的大小。假设中立区的（单侧）高度为<span class="math inline">\(\epsilon\)</span>，管道回归的误差函数为 <span class="math display">\[
 {\rm err}(y, s) = \max(0, |s-y|-\epsilon)
@@ -465,7 +465,7 @@
 <h2 id="核模型总结">核模型总结</h2>
 <p>最后对前面讲过的所有线性模型和使用了核技巧的模型（简称核模型）做一总结，参见下图</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML22_all_kernel_models.png" alt="线性模型与核模型总结"><figcaption>线性模型与核模型总结</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML22_all_kernel_models.png" alt="线性模型与核模型总结"><figcaption>线性模型与核模型总结</figcaption>
 </figure>
 <p>上图中，</p>
 <ul>

@@ -119,16 +119,16 @@
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="神经网络体系结构的主要类型 本课程主要介绍的内容是各种各样的神经网络，而这些神经网络根据神经元连接的方式大致可以划分成三种主要的体系结构 第一种结构是前馈神经网络（feed-forward neural networks）。这种结构是迄今为止实践中应用最多的结构，其第一层是输入，最后一层是输出，中间所有层都称为隐藏层。如果隐藏层层数大于1，那么得到的网络就称为“深度”神经网络。使用时，数据从输入层">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_02_perceptron_weights.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_02_feasible_solutions_cone.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_02_initial_state.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_02_non_linear_separable.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_02_simple_pattern_example.png">
-<meta property="og:updated_time" content="2017-12-19T12:35:39.000Z">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_02_perceptron_weights.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_02_feasible_solutions_cone.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_02_initial_state.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_02_non_linear_separable.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_02_simple_pattern_example.png">
+<meta property="og:updated_time" content="2018-11-17T10:59:49.953Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hinton神经网络与机器学习 2. 感知机">
 <meta name="twitter:description" content="神经网络体系结构的主要类型 本课程主要介绍的内容是各种各样的神经网络，而这些神经网络根据神经元连接的方式大致可以划分成三种主要的体系结构 第一种结构是前馈神经网络（feed-forward neural networks）。这种结构是迄今为止实践中应用最多的结构，其第一层是输入，最后一层是输出，中间所有层都称为隐藏层。如果隐藏层层数大于1，那么得到的网络就称为“深度”神经网络。使用时，数据从输入层">
-<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_02_perceptron_weights.png">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_02_perceptron_weights.png">
 
 
 
@@ -433,18 +433,18 @@ z = b + \sum_i x_iw_i,\ y= \begin{cases}1 &amp; {\rm if}\ z \ge 0 \\ 0 &amp; {\r
 <p>本节将在高维空间里讨论感知机的几何意义，同时要涉及到一些关于超平面的概念。尽管听上去比较复杂抽象，但是若把一个14维空间看成一个3维空间，超平面看成是一个2维平面，问题就好理解一些</p>
 <p>首先来看权重值空间。这个空间里的每一个维度都对应权重向量的一个分量，而空间中的每个点都代表了某个可能的权重。假设沿用上一节的做法，不单独考虑阈值，那么每条输入数据就可以表示为一个穿过原点的超平面，权重在该超平面的某一侧。下图给出了一个示例</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_02_perceptron_weights.png" alt="感知机权重向量与训练样本超平面的关系。左边为输入向量为正例的情况，右边为输入向量为负例的情况"><figcaption>感知机权重向量与训练样本超平面的关系。左边为输入向量为正例的情况，右边为输入向量为负例的情况</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_02_perceptron_weights.png" alt="感知机权重向量与训练样本超平面的关系。左边为输入向量为正例的情况，右边为输入向量为负例的情况"><figcaption>感知机权重向量与训练样本超平面的关系。左边为输入向量为正例的情况，右边为输入向量为负例的情况</figcaption>
 </figure>
 <p>在图中，每个训练数据以蓝色的向量表示，其定义了一个超平面（以黑线表示），注意超平面与该训练数据所代表的向量总是正交的（即该训练数据是其定义的超平面的法向量）。对于上图左，输入样本为正例。如果权重向量与输入向量指向同样的方向（超平面的同一侧，上图左的绿色向量），此时两个向量的夹角是个锐角，内积的结果是正值。由于不考虑阈值，因此内积为正代表权重向量给出了正确的判断，即这个权重向量是好的。相反，对于上图左中的红色向量，其与输入向量的夹角是钝角，内积结果为负，意味着其将输入样本判定为负，所以是不好的向量。对于上图右，输入样本是负例，因此需要好的向量与输入向量夹角为钝角，指向相反的方向（即权重向量和输入向量指向超平面的两侧）</p>
 <p>综上所述，对于任意给定的输入向量，只要某个权重向量指向了正确的方向，那么就能得到正确的答案。进一步地，如果在同一张图里同时画出正例和负例样本，会怎么样呢？</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_02_feasible_solutions_cone.png" alt="感知机向量应该在某个锥体中"><figcaption>感知机向量应该在某个锥体中</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_02_feasible_solutions_cone.png" alt="感知机向量应该在某个锥体中"><figcaption>感知机向量应该在某个锥体中</figcaption>
 </figure>
 <p>上图中，正例样本和负例样本确定的两个超平面又定义了一个锥体（cone），所有落在这个锥体中的权重向量对这两个样本都能给出正确的结果。这个例子可以容易地扩展到多个样本的情况——当然，有可能对于某个样本集，不存在可以将所有样本都正确分类的向量。但是如果这样的权重向量存在，它必然会存在于某个锥体中。此外，另一个需要注意的事实是，对于任意两个满足条件的权重向量（即这两个向量都在合适的锥体中），它们的均值也会满足最优条件。这意味着这个问题是凸的，而凸学习问题（凸优化问题）往往容易解决</p>
 <h2 id="为什么感知机算法能够工作">为什么感知机算法能够工作</h2>
 <p>本节将（从几何的角度）证明为什么感知机算法能最终落入最优解的凸锥中（更理论的证明可以参看林轩田老师的课程笔记）。假设存在一个权重向量能够对训练集的所有样本正确分类，并称该向量为可行向量，以及当前向量错分了某个样本，记为错误向量，如下图所示</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_02_initial_state.png" alt="讨论的初始状态"><figcaption>讨论的初始状态</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_02_initial_state.png" alt="讨论的初始状态"><figcaption>讨论的初始状态</figcaption>
 </figure>
 <p>上图中，绿色的点代表理想的可行向量，红色的点代表当前的权重向量。由感知机算法的权重更新规则，当算法错分某个样例时，会让权重向量更靠近可行向量一些，因此可以得出当前权重向量与可行向量点的距离平方，其可以进一步分解为某个沿着超平面方向向量的长度平方与沿着超平面法向量方向的向量的长度平方的和，按照图中的记法，为<span class="math inline">\(d_a^2+d_b^2\)</span>。更新权重以后，权重沿着蓝色箭头的方向移动了一点，因此<span class="math inline">\(d_a\)</span>变小，<span class="math inline">\(d_b\)</span>不变，权重可以向着可行向量逼近</p>
 <p>但是有些情况是个例外：如果可行向量对应于图中金色的点，输入向量太大，那么当前权重移动就会过多，离可行向量更远。因此我们想定义更可行的权重向量，它不仅能分对所有训练样本，还能保证每个训练样本离它有一定距离（保持一定的边界），这个距离要至少等于定义了超平面的那个输入向量的长度，这样，就能保证感知机算法犯错时权重向量总是靠近可行向量了。因此在有限次犯错后，权重向量肯定会落在可行区间，<strong>如果这个区间存在</strong></p>
@@ -463,12 +463,12 @@ z = b + \sum_i x_iw_i,\ y= \begin{cases}1 &amp; {\rm if}\ z \ge 0 \\ 0 &amp; {\r
 \]</span> 这四个不等式显然是不能同时成立的：由第二个不等式，<span class="math inline">\(\theta\)</span>是非正数，又由第三个和第四个不等式，<span class="math inline">\(w_1, w_2\)</span>是小于<span class="math inline">\(\theta\)</span>的负数，它们的和肯定是个更小的负数，<span class="math inline">\(w_1 + w_2 &lt; \min(w_1, w_2) &lt; \theta\)</span>，与<span class="math inline">\(w_1 + w_2 \ge \theta\)</span>是矛盾的</p>
 <p>从几何的角度看，这个问题更为直观。对于上述问题，建立一个坐标系，横纵轴对应输入向量的两个维度，则这个空间中的每个点都可以对应于一个数据点。权重向量则在这个空间中定义了一个分离超平面，该平面垂直于权重向量指向的方向。此外，这里还考虑进了截距（偏置）的存在，因此分离超平面不应非得通过原点。对于前面给出的例子，可以做出下图</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_02_non_linear_separable.png" alt="线性不可分的情况，感知机无法求解出权重"><figcaption>线性不可分的情况，感知机无法求解出权重</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_02_non_linear_separable.png" alt="线性不可分的情况，感知机无法求解出权重"><figcaption>线性不可分的情况，感知机无法求解出权重</figcaption>
 </figure>
 <p>可以看到，对于这样的四个数据点，无法做出一条直线使得所有灰色的点在线的一侧，同时保证所有黑色的点在线的另一侧。对于这种无法使用超平面分离的例子，我们称其为<strong>线性不可分的</strong>。</p>
 <p>对于其它例子，感知机也有不能判别的情况。考虑下面这个模式识别的例子：假设有一个长度为<span class="math inline">\(L\)</span>像素的线段，其中一些像素点被染成了黑色。染色的方法遵循某些模式，如图所示</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_02_simple_pattern_example.png" alt="感知机不能完成的一种模式识别任务案例"><figcaption>感知机不能完成的一种模式识别任务案例</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_02_simple_pattern_example.png" alt="感知机不能完成的一种模式识别任务案例"><figcaption>感知机不能完成的一种模式识别任务案例</figcaption>
 </figure>
 <p>对于上图，模式A为1黑2白2黑2白1黑，模式B为2黑3白2黑。注意这里把这个线段看作是首尾连接的，因此模式A和B的第三种情况也都遵守各自的规则。而且，例子中两个模式虽然不同，但是其中黑色像素点的数量相同，都为4。假设只使用像素点是否为黑作为特征，能否用感知机区分这两种模式？答案是不能。因为对模式A，有四个点被染色（激活），感知机得到的得分是<span class="math inline">\(4\sum w_i\)</span>；而对模式B，也有四个点被激活，感知机得到的得分也是<span class="math inline">\(4\sum w_i\)</span>。因此在这种情况下，感知机无法区分A和B。Minsky等人的著作也就是从这里入手对感知机进行批判的，因为模式识别就是要保证算法能够在模式经过变换以后仍然能够判断出模式是否相同，而这个实验证明感知机不能直接学习到“变换”。为了处理这些变换操作，感知机需要使用多个特征来意识到子模式的变换所带来的信息，而这种特征需要人手动编码来提供，并不是通过学习过程学到。在20世纪70年代，当时人们的结论是，感知机以及衍生出的神经网络都是不怎么有用的。而现在回头看，更正确的结论是，只有到神经网络能够学到如何检测特征，那才是真正的强大。不过人们花了将近20年来思考如何用神经网络检测特征</p>
 <p>从这一讲可以得知，没有隐藏层单元的神经网络（即感知机）能力非常有限。而且，即便加入隐藏层单元，如果在这些单元只进行线性变化，意义也不大，因为最后还是一个线性模型，这种模型只有在我们手动喂进了正确的特征时才有用。真正需要的模型是多层含有自适应非线性隐藏单元的模型，但是这样问题就变成了我们应该如何训练这样的网络。事实上，学到隐藏单元的权重就是在学习特征，而这也就是真正的难点：没有人能直接告诉我们隐藏层应该干什么，它们什么时候应该活跃，什么时候不该活跃。没人能告诉我们特征选取器应该是什么样时，如何学习隐藏单元的权重，进而把隐藏单元转化成真正需要的特征选取器呢？</p>

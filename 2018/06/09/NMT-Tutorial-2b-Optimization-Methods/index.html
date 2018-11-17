@@ -119,14 +119,14 @@
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="基本优化方法：梯度下降 如正文所提，梯度下降是一般机器学习中应用最多的优化算法，核心思想是让参数朝着梯度的反方向，也就是函数下降最快的方向移动。设定如下记号：  \(\boldsymbol{\theta}\)：模型参数 \(\boldsymbol{x}^{(i)}\)：第\(i\)条数据 \(f\)：模型 \(\boldsymbol{y}^{(i)}\)：第\(i\)条数据对应的标签 \(L\)：">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutorial_2b_momentum.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutorial_2b_NAG.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutorial_2b_optimizers.png">
-<meta property="og:updated_time" content="2018-07-18T14:00:58.137Z">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutorial_2b_momentum.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutorial_2b_NAG.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutorial_2b_optimizers.png">
+<meta property="og:updated_time" content="2018-11-17T10:59:49.794Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NMT Tutorial 2扩展b. 优化方法">
 <meta name="twitter:description" content="基本优化方法：梯度下降 如正文所提，梯度下降是一般机器学习中应用最多的优化算法，核心思想是让参数朝着梯度的反方向，也就是函数下降最快的方向移动。设定如下记号：  \(\boldsymbol{\theta}\)：模型参数 \(\boldsymbol{x}^{(i)}\)：第\(i\)条数据 \(f\)：模型 \(\boldsymbol{y}^{(i)}\)：第\(i\)条数据对应的标签 \(L\)：">
-<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutorial_2b_momentum.png">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutorial_2b_momentum.png">
 
 
 
@@ -447,7 +447,7 @@
 </ul>
 <p>下图给出了原始SGD与动量法加速的SGD损失函数优化轨迹的比较</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutorial_2b_momentum.png" alt="原始SGD与Momentum的比较"><figcaption>原始SGD与Momentum的比较</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutorial_2b_momentum.png" alt="原始SGD与Momentum的比较"><figcaption>原始SGD与Momentum的比较</figcaption>
 </figure>
 <p>假设每次迭代的梯度<span class="math inline">\(\hat{\boldsymbol{g}}\)</span>相同，那么可以对<span class="math inline">\(\boldsymbol{v}^{(t)}\)</span>展开: <span class="math display">\[
 \begin{align*}
@@ -472,7 +472,7 @@
 \end{align*}
 \]</span> 这种算法称为Nesterov动量法，也称为Nesterov加速梯度法（Nesterov Accelarated Gradient, NAG）。相比于传统的动量法，NAG对当前点梯度<span class="math inline">\(\nabla_{\boldsymbol{\theta}}\)</span>的信赖程度没有那么高，而是去看按照速度向量走出一步以后的梯度值<span class="math inline">\(\nabla_{\tilde{\boldsymbol{\theta}}}\)</span>。如果<span class="math inline">\(\nabla_{\boldsymbol{\theta}}\)</span>和<span class="math inline">\(\nabla_{\tilde{\boldsymbol{\theta}}}\)</span>差别不大，那么两者的更新量近似；然而如果两者相差比较大，那么说明目标函数表面可能存在一些弯曲，用之前的梯度可能会走向不希望的方向。这样，NAG收敛更快，也更稳定。下图给出了NAG和原始动量法的比较</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutorial_2b_NAG.png" alt="NAG与原始动量法的比较"><figcaption>NAG与原始动量法的比较</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutorial_2b_NAG.png" alt="NAG与原始动量法的比较"><figcaption>NAG与原始动量法的比较</figcaption>
 </figure>
 <p>《<a href="https://zhuanlan.zhihu.com/p/22810533" target="_blank" rel="noopener">比Momentum更快：揭开Nesterov Accelerated Gradient的真面目</a>》一文对NAG的原理给出了更进一步的分析，得出结论是</p>
 <blockquote>
@@ -552,7 +552,7 @@ E\left(x^{(t)}\right) &amp;=  \rho E\left(x^{(t-1)}\right) + (1-\rho)E\left(x^{(
 <p>Adam算法刚被提出的时候因为其快速收敛的能力得到了人们的广泛关注，但是[Wilson2017]指出Adam（以及其它自适应学习率算法）得到的解虽然在训练集上效果不错，但是泛化能力都比SGD要差（而且经常是明显得差）。[Reddi2018]进一步通过实验指出对某些简单的凸优化问题Adam都不能收敛到最优解，因为某些batch给出的梯度信息可能很重要，但是会被指数衰减的计算方法很快淹没。文章给出了一个解决方案：不再对梯度做有偏二阶矩估计，而是只保留所有二阶矩的最大值。文章将这种新的改进方法称为AMSGrad，并称算法能够取得很好的收敛结果。但是<a href="https://fdlm.github.io/post/amsgrad/" target="_blank" rel="noopener">奥地利一名研究人员的博客</a>通过一些实验表明AMSGrad的效果可能没有[Reddi2018]中提到的这么出色</p>
 <h2 id="结语">结语</h2>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutorial_2b_optimizers.png" alt="优化方法关系图"><figcaption>优化方法关系图</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutorial_2b_optimizers.png" alt="优化方法关系图"><figcaption>优化方法关系图</figcaption>
 </figure>
 <p>上图对上文所提到的优化方法之间的关系做了一个梳理。大部分优化器都包含在<code>tf.train</code>这个包中，小部分出现在<code>tf.contrib.opt</code>包。后者包下其它优化器大部分都是由第三方的开发人员提供，这里就不介绍了；前面<code>tf.train</code>包中有一些优化器没有包含在图里，这些主要是针对海量稀疏数据使用，例如<code>tf.train.FtrlOptimizer</code>在计算广告点击率（CTR）时非常常用。[Reddi2018]则是给出了一个更抽象的公式来涵盖上面提出各种算法的计算流程 <span class="math display">\[
 \begin{align*}

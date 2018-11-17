@@ -119,12 +119,12 @@
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="VC维的定义 第六讲证明，如果样本数\(N\)足够大且假设集合\(\mathcal{H}\)的成长函数\(m_{\mathcal{H}}(N)\)存在突破点，那么就有\(E_{\rm out} \approx E_{\rm in}\)。其中更具体地，如果成长函数存在突破点\(k\)，那么当\(N &amp;gt; k\)时，成长函数的值由上限函数\(B(N, k)\)所限制，该值等于\(\sum_{i=0">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML07_vc_message">
-<meta property="og:updated_time" content="2017-12-19T12:35:39.000Z">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML07_vc_message">
+<meta property="og:updated_time" content="2018-11-17T10:59:49.918Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NTUML 7. VC维">
 <meta name="twitter:description" content="VC维的定义 第六讲证明，如果样本数\(N\)足够大且假设集合\(\mathcal{H}\)的成长函数\(m_{\mathcal{H}}(N)\)存在突破点，那么就有\(E_{\rm out} \approx E_{\rm in}\)。其中更具体地，如果成长函数存在突破点\(k\)，那么当\(N &amp;gt; k\)时，成长函数的值由上限函数\(B(N, k)\)所限制，该值等于\(\sum_{i=0">
-<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML07_vc_message">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML07_vc_message">
 
 
 
@@ -466,7 +466,7 @@ E_{\rm{in}}(g) - \sqrt{\frac{8}{N}\ln\left(\frac{4(2N)^{d_{\rm VC}}}{\delta}\rig
 \]</span> 一般不关心<span class="math inline">\(E_\rm{out}\)</span>的下界，但是会关心其上界。其中根号里面的项称为<strong>模型复杂度</strong>，可以看作是关于样本大小、假设集合和VC上界的函数<span class="math inline">\(\Omega(N, \mathcal{H}, \delta)\)</span>，而<span class="math inline">\(\sqrt{\Omega(N, \mathcal{H}, \delta)}\)</span>称作<em>模型复杂度提升带来的代价</em>。</p>
 <p>可以把VC维和模型在样本内外的误差之间的关系作图表示</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML07_vc_message" alt="VC维与样本内外误差之间的关系"><figcaption>VC维与样本内外误差之间的关系</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML07_vc_message" alt="VC维与样本内外误差之间的关系"><figcaption>VC维与样本内外误差之间的关系</figcaption>
 </figure>
 <p>从图中可知，随着<span class="math inline">\(d_\rm{VC}\)</span>变大，模型可以打散的输入越多，因此<span class="math inline">\(E_\rm{in}\)</span>会变小。但是这样会使得模型复杂度提高。当<span class="math inline">\(d_\rm{VC}\)</span>维不那么大的时候，<span class="math inline">\(E_{\rm in}\)</span>下降的速度超过模型复杂度提升的速度，<span class="math inline">\(E_{\rm out}\)</span>会下降。但是超过某个临界点<span class="math inline">\(d_{\rm VC}^\ast\)</span>以后，模型复杂度提升的速度更快，<span class="math inline">\(E_{\rm out}\)</span>经过最小值以后会上升。这意味着最好的VC维<span class="math inline">\(d_{\rm VC}^\ast\)</span>通常在中间取得，并不是越大越好。考虑到VC维和模型复杂度的关系，这说明<strong><span class="math inline">\(\mathcal{H}\)</span>并非总是越强大越好！</strong></p>
 <p>VC维的另外一个作用就是可以决定样本复杂度，即做多大的采样能够将“坏事件“（训练集内外误差差值大于<span class="math inline">\(\epsilon\)</span>）发生的概率控制在<span class="math inline">\(\delta\)</span>以内。例如，如果<span class="math inline">\(\epsilon=0.1, \delta=0.1, d_\rm{VC} = 3\)</span>，那么理论上需要采集29300条数据才能满足要求，此时样本数<span class="math inline">\(N \approx 10000d_\rm{VC}\)</span>。不过实践中，通常<span class="math inline">\(N \approx 10d_{\rm VC}\)</span>就够用了。这意味着，VC上界是一个非常宽松的上界，这是因为</p>

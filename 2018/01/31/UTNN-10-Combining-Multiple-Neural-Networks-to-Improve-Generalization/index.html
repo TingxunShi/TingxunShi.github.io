@@ -119,15 +119,15 @@
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="为什么模型组合效果更好 模型组合是一种在拟合必然规律和过拟合采样误差间取得平衡的方法。当训练数据比较有限时，就容易造成过拟合，如果将不同模型的预测结果做平均，则可以降低过拟合风险。对于回归问题，平方误差可以分解为偏差项和方差项。如果模型能力有限，偏差项就会比较大，它表示模型逼近真是函数的能力有多差。如果模型对训练集里的采样误差的把握能力比较强，方差项就比较大——之所以叫“方差”，是因为如果用同样大">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_10_Cluster_by_relationship.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_10_mixture_of_experts.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_10_posterior_probas.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_10_weight_vectors_sampling.png">
-<meta property="og:updated_time" content="2018-02-04T10:06:57.909Z">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_10_Cluster_by_relationship.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_10_mixture_of_experts.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_10_posterior_probas.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_10_weight_vectors_sampling.png">
+<meta property="og:updated_time" content="2018-11-17T10:59:49.933Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hinton神经网络与机器学习 10. 组合多个神经网络以提高泛化能力">
 <meta name="twitter:description" content="为什么模型组合效果更好 模型组合是一种在拟合必然规律和过拟合采样误差间取得平衡的方法。当训练数据比较有限时，就容易造成过拟合，如果将不同模型的预测结果做平均，则可以降低过拟合风险。对于回归问题，平方误差可以分解为偏差项和方差项。如果模型能力有限，偏差项就会比较大，它表示模型逼近真是函数的能力有多差。如果模型对训练集里的采样误差的把握能力比较强，方差项就比较大——之所以叫“方差”，是因为如果用同样大">
-<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_10_Cluster_by_relationship.png">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_10_Cluster_by_relationship.png">
 
 
 
@@ -426,7 +426,7 @@
 <p>在这两者中间，有一种概念叫做“多局部模型”（multiple local model），这种模型适用于数据集可以划分为若干区域（regime），每个区域的输入输出关系还不一样的情况。例如，对于金融数据，不同的经济状况可能会是输入输出的映射关系不同，但是你可能并不知道如何划分这些经济状况，这种划分方法本身也在学习内容之列。那么接下来的问题就是，如何将数据进行划分</p>
 <p>一种自然的想法将训练数据聚类，每一类对应一个区域。方向是对的，但是此时不能根据输入向量的相似度聚类，而是要根据输入输出的关系聚类。以下图为例，如果将数据按输入输出关系（橙色的线）划分，那么两组数据可以容易地用两条抛物线拟合；如果只按输入（蓝色的线）划分，那么拟合难度就大了</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_10_Cluster_by_relationship.png" alt="按照不同方法聚类的效果对比"><figcaption>按照不同方法聚类的效果对比</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_10_Cluster_by_relationship.png" alt="按照不同方法聚类的效果对比"><figcaption>按照不同方法聚类的效果对比</figcaption>
 </figure>
 <p>接下来是如何设计代价函数。假设一共有<span class="math inline">\(N\)</span>个模型，每个模型的预测结果为<span class="math inline">\(y_i\)</span>。如果将代价函数设计为 <span class="math display">\[
 E = \left(t - \frac{1}{N}\sum_{i=1}^Ny_i\right)^2
@@ -434,7 +434,7 @@ E = \left(t - \frac{1}{N}\sum_{i=1}^Ny_i\right)^2
 E = \frac{1}{N}\sum_{i=1}^N p_i(t-y_i)^2
 \]</span> 此时实际上是把每个模型单独与目标值比较，然后用另外一个“管理器”来管理每个模型的权重。这个权重可以看作是一种概率，如果只选择第<span class="math inline">\(i\)</span>个模型，那么它的权重/概率就是1，其它都是0。这样最后就会得到若干专家，每个专家都只专精于处理训练集的一小部分，对其它部分一无所知</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_10_mixture_of_experts.png" alt="专家组体系结构"><figcaption>专家组体系结构</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_10_mixture_of_experts.png" alt="专家组体系结构"><figcaption>专家组体系结构</figcaption>
 </figure>
 <p>上图给出了专家组体系结构的示意图。对于每个输入，每个专家会给出预测值，每个专家的概率由管理器来控制。管理器可能有多层，但是最后一层肯定是一个softmax层，这样管理器就可以应对任意多个专家。将管理器的输出和专家的输出相结合，就可以得到代价函数的值。具体说来，有 <span class="math display">\[
 \begin{align*}
@@ -457,7 +457,7 @@ p(t^c|{\rm MoE}) = \sum_i p_i^c\frac{1}{\sqrt{2\pi}}\exp\left\{-\frac{1}{2}(t^c-
 <p>在全贝叶斯学习中，要做的不是寻找一组最好的参数，而是在所有可能的参数上都去尝试，寻找一个完全的后验分布。也就是对每组可能的参数都期望计算一个后验概率密度。这种做法的问题是对于复杂的模型计算量太大，以至于寻找一个完整的后验分布是不太可能的。而且，得到完整的后验分布以后，还要使由各种参数组合得到的模型得出预测结果，然后将结果用后验分布概率做加权平均，这个计算量就更大了。但是全贝叶斯方法的一个诱惑点在于，即便是没有太多数据，复杂模型也可用</p>
 <p>前面提到过过拟合的概念。使用比较小的数据集合训练一个复杂模型时，通常会出现这种现象。但是对这种现象发生的原因也可以解释为，是因为没有拿到参数上完整的后验分布。频率学派的观点是数据不够就应该使用简单的模型，这种说法只有当人们假设“拟合模型”就是“找到一组最好的参数”时才适用。如果能找到完整的后验分布，是可以避免过拟合的。当数据比较少的时候，完整的后验分布会给出比较模糊的结果，因为不同参数会给出非常不同的预测结果，所以后验分布也会显著不同。如果数据量变大，那么后验概率就可以只关注少数几组参数设置，预测结果可能会更集中</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_10_posterior_probas.png" alt="多组复杂模型的按后验概率加权平均的结果，可以达到更好的效果"><figcaption>多组复杂模型的按后验概率加权平均的结果，可以达到更好的效果</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_10_posterior_probas.png" alt="多组复杂模型的按后验概率加权平均的结果，可以达到更好的效果"><figcaption>多组复杂模型的按后验概率加权平均的结果，可以达到更好的效果</figcaption>
 </figure>
 <p>上图中给出了一个例子。图中给出了六个点，红线是训练出的五次多项式，而绿线是训练出的一条直线。一般人都会认为是简单模型效果更好，例如蓝色箭头所指的位置红色模型的预测看着就很离谱。但是如果在五次多项式所形成的空间上有一个合理的先验分布，进而得到所有可能的后验分布（例如上图下部红色细线表明了其它可能的五次多项式，但是它们的后验概率值比较低），可以发现如果对蓝色的箭头部分取一个均值，那么预测结果就跟绿色模型的预测结果接近了。从贝叶斯学派的角度解释，采样到多少数据不应该影响你对模型的复杂度的先验信念。或者说，没收集到足够多的数据不应该让你认为事情应该更加简单</p>
 <p>要使用神经网络做全贝叶斯学习，一个先决条件是神经网络的参数非常少，而且每个参数的取值也是有限的几个。这样，就可以在参数集上做一个网格搜索，得到所有参数组合对应模型的测试结果（似然）。这样，对每个参数组合，可以通过将它的似然和先验相乘再归一化，得到其后验概率。这种计算过程代价比较大，但是不需要梯度下降，也不需要担心局部最优解。在得到完整的后验分布以后，就可以在测试数据上做测试，此时有 <span class="math display">\[
@@ -470,7 +470,7 @@ p(y_{\rm test}|{\rm input_{test} }, D) = \sum_{i} p(W_i|D)p(t_{\rm test}|{\rm in
 \]</span> 我们不再考虑所有的<span class="math inline">\(W_i\)</span>，而是根据<span class="math inline">\(p(W_i|D)\)</span>，即<span class="math inline">\(W_i\)</span>的后验分布来对<span class="math inline">\(W\)</span>做抽样</p>
 <p>在传统的梯度下降算法中，一般是随机将权重初始化为一些比较小的值，然后在损失函数上沿着梯度方向下降，最后的结果无论是到达某个局部最小值点，还是陷入平原，还是因为跑得太慢导致我们没有耐心让它跑下去，其过程都是从某个初始点沿着某条确定路径到达某个终点。现在，引入采样的方法：初始化方法不变，只不过在每次更新权重以后，都随机加入一些高斯噪声，这样，权重向量不再会下降，而是开始随机游走，不过更倾向于损失函数值比较小的区域。下图给出了随机游走10000步以后的权重分布示意图</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_10_weight_vectors_sampling.png" alt="权重随机游走的分布示意图。最小值比较小的区域被访问的次数最多，其它局部最小点也会有一些访问。高损失值的区域由于比较大，也会被访问几次"><figcaption>权重随机游走的分布示意图。最小值比较小的区域被访问的次数最多，其它局部最小点也会有一些访问。高损失值的区域由于比较大，也会被访问几次</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_10_weight_vectors_sampling.png" alt="权重随机游走的分布示意图。最小值比较小的区域被访问的次数最多，其它局部最小点也会有一些访问。高损失值的区域由于比较大，也会被访问几次"><figcaption>权重随机游走的分布示意图。最小值比较小的区域被访问的次数最多，其它局部最小点也会有一些访问。高损失值的区域由于比较大，也会被访问几次</figcaption>
 </figure>
 <p>如果加入高斯噪声的方法是正确的，并且让权重向量游走足够长时间，那么就可以得到权重空间后验分布的无偏抽样（结合上图，就是红点越多的地方后验分布越高）。这种方法称为<strong>马尔科夫链蒙特卡洛</strong>（Markov Chain Monte Carlo, MCMC）。事实上，有更有效的方法可以得到类似的无偏抽样，也就是说这种方法不需要权重向量游走时间太长</p>
 <p>全贝叶斯学习可以用在mini batch SGD中。当在某个随机的mini batch上计算损失函数的梯度时，可以得到一个带有取样噪声的无偏估计。这个取样噪声可以提供给MCMC方法使用</p>

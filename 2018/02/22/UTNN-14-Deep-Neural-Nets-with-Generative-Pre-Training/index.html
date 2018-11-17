@@ -119,14 +119,14 @@
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="通过堆叠RBM学习特征层 本讲开始，先不提sigmoid信念网（SBN），回过头看看受限玻尔兹曼机RBM。前面提到，学习RBM有一种相对来讲比较简单的方法，可以学出一层非线性特征（隐藏状态）。受此启发，可以将这层特征作为新的输入，再学出一个RBM的非线性特征，如此持续下去，最后可以得到一个由若干RBM堆叠起来的深度网络。但是，这实际上不只是一个简单的多层玻尔兹曼机，Hinton的学生G. Y. T">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_14_generative_model.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_14_DBN_for_MNIST.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_14_Gaussian_binary_RBM.png">
-<meta property="og:updated_time" content="2018-02-23T16:05:06.971Z">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_14_generative_model.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_14_DBN_for_MNIST.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_14_Gaussian_binary_RBM.png">
+<meta property="og:updated_time" content="2018-11-17T10:59:49.947Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hinton神经网络与机器学习 14. 深度信念网络与判别微调">
 <meta name="twitter:description" content="通过堆叠RBM学习特征层 本讲开始，先不提sigmoid信念网（SBN），回过头看看受限玻尔兹曼机RBM。前面提到，学习RBM有一种相对来讲比较简单的方法，可以学出一层非线性特征（隐藏状态）。受此启发，可以将这层特征作为新的输入，再学出一个RBM的非线性特征，如此持续下去，最后可以得到一个由若干RBM堆叠起来的深度网络。但是，这实际上不只是一个简单的多层玻尔兹曼机，Hinton的学生G. Y. T">
-<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_14_generative_model.png">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_14_generative_model.png">
 
 
 
@@ -408,7 +408,7 @@
 <p>假设现在可见向量为<span class="math inline">\(\bf v\)</span>，经过学习，可以得到第一层RBM，其隐藏状态为<span class="math inline">\({\bf h}_1\)</span>，权重为<span class="math inline">\({\bf W}_1\)</span>。然后，将<span class="math inline">\({\bf h}_1\)</span>作为输入，学习可以得到第二层RBM，其隐藏状态为<span class="math inline">\({\bf h}_2\)</span>，权重为<span class="math inline">\({\bf W}_2\)</span>。注意如果<span class="math inline">\({\bf W}_2\)</span>的初始值为<span class="math inline">\({\bf W}_1^\mathsf{T}\)</span>，且<span class="math inline">\({\bf h}_2\)</span>的节点数与<span class="math inline">\(\bf v\)</span>的节点数相同，那么第二个RBM实际上就是<span class="math inline">\({\bf h}_1\)</span>一个不错的模型，因为它是第一个RBM翻转而成的，而RBM不太在乎哪个是隐藏单元哪个是可见单元。学到这两个RBM以后，可以将它们组合起来得到一个新的模型，它的上面两层是RBM，也就是第二个隐藏层和第一个隐藏层之间是一个无向模型，连接对称；而底下两层（第一个隐藏层和输入）之间是有向模型，像一个SBN。也就是说，对<span class="math inline">\(\bf v\)</span>和<span class="math inline">\({\bf h}_1\)</span>之间的对称连接，舍弃那些从<span class="math inline">\(\bf v\)</span>指向<span class="math inline">\({\bf h}_1\)</span>的边。这样就得到了一个深度信念网（DBN）。如果DBN由三个RBM堆叠而成，那么最上面两层（沿用前面的记法，是<span class="math inline">\({\bf h}_3\)</span>和<span class="math inline">\({\bf h}_2\)</span>）形成一个RBM，下面三层形成两个SBN。</p>
 <p>对于这样三个RBM堆叠生成的DBN，生成数据的过程是：首先，在<span class="math inline">\({\bf h}_2\)</span>和<span class="math inline">\({\bf h}_3\)</span>之间往复运动，达到平衡态（这个过程使用的是交替吉布斯采样方法，即先平行更新所有<span class="math inline">\({\bf h}_3\)</span>中的神经元，然后平行更新所有<span class="math inline">\({\bf h}_2\)</span>中的神经元，再平行更新所有<span class="math inline">\({\bf h}_3\)</span>中的神经元，交替执行这样一个漫长的过程。最后，顶层的RBM实际上定义了<span class="math inline">\({\bf h}_2\)</span>的先验分布，当这个RBM达到稳态以后，使用<span class="math inline">\({\bf W}_2\)</span>生成<span class="math inline">\({\bf h}_1\)</span>，再使用<span class="math inline">\({\bf W}_1\)</span>生成数据。整个结构如下图所示</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_14_generative_model.png" alt="三层DBN"><figcaption>三层DBN</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_14_generative_model.png" alt="三层DBN"><figcaption>三层DBN</figcaption>
 </figure>
 <p>注意这里红色的箭头不是生成模型的一部分，它们是对应<span class="math inline">\({\bf W}_i\)</span>的转置，在推断时候用到</p>
 <p>这里需要插一句的是，阶乘分布的均值不再是阶乘分布。假设RBM有4个隐藏单元，给定一个可见向量，这4个隐藏单元上的后验分布是阶乘的。假设对输入向量<span class="math inline">\({\bf v}_1\)</span>，隐藏单元被打开的概率分别为0.9、0.9、0.1和0.1，对输入向量<span class="math inline">\({\bf v}_2\)</span>，隐藏单元被打开的概率分别为0.1、0.1、0.9和0.9。那么这两个平均（聚合）以后的概率为0.5、0.5、0.5和0.5。现在，假设隐藏单元的状态为(1, 1, 0, 0)，如果该状态处于<span class="math inline">\({\bf v}_1\)</span>的后验分布中，则<span class="math inline">\(P((1, 1, 0, 0)) = 0.9^4 = 0.6561\)</span>（讲义这里好像算错了……）；如果该状态处于<span class="math inline">\({\bf v}_2\)</span>的后验分布中，则<span class="math inline">\(P((1, 1, 0, 0)) = 0.1^4 = 0.0001\)</span>，在聚合的后验分布下，<span class="math inline">\(P((1, 1, 0, 0)) = (0.6561 + 0.0001) / 2 = 0.3281\)</span>。但是，如果这个聚合的后验分布也是可分解为阶乘的，那么就应该是<span class="math inline">\(0.5^4 = 0.0625\)</span></p>
@@ -423,7 +423,7 @@ P({\bf v}) = \sum_{\bf h}P({\bf h})P({\bf v}|{\bf h})
 </ol>
 <p>DBN的一个应用是可以对MNIST手写数字和对应标签的联合分布建模，示意图如下所示</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_14_DBN_for_MNIST.png" alt="用于MNIST手写数字识别的DBN"><figcaption>用于MNIST手写数字识别的DBN</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_14_DBN_for_MNIST.png" alt="用于MNIST手写数字识别的DBN"><figcaption>用于MNIST手写数字识别的DBN</figcaption>
 </figure>
 <p>图中，右侧下方由两层RBM堆叠生成的SBN是无监督学习产生的。将最上层的500个隐藏单元和10个标签（实际上是一个softmax单元）连接起来，送入一个大的，有2000个隐藏单元的隐藏层，训练顶层的RBM来对连接向量建模。顶层的RBM训练好以后，用前面介绍的改进版唤醒-睡眠算法微调整个系统，这样整个系统既可以识别数字，也可以很好地生成样本——这也就是导论章节里demo的来源</p>
 <h2 id="通过微调使dbn做判别学习">通过微调使DBN做判别学习</h2>
@@ -444,7 +444,7 @@ E({\bf v}, {\bf h}) = \sum_{i \in {\rm vis}}\frac{(v_i - b_i)^2}{2\sigma_i^2} - 
 \]</span> 右边的第一项是一个向下凹的抛物线，防止能量值过大，其最小值点在第<span class="math inline">\(i\)</span>个单元的偏置处取到。第<span class="math inline">\(i\)</span>个单元的值离<span class="math inline">\(b_i\)</span>越远，能量加得越多，呈二次项关系，因此是要让第<span class="math inline">\(i\)</span>个可见单元离<span class="math inline">\(b_i\)</span>尽可能近。第三项表示可见单元和隐藏单元之间的交互项，如果把这一项对<span class="math inline">\(v_i\)</span>求梯度，可以得到一个常量<span class="math inline">\(\sum_j (h_jw_{ij}/\sigma_i)\)</span></p>
 <p>能量函数写出来比较容易，也容易求导，但是学习时还是有问题。很多文章都说这种高斯二元RBM很难运转起来，而且也难以学到可见单元比较紧的方差。找到这个问题的原因花了很久，可以参看下图</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_14_Gaussian_binary_RBM.png" alt="学习高斯二元RBM的困难"><figcaption>学习高斯二元RBM的困难</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_14_Gaussian_binary_RBM.png" alt="学习高斯二元RBM的困难"><figcaption>学习高斯二元RBM的困难</figcaption>
 </figure>
 <p>考虑可见单元<span class="math inline">\(i\)</span>对隐藏单元<span class="math inline">\(j\)</span>施加的效果，当单元<span class="math inline">\(i\)</span>的标准差<span class="math inline">\(\sigma_i\)</span>很小的时候，它会放大自底向上的权重，同时降低自顶向下权重的效果。结果是，或者自顶向上的效果太大，或者自顶向下的结果太小，隐藏单元趋近饱和，要么被永远开启，要么被永远关闭。解决方法是将隐藏节点个数设置得比可见单元数多很多，因此它们之间小的权重也可以有大的自顶向下的效果（人多力量大）</p>
 <p>这里，介绍一种单元，称为阶梯sigmoid单元（stepped sigmoid unit）。核心思想史，对每个随机的二元隐藏单元都创造很多拷贝，每个拷贝有相同的权重，也有基本的偏置<span class="math inline">\(b\)</span>，但是对<span class="math inline">\(b\)</span>施加一些固定的偏移量：第一个单元偏移量为-0.5，第二个-1.5，第三个-2.5，以此类推。这样，如果<span class="math inline">\(\frac{w_{ij}}{\sigma_i}\)</span>特别小，没有单元被激活，但是随着这个值的变大，被激活的单元数也会线性增多。也就是说，当<span class="math inline">\(\sigma_i\)</span>变小时，被激活的拷贝单元会变多，使得自顶向下的影响效果不会变小。但是，这种做法代价太昂贵，不过可以做一些快速的近似，有 <span class="math display">\[

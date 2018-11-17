@@ -119,13 +119,13 @@
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="感知机假设集合 上回说到机器学习的核心就是，使用算法\(\mathcal{A}\)接收数据\(\mathcal{D}\)，从假设集合（所有可能性）\(\mathcal{H}\)中选出一个\(g\)，希望\(g \approx f\)。那么我们现在最关心就是，\(\mathcal{H}\)应该是什么样的。 以之前提到的银行审核发放信用卡的场景为例，假设我们把每个使用者定义为向量\(\bf x\)，包">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/r2_perceptron_example.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/perceptron_correct_weight.png">
-<meta property="og:updated_time" content="2017-12-19T12:35:39.000Z">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/r2_perceptron_example.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/perceptron_correct_weight.png">
+<meta property="og:updated_time" content="2018-11-17T10:59:49.853Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NTUML 2. 学习判断是与非">
 <meta name="twitter:description" content="感知机假设集合 上回说到机器学习的核心就是，使用算法\(\mathcal{A}\)接收数据\(\mathcal{D}\)，从假设集合（所有可能性）\(\mathcal{H}\)中选出一个\(g\)，希望\(g \approx f\)。那么我们现在最关心就是，\(\mathcal{H}\)应该是什么样的。 以之前提到的银行审核发放信用卡的场景为例，假设我们把每个使用者定义为向量\(\bf x\)，包">
-<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/r2_perceptron_example.png">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/r2_perceptron_example.png">
 
 
 
@@ -422,7 +422,7 @@ h({\bf x}) &amp;= {\rm sign}\left(\left(\sum_{i=1}^d w_ix_i\right) - {\rm thresh
 h({\bf x}) = {\rm sign}(w_0 + w_1x_1 + w_2x_2)
 \]</span> 可以看出，每个<span class="math inline">\(h\)</span>其实都对应了<span class="math inline">\(\mathbb{R}^2\)</span>上的一条直线。感知机规定位于直线某一侧的样本都被判定为正例，另一侧的样本都被判定为负例。不同的权重会产生不同的直线，从而对顾客有不同的分类方式。假设我们用蓝色的圈o表示正例，红色的叉×表示负例，下图给出了两个不同感知机的图</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/r2_perceptron_example.png" alt="感知机的例子"><figcaption>感知机的例子</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/r2_perceptron_example.png" alt="感知机的例子"><figcaption>感知机的例子</figcaption>
 </figure>
 <p>可以看出右边的感知机在训练集上效果更好，因为它对所有例子做出了正确分类。而左侧的感知机在训练集上表现稍逊（一个正例被误判为负，两个负例被误判为正）</p>
 <p>由于感知机都对应于一个超平面，因此它也被称为是<strong>线性分类器</strong>（<span class="math inline">\(\mathbb{R}^2\)</span>的超平面是一条直线，<span class="math inline">\(\mathbb{R}^3\)</span>的超平面是一个平面，以此类推）。</p>
@@ -439,7 +439,7 @@ h({\bf x}) = {\rm sign}(w_0 + w_1x_1 + w_2x_2)
 {\bf w}_{t+1} \leftarrow {\bf w}_t + y_{n(t)}{\bf x}_{n(t)}
 \]</span> 下图给出了这两种情况的示例</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/perceptron_correct_weight.png" alt="感知机修正权重的示意图"><figcaption>感知机修正权重的示意图</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/perceptron_correct_weight.png" alt="感知机修正权重的示意图"><figcaption>感知机修正权重的示意图</figcaption>
 </figure>
 <p>感知机学习算法（Perceptron Learning Algorithm, PLA）就是重复上面的过程，直到没有错误发生为止。算法将最后得到的权重<span class="math inline">\(\bf w\)</span>（记做<span class="math inline">\({\bf w}_{\rm PLA}\)</span>）返回为<span class="math inline">\(g\)</span>。完整的写法如下</p>
 <blockquote>

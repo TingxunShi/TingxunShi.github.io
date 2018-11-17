@@ -119,16 +119,16 @@
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="正则化的假设集  过拟合的正则化  如上图所示，右边给出的就是在上讲中经常提到的过拟合现象，可以看到拟合的曲线（红线）与目标函数图像（蓝线）差别特别大。正则化的目的是对复杂的模型进行调整，使其也可以逼近比较简单的模型。上图左边给出的就是正则化的效果示意，可以发现经过正则化以后，函数光滑了许多，也与目标函数接近了许多。其思想是，从高次多项式假设集合逐步“走回”低次多项式假设集合。“正则化”这个概念来">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML14_regularization.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML14_lagrange_multiplier.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML14_lambda_values.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML14_l1_regularizer.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML14_lambda_noise.png">
-<meta property="og:updated_time" content="2017-12-19T12:35:39.000Z">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML14_regularization.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML14_lagrange_multiplier.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML14_lambda_values.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML14_l1_regularizer.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML14_lambda_noise.png">
+<meta property="og:updated_time" content="2018-11-17T10:59:49.832Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NTUML 14. 正则化">
 <meta name="twitter:description" content="正则化的假设集  过拟合的正则化  如上图所示，右边给出的就是在上讲中经常提到的过拟合现象，可以看到拟合的曲线（红线）与目标函数图像（蓝线）差别特别大。正则化的目的是对复杂的模型进行调整，使其也可以逼近比较简单的模型。上图左边给出的就是正则化的效果示意，可以发现经过正则化以后，函数光滑了许多，也与目标函数接近了许多。其思想是，从高次多项式假设集合逐步“走回”低次多项式假设集合。“正则化”这个概念来">
-<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML14_regularization.png">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML14_regularization.png">
 
 
 
@@ -407,7 +407,7 @@
       
         <h2 id="正则化的假设集">正则化的假设集</h2>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML14_regularization.png" alt="过拟合的正则化"><figcaption>过拟合的正则化</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML14_regularization.png" alt="过拟合的正则化"><figcaption>过拟合的正则化</figcaption>
 </figure>
 <p>如上图所示，右边给出的就是在上讲中经常提到的过拟合现象，可以看到拟合的曲线（红线）与目标函数图像（蓝线）差别特别大。<strong>正则化</strong>的目的是对复杂的模型进行调整，使其也可以逼近比较简单的模型。上图左边给出的就是正则化的效果示意，可以发现经过正则化以后，函数光滑了许多，也与目标函数接近了许多。其思想是，从高次多项式假设集合逐步“走回”低次多项式假设集合。“正则化”这个概念来自于早期函数逼近这个领域，以解决其中ill-posed问题</p>
 <p>那么如何完成这个“走回”的操作？回想之前给出的对<span class="math inline">\(x \in \mathbb{R}\)</span>做<span class="math inline">\(Q\)</span>次多项式变换的方法<span class="math inline">\(\boldsymbol{\Phi}_Q(x) = (1, x, x^2, \ldots, x^Q)\)</span>，为了方便起见，这里不再将在转换后空间<span class="math inline">\(\mathcal{Z}\)</span>中训练得到的权重记为<span class="math inline">\(\tilde{\bf w}\)</span>，而是直接记为<span class="math inline">\(\bf w\)</span>。由前面的介绍，<span class="math inline">\(\mathcal{H}_{10}\)</span>中的<span class="math inline">\(\bf w\)</span>的形式和<span class="math inline">\(\mathcal{H}_2\)</span>中的<span class="math inline">\(\bf w\)</span>的形式可以各自表示为： <span class="math display">\[
@@ -450,7 +450,7 @@
 \]</span> 从几何意义上讲，这个限制条件是把<span class="math inline">\(\bf w\)</span>限制在了一个球心为原点，半径为<span class="math inline">\(\sqrt{C}\)</span>的超球体里</p>
 <p>如何求解这个问题？如果没有条件限制，直接让<span class="math inline">\(\bf w\)</span>沿着<span class="math inline">\(-\nabla E_{\rm in}({\bf w})\)</span>的方向滚下去，滚到谷底就得到了<span class="math inline">\({\bf w}_{\rm LIN}\)</span></p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML14_lagrange_multiplier.png" alt="施加正则化以后权重w的优化"><figcaption>施加正则化以后权重w的优化</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML14_lagrange_multiplier.png" alt="施加正则化以后权重w的优化"><figcaption>施加正则化以后权重w的优化</figcaption>
 </figure>
 <p>如上图，如果没有正则化项，蓝线就是（某一时刻）<span class="math inline">\(E_{\rm in}\)</span>的等高线，蓝色的箭头是<span class="math inline">\(\bf w\)</span>变化的方向。加入正则化条件以后，<span class="math inline">\(\bf w\)</span>只能在红圈里（或边上），因此大部分情况下<span class="math inline">\(\bf w\)</span>应该都在红圈上。假设此时<span class="math inline">\(\bf w\)</span>已经在红圈上，判断其是否达到最优解的方法就是看它是否还能沿着<span class="math inline">\(-\nabla E_{\rm in}\)</span>的方向往下滚。但是限制条件又规定<span class="math inline">\(\bf w\)</span>不能滚出球（即沿着红色箭头的方向移动），只能沿着垂直于球法向量的方向移动（即绿色箭头的方向）。这样一来，如果<span class="math inline">\(-\nabla E_{\rm in}\)</span>这个方向可以沿着绿色箭头的方向分出一个分量，<span class="math inline">\(\bf w\)</span>沿着该分量方向移动的话，就可以同时满足 i) 受条件<span class="math inline">\({\bf w}^\mathsf{T}{\bf w} = C\)</span>这个条件限制 ii) 减小<span class="math inline">\(E_{\rm in}\)</span> 这两个要求。因此，最优的<span class="math inline">\({\bf w}_{\rm REG}\)</span>肯定与<span class="math inline">\(-\nabla E_{\rm in}({\bf w}_{\rm REG})\)</span>方向平行（否则还可以继续往下滚），即 <span class="math display">\[
 -\nabla E_{\rm in}({\bf w}_{\rm REG}) \propto {\bf w}_{\rm REG}
@@ -467,7 +467,7 @@
 \]</span> （笔记注：这块感觉讲得有点太细致了，如果知道拉格朗日乘子的意义，这种转化是显然的）</p>
 <p>下图中给出了正则化项系数<span class="math inline">\(\lambda\)</span>对模型效果的影响。可以看出，<span class="math inline">\(\lambda\)</span>越大，正则得越狠，模型越容易欠拟合。实际使用时，一点点正则化项就可以起到很大的作用</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML14_lambda_values.png" alt="正则化项系数lambda对模型效果的影响"><figcaption>正则化项系数lambda对模型效果的影响</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML14_lambda_values.png" alt="正则化项系数lambda对模型效果的影响"><figcaption>正则化项系数lambda对模型效果的影响</figcaption>
 </figure>
 <p>进一步地，称<span class="math inline">\(+\frac{\lambda}{N}{\bf w}^\mathsf{T}{\bf w}\)</span>为权重衰减的正则化方法。因为正则化项系数<span class="math inline">\(\lambda\)</span>越大，<span class="math inline">\(\bf w\)</span>就会更小，其范数<span class="math inline">\(C\)</span>也会越小</p>
 <p>这种方法可以和任意特征变换方式和线性模型搭配使用，例如跟Logistic回归搭配使用</p>
@@ -489,12 +489,12 @@
 <p>可以看到，正则项设计的三项原则和误差函数设计的三项原则异曲同工，都包括了目标相关性、合理性和友好性这三个点。它们也是设计机器学习算法时需要注意的关键</p>
 <p>之前介绍过L2正则化项，其形式为<span class="math inline">\(\Omega({\bf w}) = \sum_{q=0}^Q w_q^2 = |\!|{\bf w}|\!|_2^2\)</span>。这是一个凸函数，而且处处可微，因此易于优化。另一种常见的正则化项称为L1正则化项：前面L2正则化项用的是<span class="math inline">\(\bf w\)</span>的L2范数，同理L1正则化项用的是<span class="math inline">\(\bf w\)</span>的L1范数，即<span class="math inline">\(\Omega({\bf w}) = \sum_{q=0}^Q |w_q| = |\!|{\bf w}|\!|_1\)</span>。注意这个函数仍然是凸函数，但是在<span class="math inline">\(w_i = 0\)</span>时是不可微的，因此优化起来要稍微麻烦一点。那为什么它还广受青睐？参考下图</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML14_l1_regularizer.png" alt="L1正则化示意图"><figcaption>L1正则化示意图</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML14_l1_regularizer.png" alt="L1正则化示意图"><figcaption>L1正则化示意图</figcaption>
 </figure>
 <p>类似之前提到的L2正则化的原理，只有当<span class="math inline">\(\bf w\)</span>的移动方向<span class="math inline">\(-\nabla E_{\rm in}\)</span>（这里是蓝色箭头）与法向量（这里是红色箭头）平行时，<span class="math inline">\(\bf w\)</span>才达到最优解。当<span class="math inline">\(\bf w\)</span>在正方形的边上时，这种状态一般不会发生，因此总会有<span class="math inline">\(\bf w\)</span>的一个分量拉着<span class="math inline">\(\bf w\)</span>前进，直到到达正方形的顶点处。而在顶点时，说明有一些<span class="math inline">\(w_i\)</span>其值为0，这意味着使用L1正则项会得到比较稀疏的解，计算效率更高</p>
 <p>最后，下图给出了当噪声不同的时候，最优正则项系数的取值</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML14_lambda_noise.png" alt="噪声不同时，lambda与Eout期望值的关系。左为随机噪声，右为决定性噪声。最优lambda使用大实心点标出"><figcaption>噪声不同时，lambda与Eout期望值的关系。左为随机噪声，右为决定性噪声。最优lambda使用大实心点标出</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML14_lambda_noise.png" alt="噪声不同时，lambda与Eout期望值的关系。左为随机噪声，右为决定性噪声。最优lambda使用大实心点标出"><figcaption>噪声不同时，lambda与Eout期望值的关系。左为随机噪声，右为决定性噪声。最优lambda使用大实心点标出</figcaption>
 </figure>
 <p>可以看到，无论是随机噪声还是决定性噪声，噪声越大，<span class="math inline">\(\lambda\)</span>就应该越大。但是我们并不知道噪声有多大，那么<span class="math inline">\(\lambda\)</span>应该如何选择？这个问题留待下讲作答</p>
 

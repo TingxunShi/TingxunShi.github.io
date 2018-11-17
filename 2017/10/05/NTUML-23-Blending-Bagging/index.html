@@ -119,12 +119,12 @@
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="模型聚合的动机 如果已经得到了一些特征或假设，这些假设可以做预测，那么如何将这些有预测性的特征或假设合起来，让它们变得更好？这种模型就称为模型聚合 为什么要做模型聚合呢？举个例子，假设今天有15个朋友，每个人都会对股市的涨跌做一个预测，那么在得到这些预测以后应该怎么办？其实可以做的事情非常多，例如  根据过往的情况，选择最可靠的朋友，听ta的意见（类似于机器学习中的验证方法） 让朋友们一人一票，看">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML23_agg_model.png">
-<meta property="og:updated_time" content="2017-12-19T12:35:39.000Z">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML23_agg_model.png">
+<meta property="og:updated_time" content="2018-11-17T10:59:49.868Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NTUML 23. 模型混合与装袋（bagging）">
 <meta name="twitter:description" content="模型聚合的动机 如果已经得到了一些特征或假设，这些假设可以做预测，那么如何将这些有预测性的特征或假设合起来，让它们变得更好？这种模型就称为模型聚合 为什么要做模型聚合呢？举个例子，假设今天有15个朋友，每个人都会对股市的涨跌做一个预测，那么在得到这些预测以后应该怎么办？其实可以做的事情非常多，例如  根据过往的情况，选择最可靠的朋友，听ta的意见（类似于机器学习中的验证方法） 让朋友们一人一票，看">
-<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML23_agg_model.png">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML23_agg_model.png">
 
 
 
@@ -421,7 +421,7 @@
 <p>在正式介绍聚合模型法之前，有必要先从验证法入手，分析一下验证法与（其它）聚合模型法之间的不同。回忆之前讲过的验证法的过程，不难发现验证法最后返回的<span class="math inline">\(g_t^-\)</span>是<strong>一个</strong>很强的模型，因为使用验证的目的就是让被选出的模型有足够小的<span class="math inline">\(E_{\rm out}\)</span>，对该模型的评估也是要求其有足够小的<span class="math inline">\(E_{\rm val}\)</span>。再次强调，验证法最后只返回一个模型。而聚合模型的出发点是，如果我们手里有<strong>多个</strong>假设模型，是否可以做得更好（尽管这些模型可能每个单拿出来效果都不是太好）？</p>
 <p>为什么模型聚合以后的效果会比较好？可以看下面两个例子</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML23_agg_model.png" alt="模型聚合的例子"><figcaption>模型聚合的例子</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML23_agg_model.png" alt="模型聚合的例子"><figcaption>模型聚合的例子</figcaption>
 </figure>
 <p>上图左描述了这样一个问题：对于图示中的数据集，只允许用水平和竖直的线做分类器，将数据集完全分开（但是可以对分类器产生的结果进行组合）。可以看到，图中选择的两条竖直线和一条水平线各自都没有将数据集完全分开的能力，但是它们组合（投票）的结果却可以完成目标。这表明若干弱分类器聚合的结果可能会突破个体的能力限制，完成某种类似于“特征变换”的功能</p>
 <p>上图右描述了另一个问题：对于图示中的数据集，PLA算法可能会产生无限多条线将样本完全分开（因为PLA算法有随机性）。这些线有的可能会偏向红方，有的可能会偏向蓝方，但是它们组合（投票）的结果最后可能得到的是图中的黑色实线，这条实线比较中庸平均，离两边都不近——而这条线很有点像使用SVM算法得到的分类器。这说明从另一方面，模型经过聚合以后可能可以达到正则化的目的</p>

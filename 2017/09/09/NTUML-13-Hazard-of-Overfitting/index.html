@@ -119,16 +119,16 @@
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="什么是过拟合 假设现在要做一个一维数据集的回归分析，数据集一共有5个点，目标函数是一个二次函数，所有的\(x_i, i = 1, 2, 3, 4, 5\)都是随机产生，其对应的标签\(y_i\)是对应的目标函数值加上一点微小的噪声。由于拿到数据集以后并不知道目标函数的形式，因此一种思路是使用前面提到的多项式变换，引入一些四维特征。这样，拟合出的四维函数\(g\)可以完美地穿过这五个点，做到\(E_">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML13_overfit_example.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML13_high_order_target_functions.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML13_high_order_target_functions_learning_curves.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML13_sigma_n_impact.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML13_qf_n_impact.png">
-<meta property="og:updated_time" content="2017-12-19T12:35:39.000Z">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML13_overfit_example.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML13_high_order_target_functions.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML13_high_order_target_functions_learning_curves.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML13_sigma_n_impact.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML13_qf_n_impact.png">
+<meta property="og:updated_time" content="2018-11-17T10:59:49.829Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NTUML 13. 过拟合的危害">
 <meta name="twitter:description" content="什么是过拟合 假设现在要做一个一维数据集的回归分析，数据集一共有5个点，目标函数是一个二次函数，所有的\(x_i, i = 1, 2, 3, 4, 5\)都是随机产生，其对应的标签\(y_i\)是对应的目标函数值加上一点微小的噪声。由于拿到数据集以后并不知道目标函数的形式，因此一种思路是使用前面提到的多项式变换，引入一些四维特征。这样，拟合出的四维函数\(g\)可以完美地穿过这五个点，做到\(E_">
-<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML13_overfit_example.png">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML13_overfit_example.png">
 
 
 
@@ -408,7 +408,7 @@
         <h2 id="什么是过拟合">什么是过拟合</h2>
 <p>假设现在要做一个一维数据集的回归分析，数据集一共有5个点，目标函数是一个二次函数，所有的<span class="math inline">\(x_i, i = 1, 2, 3, 4, 5\)</span>都是随机产生，其对应的标签<span class="math inline">\(y_i\)</span>是对应的目标函数值加上一点微小的噪声。由于拿到数据集以后并不知道目标函数的形式，因此一种思路是使用前面提到的多项式变换，引入一些四维特征。这样，拟合出的四维函数<span class="math inline">\(g\)</span>可以完美地穿过这五个点，做到<span class="math inline">\(E_{\rm in}(g) = 0\)</span>。但是显而易见，这种情况下<span class="math inline">\(E_{\rm out}(g)\)</span>会非常大，导致了比较差的泛化结果。前面曾经提到过，当<span class="math inline">\(h\)</span>的VC维特别大时，就会导致这种情况发生。只有当<span class="math inline">\(h\)</span>的VC维取到最优情况<span class="math inline">\(d_{\rm VC}^\ast\)</span>时，才能使得<span class="math inline">\(E_{\rm in}\)</span>和<span class="math inline">\(E_{\rm out}\)</span>都取到最小。当<span class="math inline">\(h\)</span>的VC维很大，超过<span class="math inline">\(d_{\rm VC}^\ast\)</span>时，随着VC维的升高，<span class="math inline">\(E_{\rm in}\)</span>仍然会降低，但是<span class="math inline">\(E_{\rm out}\)</span>会不降反增。称这种现象为<strong>过拟合</strong>。对应地，当<span class="math inline">\(h\)</span>的VC维比较小，没有达到<span class="math inline">\(d_{\rm VC}^\ast\)</span>时，随着VC维的减小，<span class="math inline">\(E_{\rm in}\)</span>和<span class="math inline">\(E_{\rm out}\)</span>都会增加。称这种现象为<strong>欠拟合</strong>。下图给出了一个关于过拟合的状况示例</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML13_overfit_example.png" alt="过拟合的例子。左图是使用复杂度恰到好处的模型拟合的结果，右边是使用过于复杂的模型拟合的结果"><figcaption>过拟合的例子。左图是使用复杂度恰到好处的模型拟合的结果，右边是使用过于复杂的模型拟合的结果</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML13_overfit_example.png" alt="过拟合的例子。左图是使用复杂度恰到好处的模型拟合的结果，右边是使用过于复杂的模型拟合的结果"><figcaption>过拟合的例子。左图是使用复杂度恰到好处的模型拟合的结果，右边是使用过于复杂的模型拟合的结果</figcaption>
 </figure>
 <p>以上所讲的概念可以用开车的过程做类比——</p>
 <ul>
@@ -425,11 +425,11 @@
 </ul>
 <p>然后，对这两个数据集，都使用二次多项式和十次多项式拟合，观察这两个模型的效果。记二次多项式模型为<span class="math inline">\(g_2 \in \mathcal{H}_2\)</span>，十次多项式模型为<span class="math inline">\(g_{10} \in \mathcal{H}_{10}\)</span>。下图给出了两组方法在两组数据集上的效果比较。绿色为<span class="math inline">\(g_2\)</span>，红色为<span class="math inline">\(g_{10}\)</span></p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML13_high_order_target_functions.png" alt="二次多项式模型与十次多项式模型在两数据集上效果的比较。左边数据集由某个十次多项式产生，噪声适中；右边数据集由某个50次多项式产生，噪声非常小"><figcaption>二次多项式模型与十次多项式模型在两数据集上效果的比较。左边数据集由某个十次多项式产生，噪声适中；右边数据集由某个50次多项式产生，噪声非常小</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML13_high_order_target_functions.png" alt="二次多项式模型与十次多项式模型在两数据集上效果的比较。左边数据集由某个十次多项式产生，噪声适中；右边数据集由某个50次多项式产生，噪声非常小"><figcaption>二次多项式模型与十次多项式模型在两数据集上效果的比较。左边数据集由某个十次多项式产生，噪声适中；右边数据集由某个50次多项式产生，噪声非常小</figcaption>
 </figure>
 <p>对于左边的数据集，<span class="math inline">\(g_2\)</span>的<span class="math inline">\(E_{\rm in}\)</span>为0.050，<span class="math inline">\(g_{10}\)</span>的<span class="math inline">\(E_{\rm in}\)</span>为0.034，后者稍胜。但是前者的<span class="math inline">\(E_{\rm out}\)</span>为0.127，后者达到了9。对于右边的数据集，<span class="math inline">\(g_2\)</span>的<span class="math inline">\(E_{\rm in}\)</span>为0.029，<span class="math inline">\(g_{10}\)</span>的<span class="math inline">\(E_{\rm in}\)</span>为0.00001。而<span class="math inline">\(E_{\rm out}\)</span>的差距更多：前者0.120，后者居然达到了7680！可以看到，在这样两个由高次多项式产生的数据集上，使用高次多项式拟合出来的模型仍然发生了严重的过拟合现象。尤其是对于由十次多项式产生的数据集，按照道理，二次多项式模型应该没有能力在其上获得很好的效果，但是其<span class="math inline">\(E_{\rm out}\)</span>却的确取得了一个比较令人满意的结果。应该如何解释这种“以退为进”的现象？</p>
 <p>这里回顾一下对不同的假设集合，其<span class="math inline">\(E_{\rm in}\)</span>/<span class="math inline">\(E_{\rm out}\)</span>与数据集大小<span class="math inline">\(N\)</span>之间的关系，可见下图</p>
-<p><img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML13_high_order_target_functions_learning_curves.png"></p>
+<p><img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML13_high_order_target_functions_learning_curves.png"></p>
 <p>如图所示，所有的二次多项式假设集<span class="math inline">\(\mathcal{H}_2\)</span>和所有的十次多项式假设集<span class="math inline">\(\mathcal{H}_{10}\)</span>都遵循了同样的规律：</p>
 <ul>
 <li>随着数据量<span class="math inline">\(N\)</span>的增长，<span class="math inline">\(E_{\rm out}\)</span>会下降，<span class="math inline">\(E_{\rm in}\)</span>会上升。最后当<span class="math inline">\(N\rightarrow \infty\)</span>时，<span class="math inline">\(|E_{\rm in} - E_{\rm out}| \rightarrow 0\)</span></li>
@@ -445,11 +445,11 @@ y \sim {\rm Gaussian}\left(\underbrace{\sum_{q=0}^{Q_t}\alpha_qx^q}_{f(x)}, \sig
 <p>这里，候选的假设集合仍然和前面的设置一样，分别是<span class="math inline">\(g_2 \in \mathcal{H}_2\)</span>和<span class="math inline">\(g_{10} \in \mathcal{H}_{10}\)</span>。由前面的分析，<span class="math inline">\(g_{10}\)</span>过拟合的概率比较大，那么这个过拟合的程度如何衡量？这里使用的方法是<span class="math inline">\(E_{\rm out}(g_{10}) - E_{\rm out}(g_2)\)</span></p>
 <p>首先看固定模型复杂度<span class="math inline">\(Q_f = 20\)</span>以后，过拟合度与<span class="math inline">\(N\)</span>和<span class="math inline">\(\sigma^2\)</span>的关系。这里颜色越深，过拟合程度越严重。显见当样本量小，误差大的时候，过拟合比较严重；而样本量大，误差小的时候，不太容易过拟合</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML13_sigma_n_impact.png" alt="模型复杂度固定时，样本量与噪声强度对过拟合的影响"><figcaption>模型复杂度固定时，样本量与噪声强度对过拟合的影响</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML13_sigma_n_impact.png" alt="模型复杂度固定时，样本量与噪声强度对过拟合的影响"><figcaption>模型复杂度固定时，样本量与噪声强度对过拟合的影响</figcaption>
 </figure>
 <p>接着看固定噪声强度<span class="math inline">\(\sigma^2 = 1\)</span>以后，过拟合度与<span class="math inline">\(Q_f\)</span>和<span class="math inline">\(N\)</span>的关系。</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML13_qf_n_impact.png" alt="噪声强度固定时，样本量与模型复杂度对过拟合的影响"><figcaption>噪声强度固定时，样本量与模型复杂度对过拟合的影响</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML13_qf_n_impact.png" alt="噪声强度固定时，样本量与模型复杂度对过拟合的影响"><figcaption>噪声强度固定时，样本量与模型复杂度对过拟合的影响</figcaption>
 </figure>
 <p>大部分情况下，这种情况与前述实验类似，也是左上角容易过拟合，右下角不容易过拟合。这再次说明模型复杂度可以扮演噪声的角色。称前面施加的正态噪声为<strong>随机噪声</strong>，模型复杂度带来的噪声为<strong>确定性噪声</strong>，可以看出造成过拟合的因素有如下几条</p>
 <ul>

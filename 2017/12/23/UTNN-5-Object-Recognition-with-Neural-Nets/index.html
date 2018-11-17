@@ -119,16 +119,16 @@
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="为何物体识别很困难？ 尽管人类在计算能力上能被计算机甩开好几百条街，但是有一项任务做起来却是得心应手，比计算机高到不知道哪里去了。这项任务就是物体识别——人类是如此擅长这件事情，甚至不知道做起来有什么难点。但是同样的事情，机器做起来可谓是困难重重  难以从图片中把要识别的物体分割出来（segment out）。在现实生活中，我们可以在移动中寻找线索，也可以通过肉眼得到三维的立体线索，但是这些线索在">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_05_judicious_normalization.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_05_convolution.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_05_equivariant_activities.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_05_LeCun5.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_05_mcnemar_test_matrix.png">
-<meta property="og:updated_time" content="2018-01-07T09:09:09.000Z">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_05_judicious_normalization.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_05_convolution.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_05_equivariant_activities.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_05_LeCun5.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_05_mcnemar_test_matrix.png">
+<meta property="og:updated_time" content="2018-11-17T10:59:49.965Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hinton神经网络与机器学习 5. 卷积神经网络">
 <meta name="twitter:description" content="为何物体识别很困难？ 尽管人类在计算能力上能被计算机甩开好几百条街，但是有一项任务做起来却是得心应手，比计算机高到不知道哪里去了。这项任务就是物体识别——人类是如此擅长这件事情，甚至不知道做起来有什么难点。但是同样的事情，机器做起来可谓是困难重重  难以从图片中把要识别的物体分割出来（segment out）。在现实生活中，我们可以在移动中寻找线索，也可以通过肉眼得到三维的立体线索，但是这些线索在">
-<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_05_judicious_normalization.png">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_05_judicious_normalization.png">
 
 
 
@@ -430,7 +430,7 @@
 <h3 id="合理归一化">合理归一化</h3>
 <p>第二种方法称为合理归一化（judicious normalization）。例如，下面这个R经过上下颠倒以后在周围加了个框。然后，就可以在框上标明顶部（top）和前部（front）</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_05_judicious_normalization.png" alt="颠倒的R，加上框"><figcaption>颠倒的R，加上框</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_05_judicious_normalization.png" alt="颠倒的R，加上框"><figcaption>颠倒的R，加上框</figcaption>
 </figure>
 <p>这样一来，就可以说R在框的后部有一个竖线，在顶部有一个弯，等等。无论视角怎么变，如果这个框画对了，这些位置特征相对于这个框来说就是不变的，物体的同一个部分总会有相同的归一化像素。需要说明的是，这里“框”是一个抽象概念，实际使用时不一定非得是长方形</p>
 <p>但是这种方法的难度在于，很难选择这个框，原因如下</p>
@@ -444,21 +444,21 @@
 <h2 id="用于手写数字识别的卷积神经网络">用于手写数字识别的卷积神经网络</h2>
 <p>卷积神经网络的灵感来自于重复特征。由于物体总是移动，其表现形式（像素点）也不同，因此如果某个特征检测器在图片的一部分起作用，它在别处可能也能用上。因此，可以在所有不同的位置构建很多相同特征检测器的不同拷贝</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_05_convolution.png" alt="重复的特征检测器"><figcaption>重复的特征检测器</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_05_convolution.png" alt="重复的特征检测器"><figcaption>重复的特征检测器</figcaption>
 </figure>
 <p>上图给出了三个特征检测器，三者都是互相重复的。每个检测器都有9个权重，对应于9个像素点，而且对每个检测器，它们的权重都相同。例如，对于三个引出红箭头的格子，它们使用的权重都一样。这种跨区域的重复性可以极大减少要学习的参数数量。记检测器的权重为<span class="math inline">\(w\)</span>，检测器检测的区域为<span class="math inline">\(x\)</span>，则<span class="math inline">\(x\)</span>通常被称作<strong>输入</strong>，<span class="math inline">\(w\)</span>通常被称作<strong>核函数</strong>，它们的输出<span class="math inline">\(x \ast w\)</span>有时被称作<strong>特征映射</strong></p>
 <p>上面这种特征检测器可以看做是图片中某个局部区域的一种映射，也可以看作是一种特征类型。为了识别物体，肯定要训练多种类型的特征，这样，图片的每个部分可以被不同类型的特征所表示。重复特征也易于通过反向传播来学习，实际上，对反向传播算法稍加改动就能加入这种权重之间的线性约束关系。具体做法是，先按照往常一样计算梯度，然后修改梯度使得它们满足所受的约束。因此，如果在权重更新之前它们满足线性约束，在这样更新以后约束仍然存在。例如，假设约束条件是<span class="math inline">\(w_1 = w_2\)</span>，同时这两者在权重更新前就相等，那么为了保证权重更新后两者依然相等，就需要使得<span class="math inline">\(\Delta w_1 = \Delta w_2\)</span>。为此，可以计算<span class="math inline">\(\frac{\partial E}{\partial w_1}\)</span>和<span class="math inline">\(\frac{\partial E}{\partial w_2}\)</span>，然后令<span class="math inline">\(\Delta w_1 = \Delta w_2 = \frac{\partial E}{\partial w_1} + \frac{\partial E}{\partial w_2}\)</span>，就可以保持这样的约束条件</p>
 <p>需要注意的是，重复的特征并不会让被激活的神经元有平移不变性，只不过会让神经元有等变（equivariant）的行为，可以看下图的例子</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_05_equivariant_activities.png" alt="重复特征使神经元有等变行为"><figcaption>重复特征使神经元有等变行为</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_05_equivariant_activities.png" alt="重复特征使神经元有等变行为"><figcaption>重复特征使神经元有等变行为</figcaption>
 </figure>
 <p>很显然，在这两种情况下，手写数字的位置是不一样的，激活的神经元的位置也是不一样的，但是被激活的神经元展现出来的模式相同。CNN得到的真正的“不变性”是知识的不变性：如果某个特征在训练时对某个区域有用，那么这个特征的检测器在测试时对所有的区域都可用。也就是说，等变的是神经元的行为，不变的是权重</p>
 <p>如果想让神经网络对神经元行为取得某些不变性，那么就需要对重复特征检测器的结果做<strong>池化</strong>（pooling），例如对四个邻居检测器的结果求平均，将得到的这个平均值送入下一层，可以实现一小部分平移不变性。这样做的好处是可以减少下一层接受的输入数量，所以可以产生更多映射，在下一层学习更多特征。不过通常情况下做的池化操作是求最大值（这种池化操作称为最大池）。这样做的问题是经过几层池化可能会丢失物体准确的位置信息，例如，假设要做的任务是检测出有没有人脸，那么经过池化以后大致能看到哪里是鼻子，哪里是嘴，根据粗略的位置，可以做出判断。但是如果要做的任务是检测出这是谁的脸，就不好办了。因为池化操作使得眼睛跟眼睛，鼻子和嘴唇之间的精确距离信息都丢掉了</p>
-<p>Yann LeCun团队设计的LeNet是卷积神经网络的一个成功应用，它具有很多个隐藏层，每一层有很多重复单元的映射，而且每一个隐藏层都会对周围重复单元的结果做池化，再将池化结果送入下一层。下图给出了LeNet5的一个例子，其中“子采样层”（subsampling）就对应于现在说的池化层。更多的结果可以参看<a href="http://yann.lecun.com" target="_blank" rel="noopener">Yann LeCun的主页</a> <img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_05_LeCun5.png" alt="LeNet5体系结构示意图"></p>
+<p>Yann LeCun团队设计的LeNet是卷积神经网络的一个成功应用，它具有很多个隐藏层，每一层有很多重复单元的映射，而且每一个隐藏层都会对周围重复单元的结果做池化，再将池化结果送入下一层。下图给出了LeNet5的一个例子，其中“子采样层”（subsampling）就对应于现在说的池化层。更多的结果可以参看<a href="http://yann.lecun.com" target="_blank" rel="noopener">Yann LeCun的主页</a> <img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_05_LeCun5.png" alt="LeNet5体系结构示意图"></p>
 <p>需要注意的是，在设计LeNet时，里面其实也使用到了人类的一些先验知识，例如局部连通性、权重限制、以及选出何时的神经元激活函数等等。另一种方法是使用先验知识构造大量训练数据。当训练数据的数据量变大以后，尽管训练时间会变长，但是优化方法可以帮助网络找到一些聪明的，人类之前想不到甚至没法完全理解的处理方式。将这两种方法（权重共享/池化 + 人造数据）可以通过类似蛮力法的方法比较好地解决手写数字识别的问题。瑞士的一个研究团队可以达到只出现35个错误的成绩，此外，他们还通过训练多个模型然后将模型进行组合的方法，将错误数量压低到25个</p>
 <p>这里引出了另一个问题：如果测试集有10000条样本，模型A判断错40条，模型B判断错30条，我们能确定地说B比A好吗？不一定。来看一下下面两个<a href="https://en.wikipedia.org/wiki/McNemar%27s_test" target="_blank" rel="noopener">McNemar检验</a>矩阵</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_05_mcnemar_test_matrix.png" alt="两种情况下的McNemar检验矩阵"><figcaption>两种情况下的McNemar检验矩阵</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_05_mcnemar_test_matrix.png" alt="两种情况下的McNemar检验矩阵"><figcaption>两种情况下的McNemar检验矩阵</figcaption>
 </figure>
 <p>对于McNemar检验，着重要看的是红色的两个数据。对于第一种情况，“模型B正确但模型A错误”与“模型A正确但模型B错误”的比例达到了惊人的11比1，这个结果实在是太显著了，因此可以肯定地说B更好。但是对于第二种情况，两者的比例仅为5比3，这样的数据就不显著了，因此没有足够的置信度说B更好</p>
 <p>（笔者注：实际上，McNemar检验的计算逻辑要稍微复杂一些。假设模型A正确但模型B错误的测试数据数量为<span class="math inline">\(b\)</span>，模型B正确但模型A错误的测试数据数量为<span class="math inline">\(c\)</span>，McNemar检验先计算的是<span class="math inline">\((b-c)^2/(b+c)\)</span>，然后把这个值看作是自由度为1的<span class="math inline">\(\chi^2\)</span>分布的值，通过这个值可以看p值。对于上图第二种情况，对应的p值大约为0.1x，不能说有显著性）</p>

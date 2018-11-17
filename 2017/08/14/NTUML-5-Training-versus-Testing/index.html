@@ -119,15 +119,15 @@
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="再谈\(E_{\rm in}\)与\(E_{\rm out}\) 上回提到，如果有足够多的根据统计方法生成的数据，而且\(\mathcal{H}\)是有限集，那么问题是可学习的。即如果假设集\(\mathcal{H}\)的基数是有限的，记为\(M\)，而且有样本量\(N\)足够大，那么对任意算法\(\mathcal{A}\)选出来的\(g\)，都会有\(E_{\rm out}(g) \approx">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML05_single_point">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML05_two_points">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML05_three_points_worst_case">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML05_growth_function_for_convex_sets">
-<meta property="og:updated_time" content="2017-12-19T12:35:39.000Z">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML05_single_point">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML05_two_points">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML05_three_points_worst_case">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML05_growth_function_for_convex_sets">
+<meta property="og:updated_time" content="2018-11-17T10:59:49.911Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NTUML 5. 训练 vs. 测试">
 <meta name="twitter:description" content="再谈\(E_{\rm in}\)与\(E_{\rm out}\) 上回提到，如果有足够多的根据统计方法生成的数据，而且\(\mathcal{H}\)是有限集，那么问题是可学习的。即如果假设集\(\mathcal{H}\)的基数是有限的，记为\(M\)，而且有样本量\(N\)足够大，那么对任意算法\(\mathcal{A}\)选出来的\(g\)，都会有\(E_{\rm out}(g) \approx">
-<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML05_single_point">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML05_single_point">
 
 
 
@@ -437,17 +437,17 @@ P[\mathcal{B}_1{\rm\ or\ }\mathcal{B}_2{\rm\ or\ }\ldots{\rm\ or\ }\mathcal{B}_M
 <h3 id="只有一个数据点">只有一个数据点</h3>
 <p>如果数据点只有一个，即输入向量<span class="math inline">\({\bf x}_1\)</span>只有一个，那么尽管线有无限多条，但是总体来讲只需要分成两类：<span class="math inline">\(h_1\)</span>类的线把<span class="math inline">\({\bf x}_1\)</span>判为正例，<span class="math inline">\(h_2\)</span>类的线把<span class="math inline">\({\bf x}_1\)</span>判为负例，如图所示</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML05_single_point" alt="输入只有一个数据点时，超平面只被分为两类"><figcaption>输入只有一个数据点时，超平面只被分为两类</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML05_single_point" alt="输入只有一个数据点时，超平面只被分为两类"><figcaption>输入只有一个数据点时，超平面只被分为两类</figcaption>
 </figure>
 <h3 id="有两个数据点">有两个数据点</h3>
 <p>如果输入向量有两个，所有线可以分为四类，这四类线对数据集的分类结果可以如下图所示</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML05_two_points" alt="输入如果有两个数据点，分类器一共有四种"><figcaption>输入如果有两个数据点，分类器一共有四种</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML05_two_points" alt="输入如果有两个数据点，分类器一共有四种"><figcaption>输入如果有两个数据点，分类器一共有四种</figcaption>
 </figure>
 <h3 id="有三个数据点">有三个数据点</h3>
 <p>如果输入向量有三个，大概率情况下，所有线可以分为八类。但是需要注意的是，<strong>这种情况并不总是成立的！</strong>如果输入的向量三点共线，那么所有分类器只能分成六类（其中有两类情况是线性不可分的，如下图所示）</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML05_three_points_worst_case" alt="有三个输入向量时的最坏情况。打叉的两种情况线性不可分"><figcaption>有三个输入向量时的最坏情况。打叉的两种情况线性不可分</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML05_three_points_worst_case" alt="有三个输入向量时的最坏情况。打叉的两种情况线性不可分"><figcaption>有三个输入向量时的最坏情况。打叉的两种情况线性不可分</figcaption>
 </figure>
 <h3 id="有四个数据点">有四个数据点</h3>
 <p>如果输入向量有四个，所有线最多可以分为14种（当然如果共线或者正负例交叠，分类器的种类就会更少）。</p>
@@ -482,7 +482,7 @@ m_\mathcal{H}(N) &amp;= {N+1 \choose 2} + 1 \\
 <p>接下来，考虑一个稍微复杂点的情况，即输入空间<span class="math inline">\(\mathcal{X} \in \mathbb{R}^2\)</span>，对<span class="math inline">\(h\in \mathcal{H}\)</span>，如果<span class="math inline">\(\bf x\)</span>在一个凸集合里（可以看做是二元平面上的凸多边形），则<span class="math inline">\(h({\bf x}) = +1\)</span>，否则<span class="math inline">\(h({\bf x}) = -1\)</span>，计算<span class="math inline">\(\mathcal{H}\)</span>的成长函数</p>
 <p>可以先看最极端的情况，即所有<span class="math inline">\({\bf x}_1, {\bf x}_2 , \ldots, {\bf x}_N\)</span>都放在一个大的圆上。此时，任何可能的二分法分类器都可以通过如下方法得到：找出所有标记为+1的点，所有相邻的点（跳过它们中间的负例点）以线相连，这样会得到一个凸多边形，凸多边形上（及其内部）的点都标记为+1，其外的点都标记为-1。下图给出了一个例子</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML05_growth_function_for_convex_sets" alt="凸集的成长函数"><figcaption>凸集的成长函数</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML05_growth_function_for_convex_sets" alt="凸集的成长函数"><figcaption>凸集的成长函数</figcaption>
 </figure>
 <p>因此，无论输入的<span class="math inline">\(N\)</span>有多大，总可以做出来<span class="math inline">\(\mathcal{H}\)</span>上的<strong>全部</strong>二分法分类器，即此时<span class="math inline">\(m_\mathcal{H}(N) = 2^N\)</span>。此时称这<span class="math inline">\(N\)</span>个点可以被假设集合<span class="math inline">\(\mathcal{H}\)</span><strong>打散</strong>（shatter）</p>
 <h2 id="停止点break-point">停止点（break point）</h2>

@@ -119,12 +119,12 @@
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="径向基函数网络假设函数 前面讲使用高斯核的SVM时曾经提到过这种模型的一个性质：在高斯核的帮助下，这种模型可以在无限维的空间里学习到一个最大间隔超平面。该模型的定义如下 \[ g_{\rm SVM}({\bf x}) = {\rm sign}\left(\sum_{\rm SV}\alpha_n y_n \exp(-\gamma\|{\bf x}-{\bf x}_n\|^2)+b\right) \">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML30_nn_and_rbf_network.png">
-<meta property="og:updated_time" content="2017-12-19T12:35:39.000Z">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML30_nn_and_rbf_network.png">
+<meta property="og:updated_time" content="2018-11-17T10:59:49.898Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NTUML 30. 径向基函数网络">
 <meta name="twitter:description" content="径向基函数网络假设函数 前面讲使用高斯核的SVM时曾经提到过这种模型的一个性质：在高斯核的帮助下，这种模型可以在无限维的空间里学习到一个最大间隔超平面。该模型的定义如下 \[ g_{\rm SVM}({\bf x}) = {\rm sign}\left(\sum_{\rm SV}\alpha_n y_n \exp(-\gamma\|{\bf x}-{\bf x}_n\|^2)+b\right) \">
-<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML30_nn_and_rbf_network.png">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML30_nn_and_rbf_network.png">
 
 
 
@@ -413,7 +413,7 @@ g_{\rm SVM}({\bf x}) = {\rm sign}\left(\sum_{\rm SV}\alpha_n y_n \exp(-\gamma\|{
 g_{\rm SVM}({\bf x}) = {\rm sign}\left(\sum_{\rm SV} \alpha_n g_n({\bf x}) + b\right)
 \]</span> 这样更清楚地表明<span class="math inline">\(g_{\rm SVM}\)</span>其实就是<span class="math inline">\(g_n\)</span>的线性组合，每个<span class="math inline">\(g_n\)</span>代表一个径向假设。而径向基函数网络（RBF网络）就是这种模型的延伸。之所以说它是一个“网络”，就是因为其结构与之前讲过的神经网络有类似的地方。下图给出了两者的对比</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML30_nn_and_rbf_network.png" alt="神经网络与RBF网络的对比"><figcaption>神经网络与RBF网络的对比</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML30_nn_and_rbf_network.png" alt="神经网络与RBF网络的对比"><figcaption>神经网络与RBF网络的对比</figcaption>
 </figure>
 <p>可以看出，两者的输出相同，都是线性组合。不同的地方在隐含层：神经网络是计算权重和输入的内积，然后做非线性变换<span class="math inline">\(\tanh\)</span>；而RBF网络则是计算两点之间的距离，然后使用高斯函数做变换。从历史上讲，RBF网络实际是神经网络的分枝</p>
 <p>总体来看，RBF网络的假设函数可以写成如下形式 <span class="math display">\[

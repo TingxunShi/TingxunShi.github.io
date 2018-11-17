@@ -119,14 +119,14 @@
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="二次函数假设 二维平面上，解决二元分类问题的分类器可以看做是一条直线（在更高维空间上，是一个超平面），其核心思想是使用权重向量\(\bf w\)对输入\(\bf x\)算一个分数\(s = {\bf w}^\mathsf{T}{\bf x}\)，然后对得到的分数做进一步处理。这种做法的好处是其VC维能够受到控制，因此\(E_{\rm in}\)和\(E_{\rm out}\)不会差太远。但是对于某">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML12_data_not_linear_separable.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML12_nonlinear_transform_steps.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML12_generalization_issue.png">
-<meta property="og:updated_time" content="2017-12-19T12:35:39.000Z">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML12_data_not_linear_separable.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML12_nonlinear_transform_steps.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML12_generalization_issue.png">
+<meta property="og:updated_time" content="2018-11-17T10:59:49.825Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NTUML 12. 非线性变换">
 <meta name="twitter:description" content="二次函数假设 二维平面上，解决二元分类问题的分类器可以看做是一条直线（在更高维空间上，是一个超平面），其核心思想是使用权重向量\(\bf w\)对输入\(\bf x\)算一个分数\(s = {\bf w}^\mathsf{T}{\bf x}\)，然后对得到的分数做进一步处理。这种做法的好处是其VC维能够受到控制，因此\(E_{\rm in}\)和\(E_{\rm out}\)不会差太远。但是对于某">
-<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML12_data_not_linear_separable.png">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML12_data_not_linear_separable.png">
 
 
 
@@ -406,7 +406,7 @@
         <h2 id="二次函数假设">二次函数假设</h2>
 <p>二维平面上，解决二元分类问题的分类器可以看做是一条直线（在更高维空间上，是一个超平面），其核心思想是使用权重向量<span class="math inline">\(\bf w\)</span>对输入<span class="math inline">\(\bf x\)</span>算一个分数<span class="math inline">\(s = {\bf w}^\mathsf{T}{\bf x}\)</span>，然后对得到的分数做进一步处理。这种做法的好处是其VC维能够受到控制，因此<span class="math inline">\(E_{\rm in}\)</span>和<span class="math inline">\(E_{\rm out}\)</span>不会差太远。但是对于某些数据<span class="math inline">\(\mathcal{D}\)</span>，例如下图中给出的这种，可以发现无论怎么画线，都很难很好地将数据集分开。也就是说，不论怎么画线，<span class="math inline">\(E_{\rm in}\)</span>都会非常大，因此<span class="math inline">\(E_{\rm out}\)</span>也会很大。这样，线性模型在这样的数据集上无论如何都学不好。基于这样的状况，如何突破线性模型的限制成为了必须要解决的问题</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML12_data_not_linear_separable.png" alt="非线性可分数据集的例子"><figcaption>非线性可分数据集的例子</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML12_data_not_linear_separable.png" alt="非线性可分数据集的例子"><figcaption>非线性可分数据集的例子</figcaption>
 </figure>
 <p>经过观察，可以发现，尽管上图中的<span class="math inline">\(\mathcal{D}\)</span>并不是线性可分，但是可以用一个圆（半径为<span class="math inline">\(\sqrt{0.6}\)</span> ）将这些数据都分开，因此，可以用假设函数 <span class="math display">\[
 h_{\rm SEP}({\bf x}) = {\rm sign}(-x_1^2 - x_2^2 + 0.6)
@@ -441,7 +441,7 @@ h({\bf x}) = \tilde{h}({\bf z}) = {\rm sign}(\tilde{\bf w}^\mathsf{T}\boldsymbol
 </blockquote>
 <p>也可参考如下图例。注意使用非线性变换时一般没有<span class="math inline">\(\boldsymbol{\Phi}^{-1}\)</span>的那一步，图中加上这一步只是为了加深理解（实际上，<span class="math inline">\(\boldsymbol{\Phi}\)</span>的反函数是否存在也未可知）</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML12_nonlinear_transform_steps.png" alt="非线性变换过程图解"><figcaption>非线性变换过程图解</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML12_nonlinear_transform_steps.png" alt="非线性变换过程图解"><figcaption>非线性变换过程图解</figcaption>
 </figure>
 <p>非线性变换是一个独立的提取特征的操作，因此它不一定只能用在二元分类问题上，而是可以和所有其它线性模型相结合。需要注意的是，非线性变换只是得到新特征的一种方法，而特征工程是解决机器学习问题时最重要的“原力”之一</p>
 <h2 id="非线性变换的代价">非线性变换的代价</h2>
@@ -450,7 +450,7 @@ h({\bf x}) = \tilde{h}({\bf z}) = {\rm sign}(\tilde{\bf w}^\mathsf{T}\boldsymbol
 <h3 id="模型复杂度代价">模型复杂度代价</h3>
 <p>另一方面，特征变换以后，新的权重<span class="math inline">\(\tilde{\bf w}\)</span>有<span class="math inline">\(\tilde{d}+1\)</span>个自由变量。由前面提到的VC维和自由变量数之间的关系，<span class="math inline">\(\mathcal{H}_{\boldsymbol{\Phi}_Q}\)</span>的VC维大概就是<span class="math inline">\(\tilde{d}+1\)</span>。这意味着当<span class="math inline">\(Q\)</span>变大时，模型的VC维也会变大。这会带来什么问题？考虑下面这个带噪声的数据集，左边使用线性特征做分类，右边使用四次特征做分类</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML12_generalization_issue.png" alt="使用低维特征和高维特征对有噪声样本分类结果的比较"><figcaption>使用低维特征和高维特征对有噪声样本分类结果的比较</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML12_generalization_issue.png" alt="使用低维特征和高维特征对有噪声样本分类结果的比较"><figcaption>使用低维特征和高维特征对有噪声样本分类结果的比较</figcaption>
 </figure>
 <p>尽管<span class="math inline">\(\boldsymbol{\Phi}_4\)</span>转换以后分类器可以做到<span class="math inline">\(E_{\rm in}\)</span>为0，但是<em>看上去</em><span class="math inline">\(\boldsymbol{\Phi}_1\)</span>更符合直觉。这又带来了一个均衡问题：低维的<span class="math inline">\(\tilde{d}(Q)\)</span>可以使<span class="math inline">\(E_{\rm out}\)</span>与<span class="math inline">\(E_{\rm in}\)</span>足够接近，但是不能得到足够小的<span class="math inline">\(E_{\rm in}\)</span>；高维的<span class="math inline">\(\tilde{d}(Q)\)</span>可以得到足够小的<span class="math inline">\(E_{\rm in}\)</span>，但是不能让<span class="math inline">\(E_{\rm in}\)</span>足够接近于<span class="math inline">\(E_{\rm out}\)</span></p>
 <p>那么如何选择这个合适的<span class="math inline">\(Q\)</span>呢？上面这个例子里，可以通过用眼看来选择。但是用眼看总是一个很好的方法吗？先不说当<span class="math inline">\(d = 10\)</span>时如何用眼偷看资料，仅考虑最开始举的那个例子</p>

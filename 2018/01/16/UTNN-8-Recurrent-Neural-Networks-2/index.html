@@ -119,13 +119,13 @@
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="无Hessian矩阵（Hessian-Free, HF）优化法及其应用 HF优化原理 假设损失函数是一个二次曲线（曲率恒定），确切说，是一个碗口向上的抛物线，那么在这个曲线上选定方向，向前一直前进，误差在重新变大之前会减少多少？这个值取决于梯度和曲率的比值，所以如果选定的方向是好的方向，这个比值应该高。也就是说，梯度小的地方曲率也小 之前在讲神经网络优化的时候，曾经提到过，如果选最陡的方向做梯度下">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_07_vanilla_char_model.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_08_factor.png">
-<meta property="og:updated_time" content="2018-01-17T14:54:03.000Z">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_07_vanilla_char_model.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_08_factor.png">
+<meta property="og:updated_time" content="2018-11-17T10:59:49.975Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hinton神经网络与机器学习 8. 循环神经网络 II">
 <meta name="twitter:description" content="无Hessian矩阵（Hessian-Free, HF）优化法及其应用 HF优化原理 假设损失函数是一个二次曲线（曲率恒定），确切说，是一个碗口向上的抛物线，那么在这个曲线上选定方向，向前一直前进，误差在重新变大之前会减少多少？这个值取决于梯度和曲率的比值，所以如果选定的方向是好的方向，这个比值应该高。也就是说，梯度小的地方曲率也小 之前在讲神经网络优化的时候，曾经提到过，如果选最陡的方向做梯度下">
-<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_07_vanilla_char_model.png">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_07_vanilla_char_model.png">
 
 
 
@@ -424,7 +424,7 @@
 </ul>
 <p>因此设计一个RNN来建立一个字符模型是有必要的，即使用<span class="math inline">\(T\)</span>时刻的隐藏状态和输入来决定<span class="math inline">\(T+1\)</span>时刻的隐藏状态，然后通过一个softmax来产生下一个可能的字符。假设输入字符表有86个， 隐藏层有一层，里面有1500个隐藏单元，那么下面给出了这个RNN的示意图</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_07_vanilla_char_model.png" alt="比较自然的RNN网络用来做字符级语言模型建模"><figcaption>比较自然的RNN网络用来做字符级语言模型建模</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_07_vanilla_char_model.png" alt="比较自然的RNN网络用来做字符级语言模型建模"><figcaption>比较自然的RNN网络用来做字符级语言模型建模</figcaption>
 </figure>
 <p>但是一般并不会使用这种体系结构（这里存疑，因为感觉现在常见的用的的确是这种结构）。为什么呢？由于理论上任何前缀后面都可以跟86个字母中的任意一个，因此最后可以组成一个很大的树，如图所示。每当接受一个字符输入时，都会沿着这棵树向下走向一个新的节点。对于长度为<span class="math inline">\(N\)</span>的词，如果用的是统计的方法，那么就需要存储整个的这棵大树，每条边实际上存储了给定前面所有前缀的情况下，接下来的字母的概率。在RNN里，这样的前缀信息被隐藏状态向量来表示，也就是说，每个输入都会把当前的隐藏状态转化为一个新的隐藏状态</p>
 <p>使用神经网络的隐层（隐式地）实现这棵树有一个好处，就是可以共享很多结构。例如当前面的输入为f, i, x时，已经可以判断出来正在输入的可能是一个动词，而这时如果再输入i，后面跟着的很可能会是n和g。这种“前面是动词，输入i，后面可能是ng”的知识可以共享给所有其他动词。需要再着重提一下的是，是当前的隐藏状态和当前的输入<strong>共同</strong>决定了接下里的输出。如果隐藏状态里没有动词信息，那么输入i并不一定期望后面是ng。</p>
@@ -432,7 +432,7 @@
 <p>基于前面的介绍，现在要解决的问题是，如何使用当前的输入字符来确定从当前隐藏状态到下一个隐藏状态的权重矩阵。对于原始的做法，实际上要把所有86个字符都试一遍，来找出一个1500 x 1500的矩阵，这样会有很多参数（86 x 1500 x 1500），容易过拟合。如果非要使用这种方法，也需要数据量很大的时候才行（但是我个人感觉这个条件已经可以很容易地满足了）</p>
 <p>前面提到，对不同的单词，可以有一些通用的“特征”。那么一个思路就是，使用这样的特征来减少参数的数量，同时仍然实现这种“乘性连接”的功能。即，对着86个字符训练不同的转移矩阵，但是让这些矩阵共享参数。在这里，引入“因子”（factor）的概念，并假设因子的输入是两个组a和b，输出是一个组c。如下所示</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_08_factor.png" alt="因子示意图"><figcaption>因子示意图</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_08_factor.png" alt="因子示意图"><figcaption>因子示意图</figcaption>
 </figure>
 <p>因子会先对其两个输入组各自计算加权和<span class="math inline">\({\bf a}^\mathsf{T}{\bf u}_f\)</span>以及<span class="math inline">\({\bf b}^\mathsf{T}{\bf w}_f\)</span>，然后，将这两个积再相乘，可以得到一个标量。用这个标量去缩放输出权重<span class="math inline">\({\bf v}_f\)</span>可以得到组c的输入，即 <span class="math display">\[
 {\bf c}_f = ({\bf b}^\mathsf{T}{\bf w}_f)({\bf a}^\mathsf{T}{\bf u}_f){\bf v}_f

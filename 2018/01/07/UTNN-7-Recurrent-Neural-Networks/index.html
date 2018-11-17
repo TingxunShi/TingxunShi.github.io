@@ -119,16 +119,16 @@
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="对序列建模 当使用机器学习方法对序列建模时，通常是要把一个序列转化为另一个序列。例如，想把英语单词序列转化为法语单词序列（机器翻译），或者是将声音信号转化为单词的文本序列（语音识别）。有的时候，并没有一个单独的目标序列，在这种情况下，可以通过试着预测输入序列的下一个项（item）来获取一个教学信号，因此此时目标输出序列就是一步之后的输入序列——对于时间序列来说，这种预测是很正常的。不过对于图像则不">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_07_linear_dynamical_systems.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_07_HMM.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_07_providing_input_to_RNN.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_07_RNN_teaching_signals.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_07_Binary_Addition_FSA.png">
-<meta property="og:updated_time" content="2018-01-16T14:12:43.000Z">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_07_linear_dynamical_systems.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_07_HMM.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_07_providing_input_to_RNN.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_07_RNN_teaching_signals.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_07_Binary_Addition_FSA.png">
+<meta property="og:updated_time" content="2018-11-17T10:59:49.972Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hinton神经网络与机器学习 7. 循环神经网络 I">
 <meta name="twitter:description" content="对序列建模 当使用机器学习方法对序列建模时，通常是要把一个序列转化为另一个序列。例如，想把英语单词序列转化为法语单词序列（机器翻译），或者是将声音信号转化为单词的文本序列（语音识别）。有的时候，并没有一个单独的目标序列，在这种情况下，可以通过试着预测输入序列的下一个项（item）来获取一个教学信号，因此此时目标输出序列就是一步之后的输入序列——对于时间序列来说，这种预测是很正常的。不过对于图像则不">
-<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_07_linear_dynamical_systems.png">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_07_linear_dynamical_systems.png">
 
 
 
@@ -412,12 +412,12 @@
 <p>其他一些模型可以让其隐藏状态有一些内部的动态变化，这样这些隐藏状态可以根据自身内部的动态性演化，并产生观察结果。通过该机制，模型可以在隐藏状态里存储信息，并保留比较长的一段时间。如果隐藏状态的动态性是带有噪声的，而且它通过隐藏状态生成输出的过程也是带有噪声的，那么通过观察这种生成模型的输出是不可能推断其具体的隐藏状态的，只能推测在所有可能隐藏状态向量的概率分布，而这个过程通常比较难。不过对某两种特殊的隐藏状态模型，它们的隐藏状态分布是可计算的</p>
 <p>第一种模型是<strong>线性动态系统</strong>（linear dynamical systems），在工程界得到了广泛应用。下图给出了该模型的示意图</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_07_linear_dynamical_systems.png" alt="线性动态系统示意图"><figcaption>线性动态系统示意图</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_07_linear_dynamical_systems.png" alt="线性动态系统示意图"><figcaption>线性动态系统示意图</figcaption>
 </figure>
 <p>这种生成模型的隐藏状态都是实数，有线性动态性（由红色箭头表示），这种动态性带有高斯噪声，所以隐藏状态会按照一定概率演化。模型的底部是驱动输入，可以直接影响隐藏单元，而隐藏单元会决定输出。因此为了预测系统的下一个输出，就需要能推断隐藏状态。这里隐藏状态可以被推断的关键原因是因为假设了动态性是高斯噪声，满足高斯分布，而高斯分布的一个特点就是对高斯分布做线性变换的结果还是一个高斯分布，因此给定观察结果（输出）时隐藏状态的分布也是高斯分布（实际上，是一个完全协方差高斯分布，即协方差矩阵元素都不为0）。对于这类问题，可以用<strong>卡尔曼滤波</strong>（Kalman filtering）来解决</p>
 <p>第二种模型是<strong>隐马尔可夫模型</strong>（hidden Markov model, HMM），它使用的是离散分布，基于离散数学，因此广受计算机科学家喜爱。下图给出了HMM的示意图</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_07_HMM.png" alt="HMM示意图"><figcaption>HMM示意图</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_07_HMM.png" alt="HMM示意图"><figcaption>HMM示意图</figcaption>
 </figure>
 <p>在HMM中，隐藏状态是<span class="math inline">\(N\)</span>个可能值中的一个，状态之间的转移符合某种概率分布，可以组成一个概率矩阵<span class="math inline">\(\rm M\)</span>，称为转移矩阵。例如，从状态1转移到状态2的概率是<span class="math inline">\({\rm M}_{12}\)</span>。而且，输出模型也是随机的，因此系统所在的状态不能完全决定其所产生的输出，也就是说，内部状态“隐藏”在这个概率矩阵的背后。为了预测HMM的下一个输出，需要推测其可能位于哪个隐藏状态，对此可以使用一种动态规划算法，通过观测值可以推出隐藏状态的概率分布矩阵。得到概率分布矩阵以后，就可以得到HMM算法。这种算法在2012年左右是语音识别算法的首选（也是输入法引擎算法的首选）</p>
 <p>HMM有一个非常基本的局限性：它每次产生数据的时候，都会选择从<span class="math inline">\(N\)</span>个隐藏状态中选择一个。所以每个隐藏状态中储存的时间信息最多有<span class="math inline">\(\log N\)</span>位。假设现在要使用HMM生成一句话，已经生成了前一半，要生成后一半，则它对前一半的记忆是通过其在<span class="math inline">\(N\)</span>个隐藏状态中的哪一个来体现，所以只有信息中的<span class="math inline">\(\log N\)</span>位。为了让句子的后一半与前一半相协调，则后面的句子的语法要与前面匹配（性、数、格一致），语义要与前面匹配，语调、口音、音色等等都需要匹配。所以如果需要使用HMM来生成一个句子，那么隐藏状态需要覆盖所有这些信息。假设这些信息一共有100位，那么HMM就需要<span class="math inline">\(2^{100}\)</span>个状态！</p>
@@ -440,7 +440,7 @@
 <p>这样，就可以得到RNN的反向传播算法，不过这一算法更常见地是被称作“随时间推移的反向传播算法”（BackPropagation Through Time，BPTT）。因此， 可以从时间的角度来思考这个算法：正向的一趟计算在每个时间步都对所有隐藏单元的行为做一次计算，然后构建起一个栈；反向的一趟计算在每个时间步计算错误的偏导数，然后一步步把这个栈拆解掉（这也是为什么这个算法被称为是“随时间推移的”的原因）。在反向传播以后，就可以把所有不同时间步对各个权重的偏导数加起来，通过一定的比例变换最终让每层权重相同</p>
 <p>对于RNN，还有一个初始状态的问题。尽管可以将所有初始状态都设定成一个默认值，但是这样网络的效果不会特别好。事实上，也可以像学习权重那样学到网络中的状态，即先对所有非输入节点设定一个随机的初始值，然后每次反向传播也计算误差函数对状态的梯度，使用梯度下降来对状态进行修改。RNN中的初始状态有很多种初始化方法</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_07_providing_input_to_RNN.png" alt="RNN的状态初始化"><figcaption>RNN的状态初始化</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_07_providing_input_to_RNN.png" alt="RNN的状态初始化"><figcaption>RNN的状态初始化</figcaption>
 </figure>
 <ul>
 <li>上图左给出的方法是先指定所有单元的初始状态。如果把RNN看作权重受限的前向网络，这种做法比较自然</li>
@@ -449,7 +449,7 @@
 </ul>
 <p>类似地，RNN的学习目标也有很多种选择方法</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_07_RNN_teaching_signals.png" alt="RNN的学习目标选择"><figcaption>RNN的学习目标选择</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_07_RNN_teaching_signals.png" alt="RNN的学习目标选择"><figcaption>RNN的学习目标选择</figcaption>
 </figure>
 <ul>
 <li>上图左给出的方法是选择所有单元的最后状态。如果把RNN看作权重受限的前向网络，这种做法比较自然</li>
@@ -459,7 +459,7 @@
 <h2 id="示例训练一个简单的rnn">示例：训练一个简单的RNN</h2>
 <p>本节我们来考虑这样一个问题：如何训练一个神经网络，使得其输入为两个二进制数字，输出它们的和（也是二进制表示）。这个问题是可以用普通的前馈神经网络解决的，但是做起来比较麻烦：首先，需要预先确定加数、被加数以及和的最大位数。此外，更重要的是，对两个输入不同位上的做法是不能泛化的。确切说，对于两个输入，前面的处理逻辑和后面的处理逻辑使用不同的权重，因此两者的逻辑不能自动泛化。这意味着，使用前馈神经网络不能优雅地解决二进制加法问题</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_07_Binary_Addition_FSA.png" alt="解决二进制加法的有限状态自动机"><figcaption>解决二进制加法的有限状态自动机</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_07_Binary_Addition_FSA.png" alt="解决二进制加法的有限状态自动机"><figcaption>解决二进制加法的有限状态自动机</figcaption>
 </figure>
 <p>上图给出了一个解决二进制加法问题的有限状态自动机。系统在每个时刻都会处于图中的某个状态，然后接受下一列的两个数，根据输入决定状态的转移，进入到某个状态时则做相应的动作。假设现在自动机在右上角的状态，它会输出1，同时打开进位器。下一栏的两个数都是1，那么它会进入到相同的状态，输出1。但是如果下一栏的两个数一个是1一个是0，则它还会打开进位器，但是进入到右下角的状态，输出0；如果下一栏的两个数都是0，那么它关闭进位器，进入到左上角的状态，输出1。这意味着解决二进制加法的RNN需要有两个输入单元和一个输出单元，对应于在每个时刻接受两个输入位产生一个输出位</p>
 <p>需要注意的是，网络的输出对应于两个时间步之前的输出。要延迟两个时间步的原因是，网络需要一个时间步来根据输入更新隐藏单元，另一个时间步来从隐藏状态产生输出。因此网络最少只需要三个隐藏单元，这三个单元是双向全连接的，每个方向的权重不同。这样的结构使得网络可以根据时刻<span class="math inline">\(t\)</span>的隐藏状态推断出时刻<span class="math inline">\(t+1\)</span>的隐藏状态。从输入单元到隐藏单元是普通的前馈模式，这样隐藏状态可以获取输入；类似地，从隐藏单元到输出单元也是普通的前馈模式，以产生最终输入</p>

@@ -119,13 +119,13 @@
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="停止点对成长函数值的限制 如果对于某个\(\mathcal{H}\)，其停止点\(k=2\)，这透露了什么信息？这意味着当\(N=1\)时，可以产生两种二分法分类器，\(m_\mathcal{H} = 2\)；但是当\(N=2\)时，由于达到了停止点，由定义必然有\(m_\mathcal{H} (N) &amp;lt; 2^2 = 4\)，因此最多产生三种分类器。 那么当\(N=3\)呢？我们把分类器集合">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML06_B_4_3">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML06_bound_func_table">
-<meta property="og:updated_time" content="2017-12-19T12:35:39.000Z">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML06_B_4_3">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML06_bound_func_table">
+<meta property="og:updated_time" content="2018-11-17T10:59:49.915Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NTUML 6. 一般化理论">
 <meta name="twitter:description" content="停止点对成长函数值的限制 如果对于某个\(\mathcal{H}\)，其停止点\(k=2\)，这透露了什么信息？这意味着当\(N=1\)时，可以产生两种二分法分类器，\(m_\mathcal{H} = 2\)；但是当\(N=2\)时，由于达到了停止点，由定义必然有\(m_\mathcal{H} (N) &amp;lt; 2^2 = 4\)，因此最多产生三种分类器。 那么当\(N=3\)呢？我们把分类器集合">
-<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML06_B_4_3">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML06_B_4_3">
 
 
 
@@ -458,7 +458,7 @@ B(N, k) = 2^N - 1{\rm\ for\ }N = k
 <p><span class="math inline">\(N&gt;k\)</span>且<span class="math inline">\(k\not=1\)</span>的情况比较复杂。不过经过观察，似乎<span class="math inline">\(B(4,3)\)</span>与<span class="math inline">\(B(3,?)\)</span>有联系：把已有的4个点去掉一个，或者向原有的3个点增加一个，问题就会互相转化。</p>
 <p>暴力搜索以后，发现<span class="math inline">\(B(4,3) = 11\)</span>。但是这个值怎么与前一行的值联系起来呢？可以将<span class="math inline">\(B(4,3)\)</span>的解重新整理，归为两类，如下图所示</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML06_B_4_3" alt="B(4,3)合法分类器的全部形式与归类"><figcaption>B(4,3)合法分类器的全部形式与归类</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML06_B_4_3" alt="B(4,3)合法分类器的全部形式与归类"><figcaption>B(4,3)合法分类器的全部形式与归类</figcaption>
 </figure>
 <p>其中橙色部分的解都是“成双成对”的，即(1, 5)，(2, 8)，(3, 10)，(4, 11)这些分类器只是对<span class="math inline">\({\bf x}_4\)</span>的分法不同。而紫色部分的解相对“形单影只”，没有其它组合可以对应。如果记橙色部分的数量是<span class="math inline">\(2\alpha\)</span>，紫色部分的数量是<span class="math inline">\(\beta\)</span>，那么首先可以立即得到<span class="math inline">\(B(4,3) = 11 = 2\alpha + \beta\)</span></p>
 <p>进一步地，从输入集中去掉<span class="math inline">\({\bf x}_4\)</span>以后，可以得到<span class="math inline">\(\alpha + \beta\)</span>个二分法分类器。由上限函数中参数值可知，目前的假设集合<span class="math inline">\(\mathcal{H}\)</span>停止点为3，意味着不存在能打散三个输入的假设函数，所以<span class="math inline">\(\alpha+\beta\)</span>也不应该打散这三个输入。因此可以得到第一个推导 <span class="math display">\[
@@ -474,7 +474,7 @@ B(N, k) &amp;= 2\alpha + \beta \\
 \end{align*}
 \]</span> 即得到了上限函数的上限。最后可以填出如下的表格</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML06_bound_func_table" alt="上限函数的上限表"><figcaption>上限函数的上限表</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML06_bound_func_table" alt="上限函数的上限表"><figcaption>上限函数的上限表</figcaption>
 </figure>
 <p>由上表的边界情况和递推式，有 <span class="math display">\[
 B(N, k) \le \sum_{i=0}^{k-1}{N \choose i}

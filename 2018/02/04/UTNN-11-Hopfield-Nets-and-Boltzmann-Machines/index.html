@@ -100,7 +100,7 @@
 
 
 
-  <meta name="keywords" content="UTNN,玻尔兹曼机,Hopfield网,模拟退火," />
+  <meta name="keywords" content="UTNN,Hopfield网,玻尔兹曼机,模拟退火," />
 
 
 
@@ -112,20 +112,20 @@
 
 
 <meta name="description" content="Hopfield网 本讲开始介绍的神经网络和传统的前馈神经网络不同，它们的性质都是由某个全局的能量函数推演而来，因此称为基于能量的模型。Hopfield网络是其中最简单的一种，由二元阈值的单元组成，单元之间有循环连接。通常来讲，带有循环连接和非线性神经元的网络不太好分析，因为其行为比较难以捉摸：它们可以陷入稳态，可以振荡，甚至可以陷入混沌（除非你知道无限精度的初始状态，否则无法预测不远的将来的状态">
-<meta name="keywords" content="UTNN,玻尔兹曼机,Hopfield网,模拟退火">
+<meta name="keywords" content="UTNN,Hopfield网,玻尔兹曼机,模拟退火">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Hinton神经网络与机器学习 11. Hopfield网和玻尔兹曼机">
 <meta property="og:url" content="txshi-mt.com/2018/02/04/UTNN-11-Hopfield-Nets-and-Boltzmann-Machines/index.html">
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="Hopfield网 本讲开始介绍的神经网络和传统的前馈神经网络不同，它们的性质都是由某个全局的能量函数推演而来，因此称为基于能量的模型。Hopfield网络是其中最简单的一种，由二元阈值的单元组成，单元之间有循环连接。通常来讲，带有循环连接和非线性神经元的网络不太好分析，因为其行为比较难以捉摸：它们可以陷入稳态，可以振荡，甚至可以陷入混沌（除非你知道无限精度的初始状态，否则无法预测不远的将来的状态">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_11_example_of_spurious_minima.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_11_hopfield_net_with_hidden_units_example.png">
-<meta property="og:updated_time" content="2018-02-08T12:29:33.744Z">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_11_example_of_spurious_minima.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_11_hopfield_net_with_hidden_units_example.png">
+<meta property="og:updated_time" content="2018-11-17T10:59:49.937Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hinton神经网络与机器学习 11. Hopfield网和玻尔兹曼机">
 <meta name="twitter:description" content="Hopfield网 本讲开始介绍的神经网络和传统的前馈神经网络不同，它们的性质都是由某个全局的能量函数推演而来，因此称为基于能量的模型。Hopfield网络是其中最简单的一种，由二元阈值的单元组成，单元之间有循环连接。通常来讲，带有循环连接和非线性神经元的网络不太好分析，因为其行为比较难以捉摸：它们可以陷入稳态，可以振荡，甚至可以陷入混沌（除非你知道无限精度的初始状态，否则无法预测不远的将来的状态">
-<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_11_example_of_spurious_minima.png">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_11_example_of_spurious_minima.png">
 
 
 
@@ -419,7 +419,7 @@ E = -\sum_is_ib_i - \sum_{i&lt;j}s_is_jw_{ij}
 <p>Hopfield网的存储能力是一个问题。对一个有<span class="math inline">\(N\)</span>个节点，全连接的网使用前面的存储规则，网络的容量大概是<span class="math inline">\(0.15N\)</span>的记忆内容。也就是说，如果有<span class="math inline">\(N\)</span>个单元，每个单元有两种取值，在有两个单元的记忆开始出现混淆之前，可以存储的记忆数量大概是<span class="math inline">\(0.15N\)</span>。每个记忆都是<span class="math inline">\(N\)</span>个单元的一个随机配置，所以有<span class="math inline">\(N\)</span>比特信息，因此Hopfield网能存储的信息总量是<span class="math inline">\(0.15N^2\)</span>比特。也就是说，计算机使用了<span class="math inline">\(0.15N^2\)</span>个比特来存储权重，因此这种分布式记忆+局部特征最小化的方法难以使计算机有效利用其存储能力：网络中一共有<span class="math inline">\(N^2\)</span>个权重和偏置，存储<span class="math inline">\(M\)</span>个记忆以后，每个连接权重的取值是<span class="math inline">\([-M, M]\)</span>之间的一个整数（因为假设初始状态是-1或1，每存入一个记忆以后权重增1/减1），因此存储所有权重和偏置理论上需要的比特数是<span class="math inline">\(N^2\log (2M+1)\)</span></p>
 <p>所以是什么限制了Hopfield网的能力呢？每次要记住的配置时，都希望可以创造一个新的能量最小值。如下图所示，对某两个二元配置，理想状态是学到两个最小值点，一个是蓝色的，一个是绿色的。不过实际上，由于两者很近，因此最后会发生混淆，两者合并成一个红色的，更小的最小值点，但是不能对这两个二元配置作区分（这部分参考了<a href="https://www.zhihu.com/question/56994540/answer/191053894" target="_blank" rel="noopener">知乎问答：关于Hopfield神经网络</a> ）。这种相邻最小值点的融合现象称为“伪最小值点”（spurious minima）</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_11_example_of_spurious_minima.png" alt="伪最小值点的示意"><figcaption>伪最小值点的示意</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_11_example_of_spurious_minima.png" alt="伪最小值点的示意"><figcaption>伪最小值点的示意</figcaption>
 </figure>
 <p>Hopfield、Feinstein和Palmer等人提出了一种应对策略：让网络从一个随机初始状态开始，做一些“忘却”（unlearning）操作。也就是说，不管它处于什么状态，反着用前面提到的存储规则。以前面的图为例，假设现在处于红色的峰值点，经过一些“忘却”以后，就可以脱离这个点，得到了两个独立的最小值，进而增大记忆量。这种方法实践中管用，但是发明者没有做出比较好的原理分析。Francis Crick和Graham Micherson认为忘却法与快速眼球移动睡眠（REM睡眠）的过程很像（具体解释略去）。不过，关于忘却法的另一个问题是，应该忘掉多少东西？实际上，忘却的内容也是使用数据拟合模型这一过程的一部分。如果使用最大似然法拟合这个模型，忘却的过程会自然而然地出现，因此关键问题是提出一个合适的代价函数</p>
 <p>在具体介绍忘却法的代价函数之前，先看一看物理学家是如何增强Hopfield网能力的。Elizabeth Gardner提出了一种方法，就是不像之前那样只遍历一遍数据集就存一个向量，而是循环遍历多次训练集。这样，牺牲的是在线学习能力，得到的是更有效的存储。整个训练过程有点像感知机的收敛过程：让整个网络先进入到某个记忆状态，然后单独来看每个单元，判断给定所有其它单元状态的情况下，该单元是否展现了想要的状态。如果结果为“是”，那么让其输入的权重不变；否则按照收敛过程指定的权重更新规则更新权重。这种方法被统计学家称为“伪似然法”。不过Hopfield网中的权重都是对称的，因此对每个权重需要获得两组梯度然后求均值</p>
@@ -428,7 +428,7 @@ E = -\sum_is_ib_i - \sum_{i&lt;j}s_is_jw_{ij}
 <p>举个例子，当你看到图片里的一条二维的线，它应该是由什么样的三维物体的边缘所投影出来的？实际上，它可能对应了很多不同的三维物体，因为投影时边缘两端的深度信息都已经丢失了。而且，如果若干物体都放在一起，它们之间存在相互遮挡，那么你能看到的其实也只是一条线</p>
 <p>假设现在有若干张图片，每张图片里面有若干条线。可以建立一组神经元，每个神经元对应图中的一条线。由于对任意一张图片，很难包含所有的线，因此对给定的一张图片，只有若干几个神经元能够被激活。这些神经元是输入神经元。然后，对所有三维物体的线或边缘，也对应建立神经元。由于一条二维线可以对应若干三维物体，因此对某个被激活的输入神经元，可以与其所有对应的隐藏神经元建立联系</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_11_hopfield_net_with_hidden_units_example.png" alt="使用带隐藏单元的Hopfield网学习二维线段与三维物体边缘联系的示意图"><figcaption>使用带隐藏单元的Hopfield网学习二维线段与三维物体边缘联系的示意图</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_11_hopfield_net_with_hidden_units_example.png" alt="使用带隐藏单元的Hopfield网学习二维线段与三维物体边缘联系的示意图"><figcaption>使用带隐藏单元的Hopfield网学习二维线段与三维物体边缘联系的示意图</figcaption>
 </figure>
 <p>上图给出了一个示意图。这里，输入神经元与隐藏神经元之间的绿色连线表示两者存在可能的对应关系，每个连接都共享相同的权重。由于一条二维线段只对应于一种可能的三维物体，因此这些隐藏神经元之间彼此还存在竞争关系，以红线表示</p>
 <p>接下来，要建模的是不同输入单元对应的两组隐藏单元之间的关系：图片中两条二维直线相交，通常意味着两个对应的三维物体在交点处有同样的深度，因此可以建立两个隐藏单元之间的联系（上图中连接两隐藏神经元的细绿色箭头）。除此以外，如果三维物体之间不仅相交还相互垂直，那么就给一个比较强的连接。这样，在建立了隐藏单元与输入单元的连接，以及隐藏单元之间的连接以后，就可以对某个输入图像做出解释</p>
@@ -526,9 +526,9 @@ p({\bf v}) = \frac{ \sum_{ {\bf h}}e^{-E({\bf v}, {\bf h})}}{\sum_{ {\bf u}, {\b
           
             <a href="/tags/UTNN/" rel="tag"># UTNN</a>
           
-            <a href="/tags/玻尔兹曼机/" rel="tag"># 玻尔兹曼机</a>
-          
             <a href="/tags/Hopfield网/" rel="tag"># Hopfield网</a>
+          
+            <a href="/tags/玻尔兹曼机/" rel="tag"># 玻尔兹曼机</a>
           
             <a href="/tags/模拟退火/" rel="tag"># 模拟退火</a>
           

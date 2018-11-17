@@ -119,12 +119,12 @@
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="奥卡姆剃刀  Entia non sunt multiplicanda praeter necessitatem ----William of Occam (1287-1347)  该拉丁格言的意译为“如无必要，勿增实体”。用在机器学习的领域，意味着对数据最简单的拟合往往也是最好的。不过这里有两个问题：1. 说一个模型“简单”是什么意思，2. 我们怎么知道越简单就越好 简单的模型 之前其实提到过什">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-09-15%2009.44.11.png">
-<meta property="og:updated_time" content="2017-12-19T12:35:39.000Z">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-09-15%2009.44.11.png">
+<meta property="og:updated_time" content="2018-11-17T10:59:49.839Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NTUML 16. 三条锦囊妙计">
 <meta name="twitter:description" content="奥卡姆剃刀  Entia non sunt multiplicanda praeter necessitatem ----William of Occam (1287-1347)  该拉丁格言的意译为“如无必要，勿增实体”。用在机器学习的领域，意味着对数据最简单的拟合往往也是最好的。不过这里有两个问题：1. 说一个模型“简单”是什么意思，2. 我们怎么知道越简单就越好 简单的模型 之前其实提到过什">
-<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-09-15%2009.44.11.png">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-09-15%2009.44.11.png">
 
 
 
@@ -433,7 +433,7 @@
 <p>假设拿到了某种货币8年的汇率情况，希望对汇率的走势进行预测（假设是用过去20天的汇率情况预测第21天的汇率情况）。一种自然的对数据集的划分是把前6年的数据作为训练集，后2年的数据作为测试集。可以看出来，这是一个回归问题</p>
 <p>处理该问题时，为了避免原始数据取值范围太大对模型造成影响，通常要对数据做一个缩放（scale）。正常的情况下，应该是将训练数据和测试数据分别作缩放操作。但是如果将这两组数据放在一起缩放，缩放缩放完以后再划分，会是什么结果？</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-09-15%2009.44.11.png" alt="数据窥探对模型造成的影响"><figcaption>数据窥探对模型造成的影响</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/%E5%B1%8F%E5%B9%95%E5%BF%AB%E7%85%A7%202017-09-15%2009.44.11.png" alt="数据窥探对模型造成的影响"><figcaption>数据窥探对模型造成的影响</figcaption>
 </figure>
 <p>可以看出，尽管后两年的数据没有直接参与训练，但是仍然对模型效果产生了影响。因为在缩放的时候，训练数据已经隐含地知道了测试数据的一些统计信息（例如最大值、最小值、均值、标准差等等）</p>
 <p>学术研究中也有类似数据窥探的现象。一般研究时，都会有一个标准数据集<span class="math inline">\(\mathcal{D}\)</span>。假设研究机构A提出了一个模型<span class="math inline">\(\mathcal{H}_1\)</span>在<span class="math inline">\(\mathcal{D}\)</span>上表现良好，那么就会发表文章。后人如果做出了改进，提出的<span class="math inline">\(\mathcal{H}_2\)</span>比<span class="math inline">\(\mathcal{H}_1\)</span>更好，也会发表文章。假设某个人做出了<span class="math inline">\(m\)</span>个模型，实际上该模型的一般化能力需要被怀疑一下，因为此时该模型的VC维已经是<span class="math inline">\(d_{\rm VC}(\bigcup_m\mathcal{H}_m)\)</span>。因此越晚发表的论文其实受数据窥探的影响越严重</p>

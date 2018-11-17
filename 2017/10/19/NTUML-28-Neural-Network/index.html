@@ -119,14 +119,14 @@
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="动机 本课在很早之前就讲过了感知机的概念，前面又讲过了模型聚合的概念，那么有没有一种方法可以将若干个感知机模型通过线性的方式聚合起来？显然是可以的。假设一共有\(t\)个感知机，每个感知机训练出来的系数为\({\bf w}_t\)，返回的模型为\(g_t\)，其在整个模型里的权重为\(\alpha_t\)，则最后得到的聚合模型\(G\)为 \[ G({\bf x}) = {\rm sign}\le">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML28_and.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML28_mla.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML28_nn_hypothesis.png">
-<meta property="og:updated_time" content="2017-12-19T12:35:39.000Z">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML28_and.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML28_mla.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML28_nn_hypothesis.png">
+<meta property="og:updated_time" content="2018-11-17T10:59:49.886Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NTUML 28. 神经网络">
 <meta name="twitter:description" content="动机 本课在很早之前就讲过了感知机的概念，前面又讲过了模型聚合的概念，那么有没有一种方法可以将若干个感知机模型通过线性的方式聚合起来？显然是可以的。假设一共有\(t\)个感知机，每个感知机训练出来的系数为\({\bf w}_t\)，返回的模型为\(g_t\)，其在整个模型里的权重为\(\alpha_t\)，则最后得到的聚合模型\(G\)为 \[ G({\bf x}) = {\rm sign}\le">
-<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML28_and.png">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML28_and.png">
 
 
 
@@ -409,7 +409,7 @@ G({\bf x}) = {\rm sign}\left(\sum_{t=1}^T \alpha_t \underbrace{ {\rm sign}({\bf 
 \]</span> 可以看到这个过程里有两组权重：第一组<span class="math inline">\({\bf w}_t\)</span>用来投票，第二组<span class="math inline">\(\alpha_t\)</span>用来让<span class="math inline">\(g_t\)</span>投票。另外，这里有两组阶梯函数的输出，一组由每个<span class="math inline">\(g_t\)</span>产生，一组由最后的<span class="math inline">\(G\)</span>产生</p>
 <p>将感知机聚合以后，可以实现某些布尔函数。下图给出了AND函数的例子</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML28_and.png" alt="布尔函数AND的示意图"><figcaption>布尔函数AND的示意图</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML28_and.png" alt="布尔函数AND的示意图"><figcaption>布尔函数AND的示意图</figcaption>
 </figure>
 <p>在这种情况下，只有被<span class="math inline">\(g_1\)</span>和<span class="math inline">\(g_2\)</span>全部判断为+1的例子，才会被<span class="math inline">\(G\)</span>判断为+1，否则就会判断为-1。这种分类器不难实现，只需要使得 <span class="math display">\[
 G({\bf x}) = {\rm sign}(-1 + g_1({\bf x}) + g_2({\bf x}))
@@ -420,7 +420,7 @@ G({\bf x}) = {\rm sign}(-1 + g_1({\bf x}) + g_2({\bf x}))
 \]</span> 由于AND函数可以用感知机线性聚合来实现，OR函数也可以用感知机线性聚合来实现，因此通过上面的方法就可以以感知机为基础实现XOR了，只不过此时多了一<strong>层</strong>。这种更强大的模型称为<strong>多层感知机</strong>，它是后面提到的所有神经网络的基础</p>
 <p>多层感知机实际上是对生物钟神经元工作原理的模拟。这里每个感知机就可以看作是一个神经元，神经元的系数可以看做是神经元之间的连接，系数绝对值越大，连接越强。神经元之间通过连接，就形成了一个网络结构，称为<strong>神经网络</strong> 。如下就给出了一个多层感知机结构的示意图</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML28_mla.png" alt="多层感知机结构示意"><figcaption>多层感知机结构示意</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML28_mla.png" alt="多层感知机结构示意"><figcaption>多层感知机结构示意</figcaption>
 </figure>
 <p>上图中每个圆圈就是一个感知机，圆圈上的的折线表示做一个非线性变换（这里是sign函数，折线也是sign函数的图像），圆圈之间的连线以及圆圈与<span class="math inline">\(x_i\)</span>的连线表示了输入输出关系</p>
 <h2 id="神经网络假设集合">神经网络假设集合</h2>
@@ -433,7 +433,7 @@ G({\bf x}) = {\rm sign}(-1 + g_1({\bf x}) + g_2({\bf x}))
 \]</span> 之后的讲解中，中间的非线性变化会使用<span class="math inline">\(\tanh\)</span>函数</p>
 <p>接下来，为了更好地定义神经网络假设集合，需要对网络中出现的各个权重和得分进行定义。总体可见下图</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML28_nn_hypothesis.png" alt="神经网络示意图（带变量）"><figcaption>神经网络示意图（带变量）</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML28_nn_hypothesis.png" alt="神经网络示意图（带变量）"><figcaption>神经网络示意图（带变量）</figcaption>
 </figure>
 <p>其中，<span class="math inline">\(L\)</span>代表了神经网络总的层数。输入层记为第0层，第一步变换称为第1层，以此类推。<span class="math inline">\(d^{(\ell)}\)</span>为网络中第<span class="math inline">\(\ell\)</span>层所含有的总节点数。神经元之间每个连接其本质是一个权重，可以记为<span class="math inline">\(w_{ij}^{(\ell)}\)</span>，其中<span class="math inline">\(1 \le \ell \le L\)</span>指明该权重连进第<span class="math inline">\(\ell\)</span>层；<span class="math inline">\(0 \le i \le d^{(\ell -1)}\)</span>是第<span class="math inline">\(\ell - 1\)</span>层神经元的序号，从0开始标记（0对应的是常数项，也就是截距），可以看作是输入索引；<span class="math inline">\(1 \le j \le d^{(\ell)}\)</span>是第<span class="math inline">\(\ell\)</span>层神经元的序号，从1开始标记，可以看作是输出索引。换句话说，<span class="math inline">\(w_{ij}^{(\ell)}\)</span>表示第<span class="math inline">\(\ell -1\)</span>层第<span class="math inline">\(i\)</span>个单元指向第<span class="math inline">\(\ell\)</span>层第<span class="math inline">\(j\)</span>个单元的权重</p>
 <p>第<span class="math inline">\(\ell\)</span>层中，第<span class="math inline">\(j\)</span>个节点送进其变换函数之前的值，是上一层所有节点的加权得分总和，记为<span class="math inline">\(s_j^{(\ell)}\)</span>。由上一段的定义，有 <span class="math display">\[

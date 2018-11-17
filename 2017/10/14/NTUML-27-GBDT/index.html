@@ -119,12 +119,12 @@
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="AdaBoost决策树 在介绍AdaBoost决策树之前，先回顾一下之前讲过的随机森林。随机森林的核心是，将一些决策树（内层）使用bagging的方法（外层）聚合起来。如果把决策树和AdaBoost算法结合起来，那么就得到了AdaBoost决策树。但是有一点需要注意：AdaBoost算法里要求基算法在训练时能够接受样本的权重，但是之前CART算法不能根据各个样本的权重做调整，因此现在最关键的问题是">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML27_all_aggregation_learning_models.png">
-<meta property="og:updated_time" content="2017-12-19T12:35:39.000Z">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML27_all_aggregation_learning_models.png">
+<meta property="og:updated_time" content="2018-11-17T10:59:49.883Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NTUML 27. 梯度提升决策树（GBDT）">
 <meta name="twitter:description" content="AdaBoost决策树 在介绍AdaBoost决策树之前，先回顾一下之前讲过的随机森林。随机森林的核心是，将一些决策树（内层）使用bagging的方法（外层）聚合起来。如果把决策树和AdaBoost算法结合起来，那么就得到了AdaBoost决策树。但是有一点需要注意：AdaBoost算法里要求基算法在训练时能够接受样本的权重，但是之前CART算法不能根据各个样本的权重做调整，因此现在最关键的问题是">
-<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML27_all_aggregation_learning_models.png">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML27_all_aggregation_learning_models.png">
 
 
 
@@ -513,7 +513,7 @@ u_n^{(T+1)} = u_n^{(1)} \cdot \prod_{t=1}^T\exp(-y_n\alpha_tg_t({\bf x}_n)) = \f
 <li>非均匀混合：实际上就是对输入通过<span class="math inline">\(g_t\)</span>做一个变换，然后训练一个线性模型。其追求的是模型的复杂性，但是需要小心使用，防止过拟合</li>
 <li>条件混合：与非均匀混合类似，只不过最后训练的是非线性模型。这种方法通常又称为模型的堆叠法（stacking）。其追求的也是模型的复杂性</li>
 </ul></li>
-<li><p>模型的学习法，是一边学习<span class="math inline">\(g_t\)</span>一边做聚合。关系可见下图 <img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML27_all_aggregation_learning_models.png" alt="聚合学习模型概览"></p>
+<li><p>模型的学习法，是一边学习<span class="math inline">\(g_t\)</span>一边做聚合。关系可见下图 <img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML27_all_aggregation_learning_models.png" alt="聚合学习模型概览"></p>
 <p>其中随机森林、AdaBoost-DTree和GBDT都是很常用的模型</p></li>
 </ul>
 <p>模型聚合有时可以起到特征变换的作用，使得最后得到的<span class="math inline">\(G({\bf x})\)</span>很强，避免了欠拟合的问题；有时可以起到正则化的作用，使最后得到的<span class="math inline">\(G({\bf x})\)</span>不偏不倚，避免了过拟合的问题。总之，适当的模型聚合（有时又称组合ensemble），可以得到更好的效果</p>

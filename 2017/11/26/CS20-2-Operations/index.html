@@ -119,12 +119,12 @@
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="TensorBoard 在上一讲，给出了一小段TensorFlow代码，这段代码是比较简单的，容易理解 （如果运行时看见警告信息The TensorFlow library wasn&apos;t compiled to use SSE4.1 instructions, but these are available on your machine and could speed up CPU comput">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/CS20SI/CS20SI_02_TensorBoard.png">
-<meta property="og:updated_time" content="2018-01-19T04:34:05.000Z">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/CS20SI/CS20SI_02_TensorBoard.png">
+<meta property="og:updated_time" content="2018-11-17T10:59:49.745Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CS20SI 02. 操作">
 <meta name="twitter:description" content="TensorBoard 在上一讲，给出了一小段TensorFlow代码，这段代码是比较简单的，容易理解 （如果运行时看见警告信息The TensorFlow library wasn&apos;t compiled to use SSE4.1 instructions, but these are available on your machine and could speed up CPU comput">
-<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/CS20SI/CS20SI_02_TensorBoard.png">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/CS20SI/CS20SI_02_TensorBoard.png">
 
 
 
@@ -413,7 +413,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ python [yourprogram].py</span><br><span class="line">$ tensorboard --logdir=&quot;./graphs&quot; --port 6006</span><br></pre></td></tr></table></figure>
 <p>然后在浏览器中访问URL <code>http://localhost:6006</code>，可以看到在TensorBoard中已经给出了对应的计算图，如图所示</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/CS20SI/CS20SI_02_TensorBoard.png" alt="TensorBoard中的计算图"><figcaption>TensorBoard中的计算图</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/CS20SI/CS20SI_02_TensorBoard.png" alt="TensorBoard中的计算图"><figcaption>TensorBoard中的计算图</figcaption>
 </figure>
 <p>但是，图中的各个操作名称并没有使用程序里定义的名称（是“Const”而不是“a”）。为了使TensorBoard中的变量名称与程序中的一样，需要在定义操作的时候明确写出它们的名字，例如</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">a = tf.constant(<span class="number">2</span>, name=<span class="string">'a'</span>)</span><br><span class="line">b = tf.constant(<span class="number">3</span>, name=<span class="string">'b'</span>)</span><br><span class="line">x = tf.add(a, b, name=<span class="string">'add'</span>)</span><br><span class="line">writer = tf.summary.FileWriter(<span class="string">'./graphs'</span>, tf.get_default_graph())</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> tf.Session() <span class="keyword">as</span> sess:</span><br><span class="line">    print(sess.run(x))</span><br><span class="line"></span><br><span class="line">writer.close()</span><br></pre></td></tr></table></figure>

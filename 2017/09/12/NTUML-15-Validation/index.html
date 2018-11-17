@@ -119,13 +119,13 @@
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="模型选择问题 即便是对二元分类问题，前面也介绍了很多种机器学习算法。这些算法（和算法所需要设置的参数）包括了  算法\(\mathcal{A}\)本身，例如PLA、口袋算法、线性回归、Logistic回归 算法迭代的步数\(T\)。是100，1000还是10000 算法的学习率\(\eta\)。是1，0.1还是0.01 特征转换\(\boldsymbol{\Phi}\)。是原始的特征，线性的特征，">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML15_validation_in_practice.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML15_loocv.png">
-<meta property="og:updated_time" content="2017-12-19T12:35:39.000Z">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML15_validation_in_practice.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML15_loocv.png">
+<meta property="og:updated_time" content="2018-11-17T10:59:49.836Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NTUML 15. 验证">
 <meta name="twitter:description" content="模型选择问题 即便是对二元分类问题，前面也介绍了很多种机器学习算法。这些算法（和算法所需要设置的参数）包括了  算法\(\mathcal{A}\)本身，例如PLA、口袋算法、线性回归、Logistic回归 算法迭代的步数\(T\)。是100，1000还是10000 算法的学习率\(\eta\)。是1，0.1还是0.01 特征转换\(\boldsymbol{\Phi}\)。是原始的特征，线性的特征，">
-<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML15_validation_in_practice.png">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML15_validation_in_practice.png">
 
 
 
@@ -437,7 +437,7 @@ m^\ast = \mathop{ {\rm arg} \min}_{1\le m \le M}(E_m = E_{\rm val}(\mathcal{A}_m
 \]</span> 但是这里有一点需要注意：验证集的分出意味着与原来相比训练集变小。由之前的学习曲线可知，使用更少数据训练出来的模型，其<span class="math inline">\(E_{\rm out}\)</span>会大。因此，合理做法是记录<span class="math inline">\(m^\ast\)</span>对应模型的超参数（就是前面提到的<span class="math inline">\(\lambda, \boldsymbol{\Phi}\)</span>等等），然后用<strong>整个</strong><span class="math inline">\(\mathcal{D}\)</span>再把该模型训练一遍</p>
 <p>可以使用验证的方法来在五次多项式特征变换假设集<span class="math inline">\(\mathcal{H}_{\boldsymbol{\Phi}_5}\)</span>和十次多项式特征变换假设集<span class="math inline">\(\mathcal{H}_{\boldsymbol{\Phi}_{10}}\)</span>之间做选择。得到的图像如下图所示</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML15_validation_in_practice.png" alt="验证集大小与期望Eout之间的关系"><figcaption>验证集大小与期望Eout之间的关系</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML15_validation_in_practice.png" alt="验证集大小与期望Eout之间的关系"><figcaption>验证集大小与期望Eout之间的关系</figcaption>
 </figure>
 <p>这里四条线分别为：</p>
 <ul>
@@ -466,7 +466,7 @@ E_{\rm loocv}(\mathcal{H, A}) = \frac{1}{N}\sum_{n=1}^Ne_n = \frac{1}{N} \sum_{n
 \]</span> 即留一交叉验证误差的期望值与<span class="math inline">\(E_{\rm out}(g^-)\)</span>的期望值的确是近似的，可以看作是<span class="math inline">\(E_{\rm out}(g)\)</span>几乎无偏差的估计</p>
 <p>下图给出了留一交叉验证的一个示例</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML15_loocv.png" alt="留一交叉验证的示例。横轴为特征数目，纵轴为误差值"><figcaption>留一交叉验证的示例。横轴为特征数目，纵轴为误差值</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML15_loocv.png" alt="留一交叉验证的示例。横轴为特征数目，纵轴为误差值"><figcaption>留一交叉验证的示例。横轴为特征数目，纵轴为误差值</figcaption>
 </figure>
 <p>可以看出，交叉验证的误差曲线和<span class="math inline">\(E_{\rm out}\)</span>非常接近，即在实践中它的确是对<span class="math inline">\(E_{\rm out}\)</span>一个很好的估计。这张图再次证明，过多的特征会导致过拟合，特征数适量最好</p>
 <h2 id="v折交叉验证"><span class="math inline">\(V\)</span>折交叉验证</h2>

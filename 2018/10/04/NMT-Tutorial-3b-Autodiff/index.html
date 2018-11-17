@@ -119,16 +119,16 @@
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="本文无说明的部分（包括配图）均是翻译/演绎自： Baydin, A. G., Pearlmutter, B. A., Radul, A. A., &amp;amp; Siskind, J. M. (2017). Automatic differentiation in machine learning: a survey. Journal of machine learning research, 18(">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutoral_3b_numerical_diff_errors.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutoral_3b_expression_swell.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutoral_3b_computational_graph.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutoral_3b_AD_forward_mode.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutoral_3b_backward_AD.png">
-<meta property="og:updated_time" content="2018-11-09T02:31:44.305Z">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutoral_3b_numerical_diff_errors.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutoral_3b_expression_swell.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutoral_3b_computational_graph.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutoral_3b_AD_forward_mode.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutoral_3b_backward_AD.png">
+<meta property="og:updated_time" content="2018-11-17T10:59:49.806Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NMT Tutorial 3扩展b. 自动微分">
 <meta name="twitter:description" content="本文无说明的部分（包括配图）均是翻译/演绎自： Baydin, A. G., Pearlmutter, B. A., Radul, A. A., &amp;amp; Siskind, J. M. (2017). Automatic differentiation in machine learning: a survey. Journal of machine learning research, 18(">
-<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutoral_3b_numerical_diff_errors.png">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutoral_3b_numerical_diff_errors.png">
 
 
 
@@ -442,7 +442,7 @@ f&#39;(x) = \frac{f(x+h) - f(x-h)}{2h}-\frac{h^2}{6}f&#39;&#39;&#39;(\xi)
 \]</span> 即中心差分法的截断误差是<span class="math inline">\(O(h^2)\)</span>的。当<span class="math inline">\(h\)</span>很小时，该误差小于前向差分法的误差 <span class="math inline">\(\blacksquare\)</span></p>
 <p><strong>数值微分的缺点是存在截断误差和舍入误差，同时计算太慢。</strong>比较不幸的是，随着<span class="math inline">\(h\)</span>大小的变化，截断误差和舍入误差的变化趋势相反：当<span class="math inline">\(h\)</span>趋近于0时，截断误差也趋近于0，但是舍入误差会慢慢增大，反之相反。下图给出了函数<span class="math inline">\(f(x) = 64x(1-x)(1-2x)^2(1-8x+8x^2)^2\)</span>使用数值微分计算在点<span class="math inline">\(x_0 = 0.2\)</span>的导数时误差随<span class="math inline">\(h\)</span>变化的图像。</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutoral_3b_numerical_diff_errors.png" alt="数值微分误差与h的关系"><figcaption>数值微分误差与h的关系</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutoral_3b_numerical_diff_errors.png" alt="数值微分误差与h的关系"><figcaption>数值微分误差与h的关系</figcaption>
 </figure>
 <p>此外还需注意一点：当参数是标量时，前向差分法和中心差分法的计算代价相同。不过当参数是向量时，使用中心差分法计算函数<span class="math inline">\(f: \mathbb{R}^n \rightarrow \mathbb{R}^m\)</span>的雅可比矩阵需要额外<span class="math inline">\(mn\)</span>个计算量。尤其在深度学习领域，对于<span class="math inline">\(n\)</span>维向量，这种<span class="math inline">\(O(n)\)</span>的计算量是算法的主要瓶颈，而误差已经不重要了</p>
 <h3 id="自动微分不是符号微分">自动微分不是符号微分</h3>
@@ -450,7 +450,7 @@ f&#39;(x) = \frac{f(x+h) - f(x-h)}{2h}-\frac{h^2}{6}f&#39;&#39;&#39;(\xi)
 \frac{d}{dx}(f(x)g(x)) \rightsquigarrow \left(\frac{d}{dx}f(x)\right)g(x) + f(x)\left(\frac{d}{dx}g(x)\right)
 \]</span> 由于<span class="math inline">\(h\)</span>是两个函数的乘积，因此<span class="math inline">\(h(x)\)</span>和<span class="math inline">\(\frac{d}{dx}h(x)\)</span>有相同的成分，分别是<span class="math inline">\(f(x)\)</span>和<span class="math inline">\(g(x)\)</span>。此外，注意乘法法则的右式，<span class="math inline">\(f(x)\)</span>和<span class="math inline">\(\frac{d}{dx}f(x)\)</span>分别出现在不同的位置，因此如果继续符号微分<span class="math inline">\(f(x)\)</span>，然后将导数代入，那么就会出现很多冗余的表达式，它们既出现在<span class="math inline">\(f(x)\)</span>的位置，也出现在<span class="math inline">\(\frac{d}{dx}f(x)\)</span>的位置。下图给出了对表达式<span class="math inline">\(l_{n+1} = 4l_n(1-l_n), l_1 =x\)</span>在<span class="math inline">\(n=\{1,2,3,4\}\)</span>时的结果，可以注意在<span class="math inline">\(n=4\)</span>时，表达式<span class="math inline">\((1-8x+8x^2)\)</span>在<span class="math inline">\(\frac{d}{dx}l_n\)</span>中出现了多少次</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutoral_3b_expression_swell.png" alt="符号微分的表达式膨胀"><figcaption>符号微分的表达式膨胀</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutoral_3b_expression_swell.png" alt="符号微分的表达式膨胀"><figcaption>符号微分的表达式膨胀</figcaption>
 </figure>
 <p>从图中可以看到，符号微分可以很容易产生指数量级的符号表达式，因此需要很长时间来求值。这种问题称为<strong>表达式膨胀</strong>（expression swell）</p>
 <p>当我们只需要得到微分结果一个准确的数值表示，而不关心它具体的代数形式时，理论上可以把中间子表达式的结果存在内存里，这样就可以极大化简计算过程。更进一步地，可以将微分操作和化简操作交替进行，这样效率更高。这种交替操作的思想构成了自动微分的基础：在基本操作的层面上使用符号微分，保留中间的数值结果，同步计算主函数——这其实就是自动微分的前向累积模式，将在下一节介绍</p>
@@ -463,7 +463,7 @@ f&#39;(x) = \frac{f(x+h) - f(x-h)}{2h}-\frac{h^2}{6}f&#39;&#39;&#39;(\xi)
 </ul>
 <p>下图给出了表达式<span class="math inline">\(y=f(x_1, x_2) = \ln(x_1) + x_1x_2 - \sin(x_2)\)</span>的计算序列所对应的计算图，计算图可以清楚表示中间变量之间的依赖关系</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutoral_3b_computational_graph.png" alt="计算序列的计算图形式表示"><figcaption>计算序列的计算图形式表示</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutoral_3b_computational_graph.png" alt="计算序列的计算图形式表示"><figcaption>计算序列的计算图形式表示</figcaption>
 </figure>
 <p>其中各个变量的定义参见下表（假设输入<span class="math inline">\((x_1, x_2) = (2, 5)\)</span>）</p>
 <table>
@@ -523,7 +523,7 @@ f&#39;(x) = \frac{f(x+h) - f(x-h)}{2h}-\frac{h^2}{6}f&#39;&#39;&#39;(\xi)
 \dot{v}_i = \frac{\partial v_i}{\partial x_1}
 \]</span> 这样，在向前计算每个<span class="math inline">\(v_i\)</span>的值时，也能同时计算对应的<span class="math inline">\(\dot{v}_i\)</span>，如下表所示</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutoral_3b_AD_forward_mode.png" alt="自动微分的前向模式"><figcaption>自动微分的前向模式</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutoral_3b_AD_forward_mode.png" alt="自动微分的前向模式"><figcaption>自动微分的前向模式</figcaption>
 </figure>
 <p>这种做法可以很容易推广到函数<span class="math inline">\(f:\mathbb{R}^n \rightarrow \mathbb{R}^m\)</span>的雅可比矩阵的计算，其输入是<span class="math inline">\(n\)</span>个独立变量<span class="math inline">\(x_i\)</span>，输出是<span class="math inline">\(m\)</span>个独立变量<span class="math inline">\(y_j\)</span>。此时，计算前向微分的每一趟都是先初始化一个独热向量，其中只有<span class="math inline">\(\dot{x}_i=1\)</span>，其它都是0。对给定输入<span class="math inline">\(\boldsymbol{x} = \boldsymbol{a}\)</span>，代码计算 <span class="math display">\[
 \left.\dot{y}_j = \frac{\partial y_j}{\partial x_i}\right\vert_{\boldsymbol{x}=\boldsymbol{a}}, j =1,\ldots, m
@@ -581,7 +581,7 @@ f(g(v+\dot{v}\epsilon)) &amp;= f(g(v) + g&#39;(v)\dot{v}\epsilon) \\
 \end{align*}
 \]</span> 所有变量的更新方式如下图所示</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NMT_Tutorials/NMT_Tutoral_3b_backward_AD.png" alt="自动微分的后向模式"><figcaption>自动微分的后向模式</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutoral_3b_backward_AD.png" alt="自动微分的后向模式"><figcaption>自动微分的后向模式</figcaption>
 </figure>
 <p>后向模式的最大优势是对于诸如<span class="math inline">\(f: \mathbb{R}^n \rightarrow \mathbb{R}\)</span>这样的函数，一次后向模式就可以得到全部梯度<span class="math inline">\(\nabla f\)</span>。由于机器学习问题大部分都是要求标量目标函数对高维参数的梯度，因此在这样的场景下后向模式的效率比前向模式的效率要高很多</p>
 <p>与前向模式类似，后向模式通过设置<span class="math inline">\(\bar{\boldsymbol{y}} = \boldsymbol{r}\)</span>来计算雅可比矩阵转置与向量的乘积 <span class="math display">\[
@@ -796,7 +796,7 @@ e^x = \sum_{n=0}^\infty \frac{x^n}{n!} = 1+x+\frac{x^2}{2!} + \frac{x^3}{3!} + \
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/11/16/NMT-Tutorial-3c-Neural-Networks-Initialization/" rel="prev" title="NMT Tutorial 3扩展c. 神经网络的初始化">
+              <a href="/2018/11/17/NMT-Tutorial-3c-Neural-Networks-Initialization/" rel="prev" title="NMT Tutorial 3扩展c. 神经网络的初始化">
                 NMT Tutorial 3扩展c. 神经网络的初始化 <i class="fa fa-chevron-right"></i>
               </a>
             

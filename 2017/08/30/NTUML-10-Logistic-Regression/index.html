@@ -119,13 +119,13 @@
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="Logistic回归问题 二元分类问题，由于误差函数的定义，只关注样本是/否属于某个类别，即\(\mathcal{Y} \in \{-1, +1\}\)，理想的假设函数的形式也是\(f({\bf x}) = {\rm sign}(P(+1|{\bf x}) - \frac{1}{2}) \in \{-1, +1\}\) 我们还会关心一个类似的问题。以医院中的例子为例，给定一个病人，可能不再只关心t">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML10_three_linear_models.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML10_choice_of_eta.png">
-<meta property="og:updated_time" content="2017-12-19T12:35:39.000Z">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML10_three_linear_models.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML10_choice_of_eta.png">
+<meta property="og:updated_time" content="2018-11-17T10:59:49.817Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NTUML 10. Logistic回归">
 <meta name="twitter:description" content="Logistic回归问题 二元分类问题，由于误差函数的定义，只关注样本是/否属于某个类别，即\(\mathcal{Y} \in \{-1, +1\}\)，理想的假设函数的形式也是\(f({\bf x}) = {\rm sign}(P(+1|{\bf x}) - \frac{1}{2}) \in \{-1, +1\}\) 我们还会关心一个类似的问题。以医院中的例子为例，给定一个病人，可能不再只关心t">
-<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML10_three_linear_models.png">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML10_three_linear_models.png">
 
 
 
@@ -426,7 +426,7 @@ h({\bf x}) = \theta({\bf w}^\mathsf{T}{\bf x})
 <h2 id="logistic回归误差">Logistic回归误差</h2>
 <p>Logistic回归和之前提到的线性分类算法和线性回归算法有类似的地方，即对得到的特征都会做一个加权打分的操作。只不过三者在打分完以后做的事情有不同。可以参看下图</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML10_three_linear_models.png" alt="三种线性模型的比较"><figcaption>三种线性模型的比较</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML10_three_linear_models.png" alt="三种线性模型的比较"><figcaption>三种线性模型的比较</figcaption>
 </figure>
 <ul>
 <li>对于线性分类问题，算完得分以后，只根据得分的符号来做分类的动作。这里使用的是最简单的误差函数<span class="math inline">\({\rm err}_{0/1}\)</span></li>
@@ -494,7 +494,7 @@ E_{\rm in}({\bf w}_t + \eta{\bf v}) \approx E_{\rm in}({\bf w}_t) + \eta {\bf v}
 {\bf w}_{t+1} \leftarrow {\bf w}_t - \eta\frac{\nabla E_{\rm in}({\bf w}_t)}{|\!|\nabla E_{\rm in}({\bf w}_t)|\!|}
 \]</span> 注意这里<span class="math inline">\(\eta\)</span>不能太小也不能太大。如果<span class="math inline">\(\eta\)</span>太小，收敛会很慢；如果<span class="math inline">\(\eta\)</span>太大，曲线的这一小段就不能看作是一段很短的直线，逼近不准，因此收敛不稳定。具体示例可见下图</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML10_choice_of_eta.png" alt="eta取不同值时w的收敛状况"><figcaption>eta取不同值时w的收敛状况</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML10_choice_of_eta.png" alt="eta取不同值时w的收敛状况"><figcaption>eta取不同值时w的收敛状况</figcaption>
 </figure>
 <p>最好的方法是<span class="math inline">\(\eta\)</span>要经常改变。梯度越大，<span class="math inline">\(\eta\)</span>越大；梯度越小，<span class="math inline">\(\eta\)</span>越小，即<span class="math inline">\(\eta \propto {|\!|\nabla E_{\rm in}({\bf w}_t)|\!|}\)</span>。这个关系也可以表示为<span class="math inline">\(\eta = \eta_0 \cdot {|\!|\nabla E_{\rm in}({\bf w}_t)|\!|}\)</span>，而稍作变换就有<span class="math inline">\(\eta_0 = \eta / {|\!|\nabla E_{\rm in}({\bf w}_t)|\!|}\)</span>。如果把<span class="math inline">\(\eta_0\)</span>用一个新的<span class="math inline">\(\eta\)</span>替换，上式就可以写为 <span class="math display">\[
 {\bf w}_{t+1} \leftarrow {\bf w}_t - \eta \nabla E_{\rm in}({\bf w}_t)

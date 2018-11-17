@@ -119,13 +119,13 @@
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="线性网络假设函数 在本系列课程的第一讲里，曾讲到过一种称为“推荐系统”的问题，也就是根据用户对电影的评分历史，估计ta对一部新电影可能的评分。也就是说，对于第\(m\)部电影，其数据集\(\mathcal{D}_m\)可以表示为 \[ \{(\tilde{\bf x}_n = (n), y_n = r_{nm}): \ {\rm user\ }n{\rm\  rated\ movie\ }m\}">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML31_linear_network.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML31_mat_fact.png">
-<meta property="og:updated_time" content="2017-12-19T12:35:39.000Z">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML31_linear_network.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML31_mat_fact.png">
+<meta property="og:updated_time" content="2018-11-17T10:59:49.901Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NTUML 31. 矩阵分解">
 <meta name="twitter:description" content="线性网络假设函数 在本系列课程的第一讲里，曾讲到过一种称为“推荐系统”的问题，也就是根据用户对电影的评分历史，估计ta对一部新电影可能的评分。也就是说，对于第\(m\)部电影，其数据集\(\mathcal{D}_m\)可以表示为 \[ \{(\tilde{\bf x}_n = (n), y_n = r_{nm}): \ {\rm user\ }n{\rm\  rated\ movie\ }m\}">
-<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML31_linear_network.png">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML31_linear_network.png">
 
 
 
@@ -420,7 +420,7 @@
 \]</span> 由于用户基本不可能对所有电影都作出过评分，因此可以将用户没有评过分的项用“？”标记起来</p>
 <p>这个特征仍然抽象，还是需要考虑怎么做进一步的特征提取和变换。由于前面讲到的神经网络有这方面的功能，因此可以用神经网络来解决这个问题。假设网络使用如下结构构建：输入对应使用者，是一个<span class="math inline">\(N\)</span>维独热编码过的向量，中间使用<span class="math inline">\(\tilde{d}\)</span>个神经元做隐藏层，最后输出是一个<span class="math inline">\(M\)</span>维的向量对应电影评分，那么这个网络很像前面的自动编码器，看上去应该是有提取特征的功能。注意为了简单起见，网络里不带常数项<span class="math inline">\({\bf x}_0^{(\ell)}\)</span>。此外，这个应用里隐藏层不需要做非线性变换<span class="math inline">\(\tanh\)</span>，因为输入向量太稀疏了。综合起来，网络的结构可以用下图表示。由于隐藏层都使用的是线性变换，因此该网络也可以称为线性网络</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML31_linear_network.png" alt="求解推荐系统问题的线性网络"><figcaption>求解推荐系统问题的线性网络</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML31_linear_network.png" alt="求解推荐系统问题的线性网络"><figcaption>求解推荐系统问题的线性网络</figcaption>
 </figure>
 <p>按照上图所示，将两层权重分别矩阵化 <span class="math display">\[
 \begin{align*}
@@ -436,7 +436,7 @@ h({\bf x}) = {\rm W^\mathsf{T}V}{\bf x}
 E_{\rm in}(\{ {\bf w}_m\}, \{ {\bf v}_n\}) = \frac{1}{\sum_{m=1}^M |\mathcal{D}_m|} \sum_{ {\rm user\ }n{\rm\ rated\ movie\ }m}(r_{nm} - {\bf w}_m^{\mathsf T}{\bf v}_n)^2
 \]</span> 由于内积的对称性，有<span class="math inline">\(r_{nm} \approx {\bf w}_m^{\mathsf T}{\bf v}_n = {\bf v}_n^\mathsf{T}{\bf w}_m\)</span>。将这个式子矩阵化，有<span class="math inline">\(\rm R\approx V^\mathsf{T}W\)</span>，其中<span class="math inline">\(\rm R\)</span>是评分矩阵，<span class="math inline">\(\rm V\)</span>是所有用户特征组成的矩阵，<span class="math inline">\(\rm W\)</span>是所有电影特征（权重）组成的矩阵。如果能通过已知的一部分<span class="math inline">\(\rm R\)</span>（不需要知道所有的元素）将其分解为<span class="math inline">\(\rm V\)</span>和<span class="math inline">\(\rm W\)</span>的乘积，那么就能得到使用者特征，和每部电影应该怎么做线性组合。也就是说，在这个模型里做的模型是由已知评分反推那些特征影响用户评分，以及每部电影有哪些元素。例如，某个维度可能对应用户是否喜欢喜剧片，以及电影是否是喜剧片，如下图所示</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML31_mat_fact.png" alt="矩阵分解的物理意义"><figcaption>矩阵分解的物理意义</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML31_mat_fact.png" alt="矩阵分解的物理意义"><figcaption>矩阵分解的物理意义</figcaption>
 </figure>
 <p>矩阵分解经常用来从抽象特征中提取具体特征</p>
 <p>矩阵分解的最优化问题可以进一步推演 <span class="math display">\[

@@ -119,14 +119,14 @@
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="最大间隔分离超平面 前面在介绍感知机时，曾经提到线性分类器的表现形式为 \[ h({\bf x}) = {\rm sign}({\bf w}^\mathsf{T}{\bf x}) \] 它在二维空间表现为一条直线，在三维空间表现为一个平面，在\(n​\)维空间其维度总为\(n-1​\)，称作超平面 感知机算法对一个线性可分的数据集，总能找到一个超平面将其分开。然而，绝大多数情况下，这个超平面都有很">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML17_multiple_hyperplanes.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML17_hyperplane_errors.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML17_hyperplanes_fatness.png">
-<meta property="og:updated_time" content="2017-12-19T12:35:39.000Z">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML17_multiple_hyperplanes.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML17_hyperplane_errors.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML17_hyperplanes_fatness.png">
+<meta property="og:updated_time" content="2018-11-17T10:59:49.843Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NTUML 17. 线性支持向量机">
 <meta name="twitter:description" content="最大间隔分离超平面 前面在介绍感知机时，曾经提到线性分类器的表现形式为 \[ h({\bf x}) = {\rm sign}({\bf w}^\mathsf{T}{\bf x}) \] 它在二维空间表现为一条直线，在三维空间表现为一个平面，在\(n​\)维空间其维度总为\(n-1​\)，称作超平面 感知机算法对一个线性可分的数据集，总能找到一个超平面将其分开。然而，绝大多数情况下，这个超平面都有很">
-<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML17_multiple_hyperplanes.png">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML17_multiple_hyperplanes.png">
 
 
 
@@ -409,19 +409,19 @@ h({\bf x}) = {\rm sign}({\bf w}^\mathsf{T}{\bf x})
 \]</span> 它在二维空间表现为一条直线，在三维空间表现为一个平面，在<span class="math inline">\(n​\)</span>维空间其维度总为<span class="math inline">\(n-1​\)</span>，称作<strong>超平面</strong></p>
 <p>感知机算法对一个线性可分的数据集，总能找到一个超平面将其分开。然而，绝大多数情况下，这个超平面都有很多种可能性。例如下图所示</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML17_multiple_hyperplanes.png" alt="对同样的数据集，通常可以学习出多个超平面将其分开"><figcaption>对同样的数据集，通常可以学习出多个超平面将其分开</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML17_multiple_hyperplanes.png" alt="对同样的数据集，通常可以学习出多个超平面将其分开"><figcaption>对同样的数据集，通常可以学习出多个超平面将其分开</figcaption>
 </figure>
 <p>对图中的四个点，至少有三条直线可以将它们分开。PLA算法的选择是随机的，所以它们都有可能被选到。而且就VC维来看，这三条线也没什么差别。因为有 <span class="math display">\[
 E_{\rm out}({\bf w}) \le E_{\rm in}({\bf w}) + \Omega(\mathcal{H})
 \]</span> 对这三条直线，都有<span class="math inline">\(E_{\rm in}({\bf w}) = 0\)</span>。而感知机的假设集合前面已经证明过其VC维为<span class="math inline">\(d_{\rm vc}=d+1\)</span>。所以它们的<span class="math inline">\(E_{\rm out}\)</span>上限是相等的</p>
 <p>不过，对大部分人来说，可能都会选择第三幅小图中的那一个分类器。从直觉来说，假设原始数据为<span class="math inline">\({\bf x}_n\)</span>，测试数据为<span class="math inline">\({\bf x}\)</span>，由于误差的存在，有<span class="math inline">\({\bf x} \approx {\bf x}_n\)</span>。学习的目标当然是希望对于学习出来的分类器能将这两条数据归为一类。对于图中所给出的第三个分类器，因为它离所有四个数据点都很远，因此即便这个误差比较大，它也能做出正确的分类。对每条数据，以其为圆心，用灰色标记出分类器可允许的最大误差范围（即测试点落在灰圈之内就可以得到正确的标记），三条直线各自的允许误差如下图所示</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML17_hyperplane_errors.png" alt="分类器所允许的最大误差范围，以灰圈表示"><figcaption>分类器所允许的最大误差范围，以灰圈表示</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML17_hyperplane_errors.png" alt="分类器所允许的最大误差范围，以灰圈表示"><figcaption>分类器所允许的最大误差范围，以灰圈表示</figcaption>
 </figure>
 <p>也就是说，左边分类器与最右边分类器的最大区别，就是对误差的容忍度有不同。数据<span class="math inline">\({\bf x}_n\)</span>离分类器越远，模型对误差的容忍度越高。而由前面的讲述，测量误差是噪声的一种，因此模型对误差的容忍度越高，意味着模型对噪声的容忍度越高。又因为噪声的存在是导致过拟合现象的一大诱因，所以模型对噪声的容忍度越高，其本身鲁棒性越强，越不容易过拟合。上面的推理过程反过来也成立，所以最右分类器最优的原因是它最鲁棒，因为它离与它最近的数据最远</p>
 <p>前面的讲述是从“点到直线距离”这个角度出发。可以换个角度，再看看从“直线到点距离”这个角度出发有什么结论。如果直线到点的距离越大，那么将直线像两边样本方向移动（直到碰到最接近的正/负例样本），其可移动的距离就越大，可以说这条直线越“胖”。三条直线各自的“胖度”如下图所示</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML17_hyperplanes_fatness.png" alt="前述三个分类器的“胖度”"><figcaption>前述三个分类器的“胖度”</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML17_hyperplanes_fatness.png" alt="前述三个分类器的“胖度”"><figcaption>前述三个分类器的“胖度”</figcaption>
 </figure>
 <p>因此，分类器“越胖”，它与离它最近的数据点<span class="math inline">\({\bf x}_n\)</span>距离越大，鲁棒性越好。我们的目标也就变成了要寻找最胖的分离超平面。假设数据集是线性可分的，那么要解决的最优化问题可以使用如下不严格的语言描述 <span class="math display">\[
 \begin{align*}

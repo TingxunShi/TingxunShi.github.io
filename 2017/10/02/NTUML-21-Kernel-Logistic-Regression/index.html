@@ -119,12 +119,12 @@
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="软间隔SVM与正则化模型 前面讲到，软间隔SVM对每个数据点记录了其“间隔破坏量”，记为\(\xi_n\)，并对该量施加一些惩罚，得到软间隔SVM的优化问题 \[ \begin{align*} \min_{b, {\bf w}}\hspace{2ex}&amp;amp;\frac{1}{2}{\bf w^\mathsf{T}w} + C\cdot \sum_{n=1}^N \xi_n\\ {\rm s.t">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML18_hinge_loss_function.png">
-<meta property="og:updated_time" content="2017-12-19T12:35:39.000Z">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML18_hinge_loss_function.png">
+<meta property="og:updated_time" content="2018-11-17T10:59:49.862Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NTUML 21. 核Logistic回归">
 <meta name="twitter:description" content="软间隔SVM与正则化模型 前面讲到，软间隔SVM对每个数据点记录了其“间隔破坏量”，记为\(\xi_n\)，并对该量施加一些惩罚，得到软间隔SVM的优化问题 \[ \begin{align*} \min_{b, {\bf w}}\hspace{2ex}&amp;amp;\frac{1}{2}{\bf w^\mathsf{T}w} + C\cdot \sum_{n=1}^N \xi_n\\ {\rm s.t">
-<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML18_hinge_loss_function.png">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML18_hinge_loss_function.png">
 
 
 
@@ -453,7 +453,7 @@
 <h2 id="svm-vs.-logistic回归">SVM vs. Logistic回归</h2>
 <p>类似于第11讲中的做法，也可以把上面推出的SVM的损失函数<span class="math inline">\(\widehat{\rm err}_{\rm SVM}\)</span>做出图像，与原始0/1误差函数<span class="math inline">\({\rm err_{0/1}}(s, y) = [\![ys \not= 1]\!]\)</span>作比较。下图给出了这两个函数的图像</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML18_hinge_loss_function.png" alt="SVM的损失函数与0/1损失函数比较"><figcaption>SVM的损失函数与0/1损失函数比较</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML18_hinge_loss_function.png" alt="SVM的损失函数与0/1损失函数比较"><figcaption>SVM的损失函数与0/1损失函数比较</figcaption>
 </figure>
 <p>由上图可知，<span class="math inline">\(\widehat{\rm err}_{\rm SVM}\)</span>是<span class="math inline">\({\rm err}_{0/1}\)</span>的上界，因此可以用这个上界推导出一些算法，这些算法间接地降低0/1误差，来把0/1分类问题做好。在文献中，SVM使用的这个误差函数通常被称作hinge loss（一些人翻译成“铰链损失函数”）。注意hinge loss不仅是0/1误差函数的上界，还是一个凸的上界，因此在优化时有些好的性质可以利用</p>
 <p>接下来再把hinge loss和Logistic回归用的损失函数（经过缩放以后，记为SCE）<span class="math inline">\(\log_2(1+\exp(-ys))\)</span>做一个比较。当<span class="math inline">\(ys\)</span>趋近于<span class="math inline">\(+\infty\)</span>时，<span class="math inline">\(\widehat{\rm err}_{\rm SVM}(s, y) = 0\)</span>；当<span class="math inline">\(ys\)</span>趋近于<span class="math inline">\(-\infty\)</span>时，<span class="math inline">\(\widehat{\rm err}_{\rm SVM} = 1-ys \approx ys\)</span>。而SCE也有类似的结果（只不过是<span class="math inline">\(ys \rightarrow +\infty\)</span>时，<span class="math inline">\(\rm SCE \approx 0\)</span>。因此可以说，SVM可以看做是带有L2正则化的Logistic回归</p>

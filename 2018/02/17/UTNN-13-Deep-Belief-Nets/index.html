@@ -119,14 +119,14 @@
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="反向传播优劣论 反向传播算法在70年代到80年代被不同的研究组独立发现了几次，不过追根溯源可以到60年代。在1969年，Bryson和Ho在控制论领域发明了反向传播算法的线性版本。Paul Werbos意识到可以将这种算法推广到非线性范畴，并在1974年发表的论文中提出了可能是反向传播的第一个正式版本。1981年，Rumelhart、Williams和Hinton在不知道Werbos的工作的情况下">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_13_belief_net.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_13_wake-sleep_algorithm.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_13_House_jumps_belief_net.png">
-<meta property="og:updated_time" content="2018-02-22T16:04:43.168Z">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_13_belief_net.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_13_wake-sleep_algorithm.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_13_House_jumps_belief_net.png">
+<meta property="og:updated_time" content="2018-11-17T10:59:49.943Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hinton神经网络与机器学习 13. 深度信念网络">
 <meta name="twitter:description" content="反向传播优劣论 反向传播算法在70年代到80年代被不同的研究组独立发现了几次，不过追根溯源可以到60年代。在1969年，Bryson和Ho在控制论领域发明了反向传播算法的线性版本。Paul Werbos意识到可以将这种算法推广到非线性范畴，并在1974年发表的论文中提出了可能是反向传播的第一个正式版本。1981年，Rumelhart、Williams和Hinton在不知道Werbos的工作的情况下">
-<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_13_belief_net.png">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_13_belief_net.png">
 
 
 
@@ -449,7 +449,7 @@
 <p>深度网络的第二个问题是训练时间太长。当隐藏层很多时，学习过程特别慢。关于这个问题的原因众说纷纭，但是Hinton认为是因为无法找到一个比较合理的权重初始化方法。此外，反向传播算法可能会陷入不太好的局部极值点。如果初始化的随机权重离最优解太远，那么就更容易出现这样的问题。尽管可以使用更简单的模型，然后使用凸优化求解，但是这是一种妥协，逃避了真实数据的复杂度。克服这些反向传播的限制因素的最好方法是使用无监督学习算法，这样做是为了保留梯度下降和SGD的有效性和简洁性，不过是对输入建模，不再对输入和输出之间的关系建模。此时，权重的作用是最大化生成模型生成给定输入的概率，即最大化<span class="math inline">\(p(x)\)</span>而非<span class="math inline">\(p(y|x)\)</span></p>
 <p>那么接下来的问题是，应该学习什么样的生成模型呢？是学习基于能量的模型（例如玻尔兹曼机），还是学习由理想化的神经元组成的因果模型呢？还是学习两者的混合模型呢？在讲解因果信念网之前，先来看一下关于人工智能和概率的背景关系：20世纪70年代和80年代早期，人工智能学界的研究人员对概率论有强烈的抵触心态。在那时，如果研究AI的人提到概率，那就会被认为是朽木不可雕，愚不可及，没有摸到AI的门。（中间两段引用略）。进入到20世纪80年代，出现了很多关于专家系统的工作，例如医疗诊断或者矿藏勘探等。这些系统使用了大量的规则，由于要解决实际问题，因此要处理不确定性。由于前面学界共识的影响，大部分AI研究人员仍然不愿意使用概率论作为工具。不过由Pearl、Heckman、Lauritz等人提出的图模型还是拥抱了概率论，并且系统的确比专家系统使用的一个萝卜一个坑的方法要好。具体说来，离散的图可以表示变量之间的依赖关系，而有了图以后，需要做一些计算，来根据给定节点的观察值计算其它节点的期望值。信念网是图模型领域里对某种特殊子图的称呼，这种图是有向无环图，而且连接比较稀疏。在这种情况下，可以有效计算出未观察到的节点的概率。不过这种算法不适合稠密连接的图</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_13_belief_net.png" alt="信念网示意图"><figcaption>信念网示意图</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_13_belief_net.png" alt="信念网示意图"><figcaption>信念网示意图</figcaption>
 </figure>
 <p>上图给出了一个信念网的示意图。尽管实际可能观察到任何变量，但是这里假设只能观察到叶子节点（没有边流出），即蓝色节点是随机的，隐藏单元；红色的节点是可观察的单元，其中隐藏节点可以看做是可见节点的“因”。当我们观察到变量时，就有两个问题可以解决</p>
 <ul>
@@ -465,7 +465,7 @@
 <p>来快速看一下这种“阶乘分布”的例子。假设我们有三个隐藏单元，各自被激活的概率是0.3、0.6和0.8，那么隐藏状态为(1, 0, 1)的概率就是<span class="math inline">\(0.3 \times (1-0.6) \times 0.8 = 0.096\)</span>。通常情况下，长度为<span class="math inline">\(N\)</span>的二值向量的自由度是<span class="math inline">\(2^N\)</span>（实际上是<span class="math inline">\(2^{N-1}\)</span>，因为概率值相加必须为1），但是阶乘分布的自由度只有<span class="math inline">\(N\)</span></p>
 <p>接下来来看一下分解-睡眠算法。在该算法里，神经网络有两套权重，如图所示</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_13_wake-sleep_algorithm.png" alt="唤醒-睡眠算法示意图"><figcaption>唤醒-睡眠算法示意图</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_13_wake-sleep_algorithm.png" alt="唤醒-睡眠算法示意图"><figcaption>唤醒-睡眠算法示意图</figcaption>
 </figure>
 <p>模型本身是一个生成模型，因此绿色箭头是模型本来的权重，称为<strong>生成权重</strong>（generative weights），用来定义数据向量上的概率分布。此外，还有一些额外的权重，称为<strong>识别权重</strong>（recognition weights），以红色箭头表示。这些权重用来获得后验分布的近似值，即用来获得每个隐藏层的阶乘分布以（不是很好地）逼近后验分布。如算法名称所示，算法分成两个阶段：</p>
 <ul>
@@ -481,7 +481,7 @@
 <p>尽管如此，Karl Friston认为这就是大脑工作的原理，但是Hinton认为应该还有更好的算法</p>
 <p>最后来看一下模式平均。不过这里，笔者补充一个来自于原先13.3节中的例子，这个例子在讲模式平均时用到了，而且还可以用来对相消解释作用做说明。所谓相消解释，指的是即便两个隐藏状态（可以看做是事件发生的原因）在先验上是独立的，当我们观察到它们都能影响到的某件事的结果时，这两个原因也变得彼此相关了。例如，无论是卡车撞到房子还是发生地震，房子都会产生剧烈的抖动，而且发生地震和卡车撞击两件事是独立的。但是如果我们发现房子抖动了，而且观测到了地震，那么“发生了卡车撞击”这件事的概率实际上降低了。现在再来看这个例子，如下图所示</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_13_House_jumps_belief_net.png" alt="关于房屋抖动的信念网络。隐藏节点一个是发生地震，一个是卡车撞击"><figcaption>关于房屋抖动的信念网络。隐藏节点一个是发生地震，一个是卡车撞击</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_13_House_jumps_belief_net.png" alt="关于房屋抖动的信念网络。隐藏节点一个是发生地震，一个是卡车撞击"><figcaption>关于房屋抖动的信念网络。隐藏节点一个是发生地震，一个是卡车撞击</figcaption>
 </figure>
 <p>假设首先运行睡眠阶段的算法，通过模型产生数据，大多数情况下，顶部的两个单元都是关闭的，因为按照先验分布两件事发生的概率不大。因为它俩是关闭的，而且可见单元的偏置是-20，因此可见单元也是被关闭的。假设在很偶然的情况下（大概十亿分之一）两个隐藏单元中的一个被打开（两者被打开的概率相等），那么可见单元有一半的可能性会被打开。换句话说，如果看到可见单元被打开，那么有一半概率是左边的隐藏单元被打开，另一半是右边的被打开，但几乎不可能是两个都被打开或被关闭。那么来看看识别权重会学到什么：一半情况下，可见单元被置为1，两个隐藏单元被激活的概率相等，因此两者的概率都是0.5。最后，识别单元会在隐藏层上学习生成一个对(0.5, 0.5)的阶乘分布，最后会是有1/4的概率得到配置(1, 1)，另有1/4的概率得到配置(0, 0)，但是这两者在可见单元被激活时都是很不可能的配置。实际上，最好的识别模型是只选择一个模式，例如只打开左边或只打开右边</p>
 

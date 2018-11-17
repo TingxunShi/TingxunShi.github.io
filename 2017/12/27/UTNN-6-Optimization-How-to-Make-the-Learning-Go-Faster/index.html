@@ -119,15 +119,15 @@
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="Mini-batch梯度下降概论 本章主要介绍一些关于神经网络优化的方法。但是在介绍优化方法之前先回顾一下关于误差函数/代价函数的内容。如第三章所示，给定某个线性神经元，可以画出其误差表面：其纵轴是误差，横轴是权重值。如果使用的是平方误差，则误差表面的横切面应该是一个椭圆，纵切面是一个双曲线。对多层非线性网络来说，其误差表面更加复杂，但是权重不大时，仍然是光滑的，局部也可以用二次曲线逼近。如果使用">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_06_input_shifting.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_06_reduce_learning_rate_too_early.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_06_momentum.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_06_nesterov_method.png">
-<meta property="og:updated_time" content="2018-07-06T10:53:14.592Z">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_06_input_shifting.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_06_reduce_learning_rate_too_early.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_06_momentum.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_06_nesterov_method.png">
+<meta property="og:updated_time" content="2018-11-17T10:59:49.969Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hinton神经网络与机器学习 6. 神经网络的优化">
 <meta name="twitter:description" content="Mini-batch梯度下降概论 本章主要介绍一些关于神经网络优化的方法。但是在介绍优化方法之前先回顾一下关于误差函数/代价函数的内容。如第三章所示，给定某个线性神经元，可以画出其误差表面：其纵轴是误差，横轴是权重值。如果使用的是平方误差，则误差表面的横切面应该是一个椭圆，纵切面是一个双曲线。对多层非线性网络来说，其误差表面更加复杂，但是权重不大时，仍然是光滑的，局部也可以用二次曲线逼近。如果使用">
-<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_06_input_shifting.png">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_06_input_shifting.png">
 
 
 
@@ -429,7 +429,7 @@
 \end{align*}
 \]</span> 假设第一个例子的代表色为绿色，第二个例子的代表色为红色，下图左给出了这种情况下的误差表面。可以大致理解为，当只有第一个例子时，权重<span class="math inline">\(\boldsymbol{w}\)</span>需要满足<span class="math inline">\(\boldsymbol{w}^\mathsf{T}\boldsymbol{x}_1 = 2\)</span>，因此<span class="math inline">\(\boldsymbol{w}\)</span>的两个分量之间呈线性关系，线的斜率是<span class="math inline">\(-101/101 = -1\)</span>。而只有第二个例子时，权重<span class="math inline">\(\boldsymbol{w}\)</span>需要满足<span class="math inline">\(\boldsymbol{w}^\mathsf{T}\boldsymbol{x}_2 = 0\)</span>，因此<span class="math inline">\(\boldsymbol{w}\)</span>的两个分量之间呈线性关系，线的斜率是<span class="math inline">\(-101/99\)</span>。这两条线基本上是平行的，因此当将两者组合起来时，会得到一个被拉长的椭圆</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_06_input_shifting.png" alt="移动输入以后对误差表面的影响。左图是移动前的误差表面，非常长的椭圆梯度下降会非常缓慢；而右图是移动后的结果，正圆的误差表面上，梯度下降的方向总是指向圆心"><figcaption>移动输入以后对误差表面的影响。左图是移动前的误差表面，非常长的椭圆梯度下降会非常缓慢；而右图是移动后的结果，正圆的误差表面上，梯度下降的方向总是指向圆心</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_06_input_shifting.png" alt="移动输入以后对误差表面的影响。左图是移动前的误差表面，非常长的椭圆梯度下降会非常缓慢；而右图是移动后的结果，正圆的误差表面上，梯度下降的方向总是指向圆心"><figcaption>移动输入以后对误差表面的影响。左图是移动前的误差表面，非常长的椭圆梯度下降会非常缓慢；而右图是移动后的结果，正圆的误差表面上，梯度下降的方向总是指向圆心</figcaption>
 </figure>
 <p>如果对<span class="math inline">\(\boldsymbol{x}_i\)</span>的每个维度都减去100，那么就会得到一个截然不同的误差表面，如上图右所示，它是一个正圆形。这个时候，做梯度下降就容易多了</p>
 <p>如果考虑的不是输入，而是隐藏层的计算，那么类似地，让隐藏单元使用双曲正切函数<span class="math inline">\(\tanh\)</span>会是一个比较明智的做法，因为这样可以保证激活值是一个在-1和1之间的数，且均值大致为0，这会使下一层的学习变快一点。计算上，<span class="math inline">\(\tanh\)</span>也不慢，而且其与之前熟知的sigmoid函数<span class="math inline">\(\sigma\)</span>存在如下的一个关系 <span class="math display">\[
@@ -443,7 +443,7 @@
 <h3 id="其它常见问题">其它常见问题</h3>
 <ul>
 <li>关于学习率：如果给的初始学习率特别特别大，那么会导致隐藏层状态要么是恒为开的（一直被激活），要么是恒为关的（一直不被激活）。因为这会导致与该隐藏单元关联的权重或是特别大的正数，或是特别小的负数，因此其状态不再依赖于输入，也不会受到输出的误差带来的影响——单元一直处于导数基本为0的“高原”状态，学习自然会停止 在之前，人们对神经网络的担忧总是认为，神经网络最后会陷在一个局部最小值上。因此，他们会把神经网络停止学习而误差很高的情况归结于神经网络会在一个很差的局部最小值上收敛。这是不对的，实际上，这更可能意味着学习陷入到了一个高原区，走不出去</li>
-<li>使用神经网络解决分类问题时，一般都是用平方误差或者交叉熵误差，因此最好的预测策略通常是让输出单元的输出正比于某个“出现次数”。按照社区助教回复举的例子，如果现在要使用神经网络去学习一些训练语料，然后在给定某些字母的前提下，让它预测下一个字母最有可能是什么。由于神经网络的权重是随机初始化的，因此最开始得到的隐藏层特征对输出完全没有帮助，此时最好的输出策略是让每个字母的输出概率正比于这个字母在训练语料中出现的概率，也就是完全没用上输入信息。神经网络会很快找到这个策略，因此前面的误差会下降得非常快。要改进这个策略，网络需要通过隐藏层从输入层得到足够有用的、可感知到的信息，而如果初始化的权重比较小，这个过程可能是比较长的。所以在实践中可能观察到的现象是，学习进展很快，一会儿误差就不再下降了，看上去达到了某个局部最优点。但是实际上，到达的是另一个平原而已 所以，要辩证地看待课程前面提到的“学习临近结束时要降低学习率”这条经验，也要小心不要过早降低学习率。降低学习率会减少由不同mini-batch的不同梯度带来的误差的随机波动，所以看上去学习过程可以很快收敛，但是实际上会减慢之后的学习过程。下图给出了一个示例情况，其中红线是提前降低学习率的学习曲线，可以看到其最后效果要差于正常调整学习率的情况（绿线） <img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_06_reduce_learning_rate_too_early.png" alt="提前降低学习率不一定导致好的学习结果"></li>
+<li>使用神经网络解决分类问题时，一般都是用平方误差或者交叉熵误差，因此最好的预测策略通常是让输出单元的输出正比于某个“出现次数”。按照社区助教回复举的例子，如果现在要使用神经网络去学习一些训练语料，然后在给定某些字母的前提下，让它预测下一个字母最有可能是什么。由于神经网络的权重是随机初始化的，因此最开始得到的隐藏层特征对输出完全没有帮助，此时最好的输出策略是让每个字母的输出概率正比于这个字母在训练语料中出现的概率，也就是完全没用上输入信息。神经网络会很快找到这个策略，因此前面的误差会下降得非常快。要改进这个策略，网络需要通过隐藏层从输入层得到足够有用的、可感知到的信息，而如果初始化的权重比较小，这个过程可能是比较长的。所以在实践中可能观察到的现象是，学习进展很快，一会儿误差就不再下降了，看上去达到了某个局部最优点。但是实际上，到达的是另一个平原而已 所以，要辩证地看待课程前面提到的“学习临近结束时要降低学习率”这条经验，也要小心不要过早降低学习率。降低学习率会减少由不同mini-batch的不同梯度带来的误差的随机波动，所以看上去学习过程可以很快收敛，但是实际上会减慢之后的学习过程。下图给出了一个示例情况，其中红线是提前降低学习率的学习曲线，可以看到其最后效果要差于正常调整学习率的情况（绿线） <img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_06_reduce_learning_rate_too_early.png" alt="提前降低学习率不一定导致好的学习结果"></li>
 </ul>
 <h3 id="加快学习的四种方法">加快学习的四种方法</h3>
 <p>本节前面所讲的是如何让学习的效果更好，这里提供四种方法，它们都是为了让模型学习更快而设计的</p>
@@ -458,7 +458,7 @@
 <p>假设在误差表面上放置一个球，球在水平面的位置表示当前的权重向量。由于其最开始是静止的，因此它会先沿着最陡的方向（梯度方向）向下滑，但是当速度起来以后，动量会驱使它沿着之前的方向前进。显然，我们想让球最后停留在误差表面的一个最低点上，所以希望能减少球的能量，因此能引入一些粘性是最好不过的——也就是说，要在每次迭代中都缓慢降低球的速度</p>
 <p>动量法的作用就是在高曲率的地方阻止小球的振动，可以看一下下图的例子</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_06_momentum.png" alt="动量法示意图"><figcaption>动量法示意图</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_06_momentum.png" alt="动量法示意图"><figcaption>动量法示意图</figcaption>
 </figure>
 <p>小球从红点出发，经过两步以后会达到绿点位置。此时，两点处的梯度范数基本相同，但是方向相反。因此纵向于“峡谷”的梯度已经被抵消掉了，但是沿着峡谷方向的梯度还在，因此使用梯度法，可以保留该方向的速度，继续前进，最后达到最小值点</p>
 <p>动量法的数学公式比较简单 <span class="math display">\[
@@ -475,7 +475,7 @@
 <p>在学习的开始阶段，如果初始的随机权重太大，那么梯度就会很大，这时不宜使用大的动量，设成0.5比较好。当大的梯度消失时，说明学习进入到了一个正常的阶段，可能正在某个长峡谷里摸索，此时可以平滑地提高动量值。相比于直接使用大学习率的方法，使用小学习率+大动量可以达到一个实际上更大的学习速率，因为前者会导致权重纵向于峡谷方向剧烈振动</p>
 <p>标准的动量法是先计算当前位置的梯度，然后算出当前梯度与之前梯度的组合，把这个组合当做前进方向迈出很大一步，即前进方向总是累加的梯度方向。最近（2012年），Ilya Sutskever发现了一种更好的动量法，这种方法借鉴了Nesterov在优化凸函数时的方法，即先沿着之前累加梯度的方向跳出一大步，然后测量落脚点的梯度，进行修正。两种方法比较相似，其不同点在于，标准方法是先加上当前的梯度，然后跳出去赌一把；在Nesterov方法里，是先跳出去，然后再校正。下图给出了这两种方法的图示</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_06_nesterov_method.png" alt="Nesterov法与标准动量法的比较"><figcaption>Nesterov法与标准动量法的比较</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_06_nesterov_method.png" alt="Nesterov法与标准动量法的比较"><figcaption>Nesterov法与标准动量法的比较</figcaption>
 </figure>
 <p>图中</p>
 <ul>

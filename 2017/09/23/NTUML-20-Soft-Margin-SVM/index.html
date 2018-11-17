@@ -119,14 +119,14 @@
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="动机与原始问题 上一讲最后提到，SVM也会出现过拟合的情况。那么在什么时候SVM会过拟合呢？其中一种情况是使用太强力的\(\boldsymbol{\Phi}\)，而另一种情况是坚持认为数据是完全可分的。回顾之前的理论，如果总是坚持要完全可分输入数据，就是要找到一个\(g\)使得输入数据可以被\(g\)打散，因此也就增大了过拟合的可能性 回想之前介绍的口袋算法，这个算法对那些线性不可分的数据集做了一">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML20_margin_violation.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML20_soft_margin_gaussian_svm.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML20_different_SVs.png">
-<meta property="og:updated_time" content="2017-12-19T12:35:39.000Z">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML20_margin_violation.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML20_soft_margin_gaussian_svm.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML20_different_SVs.png">
+<meta property="og:updated_time" content="2018-11-17T10:59:49.857Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NTUML 20. 软间隔支持向量机">
 <meta name="twitter:description" content="动机与原始问题 上一讲最后提到，SVM也会出现过拟合的情况。那么在什么时候SVM会过拟合呢？其中一种情况是使用太强力的\(\boldsymbol{\Phi}\)，而另一种情况是坚持认为数据是完全可分的。回顾之前的理论，如果总是坚持要完全可分输入数据，就是要找到一个\(g\)使得输入数据可以被\(g\)打散，因此也就增大了过拟合的可能性 回想之前介绍的口袋算法，这个算法对那些线性不可分的数据集做了一">
-<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML20_margin_violation.png">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML20_margin_violation.png">
 
 
 
@@ -426,7 +426,7 @@
 \end{align*}
 \]</span> 这样一来，所有约束条件都是线性约束，要求解的目标问题是二次函数，又可以用QP求解器求解了。这种问题称为<strong>软间隔支持向量机</strong>，其中<span class="math inline">\(\xi_n\)</span>记录的是数据点的“间隔破坏程度”，如下图所示</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML20_margin_violation.png" alt="软间隔SVM的示意图。图中在间隔内的蓝点是破坏点，紫色的距离长度是它对间隔的破坏程度，也就是问题描述中的xi_n"><figcaption>软间隔SVM的示意图。图中在间隔内的蓝点是破坏点，紫色的距离长度是它对间隔的破坏程度，也就是问题描述中的xi_n</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML20_margin_violation.png" alt="软间隔SVM的示意图。图中在间隔内的蓝点是破坏点，紫色的距离长度是它对间隔的破坏程度，也就是问题描述中的xi_n"><figcaption>软间隔SVM的示意图。图中在间隔内的蓝点是破坏点，紫色的距离长度是它对间隔的破坏程度，也就是问题描述中的xi_n</figcaption>
 </figure>
 <p>上面描述的问题中，<span class="math inline">\(C\)</span>越大，表示对错误的容忍程度越小，对所有点尽可能不错分；<span class="math inline">\(C\)</span>越小，表示对错误的容忍程度越大，要求的间隔越宽</p>
 <p>新的问题有<span class="math inline">\(\tilde{d} + 1 + N\)</span>个变量，有<span class="math inline">\(2N\)</span>个约束条件。接下来，就要用对偶问题来移除问题对<span class="math inline">\(\tilde{d}\)</span>的依赖</p>
@@ -481,7 +481,7 @@ b = y_s - \sum_{ {\rm SV\ indices\ }n} \alpha_ny_nK({\bf x}_n, {\bf x}_s)
 \]</span> 当然，极少数的情况下，没有自由的支持向量，那么<span class="math inline">\(b\)</span>就只能通过一系列不等式得出，此时可能有不止一个<span class="math inline">\(b\)</span>存在</p>
 <p>软间隔SVM（使用高斯核）的例子如下图所示。可以看到，小的<span class="math inline">\(C\)</span>可能会有欠拟合，而大的<span class="math inline">\(C\)</span>仍然会导致过拟合的现象。因此，对软间隔SVM，仍然要小心地选择<span class="math inline">\((\gamma, C)\)</span></p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML20_soft_margin_gaussian_svm.png" alt="使用高斯核的软间隔SVM在设置不同的C时的效果"><figcaption>使用高斯核的软间隔SVM在设置不同的C时的效果</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML20_soft_margin_gaussian_svm.png" alt="使用高斯核的软间隔SVM在设置不同的C时的效果"><figcaption>使用高斯核的软间隔SVM在设置不同的C时的效果</figcaption>
 </figure>
 <p>由前面的互补松弛条件，可以看到不同的数据点对应的<span class="math inline">\(\alpha_n\)</span>可以分为三种</p>
 <ul>
@@ -491,7 +491,7 @@ b = y_s - \sum_{ {\rm SV\ indices\ }n} \alpha_ny_nK({\bf x}_n, {\bf x}_s)
 </ul>
 <p>这三种点可见下图示意。其中自由支持向量以方框圈出，受限的支持向量以三角圈出</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML20_different_SVs.png" alt="三种不同类型的支持向量"><figcaption>三种不同类型的支持向量</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML20_different_SVs.png" alt="三种不同类型的支持向量"><figcaption>三种不同类型的支持向量</figcaption>
 </figure>
 <h2 id="模型选择">模型选择</h2>
 <p>前面说过，对高斯SVM（之后提到SVM都默认是软间隔SVM+核方法），不同的<span class="math inline">\((C, \gamma)\)</span>都会产生不同的分隔边界。到底怎样的组合才是最好的？还是要用交叉验证的方法来选择</p>

@@ -119,16 +119,16 @@
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="为什么需要机器学习？ 对于一些问题，例如在复杂环境里，如何在新的光源条件下识别三维物体，编写程序去解决这些问题本来就是非常困难的：我们也不知道我们的大脑到底是如何运作来识别它的，即便我们知道，写出来的程序可能也十分复杂。对于另外一些问题，例如判断某笔信用卡交易有多大概率是欺诈性的，可能无法给出简单有效的规则。要解决这样的问题，需要将很多种比较弱的规则组合起来。而且，所谓“道高一尺魔高一丈”，犯罪分">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_01_mnist_example.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_01_cortical_neuron.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_01_handwriting_initial_weight.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_01_handwriting_final_weight.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_01_difficult_examples.png">
-<meta property="og:updated_time" content="2017-12-19T12:35:39.000Z">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_01_mnist_example.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_01_cortical_neuron.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_01_handwriting_initial_weight.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_01_handwriting_final_weight.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_01_difficult_examples.png">
+<meta property="og:updated_time" content="2018-11-17T10:59:49.929Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hinton神经网络与机器学习 1. 绪论">
 <meta name="twitter:description" content="为什么需要机器学习？ 对于一些问题，例如在复杂环境里，如何在新的光源条件下识别三维物体，编写程序去解决这些问题本来就是非常困难的：我们也不知道我们的大脑到底是如何运作来识别它的，即便我们知道，写出来的程序可能也十分复杂。对于另外一些问题，例如判断某笔信用卡交易有多大概率是欺诈性的，可能无法给出简单有效的规则。要解决这样的问题，需要将很多种比较弱的规则组合起来。而且，所谓“道高一尺魔高一丈”，犯罪分">
-<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_01_mnist_example.png">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_01_mnist_example.png">
 
 
 
@@ -416,7 +416,7 @@
 </ul>
 <p>在这诸多问题中，本课将挑选一个作为一个典型样例贯穿始终。类比于遗传学中的工作，由于人们对果蝇的习性了解很多，而且果蝇繁殖速度很快，因此遗传学经常使用果蝇作为研究对象。本课所选的“果蝇”是MNIST数据库，这里面包含了很多人手写的数字。MNIST是公开的，可以被随意下载，而且使用MNIST作为训练数据可以很快训练一个中等大小的神经网络，此外，我们也了解其它很多机器学习算法在MNIST上的效果，因此MNIST是一个很好的例子</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_01_mnist_example.png" alt="MNIST数据集的一个例子"><figcaption>MNIST数据集的一个例子</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_01_mnist_example.png" alt="MNIST数据集的一个例子"><figcaption>MNIST数据集的一个例子</figcaption>
 </figure>
 <p>上图给出了MNIST数据集的一个片段，所有的手写数字已经按照进行了归类排序。也就是说，图中的所有数字先是所有0，再是所有1，以此类推，一直到9。以图中用绿框框起来的手写的2为例，如果被告知“这就是手写数字”，那么人们大概是能看出来这些数字是2的，但是并不能用一两句话说清楚这些图像为什么就是2。图中给出的这些数字相互之间形状差异很大，即便是做一些简单的变化（例如旋转）也很难让任意两个数字重叠在一起，因此使用模板来做判定是基本不可能的——这也就是为什么这个任务是一个很好的机器学习任务的原因</p>
 <p>在MNIST之上，还有一个更大的数据集ImageNet。该数据集提供了130万张高分辨率的图片，算法的目标是将每张图片分到1000个分类中正确的那一个。2010年时，最好的系统的top 5 choices错误率为25%。2012年时，使用深度学习训练处的模型做到了20%。到了2015年，最好的算法在这项指标上已经可以达到3.8%，而多个深度神经网络的组合模型甚至可以达到3.08%（http://ischlag.github.io/2016/04/05/important-ILSVRC-achievements/）</p>
@@ -436,7 +436,7 @@
 </ul>
 <p>神经系统的基本组成元素是皮层神经元（cortical neuron）。神经元由一个细胞体（cell body）和一根轴突（axon）组成，其中轴突末端会分叉。细胞体还会分出若干树突（dendritic），来从其它神经元获得输入。轴突与树突通常在突触（synapse）处交互，轴突中产生的冲动（spike）会导致电离子注入到突触后神经元，当足够的电离子流入以后，轴丘（axio hillock）会在突触产生流出的冲动，来对细胞膜（cell membrane）去极化（depolarize）。下图给出了神经元的一个示意图</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_01_cortical_neuron.png" alt="神经元示意图"><figcaption>神经元示意图</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_01_cortical_neuron.png" alt="神经元示意图"><figcaption>神经元示意图</figcaption>
 </figure>
 <p>冲动随着轴突流动到达突触时，会导致突触小泡（vesicle）释放高浓度的化学传递物质。传递物质会沿着突触间隙（synaptic cleft）扩散至突触后神经元的细胞膜，吸附到膜中的受体（receptor），造成细胞膜形状的改变，产生若干小孔，使得特殊的离子可以进出。突触的功效性还可以随着突触小泡的数量和受体的数量变化。总体来看，突触是比较慢的，但是与RAM相比仍然有其优势：它们体积很小，功耗很低，而且可以根据局部的信号适应环境。但是它们具体是遵从何种规则来做出变化的呢？</p>
 <p>每个神经元会从其它神经元那里获取到输入，它们之间通过冲动来进行交互。神经元的输入功效由突触的权重来控制，这些权重可以是正的，也可以是负的，而且这些权重是自适应的，因此整个网络可以适应不同的环境，完成不同的计算任务，例如辨识物体、理解语言、制定计划、控制身体等等。人身上大概有一千亿个神经元，每个神经元有一万个权重。这大量的权重可以在非常短时间内影响计算。</p>
@@ -485,14 +485,14 @@ z = b + \sum_i x_iw_i, \ \ y = \tanh(z)
 </ul>
 <p>这种做法可以达到一个微妙的平衡：如果神经网络给出了正确的预测，那么该像素点对正确类别的权重贡献先增后减，相互抵消；但是如果给出了错误的预测，那么该像素点对正确类别的权重增大，对错误类别的权重减小。下图给出了刚刚初始化时和使用若干图片训练后的权重示意</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_01_handwriting_initial_weight.png" alt="网络对每个数字的初始权重"><figcaption>网络对每个数字的初始权重</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_01_handwriting_initial_weight.png" alt="网络对每个数字的初始权重"><figcaption>网络对每个数字的初始权重</figcaption>
 </figure>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_01_handwriting_final_weight.png" alt="网络训练后的最终权重"><figcaption>网络训练后的最终权重</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_01_handwriting_final_weight.png" alt="网络训练后的最终权重"><figcaption>网络训练后的最终权重</figcaption>
 </figure>
 <p>尽管网络已经展现出了学习能力，而且效果还不错，但是它仍然有不足。本质上，它学到的其实是每个数字的一个手写模板。当来到一个新的输入时，对这个输入，用学到的10个模板挨个匹配，哪个匹配得最吻合，就认为写的是哪个数字。但是这个模板并不能完美匹配所有手写的数字图像。例如，对于下面的例子，无法找到一个模板，使得其可以辨识出所有2，同时又不会误把3当成2。因此，还是需要更复杂的网络模型</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_01_difficult_examples.png" alt="简单网络难以区分的例子。绿框里的2和红框里的3使用上述算法无法区分"><figcaption>简单网络难以区分的例子。绿框里的2和红框里的3使用上述算法无法区分</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_01_difficult_examples.png" alt="简单网络难以区分的例子。绿框里的2和红框里的3使用上述算法无法区分"><figcaption>简单网络难以区分的例子。绿框里的2和红框里的3使用上述算法无法区分</figcaption>
 </figure>
 <h2 id="学习的三种类型">学习的三种类型</h2>
 <p>机器学习任务总体来讲可以分为三种类型</p>

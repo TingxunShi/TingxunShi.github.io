@@ -119,13 +119,13 @@
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="用于二元分类的线性模型 之前提到的三种线性模型都使用了\(s = {\bf w}^\mathsf{T}{\bf x}\)这个函数来计算得分  线性分类直接对这个分值取正负号，使用0/1误差来做误差函数。\(E_{\rm in}(\bf w)\)是离散的，优化是NP-hard问题 线性回归对这个分值不作处理直接输出，因此值域是\(\mathbb{R}\)，误差函数是平方误差。这个\(E_{\rm i">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML11_visualizing_error_functions.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML11_visualizing_error_functions_scaled.png">
-<meta property="og:updated_time" content="2017-12-19T12:35:39.000Z">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML11_visualizing_error_functions.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML11_visualizing_error_functions_scaled.png">
+<meta property="og:updated_time" content="2018-11-17T10:59:49.821Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NTUML 11. 用于分类问题的线性模型">
 <meta name="twitter:description" content="用于二元分类的线性模型 之前提到的三种线性模型都使用了\(s = {\bf w}^\mathsf{T}{\bf x}\)这个函数来计算得分  线性分类直接对这个分值取正负号，使用0/1误差来做误差函数。\(E_{\rm in}(\bf w)\)是离散的，优化是NP-hard问题 线性回归对这个分值不作处理直接输出，因此值域是\(\mathbb{R}\)，误差函数是平方误差。这个\(E_{\rm i">
-<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML11_visualizing_error_functions.png">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML11_visualizing_error_functions.png">
 
 
 
@@ -434,7 +434,7 @@
 <p>可以看到，这三个误差函数里都包括了<span class="math inline">\(ys\)</span>这一项。那么该项的物理意义是什么？这里<span class="math inline">\(y\)</span>是正确度，<span class="math inline">\(s\)</span>是得分，因此两者相乘可以看作是“分类的正确度得分”：两者相乘得到的结果越大，说明越正确；否则说明越不正确。这个做法实际很符合逻辑：假设<span class="math inline">\({\bf w}^\mathsf{T}{\bf x}\)</span>是一个比较大的正数，那么由Logistic回归的物理意义这说明<span class="math inline">\(y=1\)</span>的概率会非常大。假设实际上<span class="math inline">\(y=-1\)</span>，那么两者相乘就是一个比较小的负数，说明是有问题的</p>
 <p>将上面得到的三个函数图像作到一个坐标系里，可以得到如下的图</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML11_visualizing_error_functions.png" alt="三种误差函数的图象"><figcaption>三种误差函数的图象</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML11_visualizing_error_functions.png" alt="三种误差函数的图象"><figcaption>三种误差函数的图象</figcaption>
 </figure>
 <p>可以看到一些现象：</p>
 <ul>
@@ -447,7 +447,7 @@
 \]</span></p>
 <p>修改后的交叉熵误差函数能保证当<span class="math inline">\(ys=0\)</span>时交叉熵误差函数和0/1误差函数相切，即图像变为下图</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/NTUML/NTUML11_visualizing_error_functions_scaled.png" alt="对交叉熵误差函数换底以后，三个误差函数图像的比较"><figcaption>对交叉熵误差函数换底以后，三个误差函数图像的比较</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NTUML/NTUML11_visualizing_error_functions_scaled.png" alt="对交叉熵误差函数换底以后，三个误差函数图像的比较"><figcaption>对交叉熵误差函数换底以后，三个误差函数图像的比较</figcaption>
 </figure>
 <p>可以看到，换底以后，交叉熵误差函数成为了0/1误差函数严格的上界。也就是说，对任意<span class="math inline">\(ys\)</span>（其中<span class="math inline">\(s = {\bf w}^\mathsf{T}{\bf x}\)</span>），有 <span class="math display">\[
 \begin{align*}

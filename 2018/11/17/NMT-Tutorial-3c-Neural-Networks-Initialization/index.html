@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="深度学习,初始化,Xavier初始化,He初始化," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="深度学习中，在具体网络结构之上，有三种应用广泛而且比较微妙的技术，分别是  初始化，即如何恰当地初始化网络参数。不恰当的初始化方法甚至会使网络无法被训练，而好的初始化方法可以缩短网络训练的时间 优化，即如何让参数更新，最后达到最优解。这部分内容实际上并非深度学习所特有，各个优化器可以应用在其它基于梯度的机器学习模型上，例如线性回归、逻辑回归等等。因此这部分放在了深度学习部分之前介绍：优化方法 泛化">
+<meta name="keywords" content="深度学习,初始化,Xavier初始化,He初始化">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NMT Tutorial 3扩展c. 神经网络的初始化">
+<meta property="og:url" content="txshi-mt.com/2018/11/17/NMT-Tutorial-3c-Neural-Networks-Initialization/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="深度学习中，在具体网络结构之上，有三种应用广泛而且比较微妙的技术，分别是  初始化，即如何恰当地初始化网络参数。不恰当的初始化方法甚至会使网络无法被训练，而好的初始化方法可以缩短网络训练的时间 优化，即如何让参数更新，最后达到最优解。这部分内容实际上并非深度学习所特有，各个优化器可以应用在其它基于梯度的机器学习模型上，例如线性回归、逻辑回归等等。因此这部分放在了深度学习部分之前介绍：优化方法 泛化">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://intoli.com/blog/neural-network-initialization/img/relu-output-progression-violinplot.png">
+<meta property="og:updated_time" content="2018-11-17T10:59:49.810Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NMT Tutorial 3扩展c. 神经网络的初始化">
+<meta name="twitter:description" content="深度学习中，在具体网络结构之上，有三种应用广泛而且比较微妙的技术，分别是  初始化，即如何恰当地初始化网络参数。不恰当的初始化方法甚至会使网络无法被训练，而好的初始化方法可以缩短网络训练的时间 优化，即如何让参数更新，最后达到最优解。这部分内容实际上并非深度学习所特有，各个优化器可以应用在其它基于梯度的机器学习模型上，例如线性回归、逻辑回归等等。因此这部分放在了深度学习部分之前介绍：优化方法 泛化">
+<meta name="twitter:image" content="https://intoli.com/blog/neural-network-initialization/img/relu-output-progression-violinplot.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2018/11/17/NMT-Tutorial-3c-Neural-Networks-Initialization/"/>
+
+
+
+
+
+  <title>NMT Tutorial 3扩展c. 神经网络的初始化 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2018/11/17/NMT-Tutorial-3c-Neural-Networks-Initialization/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NMT Tutorial 3扩展c. 神经网络的初始化</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-17T18:59:49+08:00">
+                Nov 17 2018
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/深度学习/" itemprop="url" rel="index">
+                    <span itemprop="name">深度学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>深度学习中，在具体网络结构之上，有三种应用广泛而且比较微妙的技术，分别是</p>
+<ul>
+<li>初始化，即如何恰当地初始化网络参数。不恰当的初始化方法甚至会使网络无法被训练，而好的初始化方法可以缩短网络训练的时间</li>
+<li>优化，即如何让参数更新，最后达到最优解。这部分内容实际上并非深度学习所特有，各个优化器可以应用在其它基于梯度的机器学习模型上，例如线性回归、逻辑回归等等。因此这部分放在了深度学习部分之前介绍：<a href="http://txshi-mt.com/2018/06/09/NMT-Tutorial-2b-Optimization-Methods/">优化方法</a></li>
+<li>泛化（generalization），或者说正则化（regularization），即如何防止模型过拟合。一些泛化方法也在其它机器学习模型上得到了应用，如L1正则化、L2正则化以及衍生出来的弹性网等。但是针对深度学习，有一些比较专门的泛化方法</li>
+</ul>
+<p>本文将对初始化方法做一些介绍，下一篇文章介绍泛化（正则化）方法</p>
+<h2 id="基本初始化方法">基本初始化方法</h2>
+<p>比较常用和基本的初始化方法有两种，分别是均匀分布初始化和正态分布初始化法。核心思想就是根据给定的某个概率分布随机生成参数。例如，</p>
+<ul>
+<li><code>tf.initializers.random_uniform(-0.1, 0.1)</code>会在区间[-0.1, 0.1]内根据均匀分布产生一个随机数</li>
+<li><code>tf.initializers.truncated_normal(0, 1)</code>会根据均值为0，方差为1的正态分布产生一个随机数。<strong>如果生成的随机数超出了均值+/-2倍标准差的临界值，那么该值会被丢弃，重新产生一个随机数</strong>。TF官方文档推荐使用这个方法来初始化神经网络的权重，而不是普通的正态分布生成器<code>tf.initializaers.random_normal</code></li>
+</ul>
+<p>然而，普通的随机初始化方法有缺陷，不适合复杂网络。主要原因是对于非线性激活函数，其导数通常都有一大部分非常平坦的区域。如果初始化得到的权重落在了这个区域里，神经元会饱和，权重很难得到更新。例如，对于常见的激活函数<span class="math inline">\(\tanh\)</span>，如果输入<span class="math inline">\(x\)</span>的绝对值大于2，就会落入到饱和区域。对于最简单的前馈神经网络，假设隐藏层每个节点都与输入的每个节点全连接，那么对某个节点，有 <span class="math display">\[
+h_j = x_1w_{1j} + x_2w_{2j} + x_3w_{3j} + \ldots
+\]</span> 对求和项的每一项，其方差根据独立变量的乘积定理，有 <span class="math display">\[
+{\rm Var}(x_iw_{ij}) = [{\rm E}(x_i)]^2{\rm Var}(w_{ij}) + [{\rm E}(w_{ij})]^2{\rm Var}(x_i) + {\rm Var}(x_i){\rm Var}(w_{ij})
+\]</span> 假设输入的均值为0，方差为1，而且初始化权重时，也是从一个均值为0，方差为1的分布初始化，代入上式，有 <span class="math display">\[
+{\rm Var}(x_iw_{ij}) = 0 \times 1 + 0 \times 1 + 1 \times 1 = 1
+\]</span> 该节点的方差使用不相关独立变量加和定理，有 <span class="math display">\[
+{\rm Var}(h_j) = \sum_{i=0}^n {\rm Var}(x_iw_{ij}) = n \times 1 = n
+\]</span> 其中<span class="math inline">\(n\)</span>是输入节点的个数。假设输入节点数为784，那么方差就是784，标准差为<span class="math inline">\(\sqrt{ {\rm Var}(h_j)} = \sqrt{784} = 28\)</span>，因此大多数权重都会有<span class="math inline">\(|w| &gt; 2\)</span>，进入饱和区域。因此需要其它初始化方法</p>
+<h2 id="lecun初始化">LeCun初始化</h2>
+<p>Yann LeCun在1998年的一篇文章[lecun98]上率先提出了一种初始化方法。首先，要求节点的输出所属的分布必须标准差接近1，因此首先需要输出的方差为1，这可以通过一个归一化操作来解决。然后，假设某个神经元的输入<span class="math inline">\(y_i\)</span>不相关且方差为1，那么该单元的所有权重之和的标准差为 <span class="math display">\[
+\sigma_{y_i} = \sqrt{\left(\sum_j w_{ij}^2\right)}
+\]</span> 为了使该值接近1，权重必须来自于均值为0，标准差<span class="math inline">\(\sigma_w = m^{-1/2}\)</span>的分布，其中<span class="math inline">\(m\)</span>是该单元的输入数。文章没有点名必须用什么样的分布，只是说可以是均匀分布</p>
+<p>在TensorFlow的实现里，有两种实现：</p>
+<ul>
+<li>对<code>tf.initializers.lecun_uniform</code>，权重来源的分布是<span class="math inline">\(\rm [-limit, limit]\)</span>的均匀分布，其中<span class="math inline">\({\rm limit} = \sqrt{3/m}\)</span></li>
+<li>对<code>tf.initializers.lecun_normal</code>，权重来源的分布是均值为0，标准差为<span class="math inline">\(\sqrt{1/m}\)</span>的正态分布</li>
+</ul>
+<h2 id="xavier初始化glorot初始化">Xavier初始化（Glorot初始化）</h2>
+<p>对神经网络的每一层，记其输入是<span class="math inline">\({\boldsymbol{z}^i}\)</span>，输出（也就是下一层的输入）为<span class="math inline">\(\boldsymbol{z}^{i+1}\)</span>，有 <span class="math display">\[
+\begin{align*}
+\boldsymbol{s}^i &amp;= \boldsymbol{z}^i\boldsymbol{W}^i + \boldsymbol{b}^i \\
+\boldsymbol{z}^{i+1} &amp;= f(\boldsymbol{s}^i)
+\end{align*}
+\]</span> 其中<span class="math inline">\(f\)</span>是非线性激活函数，且在0点处导数为1（<span class="math inline">\(f&#39;(0) = 1\)</span>）。根据反向传播的定义，有 <span class="math display">\[
+\begin{align*}
+\frac{\partial {\rm cost}}{\partial s_k^i} &amp;= \frac{\partial z_k^{i+1}}{\partial s_k^i} \cdot \frac{\partial \boldsymbol{s}^{i+1}}{\partial z_k^{i+1}} \cdot \frac{\partial {\rm cost}}{\partial \boldsymbol{s}^{i+1}} \\
+&amp;= f&#39;(s_k^i)\boldsymbol{W}_{k\cdot}^i\frac{\partial {\rm cost}}{\partial \boldsymbol{s}^{i+1}} \\
+\frac{\partial {\rm cost}}{\partial W_{kl}^i} &amp;= z_l^i\frac{\partial {\rm cost}}{\partial s_k^i}
+\end{align*}
+\]</span> 假设权重矩阵中的每一项都是独立初始化，而且输入的每一项方差都相同，记为<span class="math inline">\({\rm Var}[x]\)</span>，则对于网络的第<span class="math inline">\(i\)</span>层，假设它有<span class="math inline">\(n_i\)</span>个节点，<span class="math inline">\(x\)</span>是网络的输入，有 <span class="math display">\[
+\begin{align*}
+f&#39;(s_k^i) &amp;\approx 1 \\
+{\rm Var}[z^i] &amp;= {\rm Var}[x]\prod_{i&#39;=0}^{i-1}n_{i&#39;}{\rm Var}[W^{i&#39;}]
+\end{align*}
+\]</span> （这里似乎隐含了两个假设。第一点，激活前的隐藏单元值在0点附近。这个假设我觉得是合理的，因为如果隐藏单元值不在0点附近，使用S型激活函数会导致饱和；第二点，各层输入的均值都是0）</p>
+<p>记第<span class="math inline">\(i&#39;\)</span>层的所有权重方差都为<span class="math inline">\({\rm Var}[W^{i&#39;}]\)</span>，那么对于有<span class="math inline">\(d\)</span>层的网络，有 <span class="math display">\[
+\begin{align*}
+{\rm Var}\left[\frac{\partial {\rm Cost}}{\partial s^i}\right] &amp;= {\rm Var}\left[\frac{\partial {\rm Cost}}{\partial s^d}\right]\prod_{i&#39;=i}^d n_{i&#39;+1}{\rm Var}[W^{i&#39;}] \\
+{\rm Var}\left[\frac{\partial {\rm Cost}}{\partial w^i}\right] &amp;= \prod_{i&#39;=0}^{i-1} n_{i&#39;}{\rm Var}[W^{i&#39;}]\prod_{i&#39;=i}^{d-1}n_{i&#39;+1}{\rm Var}[W^{i&#39;}]\times {\rm Var}[x]{\rm Var}\left[\frac{\partial {\rm Cost}}{\partial s^d}\right]
+\end{align*}
+\]</span> 从前向传播的角度，我们希望 <span class="math display">\[
+\forall(i, i&#39;), {\rm Var}[z^i] = {\rm Var}[z^{i&#39;}]
+\]</span> 从反向传播的角度，我们希望 <span class="math display">\[
+\forall (i, i&#39;), {\rm Var}\left[\frac{\partial {\rm Cost}}{\partial s^i}\right] = {\rm Var}\left[\frac{\partial {\rm Cost}}{\partial s^{i&#39;}}\right]
+\]</span> 综合上述条件，希望有 <span class="math display">\[
+\forall i,\ \ \ n_i{\rm Var}[W^i] = 1,\ n_{i+1}{\rm Var}[W^i] = 1
+\]</span> 即 <span class="math display">\[
+\forall i,\ \ \ {\rm Var}[W^i] = \frac{2}{n_i + n_{i+1}}
+\]</span> 假设对所有的权重都是用同样的初始化方法，则有 <span class="math display">\[
+\begin{align*}
+\forall i,\ \ {\rm Var}\left[\frac{\partial {\rm Cost}}{\partial s^i}\right] &amp;= {\Big[}n{\rm Var}[W]{\Big]}^{d-i}{\rm Var}[x] \\
+\forall i,\ \ {\rm Var}\left[\frac{\partial {\rm Cost}}{\partial w^i}\right] &amp;= {\Big[}n{\rm Var}[W]{\Big]}^{d}{\rm Var}[x]{\rm Var}\left[\frac{\partial {\rm Cost}}{\partial s^d}\right]
+\end{align*}
+\]</span> 即每层权重的梯度都是一样的</p>
+<p>假设使用如下分布初始化 <span class="math display">\[
+W_{ij} \sim U\left[-\frac{1}{\sqrt{n}}, \frac{1}{\sqrt{n}}\right]
+\]</span> 其中<span class="math inline">\(U\)</span>是均匀分布，<span class="math inline">\(n\)</span>是前一层节点的数量（每层的输入数量），那么有<span class="math inline">\(n{\rm Var}[W] = \frac{1}{3}\)</span>。综合上面的推导，更合适的初始化是 <span class="math display">\[
+W \sim U\left[-\frac{\sqrt{6}}{\sqrt{n_j + n_{j+1}}}, \frac{\sqrt{6}}{\sqrt{n_j + n_{j+1}}}\right]
+\]</span> 其中<span class="math inline">\(n_j\)</span>又称“扇入数”（fan_in），<span class="math inline">\(n_{j+1}\)</span>又称“扇出数”（fan_out）</p>
+<p>这种初始化方法称为Xavier初始化法，又称为Glorot初始化法，最初见于文献[glorot2010]。TensorFlow的标准实现是<code>tf.initializers.glorot_uniform</code>。此外，TensorFlow还提供了<code>tf.initializers.glorot_normal</code>，用于从均值为0，标准差为<span class="math inline">\(\sqrt{2}/\sqrt{n_j + n_{j+1}}\)</span>的正态分布中采样（如果采样结果的绝对值超出了两个标准差，则重新采样）。<strong>Xavier初始化法适用于激活函数为sigmoid或tanh的情况</strong></p>
+<h2 id="何恺明初始化he初始化">何恺明初始化（He初始化）</h2>
+<p>前面提到的Xavier初始化方法在神经网络使用S型函数做激活函数的情况下比较有效，但是近几年，随着整流线性单元函数（ReLU）的兴起，人们发现这种激活函数在卷积神经网络（CNN）中效果不群，同时传统的正态分布初始化和Xavier初始化都有一些缺陷。何恺明等人在[he2015]中针对使用ReLU的神经网络，尤其是CNN提出了一种新的初始化方法</p>
+<p>（关于卷积神经网络的内容可以先参看<a href="http://txshi-mt.com/2018/02/04/CS20-6-Introduction-to-CNN/">CS20SI的笔记</a>和<a href="http://txshi-mt.com/2017/12/23/UTNN-5-Object-Recognition-with-Neural-Nets/">Hinton的笔记</a>，不过本系列笔记后面应该还会再回顾）</p>
+<p>这种方法也可以分为两个视角，分别是前向视角和反向视角</p>
+<h3 id="前向视角">前向视角</h3>
+<p>对于CNN的一个卷积层，有 <span class="math display">\[
+\boldsymbol{y}_l = \boldsymbol{W}_l\boldsymbol{x}_l + \boldsymbol{b}_l
+\]</span> 这里<span class="math inline">\(\boldsymbol{x}\)</span>是一个<span class="math inline">\(k^2c \times 1\)</span>的向量，表示<span class="math inline">\(c\)</span>个输入信道共存的<span class="math inline">\(k\times k\)</span>个像素，其中<span class="math inline">\(k\)</span>是空间滤波器的大小。<span class="math inline">\(n = k^2c\)</span>是连接的数量。<span class="math inline">\(\boldsymbol{W}\)</span>是<span class="math inline">\(d\times n\)</span>的矩阵，每一行是一个滤波器的权重，<span class="math inline">\(d\)</span>是滤波器的数量。<span class="math inline">\(\boldsymbol{b}\)</span>是偏置向量，<span class="math inline">\(\boldsymbol{y}\)</span>是输出的一个“像素点”。<span class="math inline">\(l\)</span>是网络每一层的索引，<span class="math inline">\(\boldsymbol{x}_l = f(\boldsymbol{y}_{l-1})\)</span>其中<span class="math inline">\(f\)</span>是激活函数。<span class="math inline">\(c_l = d_{l-1}\)</span></p>
+<p>假设初始化时<span class="math inline">\(\boldsymbol{W}_l\)</span>的每一项都是独立的，且来自于同样的分布；<span class="math inline">\(\boldsymbol{x}_l\)</span>的每一项也都如此，且与<span class="math inline">\(\boldsymbol{W}_l\)</span>的每一项互相独立，则 <span class="math display">\[
+{\rm Var[y}_l] = n_l{\rm Var[w}_l{\rm x}_l]
+\]</span> 其中<span class="math inline">\({\rm y}_l\)</span>、<span class="math inline">\({\rm w}_l\)</span>和<span class="math inline">\({\rm x}_l\)</span>是分别来自于<span class="math inline">\(\boldsymbol{y}_l\)</span>、<span class="math inline">\(\boldsymbol{W}_l\)</span>和<span class="math inline">\(\boldsymbol{x}_l\)</span>的随机变量。令<span class="math inline">\({\rm w}_l\)</span>均值为0，则根据前面的定理以及方差的计算公式，有 <span class="math display">\[
+\begin{align}
+{\rm Var}[{\rm w}_l{\rm x}_l] &amp;= [{\rm E}[{\rm x}_l]]^2{\rm Var}[{\rm w}_l] + [{\rm E}[{\rm w}_l]]^2{\rm Var}[{\rm x}_l] + {\rm Var}[{\rm w}_l]{\rm Var}[{\rm x}_l] \\
+&amp;= [{\rm E}[{\rm x}_l]]^2{\rm Var}[{\rm w}_l]  + {\rm Var}[{\rm w}_l]{\rm Var}[{\rm x}_l] \\
+&amp;= {\rm Var}[{\rm w}_l]\Big([{\rm E}[{\rm x}_l]]^2 + {\rm Var}[{\rm x}_l]\Big) \\
+&amp;= {\rm Var}[{\rm w}_l]{\rm E[{\rm x}}_l^2]
+\end{align}
+\]</span> 所以 <span class="math display">\[
+{\rm Var}[{\rm y}_l] = n_l{\rm var}[{\rm w}_l]{\rm E[{\rm x}}_l^2]\tag{1}
+\]</span> 注意除非<span class="math inline">\({\rm x}_l\)</span>均值为0，否则<span class="math inline">\({\rm E}[{\rm x}_l^2] \not= {\rm var}[{\rm x}_l]\)</span>。而对ReLU来说，有<span class="math inline">\({\rm x}_l = \max(0, {\rm y}_{l-1})\)</span>，因此一定不会均值为0。<strong>由于激活函数性质发生了变化，前面适用于Xavier初始化的假设已经不再可用</strong></p>
+<p>假设<span class="math inline">\({\rm w}_{l-1}\)</span>是围绕零点对称分布，<span class="math inline">\({\rm b}_{l-1} = 0\)</span>，那么<span class="math inline">\({\rm y}_{l-1}\)</span>也围绕零点对称分布且均值为0。因此 <span class="math display">\[
+{\rm Var}[{\rm y}_{l-1}] = {\rm E}[{\rm y}_{l-1}^2] - [{\rm E}[{\rm y}_{l-1}]]^2 = {\rm E}[{\rm y}_{l-1}^2]
+\]</span> 当<span class="math inline">\(f\)</span>为ReLU时有</p>
+<p><span class="math display">\[
+\begin{align*}
+{\rm E}[{\rm x}_l^2] &amp;= {\rm E}[\max(0, {\rm y}_{l-1}^2)] \\
+&amp;= {\rm E}[0] + {\rm E}[{\rm y}_{l-1}^2]\Big|_{ {\rm y}_{l-1} &gt; 0}\\
+&amp;= \frac{1}{2}{\rm E}[{\rm y}_{l-1}^2] \\
+&amp;= \frac{1}{2}{\rm var}[{\rm y}_{l-1}]
+\end{align*}
+\]</span> 代回到(1)式有 <span class="math display">\[
+{\rm Var}[{\rm y}_l] = \frac{1}{2}n_l{\rm var}[{\rm w}_l]{\rm var}[{\rm y}_{l-1}]
+\]</span> 因此<span class="math inline">\(L\)</span>层连乘起来有 <span class="math display">\[
+{\rm Var}[{\rm y}_L] = {\rm Var}[{\rm y}_1]\left(\prod_{l=2}^L\frac{1}{2}n_l{\rm Var}[{\rm w}_l]\right)
+\]</span> 好的初始化方法应该避免将输入信号成指数级别地增大或缩小，因此希望连乘的每一项都近似为1。因此需要<span class="math inline">\({\rm w}_l\)</span>满足来自于均值为0，标准差为<span class="math inline">\(\sqrt{2/n_l}\)</span>的正态分布才能使得 <span class="math display">\[
+\forall l,\ \ \frac{1}{2}n_l{\rm Var}[{\rm w}_l] = 1\tag{2}
+\]</span> 此外，还应该有<span class="math inline">\(\boldsymbol{b} = {\bf 0}\)</span></p>
+<h3 id="反向视角">反向视角</h3>
+<p>在反向阶段，卷积层的梯度计算方法为 <span class="math display">\[
+\Delta \boldsymbol{x}_l = \hat{\boldsymbol{W}}_l\Delta \boldsymbol{y}_l\tag{3}
+\]</span> 这里<span class="math inline">\(\Delta \boldsymbol{x}\)</span>和<span class="math inline">\(\Delta \boldsymbol{y}\)</span>代表梯度 <span class="math display">\[
+\Delta \boldsymbol{x} = \frac{\partial \mathcal{E}}{\partial \boldsymbol{x}},\ \ \Delta \boldsymbol{y} = \frac{\partial \mathcal{E}}{\partial \boldsymbol{y}}
+\]</span> 这里<span class="math inline">\(\Delta \boldsymbol{y}\)</span>是<span class="math inline">\(d\)</span>个信道<span class="math inline">\(k\times k\)</span>个像素点，被重新组合成一个<span class="math inline">\(k^2d\times 1\)</span>的向量。记<span class="math inline">\(\hat{n} = k^2d\)</span>。注意<span class="math inline">\(\hat{n} \not= n = k^2c\)</span>。<span class="math inline">\(\hat{\boldsymbol{W}}\)</span>是一个<span class="math inline">\(c \times \hat{n}\)</span>的矩阵，滤波器被按照反向传播的方法重新调整（<span class="math inline">\(\boldsymbol{W}\)</span>和<span class="math inline">\(\hat{\boldsymbol{W}}\)</span>可以互相转换）。<span class="math inline">\(\Delta \boldsymbol{x}\)</span>是<span class="math inline">\(c\times 1\)</span>的向量，代表带层某个像素点的梯度。假设<span class="math inline">\({\rm w}_l\)</span>和<span class="math inline">\(\Delta {\rm y}_l\)</span>是相互独立的，且<span class="math inline">\({\rm w}_l\)</span>是用在0点对称的分布做初始化，那么对所有<span class="math inline">\(l\)</span>，<span class="math inline">\(\Delta {\rm x}_l\)</span>的均值为0</p>
+<p>（注意这里的<span class="math inline">\(\boldsymbol{x}\)</span>和前向视角的<span class="math inline">\(\boldsymbol{x}\)</span>不是一个概念，<span class="math inline">\(\boldsymbol{y}\)</span>也如此。在前向视角里，<span class="math inline">\(\boldsymbol{x}\)</span>是输入图像的一片区域，被卷积核覆盖，而<span class="math inline">\(\boldsymbol{y}\)</span>是根据这片区域做卷积操作以后输出的一个像素点。后向视角里，<span class="math inline">\(\boldsymbol{x}\)</span>是输入图像的一个像素点，<span class="math inline">\(\boldsymbol{y}\)</span>是被这个<span class="math inline">\(\boldsymbol{x}\)</span>影响到的所有区域）</p>
+<p>在反向传播中，还有<span class="math inline">\(\Delta {\rm y}_l = f&#39;({\rm y}_l) \Delta {\rm x}_{l+1}\)</span>。如果激活函数<span class="math inline">\(f\)</span>是ReLU，那么<span class="math inline">\(f&#39;({\rm y}_l)\)</span>为0或1，概率相等。假设<span class="math inline">\(f&#39;({\rm y}_l)\)</span>和<span class="math inline">\(\Delta {\rm x}_{l+1}\)</span>相互独立，那么<span class="math inline">\({\rm E}[\Delta {\rm y}_l] = \frac{1}{2}{\rm E}[\Delta {\rm x}_{l+1}] = 0\)</span>。且<span class="math inline">\({\rm E}[(\Delta {\rm y}_l)^2] = {\rm Var}[\Delta {\rm y}_l] = \frac{1}{2}{\rm Var}[\Delta {\rm x}_{l+1}]\)</span> 。代入(3)式有 <span class="math display">\[
+\begin{align*}
+{\rm Var}[\Delta {\rm x}_l] &amp;= \hat{n}_l {\rm Var}[{\rm w}_l]{\rm Var}[\Delta {\rm y}_l] \\
+&amp;= \frac{1}{2}\hat{n}_l{\rm Var}[{\rm w}_l]{\rm Var}[\Delta {\rm x}_{l+1}]
+\end{align*}
+\]</span> 与前面推导类似地，这需要 <span class="math display">\[
+{\rm Var}[\Delta{\rm x}_2] = {\rm Var}[\Delta{\rm x}_{L+1}]\left(\prod_{l=2}^L\frac{1}{2}\hat{n}_l{\rm Var}[{\rm w}_l]\right)
+\]</span> 因此需要 <span class="math display">\[
+\forall l,\ \frac{1}{2}\hat{n}_l{\rm Var}[{\rm w}_l] = 1\tag{4}
+\]</span> 即需要使用一个均值为0，标准差为<span class="math inline">\(\sqrt{2/\hat{n}_l}\)</span>的正态分布</p>
+<p>注意单独使用(2)式或者(4)式都可以。如果单独使用(4)式，则<span class="math inline">\(\prod_{l=2}^L \frac{1}{2}\hat{n}_l{\rm Var}[{\rm w}_l] = 1\)</span>，因此<span class="math inline">\(\prod_{l=2}^L\frac{1}{2}n_l{\rm Var}[{\rm w}_l] = \prod_{l=2}^L n_l/\hat{n}_l = c_2/d_L\)</span>，一般都不会是一个小于1的数。也就是说，如果初始化是适当的，可以放大反向传播的信号，那么也可以放大前向传播的信号。实验也表明两种形式都能收敛</p>
+<p>实验表明，在较深（例如30层）的卷积神经网络上，使用传统的初始化和Xavier初始化都会出现梯度消失的情况，而He初始化不会</p>
+<p>TensorFlow里对he初始化的标准实现是<code>tf.initializers.he_normal</code>，这里使用了前向视角的计算方法，即会使用均值为0，标准差为<span class="math inline">\(\sqrt{2/{\rm fan\_in}}\)</span>的正态分布采样（如果采样结果的绝对值超出两个标准差则重新采样）。此外，对应于Xavier初始化，TensorFlow也提供了he初始化的一种均匀分布实现<code>tf.initializers.he_uniform</code>。再次重申，<strong>he初始化适用于激活函数为ReLU的情况</strong></p>
+<h2 id="不要使用常数初始化">不要使用常数初始化</h2>
+<p>前面所列举的初始化方法虽然都不能适用于所有情况，但是至少有各自适用的场合，或者不会出乱子。但是如果要是把所有参数都初始成一个值，就会有灭顶之灾。为了简明起见，想象输入<span class="math inline">\(\boldsymbol{x}\)</span>有三个维度，将输入送进一个只有一个隐藏层的神经网络，隐藏层只有两个节点，输出为标量<span class="math inline">\(y\)</span>。输入层到隐层的权重为<span class="math inline">\(\boldsymbol{W}\)</span>，隐层到输出的权重为<span class="math inline">\(\boldsymbol{U}\)</span>，没有偏置项。非线性转化使用tanh函数（记为<span class="math inline">\(f\)</span>）。那么可以直接把前向计算过程展开列出来 <span class="math display">\[
+\begin{align*}
+s_1 &amp;= W_{11}x_1 + W_{21}x_2 + W_{31}x_3 \\
+s_2 &amp;= W_{12}x_1 + W_{22}x_2 + W_{32}x_3 \\
+h_1 &amp;= f(s_1) \\
+h_2 &amp;= f(s_2) \\
+y &amp;= U_{11}h_1 + U_{21}h_2
+\end{align*}
+\]</span> 如果所有参数初始化都使用常数，则所有<span class="math inline">\(W_{ij}\)</span>都相等，记为<span class="math inline">\(w\)</span>，那么显然<span class="math inline">\(s_1 = s_2 = s = w(x_1 + x_2 + x_3)\)</span>，<span class="math inline">\(h_1 = h_2 = f(s) = h\)</span>。所有<span class="math inline">\(U_{ij}\)</span>都相等，记为<span class="math inline">\(u\)</span>，则<span class="math inline">\(y = 2uh\)</span></p>
+<p>接下来来到反向传播的情况，由于 <span class="math display">\[
+\frac{\partial y}{\partial U_{11}} = h_1,\ \frac{\partial y}{\partial U_{21}} = h_2
+\]</span> 而根据前面的推导，<span class="math inline">\(h_1 = h_2\)</span>，因此隐层每个节点前向传播得到的值相等，反向传播获得的更新量也相等。同样的道理，也可以推出对<span class="math inline">\(j = 1, 2\)</span>，有 <span class="math display">\[
+\frac{\partial y}{\partial W_{ij}} = x_i\cdot f&#39;(s) \cdot u,\ \ \forall i = 1, 2, 3
+\]</span> 这意味着，对于隐藏层的每个节点，它与其它节点有同样的输入梯度，也有同样的输出梯度。此时神经网络的隐藏层相当于只有一个节点在工作！</p>
+<p>当然，对于给定的这个例子，更糟的情况下是将所有权重都初始化为0。此时<span class="math inline">\(s_1, s_2\)</span>都会为0，因此后面的变量<span class="math inline">\(h_1, h_2\)</span>和<span class="math inline">\(y\)</span>也都会为0，反向传播的每个梯度也都是0，网络更是什么都没学到了。此外，上述例子可以很容易地推广到多个隐藏层，带有偏置的前馈神经网络</p>
+<p>所以，为了使神经网络能够得到训练，一定不要在初始化参数的时候全都使用常数。按照花书的说法</p>
+<blockquote>
+<p>初始参数需要在不同单元间“破坏对称性”。如果具有相同激活函数的两个隐藏单元连接到相同的输入，那么这些单元必须具有不同的初始参数。如果它们具有相同的初始参数，应用到确定性损失和模型的确定性学习算法将一直以相同的方式更新这两个单元</p>
+<p>——花书184页</p>
+</blockquote>
+<h2 id="小结">小结</h2>
+<p>通过前面的分析，可以看出使用正确的初始化方法，能够让神经网络训练更稳定。不同的初始化方法的共同目的都是在于让各层各神经元的方差控制在一个可控范围内，一定程度上可以起到避免梯度消失或梯度爆炸的效果（关于梯度消失和梯度爆炸，将在后面的文章中再深入探讨）。下图（来自于博客<a href="https://intoli.com/blog/neural-network-initialization/" target="_blank" rel="noopener">Understanding Neural Network Weight Initialization</a>）给出了一个例子，将使用不同分布来初始化参数对神经元造成的影响做了可视化</p>
+<figure>
+<img src="https://intoli.com/blog/neural-network-initialization/img/relu-output-progression-violinplot.png" alt="使用不同分布初始化参数对使用ReLU的神经网络的影响。中间的初始化方法类似于使用He初始化"><figcaption>使用不同分布初始化参数对使用ReLU的神经网络的影响。中间的初始化方法类似于使用He初始化</figcaption>
+</figure>
+<p>总而言之，神经网络的初始化方法可以总结成如下几条：</p>
+<ul>
+<li>不要用常数初始化，更不要用全0初始化（不过可以把偏置初始化成0）</li>
+<li>如果使用tanh或sigmoid做激活函数，用Xavier初始化</li>
+<li>如果使用ReLU做激活函数（尤其是如果网络还很深），用He初始化</li>
+</ul>
+<h2 id="参考文献">参考文献</h2>
+<p><a href="http://adventuresinmachinelearning.com/weight-initialization-tutorial-tensorflow/" target="_blank" rel="noopener">TensorFlow的权重初始化教程</a></p>
+<p>[lecun98] LeCun, Y., Bottou, L., Orr, G. B., &amp; Müller, K. R. (1998). Efficient BackProp. In <em>Neural Networks: Tricks of the Trade</em>(pp. 9-50). Springer, Berlin, Heidelberg.</p>
+<p>[glorot2010] Glorot, X., &amp; Bengio, Y. (2010, March). Understanding the difficulty of training deep feedforward neural networks. In <em>Proceedings of the thirteenth international conference on artificial intelligence and statistics</em> (pp. 249-256).</p>
+<p>[he2015] He, K., Zhang, X., Ren, S., &amp; Sun, J. (2015). Delving deep into rectifiers: Surpassing human-level performance on imagenet classification. In <em>Proceedings of the IEEE international conference on computer vision</em> (ICCV) (pp. 1026-1034).</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2018/11/17/NMT-Tutorial-3c-Neural-Networks-Initialization/" title="NMT Tutorial 3扩展c. 神经网络的初始化">txshi-mt.com/2018/11/17/NMT-Tutorial-3c-Neural-Networks-Initialization/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/深度学习/" rel="tag"># 深度学习</a>
+          
+            <a href="/tags/初始化/" rel="tag"># 初始化</a>
+          
+            <a href="/tags/Xavier初始化/" rel="tag"># Xavier初始化</a>
+          
+            <a href="/tags/He初始化/" rel="tag"># He初始化</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/10/04/NMT-Tutorial-3b-Autodiff/" rel="next" title="NMT Tutorial 3扩展b. 自动微分">
+                <i class="fa fa-chevron-left"></i> NMT Tutorial 3扩展b. 自动微分
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">90</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">95</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本初始化方法"><span class="nav-number">1.</span> <span class="nav-text">基本初始化方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lecun初始化"><span class="nav-number">2.</span> <span class="nav-text">LeCun初始化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#xavier初始化glorot初始化"><span class="nav-number">3.</span> <span class="nav-text">Xavier初始化（Glorot初始化）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#何恺明初始化he初始化"><span class="nav-number">4.</span> <span class="nav-text">何恺明初始化（He初始化）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#前向视角"><span class="nav-number">4.1.</span> <span class="nav-text">前向视角</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#反向视角"><span class="nav-number">4.2.</span> <span class="nav-text">反向视角</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#不要使用常数初始化"><span class="nav-number">5.</span> <span class="nav-text">不要使用常数初始化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小结"><span class="nav-number">6.</span> <span class="nav-text">小结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文献"><span class="nav-number">7.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

@@ -119,16 +119,16 @@
 <meta property="og:site_name" content="Tingxun&#39;s Blog">
 <meta property="og:description" content="学习线性神经元的权重 本节首先来看使用线性神经元的神经网络如何学习权重。这个结构看起来像普通感知机，但是其实学习过程是不一样的。感知机的学习过程是调整权重，让权重向量向更好的权重向量靠近，而线性神经元虽然也是在调整权重，但是目的是让输出向目标输出靠近 感知机算法中保证的一个基本情况在神经网络里不会出现：在感知机中，两个有效权重的平均仍然是个有效权重；但是对神经网络，并不一定会是这样。因此，神经网络">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_03_error_surface.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_03_sgd.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_03_gradient_descent_bad_case.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_03_back_propagation.png">
-<meta property="og:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_03_example_of_overfitting.png">
-<meta property="og:updated_time" content="2017-12-19T12:35:39.000Z">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_03_error_surface.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_03_sgd.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_03_gradient_descent_bad_case.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_03_back_propagation.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_03_example_of_overfitting.png">
+<meta property="og:updated_time" content="2018-11-17T10:59:49.957Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hinton神经网络与机器学习 3. 反向传播">
 <meta name="twitter:description" content="学习线性神经元的权重 本节首先来看使用线性神经元的神经网络如何学习权重。这个结构看起来像普通感知机，但是其实学习过程是不一样的。感知机的学习过程是调整权重，让权重向量向更好的权重向量靠近，而线性神经元虽然也是在调整权重，但是目的是让输出向目标输出靠近 感知机算法中保证的一个基本情况在神经网络里不会出现：在感知机中，两个有效权重的平均仍然是个有效权重；但是对神经网络，并不一定会是这样。因此，神经网络">
-<meta name="twitter:image" content="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_03_error_surface.png">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_03_error_surface.png">
 
 
 
@@ -421,16 +421,16 @@ E= \frac{1}{2}\sum_{n\in {\rm training}}(t^n - y^n)^2
 <h2 id="误差曲面">误差曲面</h2>
 <p>可以通过误差曲面（error surface）来理解线性神经元学习过程中发生了什么。考虑最简单的情况，假设权重只有两个维度，使用线性神经元和平方误差函数，那么以这两个权重为水平坐标，误差值为纵坐标，可以画出一个误差曲面。这个曲面的纵切面都是一个抛物线，横切面总是一个椭圆。更复杂一些。当权重不太大的时候，误差曲面会是光滑的，但是可能仍然存在许多局部最小值点</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_03_error_surface.png" alt="误差曲面示意图"><figcaption>误差曲面示意图</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_03_error_surface.png" alt="误差曲面示意图"><figcaption>误差曲面示意图</figcaption>
 </figure>
 <p>通过误差曲面，可以知道梯度下降每一步其实就是计算误差函数对权重的导数，如果将权重沿着导数方向变化，那就是在误差曲面上沿着最陡的方向下降了一步。如果从上往下看这个误差曲面，就可以画出一些椭圆形的等高线。如果使用批处理的梯度下降法，就可以使得权重沿着正确的角度向中间逼近，但是每次更新权重都需要把所有<span class="math inline">\(x_i^n(t^n-y^n)\)</span>加起来。也可以使用在线学习的方法做，即每看过一个测试数据就更新一次权重，这时更新权重时所走的角度就会受到训练数据的限制</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_03_sgd.png" alt="在线梯度下降受到训练数据的限制"><figcaption>在线梯度下降受到训练数据的限制</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_03_sgd.png" alt="在线梯度下降受到训练数据的限制"><figcaption>在线梯度下降受到训练数据的限制</figcaption>
 </figure>
 <p>如上图所示，第一次更新权重是根据第一条数据，因此移动方向垂直于第一条数据对应的蓝线，第二次更新权重时根据第二条数据，移动方向垂直于第二条数据对应的蓝线，以此类推，循环往复。权重也会曲折地向着两条蓝线的交点前进</p>
 <p>考虑一种极端情况，就是输入数据限制线几乎平行，等高线是特别长的椭圆的时候。如下图所示</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_03_gradient_descent_bad_case.png" alt="梯度下降的最差情况"><figcaption>梯度下降的最差情况</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_03_gradient_descent_bad_case.png" alt="梯度下降的最差情况"><figcaption>梯度下降的最差情况</figcaption>
 </figure>
 <p>此时，梯度下降的每个方向基本都垂直于向着极值点的方向，每次迭代时迈出的那一步都只向极值点靠近很小的一点，因此训练时间就会特别长</p>
 <h2 id="学习logistic神经元的权重">学习Logistic神经元的权重</h2>
@@ -450,7 +450,7 @@ y = \sigma(z) \Rightarrow \frac{dy}{dz} = y(1-y)
 <p>反向传播算法背后的思想是，我们不知道隐藏层单元应该做什么，它们被称作“隐藏层”就是因为没人能解释它们的状态应该是什么，但是对某条给定的数据，当修改某个隐藏层单元的激活值时，可以计算误差变化得多快。因此，我们不再把看隐藏层单元的激活值，而是看误差对隐藏激活值的偏导数。由于每个隐藏单元都会影响许多不同的输出单元，因此如果有很多输出单元的话，就会对总体误差造成很多不同的影响，这些影响可以被有效地组合起来，所以就可以同时有效计算所有隐藏单元的误差导数。一旦得到了误差导数，就可以知道对某个训练数据，修改隐藏单元的激活值以后误差变化多快，因此就可以知道误差对隐藏激活值的导数，进而知道误差对指向某隐藏单元的权重的导数</p>
 <p>因此，反向传播算法的大致方法就是，首先计算每个输出单元的输出与目标值之间的差值，将这个差值转化为误差导数。然后，利用后一层得到的误差导数，计算本层的误差（相对于激活值的）导数，再使用这个导数计算误差相对于输入权重的导数。注意由于隐藏层节点通常连向多个输出层节点，因此求导时需要将它们都加起来。如下给出了一个例子</p>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_03_back_propagation.png" alt="反向传播示意"><figcaption>反向传播示意</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_03_back_propagation.png" alt="反向传播示意"><figcaption>反向传播示意</figcaption>
 </figure>
 <p>上图中，节点<span class="math inline">\(j\)</span>是输出层节点，<span class="math inline">\(i\)</span>是它前面的隐藏层节点，输出误差仍然使用平方误差，因此正向传播时满足 <span class="math display">\[
 z_j = \sum_i w_{ij}y_i,\ \ y_j = \sigma(z_j),\ \ E= \frac{1}{2}\sum_{j \in {\rm output}}(t_j - y_j)^2
@@ -475,7 +475,7 @@ z_j = \sum_i w_{ij}y_i,\ \ y_j = \sigma(z_j),\ \ E= \frac{1}{2}\sum_{j \in {\rm 
 <li>第二类噪声是取样误差。也就是说，输入和输出之间存在的规律联系实际上可能是偶然造成的，因为采样时采到了一些特殊的样例——尤其是样本比较小的时候。例如，在教学生什么是多边形时，不好的做法是只拿出正方形和长方形，说“这就是多边形”。这些的确是多边形，但是对于之前没接触过这一概念的人来说，他们不会意识到多边形可以有三条边也可以有六条边，也不会意识到多边形的几个角不一定非得都是直角。如果你拿出的是三角形和六边形，那么学生又不会意识到多边形不一定非得是凸的，内角不一定非得是60度的倍数。总之，不管如何仔细地选择样本，对于样本的任意有限集合，总会有一些偶然的规律出现。而训练模型时，无法告知机器这个规律是偶然的还是必然的，所以模型对这两种规律都会去学习。而当模型足够大足够有力的时候，它会很好地拟合取样误差，造成灾难性的后果，泛化能力极差</li>
 </ul>
 <figure>
-<img src="http://os2v1pkzv.bkt.clouddn.com/UTNN/UTNN_03_example_of_overfitting.png" alt="过拟合的例子"><figcaption>过拟合的例子</figcaption>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/UTNN/UTNN_03_example_of_overfitting.png" alt="过拟合的例子"><figcaption>过拟合的例子</figcaption>
 </figure>
 <p>上图给出了一个例子。对于给出的这六个点，可以使用一个自由度为2的模型（绿色直线）来拟合，它只能穿过一个点；也可以使用一个自由度为6或者更高的模型来拟合（红色直线），它可以完美地穿过所有点。但是如果新的输入数据是箭头指向的输入值，应该用哪个模型预测的结果呢？能很好拟合<em>大量</em>数据的模型是令人信服的，而复杂模型在小数据集上表现良好是稀松平常的。对于目前的例子，大多数人会选择绿线上的蓝点作为预测值。但是如果给出十倍的数据，这些数据都离红线很近，大家就会信任红线了</p>
 <p>这种对数据拟合过于完美，以至于很好拟合了取样误差的现象，叫做<strong>过拟合</strong>。这里，简单介绍一下神经网络中用来防止过拟合的方法，但是更细致的讨论留待之后（大部分在第七章）</p>
