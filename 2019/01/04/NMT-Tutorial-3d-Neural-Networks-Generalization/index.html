@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="深度学习,正则化,dropout,归一化,集成方法," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="机器学习模型的正则化是一个老生常谈的问题，毕竟模型训练出来的目的是让它在未知数据上表现良好，而不是死记硬背已有的数据——就像我们准备高考的时候大量刷题不是为了能在高考时遇见自己做过的题，而是为了能运用已有知识做出新题（当然咯，碰上是一件好事，但是这不是目标。况且以一般人的记忆力，遇到旧题还是会忘的，这个时候考试体验就更差了……）。而神经网络（尤其是比较深的神经网络）其模型复杂度会更高，因此过拟合的">
+<meta name="keywords" content="深度学习,正则化,dropout,归一化,集成方法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NMT Tutorial 3扩展d. 神经网络的泛化">
+<meta property="og:url" content="txshi-mt.com/2019/01/04/NMT-Tutorial-3d-Neural-Networks-Generalization/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="机器学习模型的正则化是一个老生常谈的问题，毕竟模型训练出来的目的是让它在未知数据上表现良好，而不是死记硬背已有的数据——就像我们准备高考的时候大量刷题不是为了能在高考时遇见自己做过的题，而是为了能运用已有知识做出新题（当然咯，碰上是一件好事，但是这不是目标。况且以一般人的记忆力，遇到旧题还是会忘的，这个时候考试体验就更差了……）。而神经网络（尤其是比较深的神经网络）其模型复杂度会更高，因此过拟合的">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutoral_3d_constant_LR_loss_surfaces.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutoral_3d_train_test_error_surfaces_not_aligned.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutoral_3d_bn_transformation.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutoral_3d_tf_bn.jpg">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutoral_3d_normalizations.png">
+<meta property="og:updated_time" content="2019-01-04T07:41:01.029Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NMT Tutorial 3扩展d. 神经网络的泛化">
+<meta name="twitter:description" content="机器学习模型的正则化是一个老生常谈的问题，毕竟模型训练出来的目的是让它在未知数据上表现良好，而不是死记硬背已有的数据——就像我们准备高考的时候大量刷题不是为了能在高考时遇见自己做过的题，而是为了能运用已有知识做出新题（当然咯，碰上是一件好事，但是这不是目标。况且以一般人的记忆力，遇到旧题还是会忘的，这个时候考试体验就更差了……）。而神经网络（尤其是比较深的神经网络）其模型复杂度会更高，因此过拟合的">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutoral_3d_constant_LR_loss_surfaces.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2019/01/04/NMT-Tutorial-3d-Neural-Networks-Generalization/"/>
+
+
+
+
+
+  <title>NMT Tutorial 3扩展d. 神经网络的泛化 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2019/01/04/NMT-Tutorial-3d-Neural-Networks-Generalization/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NMT Tutorial 3扩展d. 神经网络的泛化</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-04T13:35:10+08:00">
+                Jan 4 2019
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/深度学习/" itemprop="url" rel="index">
+                    <span itemprop="name">深度学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>机器学习模型的正则化是一个老生常谈的问题，毕竟模型训练出来的目的是让它在未知数据上表现良好，而不是死记硬背已有的数据——就像我们准备高考的时候大量刷题不是为了能在高考时遇见自己做过的题，而是为了能运用已有知识做出新题（当然咯，碰上是一件好事，但是这不是目标。况且以一般人的记忆力，遇到旧题还是会忘的，这个时候考试体验就更差了……）。而神经网络（尤其是比较深的神经网络）其模型复杂度会更高，因此过拟合的风险会更大，也就更有必要采取一些正则化手段，使得模型有更好的泛化能力。本节介绍的泛化手段基本均来自于花书第7章，不过会有详略之分——一些想法比较直接，或者已经介绍过很多遍的，就不会再浪费笔墨了。此外，以下方法由于各种原因，在这里略过</p>
+<ul>
+<li>作为约束的范数惩罚（7.2节）。好像并不常用</li>
+<li>噪声鲁棒性，向权重加入噪声（7.5节）。用得也不多了</li>
+<li>半监督学习（7.6节）。展开可能能写出一篇文章……</li>
+<li>多任务学习（7.7节）。在NLP里展开几乎必定能写出一篇文章……</li>
+<li>参数绑定和参数共享（7.9节）。书里都说了最佳范例就是CNN，个人感觉RNN也包含类似思想</li>
+<li>稀疏表示（7.10节）。神经元稀疏可以用ReLU做到，强制隐层稀疏好像用得不多了</li>
+<li>对抗训练（7.13节）。展开可能能写出一篇文章……</li>
+<li>切面距离、正切传播和流形正切分类器（7.14节）。基本没人用了……</li>
+</ul>
+<p>因此以下主要整理一些常见的方法</p>
+<h2 id="数据增强">数据增强</h2>
+<p>模型不能泛化的表现是在各种数据集上有比较大的方差，而这种现象出现的原因有一种可能是数据集里数据太“纯”，以至于模型没有看到一些只出现在验证集和测试集里的数据模式。解决方法是对输入数据做一些增强：普适的方法是增加一些噪声（常见的是加入高斯噪声），而对于与图像相关的问题，可能平移几个像素点、旋转图像、缩放图像、裁剪图像等都是有效的。需要注意的这种变换不能改变类别，比如OCR任务需要认识到“b“和”d“的区别，以及”6“和”9“的区别，此时水平翻转和旋转180°就不是合适的数据增强方式</p>
+<p>不过在NLP领域，似乎缺少一些通用的数据增强手段——对不同的具体任务，可能需要一种具体的方法。例如，对于机器翻译，可以使用back translation的方法[sennrich2015]。其它一些文章采用了同义词替换的方法：[wang2015]是对给定的某个单词，在训练出的词向量里选择k个距离最近的词做替换，而[zhang2015]则是使用词典做同义词替换</p>
+<h2 id="参数范数惩罚">参数范数惩罚</h2>
+<p>对模型参数施加<span class="math inline">\(L^2\)</span>范数惩罚使得不重要的参数接近于0，或者施加<span class="math inline">\(L^1\)</span>范数惩罚淘汰不重要的特征让解变得稀疏，已经是介绍过很多次的正则化方法了，因此这里对概念不多做介绍，仅对花书中的一些重要结论做一记录</p>
+<h3 id="l2正则化"><span class="math inline">\(L^2\)</span>正则化</h3>
+<p>假设原始目标函数为<span class="math inline">\(J(\boldsymbol{w}; \boldsymbol{X}, \boldsymbol{y})\)</span>，那么加入<span class="math inline">\(L^2\)</span>正则化以后的目标函数改变为 <span class="math display">\[
+\tilde{J}(\boldsymbol{w}; \boldsymbol{X},\boldsymbol{y}) = \frac{\alpha}{2}\boldsymbol{w}^\mathsf{T}\boldsymbol{w} + J(\boldsymbol{w}; \boldsymbol{X},\boldsymbol{y})
+\]</span> 与之对应的梯度为 <span class="math display">\[
+\nabla_{\boldsymbol{w}}\tilde{J}(\boldsymbol{w}; \boldsymbol{X},\boldsymbol{y}) = \alpha \boldsymbol{w} + \nabla_{\boldsymbol{w}}J(\boldsymbol{w}; \boldsymbol{X},\boldsymbol{y})
+\]</span> 记<span class="math inline">\(\boldsymbol{w}^\ast = \mathop{\rm arg\ min}_{\boldsymbol{w}}J(\boldsymbol{w})\)</span>，并在<span class="math inline">\(\boldsymbol{w}^\ast\)</span>的邻域内对<span class="math inline">\(J\)</span>做二次近似，则 <span class="math display">\[
+\hat{J}(\boldsymbol{w}) = J(\boldsymbol{w}^\ast) + \frac{1}{2}(\boldsymbol{w}-\boldsymbol{w}^\ast)^\mathsf{T}\boldsymbol{H}(\boldsymbol{w}-\boldsymbol{w}^\ast)
+\]</span> 其中<span class="math inline">\(\boldsymbol{H}\)</span>是<span class="math inline">\(J\)</span>在<span class="math inline">\(\boldsymbol{w}^\ast\)</span>处计算的关于<span class="math inline">\(\boldsymbol{w}\)</span>的Hessian矩阵。上式的梯度为 <span class="math display">\[
+\nabla_\boldsymbol{w}\hat{J}(\boldsymbol{w}) = \boldsymbol{H}(\boldsymbol{w}-\boldsymbol{w}^\ast)
+\]</span> 因此新目标函数<span class="math inline">\(\tilde{J}\)</span>的解<span class="math inline">\(\tilde{\boldsymbol{w}}\)</span>满足 <span class="math display">\[
+\alpha\tilde{\boldsymbol{w}} + \boldsymbol{H}(\tilde{\boldsymbol{w}} - \boldsymbol{w}^\ast) = 0
+\]</span> 解得 <span class="math display">\[
+\tilde{\boldsymbol{w}} = (\boldsymbol{H} + \alpha\boldsymbol{I})^{-1}\boldsymbol{Hw}^\ast
+\]</span> 由于<span class="math inline">\(\boldsymbol{H}\)</span>是实对称矩阵，因此可以将其分解为一个对角矩阵<span class="math inline">\(\boldsymbol{\Lambda}\)</span>和一组正交向量的标准正交基<span class="math inline">\(\boldsymbol{Q}\)</span>（<a href="http://www.quandt.com/papers/basicmatrixtheorems.pdf" target="_blank" rel="noopener">证明</a>），并且有<span class="math inline">\(\boldsymbol{H} = \boldsymbol{Q\Lambda Q}^\mathsf{T}\)</span>。代入上式，有 <span class="math display">\[
+\begin{align*}
+\tilde{\boldsymbol{w}} &amp;= (\boldsymbol{Q\Lambda Q}^\mathsf{T}+\alpha\boldsymbol{I})^{-1}\boldsymbol{Q\Lambda Q}^\mathsf{T}\boldsymbol{w}^\ast \\
+&amp;= [\boldsymbol{Q}(\boldsymbol{\Lambda}+\alpha\boldsymbol{I})\boldsymbol{Q}^\mathsf{T}]^{-1}\boldsymbol{Q\Lambda Q}^\mathsf{T}\boldsymbol{w}^\ast \\
+&amp;= \boldsymbol{Q}(\boldsymbol{\Lambda} + \alpha\boldsymbol{I})^{-1}\boldsymbol{\Lambda Q}^\mathsf{T}\boldsymbol{w}^\ast \tag{1}
+\end{align*}
+\]</span> 因此<span class="math inline">\(L^2\)</span>正则的意义是沿着由<span class="math inline">\(\boldsymbol{H}\)</span>的特征向量定义的轴缩放<span class="math inline">\(\boldsymbol{w}^\ast\)</span>。更具体地，对<span class="math inline">\(\boldsymbol{w}^\ast\)</span>的第<span class="math inline">\(i\)</span>个分量<span class="math inline">\(w^\ast_i\)</span>，缩放系数为<span class="math inline">\(\frac{\lambda_i}{\lambda_i + \alpha}\)</span>，其中<span class="math inline">\(\lambda_i\)</span>是<span class="math inline">\(\boldsymbol{H}\)</span>的第<span class="math inline">\(i\)</span>个特征值。对于<span class="math inline">\(\boldsymbol{H}\)</span>，其在有助于减小目标函数的方向上特征值大，在无助于减小目标函数的方向上特征值小，因此对<span class="math inline">\(\boldsymbol{w}^\ast\)</span>来说不重要的分量会被显著缩小。假设正则项系数<span class="math inline">\(\alpha\)</span>设为100，而且对某些方向<span class="math inline">\(\lambda_i &lt;\!\!&lt; \alpha\)</span>，那么<span class="math inline">\(w_i^\ast\)</span>就会是原来的百分之一</p>
+<p>在神经网络里，<span class="math inline">\(L^2\)</span>正则通常也被称为<strong>权重衰减</strong>法</p>
+<h3 id="l1正则化"><span class="math inline">\(L^1\)</span>正则化</h3>
+<p>对模型参数的<span class="math inline">\(L^1\)</span>正则化被定义为 <span class="math display">\[
+\Omega(\boldsymbol{w}) = \|\boldsymbol{w}\|_1 = \sum_{i}|w_i|
+\]</span> 与<span class="math inline">\(L^2\)</span>正则化类似的，假设原始目标函数为<span class="math inline">\(J(\boldsymbol{w}; \boldsymbol{X}, \boldsymbol{y})\)</span>，那么加入<span class="math inline">\(L^1\)</span>正则化以后的目标函数改变为 <span class="math display">\[
+\tilde{J}(\boldsymbol{w}; \boldsymbol{X},\boldsymbol{y}) =\alpha\|\boldsymbol{w}\|_1 + J(\boldsymbol{w}; \boldsymbol{X},\boldsymbol{y})
+\]</span> 与之对应的梯度为 <span class="math display">\[
+\nabla_{\boldsymbol{w}}\tilde{J}(\boldsymbol{w}; \boldsymbol{X},\boldsymbol{y}) = \alpha {\rm sign}(\boldsymbol{w}) + \nabla_{\boldsymbol{w}}J(\boldsymbol{w}; \boldsymbol{X},\boldsymbol{y})
+\]</span> 记<span class="math inline">\(\boldsymbol{w}^\ast = \mathop{\rm arg\ min}_{\boldsymbol{w}}J(\boldsymbol{w})\)</span>，简化假设<span class="math inline">\(\boldsymbol{H}\)</span>是对角的，且<span class="math inline">\(H_{i,i} &gt; 0\)</span>（这个假设在线性回归问题中，若数据已被预处理，去除了输入特征之间的相关性，则假设成立）。在<span class="math inline">\(\boldsymbol{w}^\ast\)</span>的邻域内对<span class="math inline">\(\tilde{J}\)</span>做二次近似，则 <span class="math display">\[
+\hat{J}(\boldsymbol{w}) = J(\boldsymbol{w}^\ast) + \sum_i \left[\frac{1}{2}H_{i,i}(w_i - w_i^\ast)^2 + \alpha|w_i|\right]
+\]</span> 上式右侧只有求和项与<span class="math inline">\(w_i\)</span>有关，记为<span class="math inline">\(f(w_i)\)</span>。<span class="math inline">\(f\)</span>可以重写为 <span class="math display">\[
+f(w_i)  = \frac{1}{2}H_{i,i}(w_i - w_i^\ast)^2 + \alpha {\rm sign}(w_i)\cdot w_i
+\]</span> 令<span class="math inline">\(f&#39;(w_i) = 0\)</span>，得到 <span class="math display">\[
+w_i = w_i^\ast - \frac{\alpha}{H_{i,i}}{\rm sign}(w_i)
+\]</span> 因此最优的<span class="math inline">\(w_i\)</span>有 <span class="math display">\[
+f(w_i) = \frac{\alpha^2}{2H_{i,i}} + \alpha|w_i|
+\]</span> 又 <span class="math display">\[
+f(0) = \frac{1}{2}H_{i,i}{w_i^\ast}^2 + \alpha|w_i|
+\]</span> 可知当<span class="math inline">\(w_i^\ast &lt; \alpha/H_{i,i}\)</span>时，0是极值点。又<span class="math inline">\(w_i^\ast = {\rm sign}(w_i^\ast)\cdot |w_i^\ast|\)</span>，因此当<span class="math inline">\(w_i\)</span>取如下值时，最小化<span class="math inline">\(\hat{J}\)</span> <span class="math display">\[
+w_i = {\rm sign}(w_i^\ast)\max\left\{|w_i^\ast| - \frac{\alpha}{H_{i,i}}, 0\right\}
+\]</span> 对每个<span class="math inline">\(i\)</span>，假设<span class="math inline">\(w_i^\ast &gt; 0\)</span>，有两种情况。一种是<span class="math inline">\(w_i^\ast \le \alpha / H_{i,i}\)</span>，此时最好的<span class="math inline">\(w_i\)</span>为0；另一种<span class="math inline">\(w_i^\ast &gt; \alpha / H_{i,i}\)</span>，这个参数还会被保留，因此<span class="math inline">\(L^1\)</span>正则化会产生更稀疏的解</p>
+<h3 id="在tensorflow中使用参数范数惩罚">在TensorFlow中使用参数范数惩罚</h3>
+<p>在TensorFlow中，若要使用参数范数惩罚，通常是在定义损失函数时手动加上正则化项，例如（代码片段取自<a href="https://github.com/guillaume-chevalier/HAR-stacked-residual-bidir-LSTMs/blob/master/config_dataset_HAR_6_classes.py" target="_blank" rel="noopener">HAR-stacked-residual-bidir-LSTMs</a>）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">l2 = lam * sum(</span><br><span class="line">            tf.nn.l2_loss(tf_var)</span><br><span class="line">                <span class="keyword">for</span> tf_var <span class="keyword">in</span> tf.trainable_variables()</span><br><span class="line">                <span class="keyword">if</span> <span class="keyword">not</span> (<span class="string">"noreg"</span> <span class="keyword">in</span> tf_var.name <span class="keyword">or</span> <span class="string">"Bias"</span> <span class="keyword">in</span> tf_var.name)</span><br><span class="line">        )</span><br><span class="line">loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(pred_y, Y)) + l2</span><br></pre></td></tr></table></figure>
+<p>注意这里的<code>lam</code>是上述推导里正则化系数<span class="math inline">\(\alpha\)</span>的倒数</p>
+<h2 id="提前终止">提前终止</h2>
+<h3 id="方法概览">方法概览</h3>
+<p>假设训练一个表示能力很强的模型，很有可能出现这样的情况：模型在训练集上的损失值一直下降，但是在验证集上先下降后上升。一种自然的想法是返回使验证集误差最低的参数设置，保存使验证误差最低的模型。由于通常来讲验证集与测试集分布相同，而且不参与训练，因此使验证误差最低的模型，很大可能也会使测试误差最低。这种方法称为<strong>提前终止</strong>法。提前终止法可以说是深度学习里最简单的正则化方法，实现也很简单，几乎不需要对训练过程做什么改动</p>
+<p>由于提前终止法需要一部分数据做验证集，因此有一部分数据没有参与训练。为了更好地利用这些数据，需要使用所有数据重新训练。书里给出了两种方法：一种是重新初始化模型，然后用所有数据训第一轮训练的那么多步数；另一种是保持参数不变，继续训练，直到低于第一轮模型得到的损失值。两种方法各有各的问题，需要在实践中根据实际情况适当调整，而且在数据量太大，训练集规模远大于验证集规模时，验证集是否需要参与训练个人觉得也不是非常重要，影响不大</p>
+<h3 id="提前终止与l2正则的关系">提前终止与<span class="math inline">\(L^2\)</span>正则的关系</h3>
+<p>如果使用平方误差做误差函数，模型设定为简单的线性模型，使用普通的梯度下降法，则可以说明提前终止相当于<span class="math inline">\(L^2\)</span>正则化。假设参数里没有偏置项，最佳值仍然为<span class="math inline">\(\boldsymbol{w}^\ast\)</span>，在<span class="math inline">\(\boldsymbol{w}^\ast\)</span>的邻域内对<span class="math inline">\(J\)</span>做二次近似，则 <span class="math display">\[
+\hat{J}(\boldsymbol{w}) = J(\boldsymbol{w}^\ast) + \frac{1}{2}(\boldsymbol{w}-\boldsymbol{w}^\ast)^\mathsf{T}\boldsymbol{H}(\boldsymbol{w}-\boldsymbol{w}^\ast)
+\]</span> 其中<span class="math inline">\(\boldsymbol{H}\)</span>是<span class="math inline">\(J\)</span>在<span class="math inline">\(\boldsymbol{w}^\ast\)</span>处计算的关于<span class="math inline">\(\boldsymbol{w}\)</span>的Hessian矩阵。上式的梯度为 <span class="math display">\[
+\nabla_\boldsymbol{w}\hat{J}(\boldsymbol{w}) = \boldsymbol{H}(\boldsymbol{w}-\boldsymbol{w}^\ast)
+\]</span> 假设学习率为<span class="math inline">\(\eta\)</span>，训练步数为<span class="math inline">\(t\)</span>，<span class="math inline">\(\boldsymbol{w}\)</span>初始化为<span class="math inline">\(\boldsymbol{0}\)</span>（尽管在神经网络里不能这么做，但是普通线性模型是可以的），分析<span class="math inline">\(\hat{J}\)</span>上的梯度下降可以近似研究<span class="math inline">\(J\)</span>上的梯度下降 <span class="math display">\[
+\begin{align*}
+\boldsymbol{w}^{(t)} &amp;= \boldsymbol{w}^{(t-1)} - \eta\nabla_{\boldsymbol{w}}\hat{J}(\boldsymbol{w}^{(t-1)}) \\
+&amp;= \boldsymbol{w}^{(t-1)} - \eta \boldsymbol{H}(\boldsymbol{w}^{(t-1)}-\boldsymbol{w}^\ast) \\
+\boldsymbol{w}^{(t)} - \boldsymbol{w}^\ast &amp;= (\boldsymbol{I}-\eta\boldsymbol{H})(\boldsymbol{w}^{(t-1)}-\boldsymbol{w}^\ast)
+\end{align*}
+\]</span> 将<span class="math inline">\(\boldsymbol{H}\)</span>做特征分解<span class="math inline">\(\boldsymbol{H} = \boldsymbol{Q\Lambda Q}^\mathsf{T}\)</span>，代入上式，并两边同时左乘<span class="math inline">\(\boldsymbol{Q}^\mathsf{T}\)</span>，有 <span class="math display">\[
+\boldsymbol{Q}^\mathsf{T}(\boldsymbol{w}^{(t)}-\boldsymbol{w}^\ast) = (\boldsymbol{I} - \eta \boldsymbol{\Lambda})\boldsymbol{Q}^\mathsf{T}(\boldsymbol{w}^{(t-1)}-\boldsymbol{w}^\ast)
+\]</span> 将<span class="math inline">\(\boldsymbol{Q}^{\mathsf{T}}(\boldsymbol{w}^{(t)}- \boldsymbol{w}^\ast)\)</span>记为<span class="math inline">\(\boldsymbol{a}^{(t)}\)</span>，则 <span class="math display">\[
+\boldsymbol{a}^{(t)} = (\boldsymbol{I} - \eta\boldsymbol{\Lambda})\boldsymbol{a}^{(t-1)}
+\]</span> 是一个等比数列，因此有 <span class="math display">\[
+\boldsymbol{a}^{(t)} = (\boldsymbol{I}-\eta\boldsymbol{\Lambda})^t\boldsymbol{a}^{(0)}
+\]</span> 带回<span class="math inline">\(\boldsymbol{a}^{(t)}\)</span>的定义，有 <span class="math display">\[
+\boldsymbol{Q}^{\mathsf{T}}(\boldsymbol{w}^{(t)}-\boldsymbol{w}^\ast) = (\boldsymbol{I}-\eta \boldsymbol{\Lambda})^t\boldsymbol{Q}^\mathsf{T}(-\boldsymbol{w}^\ast)
+\]</span> 整理可得 <span class="math display">\[
+\boldsymbol{Q}^\mathsf{T}\boldsymbol{w}^{(t)} = [\boldsymbol{I}-(\boldsymbol{I}-\eta\boldsymbol{\Lambda})^t]\boldsymbol{Q}^\mathsf{T}\boldsymbol{w}^\ast \tag{2}
+\]</span> 前面介绍<span class="math inline">\(L^2\)</span>正则化时有个式子(1)： <span class="math display">\[
+\tilde{\boldsymbol{w}} = \boldsymbol{Q}(\boldsymbol{\Lambda} + \alpha\boldsymbol{I})^{-1}\boldsymbol{\Lambda Q}^\mathsf{T}\boldsymbol{w}^\ast
+\]</span> 两边左乘<span class="math inline">\(\boldsymbol{Q}^\mathsf{T}\)</span>，有 <span class="math display">\[
+\boldsymbol{Q}^\mathsf{T}\tilde{\boldsymbol{w}} = (\boldsymbol{\Lambda} + \alpha\boldsymbol{I})^{-1}\boldsymbol{\Lambda Q}^\mathsf{T}\boldsymbol{w}^\ast
+\]</span> 由于<span class="math inline">\((\boldsymbol{\Lambda} + \alpha\boldsymbol{I})^{-1}\boldsymbol{\Lambda} + (\boldsymbol{\Lambda} + \alpha\boldsymbol{I})^{-1}\alpha = \boldsymbol{I}\)</span>，因此上式可以写为 <span class="math display">\[
+\boldsymbol{Q}^\mathsf{T}\tilde{\boldsymbol{w}} = [\boldsymbol{I} - (\boldsymbol{\Lambda} + \alpha\boldsymbol{I})^{-1}\alpha] \boldsymbol{Q}^\mathsf{T}\boldsymbol{w}^\ast\tag{3}
+\]</span> 将(3)式与(2)式比较，可以发现，如果满足 <span class="math display">\[
+(\boldsymbol{I}-\eta\boldsymbol{\Lambda})^t = (\boldsymbol{\Lambda} + \alpha\boldsymbol{I})^{-1}\alpha
+\]</span> 则提前终止与<span class="math inline">\(L^2\)</span>可以看作是等价的。如果将上式两边取对数，做<span class="math inline">\(\log(1+x)\)</span>的级数展开（<span class="math inline">\(\log(1+x) = x - \frac{x^2}{2} + \frac{x^3}{3} - \frac{x^4}{4} + \ldots\)</span>），则可以得出结论：如果所有<span class="math inline">\(\lambda_i\)</span>都是小的，满足<span class="math inline">\(\eta \lambda_i &lt;\!\!&lt; 1\)</span>且<span class="math inline">\(\lambda_i /\alpha &lt;\!\!&lt; 1\)</span>，有 <span class="math display">\[
+t \approx \frac{1}{\eta \alpha},\ \ \ \ \ \alpha\approx\frac{1}{\eta t}
+\]</span> 即在满足所有假设的情况下，训练迭代次数<span class="math inline">\(t\)</span>起着和<span class="math inline">\(L^2\)</span>参数成反比的作用</p>
+<h2 id="集成方法">集成方法</h2>
+<h3 id="集成方法概览">集成方法概览</h3>
+<p>模型组合，或者称“集成学习”（ensemble learning），其核心思想是通过结合几个模型来降低泛化误差，因为不同的模型通常不会在测试集上产生完全相同的误差，或者说，它们产生的误差可以相互抵消掉</p>
+<p>假设有<span class="math inline">\(k\)</span>个回归模型，假设每个模型<span class="math inline">\(i\)</span>在每个例子上误差是<span class="math inline">\(\epsilon_i\)</span>，这个误差服从均值<span class="math inline">\(\mathbb{E}[\epsilon_i] = 0\)</span>，方差${}[_i] = [_i^2] =v <span class="math inline">\(且协方差\)</span>[_i_j] =c<span class="math inline">\(的多维正态分布。模型集成（通常是平均所有被集成模型的预测结果）得到的平均误差是\)</span>_i _i$，集成预测器的平方误差的期望是 <span class="math display">\[
+\begin{align*}
+\mathbb{E}\left[\left(\frac{1}{k}\sum_i \epsilon_i\right)^2\right] &amp;= \frac{1}{k^2}\mathbb{E}\left[\sum_i \left(\epsilon_i^2 + \sum_{j\not= i}\epsilon_i\epsilon_j\right)\right] \\
+&amp;= \frac{1}{k}v + \frac{k-1}{k}c
+\end{align*}
+\]</span> 假设所有模型误差完全相关，<span class="math inline">\(c=v\)</span>，上式结果是<span class="math inline">\(v\)</span>，与之前没有变化，模型平均没有什么帮助，但是也没有扯后腿；假设所有模型误差完全不相关，<span class="math inline">\(c=0\)</span>，那么平方误差的期望仅仅为<span class="math inline">\(v/k\)</span>，因此模型越多，集成规模越大，平方误差的期望就会越小。这说明如果各个成员的误差是独立的，集成将显著提高模型效果</p>
+<p>常见的模型集成方法包括</p>
+<ul>
+<li>装袋法（bagging），核心思想是对<span class="math inline">\(N\)</span>个样本组成的测试集做<span class="math inline">\(k\)</span>次有放回采样（bootstrap），训练<span class="math inline">\(k\)</span>个模型，对它们的预测结果求平均。具体可参考<a href="http://txshi-mt.com/2017/06/29/edx-columbia-12-Decision-Tree-Random-Forest/">哥大机器学习讲义：随机森林</a>和<a href="http://txshi-mt.com/2017/10/05/NTUML-23-Blending-Bagging/">台大机器学习讲义：装袋法</a></li>
+<li>提升法（boosting），核心思想是训练<span class="math inline">\(k\)</span>个比较弱的基分类器，对每个基分类器，着重使用前面分类器效果不好的数据做训练。具体可参考<a href="http://txshi-mt.com/2017/06/29/edx-columbia-13-Boosting/">哥大机器学习讲义：Boosting</a>和<a href="http://txshi-mt.com/2017/10/05/NTUML-24-Adaptive-Boosting/">台大机器学习讲义：自适应提升算法</a></li>
+<li>堆叠法（stacking）。具体做法是将训练集划分为两个不相交的集合，用第一部分数据训练基分类器，将这些基分类器在第二部分数据上做推断，然后将推断结果作为输入，正确标签做输出，训练一个更高级分类器。堆叠法通常会使用各种非常不一样的分类器（例如SVM、LR等等混杂）（<a href="https://s3.amazonaws.com/academia.edu.documents/30766420/RN_11_02.pdf?AWSAccessKeyId=AKIAIWOWYYGZ2Y53UL3A&amp;Expires=1542722034&amp;Signature=GCVE8qf4cZsJZ50BEsHvZGcdCBA%3D&amp;response-content-disposition=inline%3B%20filename%3DEnsemble_learning.pdf" target="_blank" rel="noopener"><em>Ensemble Learning</em></a>）</li>
+</ul>
+<p>对于神经网络，即便其结构相同，由于权重初始化往往是从某个分布中随机抽样取值，每个batch选取的数据可能不一样，以及其它超参数设置不同，使用同一个训练集训练出的不同模型往往就有部分独立的误差，可以做集成</p>
+<p>常见的集成方法一般包括投票（常见于分类问题）、对结果求平均等等。对于NMT等seq2seq任务，在解码的时候通常使用beam search，此时模型集成的方法通常是将各个子模型给出的各单词得分做一个平均，取出top k结果，然后将这k个结果发送给各个子模型做下一步搜索。这种集成过程比较复杂，在TensorFlow里也不是特别容易实现（例如OpenNMT-tf就没有实现这个过程，目前只在OpenNMT-py里用PyTorch实现了）</p>
+<h3 id="参数平均">参数平均</h3>
+<p>对于深度学习，有一个更加方便普适，易于实现的集成方法：每隔若干个step就保存一个检查点checkpoint，然后将每个检查点的权重加起来求平均，即<strong>对参数求平均</strong>。需要注意的是，参数平均要求被平均的模型至少有同样的结构和同样的随机初始化参数（不只是随机分布要相同，连随机的结果都要相同！），甚至初始若干个训练步骤都要相同。此时独立初始化的模型反而不能用作参数平均的输入</p>
+<p>参数平均的思想在[junczys2016]中首先被验证有效，在[izmailov2018]中得到了理论说明。简而言之，在若干简化条件下，使用恒定学习率运行SGD算法，等效于从一个期望为最佳参数（使损失函数取得最小值），协方差由学习率控制的正态分布中随机抽样的过程。SGD得到的解倾向于分布在一个平坦的局部极值区域（而不是一个点），因此将不同时间步得到的参数求平均会将最后得到的解落入到这个极值区域的内部，更接近最优解。下图给出了在CIFAR-100上训练ResNet-164（在预训练模型基础上微调）得到的误差函数表面，损失函数使用的是交叉熵函数，并采用了正则化。</p>
+<figure>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutoral_3d_constant_LR_loss_surfaces.png" alt="使用恒定学习率做SGD的误差表面。左图为训练误差，右图为测试误差"><figcaption>使用恒定学习率做SGD的误差表面。左图为训练误差，右图为测试误差</figcaption>
+</figure>
+<p>其中三个黑叉代表了微调开始、中期和结束时得到的参数位置。文章也采取了最近新提出的学习率调整策略（周期性调整学习率，学习率先变小再变大）做了同样的实验，得到了类似效果（不过新策略得到的三个点比固定学习率得到的点要明显靠近中心很多）</p>
+<p>另一个值得注意的现象是，同一个模型的训练误差平面和测试误差平面形状相似，但不能完全对齐。下图给出了使用SGD在CIFAR-100上经过125个epoch训练ResNet-164得到的训练误差平面和测试误差平面，<span class="math inline">\(w_{\rm SGD}\)</span>是SGD给出的最优解，<span class="math inline">\(w_{\rm SWA}\)</span>是参数平均得到的解。可以看到，参数平均得到的解尽管在训练集上效果不那么好，但是有更强的泛化能力</p>
+<figure>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutoral_3d_train_test_error_surfaces_not_aligned.png" alt="训练误差平面与测试误差平面的对比"><figcaption>训练误差平面与测试误差平面的对比</figcaption>
+</figure>
+<p>参数平均是一种非常高效的模型集成方法，它不需要额外时间训练若干个模型，也不需要在推断时花费多余的时间产生若干个结果。此外，其实现也非常简单，可以参考<a href="https://github.com/OpenNMT/OpenNMT-tf/blob/a889b54bb64cefd60876052473ea18a3c7f0ef16/opennmt/utils/checkpoint.py#L214" target="_blank" rel="noopener">OpenNMT-tf的实现</a></p>
+<h3 id="dropout">Dropout</h3>
+<h4 id="原理">原理</h4>
+<p>在计算资源无限的前提下，要正则化一个固定大小的模型，最好方法是对模型所有可能的参数组合都算出各自的预测值，然后对预测值做加权平均，其中权重是给定训练数据后每组参数组合的后验概率。这种也是模型集成的方法，但是要完全达到这个目的，需要训练指数多个模型，代价太大了</p>
+<p>Dropout的目的是防止过拟合，以及对“组合指数多个不同神经网络”这一遥不可及的目标给出一个近似而且有效的方法。其基本思想比较直观，即在训练时的每一批次，对网络中的每个神经元（输入神经元和隐藏神经元都可以）独立地以概率<span class="math inline">\(p\)</span><strong>保留</strong>之。如果随机数落到了<span class="math inline">\([1-p, 1)\)</span>的区间，就将它连同其入边和出边一起临时删掉。这样，对神经网络做dropout类似于从原始网络抽样出一个“苗条版”的子网络，因此对有<span class="math inline">\(n\)</span>个节点的网络，可以看做其包含了<span class="math inline">\(2^n\)</span>个子网络（每个节点都可能被保留/丢弃），对其使用dropout训练就像是训练了<span class="math inline">\(2^n\)</span>个权重共享的小网络</p>
+<p>在测试时，很难让所有小网络都给出预测值，然后做加权平均，不过可以使用一种方法来取得近似的效果，就是在测试/推断时使用没有dropout的网络，只不过每个节点出边的权重都乘以<span class="math inline">\(p\)</span>，使得节点在训练时输出的期望与测试时的实际输出相匹配，以达到聚合模型的目的</p>
+<p>Dropout这种思想的提出还受到了生物进化过程中有性繁殖这一过程的启发。因为在有性繁殖的过程中，父代个体的基因只有一般可能性会传给子代（而且可能还会变异），这就使得每个基因都要有一定鲁棒性，能力够强，能够跟其他随机一组基因很好地合作，不能每时每刻都依赖<em>很多</em>个同伴。类似地，使用dropout得到的每个隐藏神经元必须可以与随机分配的其它单元都能很好合作，能靠自己创造有用的特征，而不是依赖其它单元纠正它的错误。或者说，dropout更像是从一些成功的阴谋活动中吸取到了经验：每5个人完成一个小的阴谋，一共完成10个，总容易过让50个人一起完成一个大的阴谋</p>
+<p>Dropout的形式化描述比较简洁。假设神经网络共有<span class="math inline">\(L\)</span>个隐藏层，编号<span class="math inline">\(l \in \{1, \ldots , L\}\)</span>。<span class="math inline">\(\boldsymbol{z}^{(l)}\)</span>是第<span class="math inline">\(l\)</span>层的输入向量，<span class="math inline">\(\boldsymbol{y}^{(l)}\)</span>是第<span class="math inline">\(l\)</span>层的输出向量（<span class="math inline">\(\boldsymbol{y}^{(0)} = \boldsymbol{x}\)</span>是整个网络的输入）。<span class="math inline">\(\boldsymbol{W}^{(l)}\)</span>和<span class="math inline">\(\boldsymbol{b}^{(l)}\)</span>是第<span class="math inline">\(l\)</span>层的权重和偏置，对<span class="math inline">\(l \in \{0, \ldots, L-1\}\)</span>的每个节点<span class="math inline">\(i\)</span>，普通的前向传播有 <span class="math display">\[
+\begin{align*}
+z_i^{(l+1)} &amp;= \boldsymbol{w}_i^{(l+1)}\boldsymbol{y}^{l}+b_i^{(l+1)} \\
+y_i^{(l+1)} &amp;= f(z_i^{(l+1)})
+\end{align*}
+\]</span> 其中<span class="math inline">\(f\)</span>是激活函数。加入dropout以后，传播操作变为 <span class="math display">\[
+\begin{align*}
+r_j^{(l)} &amp;\sim {\rm Bernoulli}(p) \\
+\tilde{\boldsymbol{y}}^{(l)} &amp;= {\bf r}^{(l)} \otimes \boldsymbol{y}^{(l)} \\
+z_i^{(l+1)} &amp;= \boldsymbol{w}_i^{(l+1)}\tilde{\boldsymbol{y}}^{l}+b_i^{(l+1)} \\
+y_i^{(l+1)} &amp;= f(z_i^{(l+1)})
+\end{align*}
+\]</span> 在测试/推断时，有 <span class="math display">\[
+\boldsymbol{W}_{\rm test}^{(l)} = p\boldsymbol{W}^{(l)}
+\]</span> 原始论文推荐的参数是对隐藏节点，<span class="math inline">\(p\)</span>设为0.5；对输入节点，设为0.8。此外，原始论文推荐将dropout和参数范数限制一起使用（即在优化时加上<span class="math inline">\(\|\boldsymbol{w}\| \le c\)</span>的限制），不过现在（2018年）已经很少有人这么提了。另外有一些文章指出dropout在线性模型上可以起到L2正则化的效果，尽管花书指出这种推理不适用于神经网络，但是最新的文章 [hara2016] 仍然（从效果上）对这个结论给予了支持。需要注意的是，尽管dropout在大多数网络上都有效，但是它不适用于规模比较小的网络</p>
+<h4 id="实现与使用">实现与使用</h4>
+<p>TF在实现dropout时，没有使用原始的dropout方法，而是使用了一种称为”inverted dropout“的技巧：训练时，所有没有被丢弃掉的神经元权重都除以<span class="math inline">\(p\)</span>，这样测试时就不需要修改网络的权重了。具体实现在<code>tf.nn.dropout</code>中，伪代码如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dropout</span><span class="params">(x, p)</span>:</span></span><br><span class="line">    <span class="comment"># x中的每个元素以概率p保留，概率1-p设置为0</span></span><br><span class="line">    mask = random_uniform(x.shape)</span><br><span class="line">    <span class="comment"># mask中的元素在0-1之间均匀分布，加p以后就是p-1+p之间均匀分布。</span></span><br><span class="line">    <span class="comment"># 取整以后，每个元素正好有1-p的概率为0，p的概率为1</span></span><br><span class="line">    keep_flags = floor(mask + p) </span><br><span class="line">    <span class="keyword">return</span> x / p * keep_flags</span><br></pre></td></tr></table></figure>
+<p>应用时，在构建计算图的代码里，通常使用placeholder来接收外部传进来的<code>keep_prob</code>值（因为训练时和推断时的<code>keep_prob</code>值不同，推断时<code>keep_prob</code>值必须为1——这是一个很容易被忽视的地方！）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> graph.as_default():</span><br><span class="line">    ...</span><br><span class="line">    keep_prob = tf.placeholder(tf.float32)</span><br><span class="line">    </span><br><span class="line">    hidden = tf.nn.relu(tf.matmul(x, w_hidden) + b_hidden)</span><br><span class="line">    dropout_hidden = tf.nn.dropout(hidden)</span><br><span class="line">    out = tf.matmul(dropout_hidden, w_out) + b_out</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+<p>使用高阶API，例如<code>Estimator</code>时，建议使用<code>tf.layers.dropout</code>。它实际使用了keras对dropout的封装，可以通过开关判断是否需要dropout，所以与ModeKeys搭配使用尤其好，例如</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dense = tf.layers.dense(inputs=x, units=<span class="number">1024</span>, activation=tf.nn.relu, name=<span class="string">'dense'</span>)</span><br><span class="line">dropout = tf.layers.dropout(inputs=dense1, rate=<span class="number">0.4</span>, training=mode == tf.estimator.ModeKeys.TRAIN)</span><br></pre></td></tr></table></figure>
+<h2 id="批归一化">批归一化</h2>
+<p>Ioffe和Szegedy两人在[ioffe2015]中对神经网络难以训练的原因提出了一个新的猜想：每一层的输入都由前面所有层的参数共同决定，因此随着网络的变深，一点小的变化也会被一直放大，即各层的输入所属的分布会发生变化，称为经历了“共变量偏移”（covariate shift）。将每一层输入的分布固定住可以让训练过程变得更有效：假设神经网络使用sigmoid函数作为激活函数<span class="math inline">\(g\)</span>，根据前面提到过多次的结论，当某一层的输入<span class="math inline">\(x\)</span>的绝对值很大时，会有<span class="math inline">\(g&#39;(x) \rightarrow 0\)</span>，发生梯度消失，训练变慢。但是这个<span class="math inline">\(x\)</span>由前面所有层的参数算出来，因此参数发生变化以后<span class="math inline">\(x\)</span>向饱和区域内移动的可能性是很大的。尽管这种情况可以通过使用ReLU激活或者好的初始化方法（见前一篇文章）来缓解，但是如果能让输入的分布保持稳定，也可以加速训练过程。文章称这种在训练过程中内部结点分布发生变化的现象为“内部共变量偏移”（internal convariate shift），并提出了一种减少这种偏移现象的方法——批归一化（batch normalization）</p>
+<h3 id="原理-1">原理</h3>
+<p>批归一化操作的思想一部分来源于“白化”（whitening）操作，不过白化只是将神经网络的整体输入归一化，使其均值为0方差为1，而批归一化是对每一层的输入都如此做。但是，如果归一化参数是在梯度下降过程之外计算，会导致参数一直涨而损失值变化不大的情况，因为优化过程“不知道”归一化已经发生。所以正确的对策是让网络产生的激活值总是满足期望的分布，然而，对每一层的输入都做白化，会导致大量的计算而且可能不是处处可导</p>
+<p>批归一化对此作了两个关键简化</p>
+<ul>
+<li><p>不是联合白化输入和输出，而是对每个特征标量独立归一化。假设某一层的输入<span class="math inline">\(\boldsymbol{x}\)</span>有<span class="math inline">\(d\)</span>个维度，<span class="math inline">\(\boldsymbol{x} = \left(x^{(1)}, \ldots , x^{(d)}\right)\)</span>，则对每个维度都做如下归一化 <span class="math display">\[
+\hat{x}^{(k)} = \frac{x^{(k)} - {\rm E}[x^{(k)}]}{\sqrt{ {\rm Var}[x^{(k)}]}}
+\]</span> 其中期望和方差是在整个训练集上求得。注意这个操作会改变这一层所能提取的特征，例如如果激活函数是sigmoid，那么做这个变换以后会把输入都集中在非饱和区域，因此需要保证这样的变化可以表示恒等变化。为了做到这一点，需要对每个激活值<span class="math inline">\(x^{(k)}\)</span>引入一对变量<span class="math inline">\(\gamma^{(k)}\)</span>和<span class="math inline">\(\beta^{(k)}\)</span>，前者用来缩放，后者用来偏移。这两个变量也是通过训练学到，它们的作用的是保持网络的表示能力</p></li>
+<li><p>由于神经网络通常都是使用小批量SGD做优化，很难得到整个数据集的均值和方差，因此批归一化做了一个近似：使用每个小批量的均值和方差近似整个数据集的对应指标</p></li>
+</ul>
+<p>由于对于特征<span class="math inline">\(x^{(k)}, k \in \{1, \ldots, d\}\)</span>，归一化都是各自独立的，因此对某个特征<span class="math inline">\(x^{(k)}\)</span>，可以简记为<span class="math inline">\(x\)</span>。假设对由<span class="math inline">\(m\)</span>条数据组成的某个小批量数据集<span class="math inline">\(\mathcal{B} = \{x_{1\ldots m}\}\)</span>，归一化得到<span class="math inline">\(\hat{x}_{1\ldots m}\)</span>，线性转换的结果为<span class="math inline">\(y_{1\ldots m}\)</span>，称变换<span class="math inline">\({\rm BN}_{\gamma, \beta}:x_{1\ldots m} \rightarrow y_{1\ldots m}\)</span>为<strong>批归一化变换</strong>，具体算法如下图所示，其中<span class="math inline">\(\epsilon\)</span>用来维持算法的数值稳定性</p>
+<figure>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutoral_3d_bn_transformation.png" alt="批归一化变换算法"><figcaption>批归一化变换算法</figcaption>
+</figure>
+<p>每个归一化后的激活值<span class="math inline">\(\hat{x}^{(k)}\)</span>都可以看作是对下个子网络的输入，该子网络包括两个部分，先是线性变换<span class="math inline">\(y^{(k)}\)</span>，然后是原始网络的其它处理过程</p>
+<p>上图的算法是在前向传播时计算。在反向传播时，损失函数<span class="math inline">\(L\)</span>的梯度也可以相应使用链式法则算出 <span class="math display">\[
+\begin{align*}
+\frac{\partial L}{\partial \gamma} &amp;= \sum_{i=1}^m \frac{\partial L}{\partial y_i} \cdot \hat{x}_i \\
+\frac{\partial L}{\partial \beta} &amp;= \sum_{i=1}^m \frac{\partial L}{\partial y_i} \\
+\frac{\partial L}{\partial \hat{x}_i} &amp;= \frac{\partial L}{\partial y_i}\cdot \gamma \\
+\frac{\partial L}{\partial \sigma_{\mathcal{B}}^2} &amp;= \sum_{i=1}^m \left(\frac{\partial L}{\partial \hat{x}_i} \cdot \frac{\partial \hat{x}_i}{\partial \sigma^2_{\mathcal{B}}}\right) \\ &amp;= \sum_{i=1}^m \frac{\partial L}{\partial \hat{x}_i} \cdot (x_i - \mu_{\mathcal{B}})\cdot \left(-\frac{1}{2}\right)(\sigma^2_{\mathcal{B}} + \epsilon)^{-\frac{3}{2}} \\
+\frac{\partial L}{\partial \mu_{\mathcal{B}}} &amp;= \sum_{i=1}^m\left(\frac{\partial L}{\partial \hat{x}_i} \cdot \frac{\partial \hat{x}_i}{\partial \mu_{\mathcal{B}}}\right) + \frac{\partial L}{\partial \sigma^2_{\mathcal{B}}}\cdot \frac{\partial \sigma_{\mathcal{B}}^2}{\partial \mu_{\mathcal{B}}} \\
+&amp;= \left(\sum_{i=1}^m\frac{\partial L}{\partial \hat{x}_i} \cdot \frac{-1}{\sqrt{\sigma^2_{\mathcal{B}} + \epsilon}}\right) + \frac{\partial L}{\partial \sigma^2_{\mathcal{B}}} \cdot \frac{1}{m}\sum_{i=1}^m-2(x_i-\mu_{\mathcal{B}}) \\
+&amp;= \sum_{i=1}^m\frac{\partial L}{\partial \hat{x}_i} \cdot \frac{-1}{\sqrt{\sigma^2_{\mathcal{B}} + \epsilon}}\ \ \ \ \left(\because \sum_{i=1}^m \mu_{\mathcal{B}} = m\cdot\frac{1}{m} \sum_{i=1}^mx_i = \sum_{i=1}^m x_i\right) \\
+\frac{\partial L}{\partial x_i} &amp;= \frac{\partial L}{\partial \hat{x}_i} \cdot \frac{\partial \hat{x}_i}{\partial x_i} + \frac{\partial L}{\partial \mu_{\mathcal{B}}}\cdot \frac{\partial \mu_{\mathcal{B}}}{\partial x_i} + \frac{\partial L}{\partial \sigma_{\mathcal{B}}^2}\cdot \frac{\partial \sigma_{\mathcal{B}}^2}{\partial x_i} \\
+&amp;= \frac{\partial L}{\partial \hat{x}_i} \cdot (\sigma^2 + \epsilon)^{-\frac{1}{2}} + \frac{\partial L}{\partial \mu_{\mathcal{B}}}\cdot\frac{1}{m} + \frac{\partial L}{\partial \sigma^2_{\mathcal{B}}} \cdot \frac{2}{m}(x_i-\mu_\mathcal{B}) \\
+&amp;= \frac{\partial L}{\partial \hat{x}_i} \cdot (\sigma^2 + \epsilon)^{-\frac{1}{2}} -\frac{1}{m}(\sigma^2_{\mathcal{B}} + \epsilon)^{-\frac{1}{2}}\left(\sum_{j=1}^m\frac{\partial L}{\partial \hat{x}_j}\right) -\frac{1}{m}(\sigma^2 + \epsilon)^{-\frac{1}{2}}\cdot \frac{x_i - \mu_{\mathcal{B}}}{\sqrt{\sigma^2_{\mathcal{B}} + \epsilon}} \cdot \sum_{j=1}^m 2\cdot\frac{\partial L}{\partial \hat{x}_j}\cdot(x_j-\mu_{\mathcal{B}}) \cdot \frac{1}{2} \cdot (\sigma^2 + \epsilon)^{-\frac{1}{2}} \\
+&amp;= \frac{\partial L}{\partial \hat{x}_i} \cdot (\sigma^2 + \epsilon)^{-\frac{1}{2}} -\frac{1}{m}(\sigma^2_{\mathcal{B}} + \epsilon)^{-\frac{1}{2}}\left(\sum_{j=1}^m\frac{\partial L}{\partial \hat{x}_j}\right) -\frac{1}{m}(\sigma^2 + \epsilon)^{-\frac{1}{2}}\cdot \hat{x}_i\cdot\left(\sum_{i=1}^m\frac{\partial L}{\partial \hat{x}_j}\cdot \hat{x}_j\right) \\
+&amp;= \frac{1}{m}(\sigma^2 + \epsilon)^{-\frac{1}{2}}\left(\frac{m\partial L}{\partial \hat{x}_i} - \sum_{j=1}^m\frac{\partial L}{\partial \hat{x}_j} - \hat{x}_i\sum_{i=1}^m\frac{\partial L}{\partial \hat{x}_j}\cdot\hat{x}_j\right)
+\end{align*}
+\]</span> 也就是说，批归一化变换是可导的变换，即随着模型的训练过程，每一层所使用的输入都会努力减小内部共线性偏移，训练可以加速</p>
+<p>真正应用时，是对激活前的值做批归一化。即对某些层，如果原来接收的是<span class="math inline">\(x\)</span>，现在改为接收<span class="math inline">\({\rm BN}(x)\)</span>。推断时，按照道理来讲，所有需要被批归一化的激活值都应该使用整个数据集的均值和方差做归一化操作，但是计算整个数据集的统计量可能比较耗时，所以可以使用滑动均值来做（这块实际做法和原文所说的做法感觉有差异，以实际做法为准），即对每个小批量数据，以如下方法估计整个样本的期望<span class="math inline">\(\hat{ {\rm E}}[x]\)</span>和方差<span class="math inline">\(\widehat{ {\rm Var}}[x]\)</span>： <span class="math display">\[
+\begin{align*}
+\hat{ {\rm E}}[x] &amp;\leftarrow \alpha \hat{ {\rm E}}[x] + (1-\alpha)\mu_{\mathcal{B}} \\
+\widehat{ {\rm Var}}[x] &amp;\leftarrow \alpha \widehat{ {\rm Var}}[x] + (1-\alpha)\sigma_{\mathcal{B}}^2 \\
+\end{align*}
+\]</span> 通常<span class="math inline">\(\alpha\)</span>取0.9，也被称为“动量”（momentum，与前面介绍的动量法梯度下降有点不谋而合）</p>
+<p>此外，假设原来要激活的值是<span class="math inline">\(\boldsymbol{Wu} + \boldsymbol{b}\)</span>，由于批归一化的<span class="math inline">\(\beta\)</span>替代了<span class="math inline">\(\boldsymbol{b}\)</span>原来的作用，因此可以将偏置项略去。也就是原来的<span class="math inline">\(\boldsymbol{z} = g(\boldsymbol{Wu}+\boldsymbol{b})\)</span>被替换成<span class="math inline">\(\boldsymbol{z} = g({\rm BN}(\boldsymbol{Wu}))\)</span>，其中<span class="math inline">\(g\)</span>是激活函数。再次提醒这里<span class="math inline">\(\rm BN\)</span>是对每个特征维度做，学到的<span class="math inline">\(\gamma^{(k)}\)</span>和<span class="math inline">\(\beta^{(k)}\)</span>也是应用在各个特征维度上</p>
+<p>需要注意的是，对于卷积神经网络，为了保证满足卷积操作的性质，需要对同一卷积核内的所有神经元做相同的归一化操作，因此对卷积核大小为<span class="math inline">\(p \times q\)</span>的网络来说，此时小批量样本数的大小<span class="math inline">\(m&#39; = |\mathcal{B}| = mpq\)</span>，<span class="math inline">\(\gamma^{(k)}\)</span>和<span class="math inline">\(\beta^{(k)}\)</span>也是适用于每个卷积核，而不是单独的神经元</p>
+<p>使用批归一化的网络可以使用大一点的学习率训练，因为对标量<span class="math inline">\(a\)</span>，容易验证<span class="math inline">\({\rm BN}(\boldsymbol{Wu}) = {\rm BN}((a\boldsymbol{W})\boldsymbol{u})\)</span>，因此 <span class="math display">\[
+\begin{align*}
+\frac{\partial {\rm BN}((a\boldsymbol{W})\boldsymbol{u})}{\partial \boldsymbol{u}} &amp;= \frac{\partial {\rm BN}(\boldsymbol{W}\boldsymbol{u})}{\partial \boldsymbol{u}} \\
+\frac{\partial {\rm BN}((a\boldsymbol{W})\boldsymbol{u})}{\partial (a\boldsymbol{W})} &amp;= \frac{1}{a} \cdot \frac{\partial {\rm BN}(\boldsymbol{W}\boldsymbol{u})}{\partial \boldsymbol{W}}
+\end{align*}
+\]</span> 即学习率越大，梯度会越小，参数增长反而更稳定</p>
+<p>此外，批归一化方法也是一种正则化的手段。简单地讲，可以看做是向样本中添加了噪声，因为每个隐藏单元都缩放了一个随机值<span class="math inline">\(\sigma_{\mathcal{B}}\)</span>，也减去了一个随机值<span class="math inline">\(\mu_\mathcal{B}\)</span>（<a href="https://www.quora.com/Is-there-a-theory-for-why-batch-normalization-has-a-regularizing-effect" target="_blank" rel="noopener">Ian Goodfellow的回答</a>）。香港中文大学的研究者对其中原理做了更深入的分析，有兴趣的读者可以访问<a href="https://openreview.net/pdf?id=HJlLKjR9FQ" target="_blank" rel="noopener">文章的OpenReview版本</a>了解更多</p>
+<h3 id="使用与实现">使用与实现</h3>
+<p>TensorFlow为批归一化提供了若干种实现手段，包括</p>
+<ul>
+<li><code>tf.nn.batch_normalization</code>，是一个封装层级比较低的操作符。调用者需要自己手动处理<code>mean</code>和<code>variance</code>张量</li>
+<li><code>tf.nn.fused_batch_norm</code>，跟上一个操作符平级，针对CNN里常用到的四维输入张量做了优化</li>
+<li><code>tf.contrib.layers.batch_norm</code>，一个比较老的实现。传言TF2.0要舍弃掉contrib包，所以这个方法不建议用</li>
+<li><code>tf.nn.batch_norm_with_global_normalization</code>，也是要废弃的实现了</li>
+<li><code>tf.layers.batch_normalization</code>，是对第一个操作的高层封装，主要包括了以下几项支持：
+<ul>
+<li>会自己维护滑动均值和方差</li>
+<li>会根据输入决定是否调用fused版本（也算是封装了<code>tf.nn.fused_batch_norm</code>）</li>
+<li>支持virtual batch[salimans2016b]。virtual batch主要在GAN上使用，为了解决每个批量数据里每个样本<span class="math inline">\(\boldsymbol{x}\)</span>都依赖于其它输入的问题</li>
+<li>支持批量重归一化（batch renormalization）[Ioffe2017]。该方法主要是引入一个新的线性变换来逼近数据的真实分布，在批数据量小或数据来源非独立同分布时比较有效</li>
+</ul></li>
+</ul>
+<p><strong>推荐使用<code>tf.layers.batch_normalization</code></strong></p>
+<p>真正使用时，批归一化通常在激活函数之前（如果是CNN，一般是在卷积之后，激活之前），示例代码如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">is_training = tf.placeholder(tf.bool)</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> tf.name_scope(<span class="string">'conv1'</span>):</span><br><span class="line">    conv1 = tf.layers.conv2d(</span><br><span class="line">        inputs=input_layer, </span><br><span class="line">        filters=<span class="number">6</span>, </span><br><span class="line">        kernel_size=[<span class="number">5</span>, <span class="number">5</span>], </span><br><span class="line">        padding=<span class="string">'same'</span>,</span><br><span class="line">        activation=<span class="keyword">None</span></span><br><span class="line">    )</span><br><span class="line">    </span><br><span class="line">    conv1_bn = tf.layers.batch_normalization(</span><br><span class="line">        inputs=conv1,</span><br><span class="line">        axis=<span class="number">-1</span>,</span><br><span class="line">        momentum=<span class="number">0.9</span>,</span><br><span class="line">        epsilon=<span class="number">0.001</span>,</span><br><span class="line">        center=<span class="keyword">True</span>,</span><br><span class="line">        scale=<span class="keyword">True</span>,</span><br><span class="line">        training=is_training,</span><br><span class="line">        name=<span class="string">'conv1_bn'</span></span><br><span class="line">    )</span><br><span class="line">    </span><br><span class="line">    conv1_bn_relu = tf.nn.relu(conv1_bn)</span><br><span class="line">    </span><br><span class="line">    maxpool1 = tf.layers.max_pooling2d(</span><br><span class="line">        inputs=conv1_bn_relu,</span><br><span class="line">        pool_size=[<span class="number">2</span>, <span class="number">2</span>],</span><br><span class="line">        strides=<span class="number">2</span>,</span><br><span class="line">        padding=<span class="string">'valid'</span></span><br><span class="line">    )</span><br></pre></td></tr></table></figure>
+<p>需要注意的是，该方法内部维护的<code>moving_mean</code>和<code>moving_variance</code>（实际上底层是某个<code>keras.layers.BatchNormalization</code>类对象维护的成员变量）需要在训练时被更新，而更新操作符在<code>tf.GraphKeys.UPDATE_OPS</code>中，因此需要加到<code>train_op</code>的依赖里，并且在获取<code>UPDATE_OPS</code>集合之前加入<code>batch_normalization</code>这个操作符，即</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">conv1_bn = tf.layers.batch_normalization(...)</span><br><span class="line"></span><br><span class="line"><span class="comment"># ...</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> tf.control_dependencies(tf.get_collection(tf.GraphKeys.UPDATE_OPS)):</span><br><span class="line">    train_op = tf.train.AdamOptimizer(<span class="number">1e-4</span>).minimize(cross_entropy)</span><br></pre></td></tr></table></figure>
+<p>否则两个滑动统计量不会被正确更新</p>
+<p>调用<code>tf.layers.batch_normalization</code>方法时，实际上是新建了一个<code>tensorflow.python.layers.BatchNormalization</code>类的对象，然后调用<code>apply</code>方法。该类有如下继承关系</p>
+<figure>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutoral_3d_tf_bn.jpg" alt="TensorFlow中tensor.python.layers.BatchNormalization类的继承关系"><figcaption>TensorFlow中tensor.python.layers.BatchNormalization类的继承关系</figcaption>
+</figure>
+<p><code>apply</code>方法由根节点祖先类提供，实际上调用了祖先类的<code>__call__</code>方法。该方法会依次调用<code>keras.layers.BatchNormalization</code>（以下简称keras_BN类）的<code>build</code>方法和<code>call</code>方法。其中前者主要是对传入参数做一些检查以及添加变量，真正处理逻辑都在<code>call</code>方法中，实现的伪代码如下（这里去掉了关于批量重归一化、virtual batch、fused BN等部分的细节）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tensorflow.python.keras.utils <span class="keyword">import</span> tf_utils</span><br><span class="line"><span class="keyword">from</span> tensorflow.python.ops <span class="keyword">import</span> nn, state_ops</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_assign_moving_average</span><span class="params">(self, variable, value, momentum)</span>:</span></span><br><span class="line">    <span class="comment"># var = var - (var - val)(1 - a) =&gt; var = avar + (1 - a)val</span></span><br><span class="line">    decay = <span class="number">1.</span> - momentum</span><br><span class="line">    update_delta = (variable - value) * decay</span><br><span class="line">    state_ops.assign_sub(variable, update_delta)</span><br><span class="line">    </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">call</span><span class="params">(self, inputs, training=None)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> self.fused:</span><br><span class="line">        <span class="keyword">return</span> self._fused_batch_norm(inputs, training=training)</span><br><span class="line">    ndims = len(inputs.get_shape())</span><br><span class="line">    reduction_axes = [i <span class="keyword">for</span> i <span class="keyword">in</span> range(ndims) <span class="keyword">if</span> i <span class="keyword">not</span> <span class="keyword">in</span> self.axis]</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 这个判断条件比较坑，因为training实际上是三个可能值：True, False和None</span></span><br><span class="line">    <span class="comment"># 当training是一个”动态值“时，这里会得到None，所以不能简单写if not training</span></span><br><span class="line">    <span class="keyword">if</span> training <span class="keyword">is</span> <span class="keyword">False</span>:</span><br><span class="line">        mean, var = self.moving_mean, self.moving_var</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">False</span>:</span><br><span class="line">        <span class="comment"># 允许传入一个adjustment函数，将归一化的数据先做一个ax+b的仿射变换</span></span><br><span class="line">        <span class="comment"># 然后再做BN算法里的 gamma * x + beta</span></span><br><span class="line">        <span class="comment"># 意义不明</span></span><br><span class="line">        <span class="keyword">if</span> self.adjustment:</span><br><span class="line">            do_extra_adjustment</span><br><span class="line">        <span class="comment"># 获得均值和方差</span></span><br><span class="line">        keep_dims = self.virtual_batch_size <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span> <span class="keyword">or</span> len(self.axis) &gt; <span class="number">1</span></span><br><span class="line">        mean, var = nn.moments(inputs, reduction_axes, keep_dims=keep_dims)</span><br><span class="line">        moving_mean = self.moving_mean</span><br><span class="line">        moving_var = self.moving_var</span><br><span class="line">        </span><br><span class="line">        mean = tf_utils.smart_cond(training, <span class="keyword">lambda</span>: mean, <span class="keyword">lambda</span>: moving_mean)</span><br><span class="line">        var = tf.utils.smart_cond(training, <span class="keyword">lambda</span>: var, <span class="keyword">lambda</span>: moving_var)</span><br><span class="line">        <span class="keyword">if</span> self.virtual_batch_size <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</span><br><span class="line">            <span class="comment"># virtual batch related logic</span></span><br><span class="line">            ...</span><br><span class="line">        <span class="keyword">if</span> self.renorm:</span><br><span class="line">            <span class="comment"># batch renormalization related logic</span></span><br><span class="line">            ...</span><br><span class="line">        mean_update = tf.utils.smart_cond(</span><br><span class="line">            training,</span><br><span class="line">            <span class="keyword">lambda</span>: self._assign_moving_average(self.moving_mean, mean, self.momentum),</span><br><span class="line">            <span class="keyword">lambda</span>: self.moving_mean</span><br><span class="line">        )</span><br><span class="line">        var_update = tf.utils.mart_cond(</span><br><span class="line">            training,</span><br><span class="line">            <span class="keyword">lambda</span>: self._assign_moving_average(self.moving_var, var, self.momentum),</span><br><span class="line">            <span class="keyword">lambda</span>: self.moving_var</span><br><span class="line">        )</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> eager_execution:</span><br><span class="line">            self.add_update(mean_update, inputs=<span class="keyword">True</span>)</span><br><span class="line">            self.add_update(var_update, inputs=<span class="keyword">True</span>)</span><br><span class="line">            </span><br><span class="line">    <span class="comment"># offset和scale在do_extra_adjustment里被额外做了一些计算。</span></span><br><span class="line">    <span class="comment"># 如果没有adjustment这个步骤，可以认为 offset = self.beta, scale = self.gamma</span></span><br><span class="line">    <span class="keyword">return</span> nn.batch_normalization(inputs, mean, var, offset, scale, self.epsilon)</span><br></pre></td></tr></table></figure>
+<p>可以参考知乎问题<a href="https://www.zhihu.com/question/53133249" target="_blank" rel="noopener">怎样在tensorflow中使用batch normalization？</a>中匿名用户的回答得到一个更简洁而且实际可用的批归一化实现</p>
+<h3 id="进一步探索">进一步探索</h3>
+<p>在NIPS2018上，有两篇文章更深入地探索了批归一化成功的原因。[bjorck2018]首先提出使用原始SGD时，每批数据引入的噪声对神经网络正则化有正向帮助，而引入噪声的两种方法是减小每批数据的大小<span class="math inline">\(|\mathcal{B}|\)</span>或者增大学习率<span class="math inline">\(\alpha\)</span>。实验表明，使用批归一化训练的网络（文中主要是在CV领域对CNN进行验证）可以容忍更大的学习率，因此批归一化可以增强模型的泛化能力。具体说来，使用批归一化的网络在初始化阶段梯度的大小更集中在零点附近，比较均匀；而没有批归一化的网络有严重的长尾现象。而且对于后者，学习率越大，网络越难收敛（按照文章的定义，是两次训练之间损失值差了1000倍以上），其原因是随着网络的变深，深层节点的激活值变得很大，输出“爆炸了”</p>
+<p>另外，不使用批归一化的网络在初始化以后的训练初始阶段，倾向于将所有输入统一标记成某个类别（显然通常会给出错误的类别），因此梯度通常都是正的，加起来就是一个巨大的值，而且对不同批次数据变化不大。也就是说，网络优化的过程更多是在矫正不好的初始化状态，而不是在学习。实验还显示，对于CNN而言，即便使用了Xavier初始化方法，如果不加批归一化，某些信道也容易发生梯度爆炸的现象，一个可能原因是Xavier初始化假设初始化之后各个信道权重的方差是常量，但是这个假设太弱了。批归一化极大程度上消除了随机初始化矩阵产生病态输出，导致梯度过大的现象，因此可以使用更大的学习率训练网络，引入更多噪声，从而提高网络的泛化能力</p>
+<p>另一篇文章[santurkar2018]的结果更加有颠覆性，该文在分析批归一化效果显著的原因时给出了一个与原始论文截然不同的观点，即批归一化的成功与原始论文所说的“消除了内部共变量偏移”<strong>毫无关系</strong>（下文为了简便，将“内部共变量偏移”简记为ICS）。为了证明这一点，作者在批归一化层后面加入了一些随机噪声，而且噪声来源的分布均值不为0，方差也不为1，分布还会在每个时间步过后改变。尽管这种做法使得每一层的输入不再满足批归一化算法所希望的输入的性质，但是实验结果表明这样训出的模型效果与不加扰动训出的模型效果类似，收敛速度也相近，这证明ICS与训练效果并不直接相关。进一步实验表明，批归一化实际上并没有减小ICS</p>
+<p>那么为什么批归一化能取得成功呢？文章认为，其关键在于批归一化操作重参数化了底层的优化问题，使得问题表面显著光滑了很多。对于普通的深度神经网络，损失函数不仅非凸，而且有平原有峡谷，因此使用基于梯度的算法会不稳定，对学习率和初始化敏感。而经过批归一化后，梯度变得更加可靠，有更强的预测能力，因此向着梯度方向迈出更大一步（学习率变大）以后，接下来梯度的方向仍然是比较准确的估计。意外的是，批归一化能达到的效果，使用其他<span class="math inline">\(\ell_p\)</span>正则也可以做到，而<span class="math inline">\(\ell_1\)</span>可能还更好一些</p>
+<h3 id="扩展">扩展</h3>
+<p>批归一化算法提出以后，给很多研究人员带来了启发，各种试图对某些元素归一化的方法如雨后春笋般冒出。而且批归一化算法本身对RNN和对噪声敏感的网络（例如GAN）表现也不好，因此其他方法也可以弥补批归一化的这些缺点。以下是若干比较重要的方法，不过这里不会介绍太多细节</p>
+<h4 id="权重归一化">权重归一化</h4>
+<p>权重归一化（[salimans2016a]）将着眼点放在了权重上，而不是神经元的输入。对于神经元<span class="math inline">\(y = \phi({\boldsymbol{w} \cdot \boldsymbol{x}} + b)\)</span>，权重归一化将权重<span class="math inline">\(\boldsymbol{w}\)</span>表示为 <span class="math display">\[
+\boldsymbol{w} = \frac{g}{\|\boldsymbol{v}\|}\boldsymbol{v}
+\]</span> 由于<span class="math inline">\(\boldsymbol{v}/\|\boldsymbol{v}\|\)</span>是单位向量，因此有<span class="math inline">\(\|\boldsymbol{w}\| = g\)</span>。这样，需要被优化的参数变成了<span class="math inline">\(\boldsymbol{v}\)</span>和<span class="math inline">\(g\)</span>两个。根据对梯度<span class="math inline">\(\nabla_{\boldsymbol{v}}L\)</span>的一种重写 <span class="math display">\[
+\nabla_{\boldsymbol{v}}L = \frac{g}{\|\boldsymbol{v}\|}M_{\boldsymbol{w}}\nabla_\boldsymbol{w}L,\ \ M_{\boldsymbol{w}} = \boldsymbol{I} - \frac{\boldsymbol{ww}^\mathsf{T}}{\|\boldsymbol{w}\|^2}
+\]</span> 可以看出权重归一化一方面对权重的梯度做了缩放，另一方面它将梯度投射到了与当前权重向量不一样的方向，最后会导致梯度可以自稳定自己的范数（但是不能使用自适应学习率的SGD，例如Adam），因此使用权重归一化可以使网络对学习率的选择有很强的鲁棒性（训练时可以使用更大的学习率）。此外，这种分解还有助于减小梯度方向的噪声，也可以加速学习。文章指出，权重归一化可以看作是一种计算量更小、噪声更少的对批归一化方法的近似，不依赖每个小批量输入数据，因此适用于RNN、LSTM和强化学习（强化学习对噪声敏感）。最后，权重归一化实现起来要容易一些。不过根据讨论，权重归一化容易在训练时不稳定，而且对输入数据有很强的依赖性</p>
+<h4 id="层归一化">层归一化</h4>
+<p>对固定深度的前馈网络，使用批归一化方法可以分层分别存储统计信息。但是对RNN来说，输入序列的长度通常都是变化的，因此在不同的时间步需要存储不同的统计信息。层归一化方法（layer normalization）[ba2016]做了一定的简化，通过隐藏层输入的加和来估计归一化统计信息，因此不再依赖于具体的训练数据，更加适用于RNN。层归一化方法是一种在NLP领域里用得比较多的归一化方法，考虑到篇幅限制和方法的重要性，这部分内容将放在RNN之后介绍</p>
+<h4 id="组归一化">组归一化</h4>
+<p>批归一化的一大问题是，每批次参与训练的数据量<span class="math inline">\(|\mathcal{B}|\)</span> 不能太少（经验值是不要少于32）。如果<span class="math inline">\(|\mathcal{B}|\)</span> 特别小，比如极端情况下到达2，那么误差会特别大，得到的统计量特别不准，因此训大的视觉模型时比较吃力。FAIR的何恺明组在2018年提出了一种新的归一化方法——组归一化（group normalization）[wu2018]来解决这个问题，主要创新是将信道划分成组，计算每组的均值和方差，来做归一化。由于这种划分方式独立于<span class="math inline">\(|\mathcal{B}|\)</span>，因此对任一批次大小的数据量都可用</p>
+<p>文章首先对所有归一化问题给出了一个通用的描述形式，即它们都是对输入<span class="math inline">\(x_i\)</span>做变换 <span class="math display">\[
+\hat{x}_i = \frac{1}{\sigma_i}(x_i - \mu_i)
+\]</span> 对于二维图像，<span class="math inline">\(i = (i_N, i_C, i_H, i_W)\)</span>，其中<span class="math inline">\(N\)</span>是每小批训练数据batch轴、<span class="math inline">\(C\)</span>是信道轴、<span class="math inline">\(H\)</span>是空间上的高度，<span class="math inline">\(W\)</span>是空间上的宽度。<span class="math inline">\(\mu\)</span>和<span class="math inline">\(\sigma\)</span>分别是均值和标准差 <span class="math display">\[
+\begin{align*}
+\mu_i &amp;= \frac{1}{m}\sum_{k\in \mathcal{S}_i}x_k \\
+\sigma_i &amp;= \sqrt{\frac{1}{m}\sum_{k \in \mathcal{S}_i}(x_k - \mu_i)^2 + \epsilon}
+\end{align*}
+\]</span> 归一化以后，对每个信道，要学习一个线性变换，来使得归一化后的点有缩放和移动能力，保持原始数据的表示性 <span class="math display">\[
+y_i = \gamma \hat{x}_i + \beta
+\]</span> 各种归一化方法主要是在使用哪些像素点<span class="math inline">\(\mathcal{S}_i\)</span>上有所不同：</p>
+<ul>
+<li>批归一化方法是让同信道的所有点做归一化（即沿着<span class="math inline">\((N,H,W)\)</span>轴做）</li>
+<li>层归一化方法是让同批次的所有点做归一化（即沿着<span class="math inline">\((C,H,W)\)</span>轴做）</li>
+<li>实例归一化方法[vedaldi2016]（instance normalization，主要用于风格迁移）是让同批次各信道内的点做归一化（即沿着<span class="math inline">\((H,W)\)</span>轴做）</li>
+<li>组归一化方法是将信道划分为<span class="math inline">\(G\)</span>个组（<span class="math inline">\(G\)</span>是超参数，默认为32），同组信道，同批次内的点做归一化。当<span class="math inline">\(G = 1\)</span>时，方法退化为层归一化，此时认为一层里所有信道贡献相同（不过由于卷积的存在，这个假设是不太成立的）。当<span class="math inline">\(G=C\)</span>时，方法退化为实例归一化，但是模型无法学习信道之间的依赖关系</li>
+</ul>
+<p>下图（截取自原文）给出了四种归一化方法之间的关系</p>
+<figure>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutoral_3d_normalizations.png" alt="归一化方法示意图"><figcaption>归一化方法示意图</figcaption>
+</figure>
+<p>组归一化方法的TF实现也比较简洁</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">group_norm</span><span class="params">(x, gamma, beta, g, eps=<span class="number">1e-5</span>)</span></span></span><br><span class="line"><span class="function">    # <span class="title">x</span>:</span> input featurs <span class="keyword">with</span> shape [N, C, H, W]</span><br><span class="line">    <span class="comment"># gamma, beta: scale and offset, with shape [1, C, 1, 1]</span></span><br><span class="line">    <span class="comment"># g: number of groups for GN</span></span><br><span class="line">    n, c, h, w = x.shape</span><br><span class="line">    x = tf.reshape(x, [n, g, c // g, h, w])</span><br><span class="line">    </span><br><span class="line">    mean, var = tf.nn.moments(x, [<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>], keep_dims=<span class="keyword">True</span>)</span><br><span class="line">    x = (x - mean) / tf.sqrt(var + eps)</span><br><span class="line">    </span><br><span class="line">    x = tf.reshape(x, [n, c, h, w])</span><br><span class="line">    <span class="keyword">return</span> x * gamma + beta</span><br></pre></td></tr></table></figure>
+<p>组归一化背后的原理和一些视觉相关的内容有关，这里就不介绍了。有兴趣的话可以参阅<a href="https://arxiv.org/pdf/1803.08494.pdf" target="_blank" rel="noopener">原文</a></p>
+<h2 id="参考文献">参考文献</h2>
+<p>花书第7章</p>
+<p>[sennrich2015] Sennrich, R., Haddow, B., &amp; Birch, A. (2015). Improving neural machine translation models with monolingual data. <em>arXiv preprint arXiv:1511.06709</em>.</p>
+<p>[wang2015] Wang, W. Y., &amp; Yang, D. (2015). That's So Annoying!!!: A Lexical and Frame-Semantic Embedding Based Data Augmentation Approach to Automatic Categorization of Annoying Behaviors using# petpeeve Tweets. In <em>Proceedings of the 2015 Conference on Empirical Methods in Natural Language Processing</em> (EMNLP) (pp. 2557-2563).</p>
+<p>[zhang2015] Zhang, X., &amp; LeCun, Y. (2015). Text understanding from scratch. <em>arXiv preprint arXiv:1502.01710</em>.</p>
+<p>[junczys2016] Junczys-Dowmunt, M., Dwojak, T., &amp; Sennrich, R. (2016). The AMU-UEDIN submission to the WMT16 news translation task: Attention-based NMT models as feature functions in phrase-based SMT. <em>arXiv preprint arXiv:1605.04809</em>.</p>
+<p>[izmailov2018] Izmailov, P., Podoprikhin, D., Garipov, T., Vetrov, D., &amp; Wilson, A. G. (2018). Averaging Weights Leads to Wider Optima and Better Generalization. <em>arXiv preprint arXiv:1803.05407</em>.</p>
+<p>[srivastava2014] Srivastava, N., Hinton, G., Krizhevsky, A., Sutskever, I., &amp; Salakhutdinov, R. (2014). Dropout: a simple way to prevent neural networks from overfitting. <em>The Journal of Machine Learning Research</em>, <em>15</em>(1), 1929-1958.</p>
+<p>[hara2016] Hara, K., Saitoh, D., &amp; Shouno, H. (2016, September). Analysis of dropout learning regarded as ensemble learning. In <em>International Conference on Artificial Neural Networks</em>. Springer, Cham. (pp. 72-79)</p>
+<p>[ioffe2015] Ioffe, S., &amp; Szegedy, C. (2015). Batch normalization: Accelerating deep network training by reducing internal covariate shift. <em>arXiv preprint arXiv:1502.03167</em>.</p>
+<p>[bjorck2018] Bjorck, J., Gomes, C., &amp; Selman, B. (2018). Understanding Batch Normalization. In <em>Proceedings of Advances in Neural Information Processing Systems 31: Annual Conference on Neural Information Processing Systems 2018</em> (NeurIPS) (pp. 7705-7716).</p>
+<p>[santurkar2018] Santurkar, S., Tsipras, D., Ilyas, A., &amp; Madry, A. (2018). How Does Batch Normalization Help Optimization?. In <em>Proceedings of Advances in Neural Information Processing Systems 31: Annual Conference on Neural Information Processing Systems 2018</em> (NeurIPS) (pp. 2488-2498).</p>
+<p><a href="https://stackoverflow.com/questions/48001759/what-is-right-batch-normalization-function-in-tensorflow" target="_blank" rel="noopener">What is right batch normalization function in TensorFlow</a></p>
+<p>[salimans2016a] Salimans, T., &amp; Kingma, D. P. (2016). Weight normalization: A simple reparameterization to accelerate training of deep neural networks. In <em>Advances in Neural Information Processing Systems 2016</em> (NeurIPS) (pp. 901-909).</p>
+<p>[ba2016] Ba, J. L., Kiros, J. R., &amp; Hinton, G. E. (2016). Layer normalization. <em>arXiv preprint arXiv:1607.06450</em>.</p>
+<p><a href="https://stats.stackexchange.com/questions/304755/pros-and-cons-of-weight-normalization-vs-batch-normalization" target="_blank" rel="noopener">Pros and cons of weight normalization vs batch normalization</a></p>
+<p><a href="https://stackoverflow.com/questions/43234667/tf-layers-batch-normalization-large-test-error" target="_blank" rel="noopener">tf.layers.batch_normalization large test error</a></p>
+<p>[wu2018] Wu, Y., &amp; He, K. (2018). Group normalization. <em>arXiv preprint arXiv:1803.08494</em>.</p>
+<p>[vedaldi2016] Vedaldi, V. L. D. U. A. (2016). Instance Normalization: The Missing Ingredient for Fast Stylization. <em>arXiv preprint arXiv:1607.08022</em>.</p>
+<p>[salimans2016b] Salimans, T., Goodfellow, I., Zaremba, W., Cheung, V., Radford, A., &amp; Chen, X. (2016). Improved techniques for training gans. In <em>Advances in Neural Information Processing Systems</em> (NeurIPS) (pp. 2234-2242).</p>
+<p>[Ioffe2017] Ioffe, S. (2017). Batch renormalization: Towards reducing minibatch dependence in batch-normalized models. In <em>Advances in Neural Information Processing Systems</em> (NeurIPS) (pp. 1945-1953).</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2019/01/04/NMT-Tutorial-3d-Neural-Networks-Generalization/" title="NMT Tutorial 3扩展d. 神经网络的泛化">txshi-mt.com/2019/01/04/NMT-Tutorial-3d-Neural-Networks-Generalization/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/深度学习/" rel="tag"># 深度学习</a>
+          
+            <a href="/tags/正则化/" rel="tag"># 正则化</a>
+          
+            <a href="/tags/dropout/" rel="tag"># dropout</a>
+          
+            <a href="/tags/归一化/" rel="tag"># 归一化</a>
+          
+            <a href="/tags/集成方法/" rel="tag"># 集成方法</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/11/17/NMT-Tutorial-3c-Neural-Networks-Initialization/" rel="next" title="NMT Tutorial 3扩展c. 神经网络的初始化">
+                <i class="fa fa-chevron-left"></i> NMT Tutorial 3扩展c. 神经网络的初始化
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">91</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">95</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#数据增强"><span class="nav-number">1.</span> <span class="nav-text">数据增强</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参数范数惩罚"><span class="nav-number">2.</span> <span class="nav-text">参数范数惩罚</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#l2正则化"><span class="nav-number">2.1.</span> <span class="nav-text">\(L^2\)正则化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#l1正则化"><span class="nav-number">2.2.</span> <span class="nav-text">\(L^1\)正则化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#在tensorflow中使用参数范数惩罚"><span class="nav-number">2.3.</span> <span class="nav-text">在TensorFlow中使用参数范数惩罚</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#提前终止"><span class="nav-number">3.</span> <span class="nav-text">提前终止</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#方法概览"><span class="nav-number">3.1.</span> <span class="nav-text">方法概览</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#提前终止与l2正则的关系"><span class="nav-number">3.2.</span> <span class="nav-text">提前终止与\(L^2\)正则的关系</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#集成方法"><span class="nav-number">4.</span> <span class="nav-text">集成方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#集成方法概览"><span class="nav-number">4.1.</span> <span class="nav-text">集成方法概览</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参数平均"><span class="nav-number">4.2.</span> <span class="nav-text">参数平均</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dropout"><span class="nav-number">4.3.</span> <span class="nav-text">Dropout</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#原理"><span class="nav-number">4.3.1.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#实现与使用"><span class="nav-number">4.3.2.</span> <span class="nav-text">实现与使用</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#批归一化"><span class="nav-number">5.</span> <span class="nav-text">批归一化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#原理-1"><span class="nav-number">5.1.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用与实现"><span class="nav-number">5.2.</span> <span class="nav-text">使用与实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#进一步探索"><span class="nav-number">5.3.</span> <span class="nav-text">进一步探索</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#扩展"><span class="nav-number">5.4.</span> <span class="nav-text">扩展</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#权重归一化"><span class="nav-number">5.4.1.</span> <span class="nav-text">权重归一化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#层归一化"><span class="nav-number">5.4.2.</span> <span class="nav-text">层归一化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#组归一化"><span class="nav-number">5.4.3.</span> <span class="nav-text">组归一化</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文献"><span class="nav-number">6.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
