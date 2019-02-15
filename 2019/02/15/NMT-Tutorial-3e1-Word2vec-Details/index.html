@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="词向量,word2vec," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="本文共分为三节，由若干文章拼接而成。第一节具体推导word2vec参数的更新规则，第二节介绍在词表比较大时对softmax做近似的方法，第三部分介绍如何生成好的词向量 Word2vec的参数学习 本节内容完全来自于[rong2014] 连续词袋模型（CBOW） 上下文仅有一个单词的情况 上下文只有一个单词时，网络做的事情其实类似于二元语法模型。假设词表大小为\(V\)，隐藏层大小为\(N\)，输入">
+<meta name="keywords" content="词向量,word2vec">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NMT Tutorial 3扩展e第1部分. Word2Vec及若干关于词向量的扩展知识">
+<meta property="og:url" content="txshi-mt.com/2019/02/15/NMT-Tutorial-3e1-Word2vec-Details/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="本文共分为三节，由若干文章拼接而成。第一节具体推导word2vec参数的更新规则，第二节介绍在词表比较大时对softmax做近似的方法，第三部分介绍如何生成好的词向量 Word2vec的参数学习 本节内容完全来自于[rong2014] 连续词袋模型（CBOW） 上下文仅有一个单词的情况 上下文只有一个单词时，网络做的事情其实类似于二元语法模型。假设词表大小为\(V\)，隐藏层大小为\(N\)，输入">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutoral_3e1_simplest_CBOW.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutoral_3e1_full_CBOW.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutoral_3e1_SkipGram.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutorial_3e1_hierarchical_softmax.png">
+<meta property="og:updated_time" content="2019-02-15T12:25:25.705Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NMT Tutorial 3扩展e第1部分. Word2Vec及若干关于词向量的扩展知识">
+<meta name="twitter:description" content="本文共分为三节，由若干文章拼接而成。第一节具体推导word2vec参数的更新规则，第二节介绍在词表比较大时对softmax做近似的方法，第三部分介绍如何生成好的词向量 Word2vec的参数学习 本节内容完全来自于[rong2014] 连续词袋模型（CBOW） 上下文仅有一个单词的情况 上下文只有一个单词时，网络做的事情其实类似于二元语法模型。假设词表大小为\(V\)，隐藏层大小为\(N\)，输入">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutoral_3e1_simplest_CBOW.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2019/02/15/NMT-Tutorial-3e1-Word2vec-Details/"/>
+
+
+
+
+
+  <title>NMT Tutorial 3扩展e第1部分. Word2Vec及若干关于词向量的扩展知识 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2019/02/15/NMT-Tutorial-3e1-Word2vec-Details/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NMT Tutorial 3扩展e第1部分. Word2Vec及若干关于词向量的扩展知识</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-02-15T20:25:25+08:00">
+                Feb 15 2019
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/NLP/" itemprop="url" rel="index">
+                    <span itemprop="name">NLP</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文共分为三节，由若干文章拼接而成。第一节具体推导word2vec参数的更新规则，第二节介绍在词表比较大时对softmax做近似的方法，第三部分介绍如何生成好的词向量</p>
+<h2 id="word2vec的参数学习">Word2vec的参数学习</h2>
+<p>本节内容完全来自于[rong2014]</p>
+<h3 id="连续词袋模型cbow">连续词袋模型（CBOW）</h3>
+<h4 id="上下文仅有一个单词的情况">上下文仅有一个单词的情况</h4>
+<p>上下文只有一个单词时，网络做的事情其实类似于二元语法模型。假设词表大小为<span class="math inline">\(V\)</span>，隐藏层大小为<span class="math inline">\(N\)</span>，输入层到隐藏层及隐藏层到输出层都是全连接，输入为独热编码向量，那么网络的示意图如下图所示 <img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutoral_3e1_simplest_CBOW.png" title="最简单的CBOW模型" alt="此处输入图片的描述"></p>
+<p>从图中可知，输入层和隐藏层之间的权重可以使用<span class="math inline">\(V \times N\)</span>的矩阵<span class="math inline">\(\boldsymbol{W}\)</span>表示。假设输入的语境单词为词表中的第<span class="math inline">\(k\)</span>个单词，则输入向量<span class="math inline">\(\boldsymbol{x}\)</span>满足<span class="math inline">\(x_k = 1\)</span>且<span class="math inline">\(\forall k&#39; \not= k \rightarrow x_{k&#39;} = 0\)</span>，因此有 <span class="math display">\[
+\boldsymbol{h} = \boldsymbol{W}^\mathsf{T}\boldsymbol{x} = \boldsymbol{w}_{(k, \cdot)}^\mathsf{T} := \boldsymbol{v}_{w_I}^\mathsf{T} 
+\]</span> 即<span class="math inline">\(\boldsymbol{W}\)</span>的第k行行向量实际上就是词表中第k个单词词向量的转置，记输入单词词向量为<span class="math inline">\(\boldsymbol{v}_{w_I}\)</span></p>
+<p>假设最后得到的得分向量为<span class="math inline">\(\boldsymbol{u}\)</span>，则从隐藏层到输出层有 <span class="math display">\[
+\boldsymbol{u} = \boldsymbol{W}&#39;^\mathsf{T}\boldsymbol{h} \tag{1}
+\]</span> 其中<span class="math inline">\(\boldsymbol{u}\)</span>的第<span class="math inline">\(j\)</span>行元素<span class="math inline">\(u_j\)</span>为 <span class="math display">\[
+u_j = \boldsymbol{w}_{(\cdot, j)}&#39;^\mathsf{T}\boldsymbol{h} \tag{2}
+\]</span> 这里<span class="math inline">\(\boldsymbol{w}_{(\cdot, j)}&#39;\)</span>是<span class="math inline">\(\boldsymbol{W}&#39;\)</span>的第<span class="math inline">\(j\)</span>列。记<span class="math inline">\(\boldsymbol{w}_{(\cdot, j)}&#39;\)</span>为<span class="math inline">\(\boldsymbol{v}&#39;_{w_O}\)</span></p>
+<p>得到<span class="math inline">\(\boldsymbol{u}\)</span>以后，可以使用softmax来得到单词的后验分布：给定上文单词为<span class="math inline">\(w_I\)</span>的情况下，出现单词<span class="math inline">\(w_O\)</span>的概率为 <span class="math display">\[
+P(w_O|w_I) = y_j = \frac{\exp(u_j)}{\sum_{j&#39;=1}^V \exp(u_{j&#39;})} \tag{3}
+\]</span> 将式(1)和(2)代入(3)可得 <span class="math display">\[
+P(w_O|w_I) = \frac{\exp\left(\boldsymbol{v}_{w_O}&#39;^\mathsf{T}\boldsymbol{v}_{w_I}\right)}{\sum_{j&#39;=1}^V \exp\left(\boldsymbol{v}_{w_j&#39;}&#39;^\mathsf{T}\boldsymbol{v}_{w_I}\right)} \tag{4}
+\]</span></p>
+<p>可见对同一个单词<span class="math inline">\(w\)</span>来说，会有两个嵌入表示<span class="math inline">\(\boldsymbol{v}_{w}\)</span>和<span class="math inline">\(\boldsymbol{v}_{w}&#39;\)</span>，前者是<span class="math inline">\(\boldsymbol{W}\)</span>的第<span class="math inline">\(i\)</span>行行向量，后者是<span class="math inline">\(\boldsymbol{W}&#39;\)</span>的第<span class="math inline">\(i\)</span>列列向量。在后续的分析中，称前者为单词<span class="math inline">\(w\)</span>的<strong>输入向量</strong>，后者为单词<span class="math inline">\(w\)</span>的<strong>输出向量</strong></p>
+<h5 id="隐藏层到输出层权重的更新">隐藏层到输出层权重的更新</h5>
+<p>假设给定单词<span class="math inline">\(w_k\)</span>，期望输出是单词<span class="math inline">\(w_{j^\ast}\)</span>，那么模型优化的目标是要最大化正确单词对应的概率<span class="math inline">\(y_{j^\ast}\)</span>，有 <span class="math display">\[
+\begin{align*}
+\mathop{ {\rm \arg}\max}_{\boldsymbol{W}&#39;} p(w_O|w_I) &amp;= \mathop{ {\rm \arg}\max}_{\boldsymbol{W}&#39;} y_{j^\ast} \\
+&amp;= \mathop{ {\rm \arg}\max}_{\boldsymbol{W}&#39;} \log y_{j^\ast} \\
+&amp;= \mathop{ {\rm \arg}\max}_{\boldsymbol{W}&#39;} \left(u_{j^\ast} - \log \sum_{j&#39;=1}^V \exp(u_{j&#39;})\right)
+\end{align*}
+\]</span> 记<span class="math inline">\(E = -\log p(w_O|w_I)\)</span> 为学习的目标函数，那么学习的目的就是最小化<span class="math inline">\(E\)</span>。可知 <span class="math display">\[
+\frac{\partial E}{\partial u_j} = y_j - t_j := e_j
+\]</span> 其中<span class="math inline">\(t_j = \mathbb{1}(j = j^\ast)\)</span>。或者可以写为 <span class="math display">\[
+\frac{\partial E}{\partial u_j} = \begin{cases}y_j - 1 &amp; j = j^\ast \\ y_j &amp; {\rm elsewhere}\end{cases}
+\]</span> 接着可以求出<span class="math inline">\(E\)</span>对<span class="math inline">\(\boldsymbol{W}&#39;\)</span>中每个元素<span class="math inline">\(w_{ij}&#39;\)</span>的偏导数 <span class="math display">\[
+\frac{\partial E}{\partial w_{ij}&#39;} = \frac{\partial E}{\partial u_j}\cdot \frac{\partial u_j}{\partial w_{ij}&#39;} = e_j \cdot h_i
+\]</span> 因此梯度下降的更新方法为 <span class="math display">\[
+w_{ij}&#39;^{(\rm new)} = w_{ij}&#39;^{(\rm old)} - \eta \cdot e_j\cdot h_i
+\]</span> 向量化的形式为 <span class="math display">\[
+\boldsymbol{v}_{w_j}&#39;^{(\rm new)} = \boldsymbol{v}_{w_j}&#39;^{(\rm old)} - \eta \cdot e_j \cdot \boldsymbol{h}
+\]</span> 这意味着，当<span class="math inline">\(y_j &gt; t_j\)</span>时，<span class="math inline">\(e_j\)</span>为正值，<span class="math inline">\(\boldsymbol{v}_{w_j}&#39;\)</span>会变小。由于<span class="math inline">\(t_j\)</span>只能为0或1，因此这说明给定输入单词为<span class="math inline">\(w_I\)</span>时，对不是期望单词序号<span class="math inline">\(j^\ast\)</span>的<span class="math inline">\(j\)</span>，<span class="math inline">\(w_j\)</span>的输出向量会变小，反之相反</p>
+<h5 id="输入层到隐藏层权重的更新">输入层到隐藏层权重的更新</h5>
+<p>首先计算目标函数<span class="math inline">\(E\)</span>对隐藏层每个输出元素<span class="math inline">\(h_i\)</span>的偏导数。由于隐藏层到输出层是全连接的，因此<span class="math inline">\(h_i\)</span>对每个<span class="math inline">\(u_j\)</span>都有贡献，使用全微分公式有 <span class="math display">\[
+\frac{\partial E}{\partial h_i} = \sum_{j=1}^V \frac{\partial E}{\partial u_j} \cdot \frac{\partial u_j}{\partial h_i} = \sum_{j=1}^V e_j \cdot w_{ij}&#39; := e&#39;_i
+\]</span> 其中<span class="math inline">\(e&#39;_i\)</span>是<span class="math inline">\(N\)</span>维向量<span class="math inline">\(\boldsymbol{e}&#39;\)</span>的第<span class="math inline">\(i\)</span>个元素。由于输入层到隐藏层也是一个全连接，因此有 <span class="math display">\[
+h_i = \sum_{k=1}^V x_k \cdot w_{ki}
+\]</span> 所以对<span class="math inline">\(\boldsymbol{W}\)</span>的每个元素<span class="math inline">\(w_{ki}\)</span>，有 <span class="math display">\[
+\frac{\partial E}{\partial w_{ki}} = \frac{\partial E}{\partial h_i}\cdot \frac{\partial h_i}{\partial w_{ki}} = e&#39;_i \cdot x_k
+\]</span> 写成向量（矩阵）形式，为 <span class="math display">\[
+\frac{\partial E}{\partial \boldsymbol{W}} = \boldsymbol{x} \otimes \boldsymbol{e}&#39; = \boldsymbol{x}\boldsymbol{e}&#39;^\mathsf{T}
+\]</span> 由于<span class="math inline">\(\boldsymbol{x}\)</span>是独热向量，因此<span class="math inline">\(\partial E/\partial \boldsymbol{W} = \boldsymbol{e}&#39;^\mathsf{T}\)</span>，即 <span class="math display">\[
+\boldsymbol{v}_{w_I}^{(\rm new)} = \boldsymbol{v}_{w_I}^{(\rm old)} - \eta \boldsymbol{e}&#39;^\mathsf{T}
+\]</span> 这意味着本次更新只有输入单词对应的那一行参数会受到影响</p>
+<p>从前面的推导中可以看出，<span class="math inline">\(\boldsymbol{e}&#39;\)</span>实际上是<span class="math inline">\(V\)</span>个输出向量<span class="math inline">\(\boldsymbol{v}_j&#39;\)</span>的加权求和，权重是每个单词<span class="math inline">\(j\)</span>的损失值<span class="math inline">\(e_j = y_j - t_j\)</span>。因此如果在输出层中，单词<span class="math inline">\(w_j\)</span>成为输出单词的概率被高估了，梯度下降会把输入向量<span class="math inline">\(w_I\)</span>拉得离<span class="math inline">\(w_j\)</span>的输出向量远一些，反之相反</p>
+<p>综上所述，整个参数更新的过程实际上就是输出词的输出向量被输入词（邻居）的输入向量来回拉扯的过程，对输入词的输入向量也是如此。两个词的共现次数越多，对应向量之间的拉力就越强，最后整个系统在经历足够多的迭代以后，会稳定下来</p>
+<h4 id="上下文有多个单词的情况">上下文有多个单词的情况</h4>
+<p>当上下文有多个单词时（假设有<span class="math inline">\(C\)</span>个），隐藏层会对输入向量做平均 <span class="math display">\[
+\begin{align*}
+\boldsymbol{h} &amp;= \frac{1}{C}\boldsymbol{W}^\mathsf{T}(\boldsymbol{x}_1 + \boldsymbol{x}_2 + \cdots + \boldsymbol{x}_C) \\
+&amp;= \frac{1}{C}(\boldsymbol{v}_{w_1} + \boldsymbol{v}_{w_2} + \cdots + \boldsymbol{v}_{w_C})^\mathsf{T}
+\end{align*}
+\]</span> 模型的损失函数并没有变化，结构变为如下形式 <img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutoral_3e1_full_CBOW.png" title="有多个上下文的CBOW模型" alt="此处输入图片的描述"></p>
+<p>输出向量的更新方法也没有变化，唯一变化是输入向量的更新量是之前的<span class="math inline">\(C\)</span>分之一 <span class="math display">\[
+\boldsymbol{v}_{w_{I, c}}^{(\rm new)} = \boldsymbol{v}_{w_{I, c}}^{(\rm old)} - \frac{1}{C}\cdot\eta \boldsymbol{e}&#39;^\mathsf{T}
+\]</span></p>
+<h3 id="skipgram模型">SkipGram模型</h3>
+<p>CBOW模型是用多个词做上下文，预测的是中心词；而跳表模型是用一个词做上下文，预测的是周围词。因此，对跳表模型，隐藏层输入向量与单个单词做上下文的CBOW模型没有区别 <span class="math display">\[
+\boldsymbol{h} = \boldsymbol{w}_{(k, \cdot)}^\mathsf{T} := \boldsymbol{v}_{w_I}^\mathsf{T}
+\]</span> 由于是预测周围<span class="math inline">\(C\)</span>个词，因此输出层要输出<span class="math inline">\(C\)</span>个多项分布，输出之间共享隐藏层到输出层的矩阵<span class="math inline">\(\boldsymbol{W&#39;}\)</span>。有</p>
+<p><span class="math display">\[
+p(w_{c,j} = w_{O, c}|w_I) = y_{c,j} = \frac{\exp(u_{c, j})}{\sum_{j&#39;=1}^V \exp(u_{j&#39;})}
+\]</span> 其中<span class="math inline">\(w_{c,j}\)</span>是输出层中第<span class="math inline">\(c\)</span>个位置上的第<span class="math inline">\(j\)</span>个单词，<span class="math inline">\(w_{O, c}\)</span>是输出单词序列中的第<span class="math inline">\(c\)</span>个单词（第<span class="math inline">\(c\)</span>个位置上的实际单词），<span class="math inline">\(w_I\)</span>是唯一的那个输入单词，<span class="math inline">\(y_{c,j}\)</span>是模型算出第<span class="math inline">\(c\)</span>个位置上是第<span class="math inline">\(j\)</span>个单词的概率。由于输出层各个位置共享权重，因此 <span class="math display">\[
+u_{c,j} = u_j = \boldsymbol{v}_{w_j}&#39;^\mathsf{T} \cdot \boldsymbol{h},\ \  {\rm for\ }c =1,2,\cdots, C
+\]</span> 其中<span class="math inline">\(\boldsymbol{v}_{w_j}&#39;\)</span>仍然是第<span class="math inline">\(j\)</span>个单词的输出向量，也是<span class="math inline">\(\boldsymbol{W}_j&#39;\)</span>的第<span class="math inline">\(j\)</span>列。跳表模型的示意图如下</p>
+<figure>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutoral_3e1_SkipGram.png" title="跳表模型" alt="此处输入图片的描述"><figcaption>此处输入图片的描述</figcaption>
+</figure>
+<p>由于是预测多个输出单词，因此需要对<span class="math inline">\(C\)</span>个输出概率连乘。损失函数变为 <span class="math display">\[
+\begin{align*}
+E &amp;= -\log p(w_{O,1}, w_{O, 2}, \cdots, w_{O, C}|w_I) \\
+&amp;= -\log \prod_{c=1}^C \frac{\exp (u_{c, j_c^\ast})}{\sum_{j&#39;=1}^V \exp(u_{j&#39;})} \\
+&amp;= -\sum_{c=1}^C u_{j_{c}^\ast} + C \cdot \log\sum_{j&#39;=1}^V \exp(u_{j&#39;})
+\end{align*}
+\]</span> 对输出的每个位置<span class="math inline">\(c\)</span>，<span class="math inline">\(\partial E / \partial u_{c,j}\)</span>的计算方法与之前差别不大 <span class="math display">\[
+\frac{\partial E}{\partial u_{c,j}} = y_{c,j} - t_{c,j} := e_{c,j}
+\]</span> 定义<span class="math inline">\(e_j\)</span>为每个位置<span class="math inline">\(c\)</span>上模型都预测为<span class="math inline">\(w_j\)</span>时，模型的损失值总和 <span class="math display">\[
+e_j = \sum_{c=1}^C e_{c,j}
+\]</span> 这样，跳表模型的<span class="math inline">\(\partial E /\partial w_{ij}&#39;\)</span>、<span class="math inline">\(e_i&#39;\)</span>和权重更新公式就和前面单个上下文CBOW模型的公式形式一样了</p>
+<h3 id="优化计算效率">优化计算效率</h3>
+<p>前面提到无论是CBOW还是SkipGram算法，对每个单词都会计算出一个输入向量<span class="math inline">\(\boldsymbol{v}_w\)</span>和一个输出向量<span class="math inline">\(\boldsymbol{v}_w&#39;\)</span>。为了计算输出向量，对每条训练数据都要迭代词表中的每个单词<span class="math inline">\(w_j\)</span>，计算原始得分<span class="math inline">\(u_j\)</span>、概率<span class="math inline">\(p_j\)</span>（对SkipGram是<span class="math inline">\(p_{c, j}\)</span>）、误差<span class="math inline">\(e_j\)</span>然后才能更新<span class="math inline">\(\boldsymbol{v}_j&#39;\)</span>。这些计算代价太高，因此对大型训练语料或者大词表使用原始做法比较难，因此人们想出了分层softmax和负采样两种做法</p>
+<h4 id="分层softmax">分层softmax</h4>
+<p>分层softmax的做法是建立一棵二叉树（更确切地说，为了快速训练，是一颗Huffman树）表达此表中的所有单词，其中所有单词对应的节点都是叶子节点，因此树一共有<span class="math inline">\(V\)</span>个叶子节点，相应地有<span class="math inline">\(V-1\)</span>个内部节点。而且由树的性质，从树根到每个单词的路径是唯一的，这条路径也就可以用来估计叶子节点对应单词的概率。对单词<span class="math inline">\(w\)</span>，记从根节点到其对应叶子节点路径上的第<span class="math inline">\(j\)</span>个节点为<span class="math inline">\(n(w,j)\)</span></p>
+<p>在该模型中，单词不再有对应的输出向量表示，而是每个内部节点都有一个输出向量<span class="math inline">\(\boldsymbol{v}&#39;_{n(w,j)}\)</span>。令<span class="math inline">\(L(w)\)</span>是路径的长度（即路径上有几个节点，因此<span class="math inline">\(n(w, 1) = {\rm root}\)</span>，<span class="math inline">\(n(w, L(w)) = w\)</span>）。对所有内部节点<span class="math inline">\(n\)</span>，令<span class="math inline">\({\rm ch}(n)\)</span>为其左孩子（Mikolov的原始论文里其实无此限制），并令<span class="math inline">\([\![x]\!]\)</span>在<span class="math inline">\(x\)</span>为真时为1否则为-1，<span class="math inline">\(\sigma(x)\)</span>是sigmoid函数，则一个单词是输出单词的概率是 <span class="math display">\[
+p(w=w_O) = \prod_{j=1}^{L(w)-1}\sigma\left([\![n(w, j+1) = {\rm ch}(n(w, j))]\!] \cdot {\boldsymbol{v}_{n(w,j)}&#39;}^\mathsf{T}\boldsymbol{h}\right) 
+\]</span></p>
+<figure>
+<img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutorial_3e1_hierarchical_softmax.png" title="分层softmax示例" alt="此处输入图片的描述"><figcaption>此处输入图片的描述</figcaption>
+</figure>
+<p>上图给出了分层softmax的一个示例。假设要计算输出单词为<span class="math inline">\(w_2\)</span>的概率，这实际上是计算从根开始随机游走，有多大概率会走到<span class="math inline">\(w_2\)</span>对应的叶子节点。我们先定义在每个内部节点向左走的概率为 <span class="math display">\[
+p(n, {\rm left}) = \sigma\left(\boldsymbol{v}_n&#39;^\mathsf{T}\cdot \boldsymbol{h}\right)
+\]</span> 由于二叉树是Huffman树，每个内部节点有且仅有两个分支，因此显然<span class="math inline">\(p(n, {\rm right}) = 1 - p(n, {\rm left})\)</span>。由sigmoid函数的性质，有 <span class="math display">\[
+p(n, {\rm right}) = \sigma\left(-\boldsymbol{v}_n&#39;^\mathsf{T}\cdot \boldsymbol{h}\right)
+\]</span> 所以有 <span class="math display">\[
+\begin{align*}
+p(w_2=w_O) &amp;= p(n(w_2, 1), {\rm left}) \cdot p(n(w_2, 2), {\rm left}) \cdot p(n(w_2, 3), {\rm right})\\
+&amp;= \sigma\left(\boldsymbol{v}_{n(w_2,1)}&#39;^\mathsf{T}\cdot \boldsymbol{h}\right) \cdot \sigma\left(\boldsymbol{v}_{n(w_2,2)}&#39;^\mathsf{T}\cdot \boldsymbol{h}\right) \cdot \sigma\left(-\boldsymbol{v}_{n(w_2,3)}&#39;^\mathsf{T}\cdot \boldsymbol{h}\right)
+\end{align*}
+\]</span> 显然有 <span class="math display">\[
+\sum_{i=1}^V p(w_i = w_O) = 1
+\]</span> 接下来来看一下分层softmax算法如何更新权重。为了简单起见，不失准确性地，可以记 <span class="math display">\[
+\begin{align*}
+[\![\cdot]\!] &amp;:= [\![n(w, j+1) = {\rm ch}(n(w, j))]\!] \\
+\boldsymbol{v}&#39;_j &amp;:= \boldsymbol{v}&#39;_{n_{(w, j)}}
+\end{align*}
+\]</span></p>
+<p>因此损失函数为 <span class="math display">\[
+E = -\log p(w=w_O|w_I) = -\sum_{j=1}^{L(w)-1}\log \sigma\left([\![\cdot]\!]\boldsymbol{v}_j&#39;^\mathsf{T}\boldsymbol{h}\right)
+\]</span></p>
+<p>先计算<span class="math inline">\(\partial E/\partial \boldsymbol{v}_j&#39;^\mathsf{T}\boldsymbol{h}\)</span>。考虑到<span class="math inline">\(\sigma&#39;(x) = \sigma(x)(1-\sigma(x))\)</span>和<span class="math inline">\(\sigma(-x) = 1-\sigma(x)\)</span>，有 <span class="math display">\[
+\begin{align*}
+\frac{\partial E}{\partial \boldsymbol{v}_j&#39;^\mathsf{T}\boldsymbol{h}} &amp;= \left(\sigma\left( [\![\cdot]\!] \boldsymbol{v}_j&#39;^\mathsf{T}\boldsymbol{h}\right)-1\right)[\![\cdot]\!] \\
+&amp;= \begin{cases}\sigma\left(\boldsymbol{v}_j&#39;^\mathsf{T}\boldsymbol{h}\right) - 1 &amp; ([\![\cdot]\!] = 1)\\ \sigma\left(\boldsymbol{v}_j&#39;^\mathsf{T}\boldsymbol{h}\right) &amp; ([\![\cdot]\!] = -1) \end{cases} \\
+&amp;= \sigma\left(\boldsymbol{v}_j&#39;^\mathsf{T}\boldsymbol{h}\right) - t_j
+\end{align*}
+\]</span> 其中 <span class="math display">\[
+\begin{align*}
+t_j = \begin{cases}1 &amp; {\rm if\ }[\![\cdot]\!]=1 \\ 0 &amp; {\rm elsewhere}\end{cases}
+\end{align*}
+\]</span></p>
+<p>有了<span class="math inline">\(\partial E/\partial \boldsymbol{v}_j&#39;^\mathsf{T}\boldsymbol{h}\)</span>以后，计算<span class="math inline">\(\partial E / \partial \boldsymbol{v}&#39;\)</span>就容易许多： <span class="math display">\[
+\frac{\partial E}{\partial \boldsymbol{v}_j&#39;} = \frac{\partial E}{\partial \boldsymbol{v}_j&#39;^\mathsf{T}\boldsymbol{h}} \cdot \frac{\partial \boldsymbol{v}_j&#39;^\mathsf{T}\boldsymbol{h}}{\partial \boldsymbol{v}_j&#39;} = \left(\sigma(\boldsymbol{v}_j&#39;^\mathsf{T}\boldsymbol{h})-t_j\right) \cdot \boldsymbol{h}
+\]</span> 所以对<span class="math inline">\(j = 1, 2, \cdots, L(w)-1\)</span>，有内部节点输出向量的更新公式 <span class="math display">\[
+\boldsymbol{v}_j&#39;^{(\rm new)} = \boldsymbol{v}_j&#39;^{\rm (old)} - \eta \left(\sigma(\boldsymbol{v}_j&#39;^\mathsf{T}\boldsymbol{h})-t_j\right) \cdot \boldsymbol{h}
+\]</span></p>
+<p>该公式对CBOW和skip-gram模型都适用。对于后者，需要对<span class="math inline">\(C\)</span>个输出单词重复走一遍这个过程</p>
+<p>为了学习输入层到隐藏层的权重，需要计算<span class="math inline">\(\partial E/\partial \boldsymbol{h}\)</span>： <span class="math display">\[
+\begin{align*}
+\frac{\partial E}{\partial \boldsymbol{h}} &amp;= \sum_{j=1}^{L(w)-1}\frac{\partial E}{\partial \boldsymbol{v}_j&#39;^\mathsf{T}\boldsymbol{h}} \cdot \frac{\partial \boldsymbol{v}_j&#39;^\mathsf{T}\boldsymbol{h}}{\partial \boldsymbol{h}} \\
+&amp;= \sum_{j=1}^{L(w)-1} \left(\sigma(\boldsymbol{v}_j&#39;^\mathsf{T}\boldsymbol{h})-t_j\right) \cdot \boldsymbol{v}_j&#39; \\
+&amp;:= \boldsymbol{e}&#39; 
+\end{align*}
+\]</span></p>
+<p>就可以继续用之前推导过的公式来更新权重</p>
+<p>可以看出，使用分层softmax以后，参数数量没有变化（<span class="math inline">\(V-1\)</span>个输出向量，<span class="math inline">\(V\)</span>个输入向量），但是每个训练单词的计算复杂度从<span class="math inline">\(O(V)\)</span>削减到了<span class="math inline">\(O(\log(V))\)</span></p>
+<h4 id="负采样">负采样</h4>
+<p>负采样的思想是，由于每次迭代要花时间更新太多输出向量，不如采样少量几个单词，把它们当做负样本。采样负样本只需要设计一个合理的概率分布就可以，这里称其为“噪声分布”，记为<span class="math inline">\(P_n(w)\)</span>。原文的噪声分布参见<a href="http://txshi-mt.com/2018/07/20/NMT-Tutorial-3-NN-Word-Embedding/">词向量的介绍</a>。目标函数为 <span class="math display">\[
+E = -\log \sigma(\boldsymbol{v}_{w_O}&#39;^\mathsf{T}\boldsymbol{h}) - \sum_{w_j \in \mathcal{W}_{\rm neg}} \log \sigma(-\boldsymbol{v}_{w_j}&#39;^\mathsf{T}\boldsymbol{h})
+\]</span> 其中</p>
+<ul>
+<li><span class="math inline">\(w_O\)</span>是输出单词（正样本）</li>
+<li><span class="math inline">\(\boldsymbol{v}_{w_O}&#39;\)</span>是正样本的输出向量</li>
+<li>对CBOW模型，<span class="math inline">\(\boldsymbol{h}\)</span>为<span class="math inline">\(\frac{1}{C}\sum_{c=1}^C \boldsymbol{v}_{w_c}\)</span>；对skip-gram模型，<span class="math inline">\(\boldsymbol{h}=\boldsymbol{v}_{w_I}\)</span></li>
+<li><span class="math inline">\(\mathcal{W}_{\rm neg} = \{w_j|j=1,\cdots, K\}\)</span>是使用分布<span class="math inline">\(P_n(w)\)</span>获得的一些单词（负样本）</li>
+</ul>
+<p>类似地，可以先计算出损失函数对原始得分的偏导数 <span class="math display">\[
+\begin{align*}
+\frac{\partial E}{\partial \boldsymbol{v}_{w_j}&#39;^\mathsf{T}\boldsymbol{h}} &amp;= \begin{cases}\sigma\left(\boldsymbol{v}_{w_j}&#39;^\mathsf{T}\boldsymbol{h}\right) - 1 &amp; {\rm if\ } w_j = w_O \\ \sigma\left(\boldsymbol{v}_{w_j}&#39;^\mathsf{T}\boldsymbol{h}\right) &amp; {\rm if\ }w_j\in \mathcal{W}_{\rm neg}\end{cases} \\
+&amp;= \sigma\left(\boldsymbol{v}_{w_j}&#39;^\mathsf{T}\boldsymbol{h}\right)-t_j
+\end{align*}
+\]</span></p>
+<p>其中<span class="math inline">\(t_j\)</span>意义明显，不再进一步解释。接下来的参数更新方式和<span class="math inline">\(\partial E/\partial \boldsymbol{h}\)</span>的计算也与前面分层softmax部分的推导类似，不再赘述</p>
+<h2 id="softmax的近似方法">Softmax的近似方法</h2>
+<p>本节主要来自于Ruder的博客文章[ruder2016a]</p>
+<p>如本文和前面若干文章所讨论过的，softmax的最大问题是要对每个词都计算得分，因此当词表非常大时，算法的时间复杂度非常高。为了不让这个步骤成为影响效率的主要瓶颈，人们提出了很多种方法。其中<strong>softmax扩展法</strong>仍然保留了softmax的基本思想，不过对体系结构做出了修改；而<strong>采样法</strong>则是去掉了softmax层，通过修改损失函数做softmax的近似。word2vec的两个改进方案里，分层Softmax（以下简称HSM）属于第一种方法，而负采样属于第二种</p>
+<p>（本节写作的初衷是，直觉上感觉TensorFlow不太好实现HSM，想看看有没有写得比较漂亮的代码，然后发现好像真的没有。接着，在OpenNMT-py，也就是OpenNMT的PyTorch版，的一个issue里，看到他们没有实现HSM的原因是PyTorch实现了一个更高效的方法，称为适应softmax（adaptive softmax，简称ASM）。因此勾起了我的好奇心，想看看有没有其它类似比较高效的，适用于大规模词表的softmax方法，于是就找到了Ruder的这篇文章。但是此文成文之时并没有介绍ASM，因此本节会同时覆盖两者，并把ASM作为重点。其它方法基本都会简略带过）</p>
+<h3 id="softmax扩展法">Softmax扩展法</h3>
+<p>除去HSM和ASM，[ruder2016a]还介绍了两种扩展方法</p>
+<ul>
+<li>差分softmax（[chen2016]，differentiated softmax，DSM）认为不同单词需要的参数数量不一样。少部分常见词可能需要很多参数来描述，而大部分罕见词其向量维度可以少一点。因此DSM使用了一个很大的稀疏矩阵，将其分为若干块。假设矩阵分为两块，那么左上角的子矩阵列数会多一些，行数少一些，用来刻画常见词；而右下角的子矩阵则是列数少，行数多，用来刻画罕见词。稀疏矩阵的右上角和左下角都是0。该方法的问题是对罕见词的建模能力比较弱</li>
+<li>CNN-softmax [jozefowicz2016]对输出层也使用了一个字符级别的CNN（charCNN）。不过实验显示对拼写相近而意思差别很大的两个单词，charCNN的效果不太好。文章的对策是为每个单词加一个修正向量。这种做法的好处是对集外词比较鲁棒</li>
+</ul>
+<p>本小节主要介绍的工作是FAIR在2016年发表的工作ASM[grave2017]（2016年首发于arxiv），这项工作的最大特点是其目的是要有效利用GPU，比起普通softmax有2倍到10倍性能提升。其核心思想是将单词聚类，然后做分层softmax</p>
+<p>假设训练时每批量数据大小为<span class="math inline">\(B\)</span>，隐藏单元数量为<span class="math inline">\(d\)</span>，词表大小为<span class="math inline">\(k\)</span>，大小为<span class="math inline">\(B\times d\)</span>的隐层矩阵与大小为<span class="math inline">\(d \times k\)</span>的输出层矩阵相乘的计算时间为<span class="math inline">\(g(k, B)\)</span>。实验表明，当固定<span class="math inline">\(B\)</span>大小不变时，存在一个阈值<span class="math inline">\(k_0\)</span>，使得<span class="math inline">\(k \le k_0\)</span>时<span class="math inline">\(g(k)\)</span>的时间为常量，<span class="math inline">\(k &gt; k_0\)</span>时<span class="math inline">\(g(k)\)</span>与<span class="math inline">\(k\)</span>呈线性关系，对<span class="math inline">\(B\)</span>也存在一个类似的<span class="math inline">\(B_0\)</span>。因此有 <span class="math display">\[
+g(k,B) = \max(c+\lambda k_0B_0, c+\lambda kB)
+\]</span> 即当矩阵相乘时，如果某个维度比较小，则相乘效率会降低。所以使用Huffman编码的效率不是最优的，原因是会导致每个内部结点下面只有两个叶子节点，节点数太少；或者如果某个内部节点下面的叶子节点都是罕见词，概率<span class="math inline">\(p\)</span>都很小，也会导致<span class="math inline">\(pB\)</span>变小，不划算</p>
+<p>由于自然语言中存在Zipf现象（直观例子是87%的文档由20%单词覆盖），因此直观地说可以把词典<span class="math inline">\(\mathcal{V}\)</span>划分成两个簇<span class="math inline">\(\mathcal{V}_{\rm h}\)</span>和<span class="math inline">\(\mathcal{V}_{\rm t}\)</span>，其中<span class="math inline">\(\mathcal{V}_{\rm h}\)</span>是分布的头部（头簇），只包含最常见的单词；<span class="math inline">\(\mathcal{V}_{\rm t}\)</span>是分布的尾部（尾簇），包含大量罕见词。划分应该满足<span class="math inline">\(|\mathcal{V}_{\rm h}| \ll |\mathcal{V}_{\rm t}|\)</span>且<span class="math inline">\(p_{\rm h} := \sum_{w \in \mathcal{V_{\rm h}}}p_i \gg p_{\rm t} := \sum_{w \in \mathcal{V_{\rm t}}}p_i\)</span>。如果使用short-list实现方式（根节点里包含一个列表，列表中存储头簇），且记<span class="math inline">\(k_{\rm h} = |\mathcal{V}_{\rm h}|\)</span>，则总的计算时间为 <span class="math display">\[
+C = g(k_{\rm h}+1, B) + g(k_{\rm t}, p_{\rm t}B)
+\]</span> 文章使用了一个投影矩阵来把尾簇的维度降低到<span class="math inline">\(d/4\)</span>，因为罕见词不太容易被学习，使用高维空间比较浪费</p>
+<p>类似的思想可以很容易扩展到多维划分的情况，此时词典<span class="math inline">\(\mathcal{V}\)</span>被分为<span class="math inline">\(\mathcal{V}= \mathcal{V}_{\rm h} \cup \mathcal{V}_1 \cup \ldots \cup \mathcal{V}_J\)</span>，<span class="math inline">\(\mathcal{V}_i \cap \mathcal{V}_j = \varnothing\)</span>。此时比较好的策略是将所有词按出现频率降序排列，词频高的词分到比较小的簇，簇的大小依次增大（小簇里是词频高的词，大簇里是罕见词）。实验指出簇数在10到15达到最优，但是超过5以后模型ppl（perplexity，困惑度）变化不是很大，因此常用2到5个簇。确定簇数后，每个簇分配多少个单词就可以用动态规划求解</p>
+<p>自适应softmax的TF实现可以参考<a href="https://github.com/yangsaiyong/tf-adaptive-softmax-lstm-lm/blob/master/softmax.py" target="_blank" rel="noopener">这里</a></p>
+<h3 id="采样法">采样法</h3>
+<p>Softmax可以看做是将各个得分归一化的手段，<strong>采样法实际上是对归一化时的分母做近似，使用一些其它更容易计算的损失函数</strong>。采样法只在训练时可用，推断时仍然需要计算完整的softmax</p>
+<p>为了说明上面加粗部分的结论，来看一下损失函数<span class="math inline">\(J_\theta\)</span>对参数<span class="math inline">\(\theta\)</span>的梯度。通常来讲，多元分类使用交叉熵作为损失函数，即 <span class="math display">\[
+H(p, q) = -\sum_x p(x)\log q(x)
+\]</span> 这里<span class="math inline">\(p(x)\)</span>为真实概率分布，<span class="math inline">\(q(x)\)</span>为近似的概率分布。对于使用softmax获得各单词概率的模型来说，<span class="math inline">\(p(x)\)</span>就是一个独热向量，该向量中对应应该出现的单词的ID那一行元素为1，其余元素为0；<span class="math inline">\(q(x)\)</span>是一个概率分布，由softmax得出。因此假设目标单词为<span class="math inline">\(w\)</span>，则损失函数为 <span class="math display">\[
+\begin{align*}
+J_\theta &amp;= -\log \frac{\exp(\boldsymbol{v}_w&#39;^\mathsf{T}\boldsymbol{h})}{\sum_{w_i \in V}\exp(\boldsymbol{v}_{w_i}&#39;^\mathsf{T}\boldsymbol{h})}\\
+&amp;= -\boldsymbol{v}_w&#39;^\mathsf{T}\boldsymbol{h} + \log \sum_{w_i\in V} \exp(\boldsymbol{v}_{w_i}&#39;^\mathsf{T}\boldsymbol{h})
+\end{align*}
+\]</span> 记<span class="math inline">\(-\boldsymbol{v}_w&#39;^\mathsf{T}\boldsymbol{h}\)</span>为<span class="math inline">\(\mathcal{E}(w)\)</span>，则上式可以重写为 <span class="math display">\[
+J_\theta = \mathcal{E}(w) + \log \sum_{w_i \in V}\exp(-\mathcal{E}(w_i))
+\]</span> 求<span class="math inline">\(J_\theta\)</span>对<span class="math inline">\(\theta\)</span>的偏导，有 <span class="math display">\[
+\begin{align*}
+\nabla_\theta J_\theta &amp;= \nabla_\theta\mathcal{E}(w) + \nabla_\theta\log\sum_{w_i \in V}\exp(-\mathcal{E}(w_i))\\
+&amp;= \nabla_\theta\mathcal{E}(w) + \frac{1}{\sum_{w_i \in V}\exp(-\mathcal{E}(w_i))}\sum_{w_i\in V}\exp(-\mathcal{E}(w_i))\nabla_\theta(-\mathcal{E}(w_i)) \\
+&amp;= \nabla_\theta\mathcal{E}(w) + \sum_{w_i \in V}\frac{\exp(-\mathcal{E}(w_i))}{\sum_{w_j \in V}\exp(-\mathcal{E}(w_j))}\nabla_\theta(-\mathcal{E}(w_i))
+\end{align*}
+\]</span> 注意到求和项内部梯度的系数其实就是<span class="math inline">\(w_i\)</span>的softmax概率，因此将其写作<span class="math inline">\(P(w_i)\)</span>，有 <span class="math display">\[
+\begin{align*}
+\nabla_\theta J_\theta &amp;= \nabla_\theta \mathcal{E}(w) + \sum_{w_i \in V}P(w_i)\nabla_\theta (-\mathcal{E}(w_i)) \\
+&amp;= \nabla_\theta \mathcal{E}(w) - \sum_{w_i \in V}P(w_i)\nabla_\theta \mathcal{E}(w_i)
+\end{align*}
+\]</span> 因此梯度可以分为两部分，第一部分是增强目标单词<span class="math inline">\(w\)</span>，第二部分是削弱非目标单词<span class="math inline">\(w_i\)</span>。后者又可以写作 <span class="math display">\[
+\sum_{w_i \in V}P(w_i)\nabla_\theta\mathcal{E}(w_i) = \mathbb{E}_{w_i \sim P}[\nabla_\theta\mathcal{E}(w_i)]
+\]</span> 因此所有的抽样法实际上都是在求上项的近似值，以避免算<span class="math inline">\(V\)</span>中所有单词<span class="math inline">\(w_i\)</span>的概率</p>
+<p>[ruder2016a]调研了若干种基于采样法的工作，本文主要介绍两项：重要性采样法（Importance Sampling，简称IS）和噪声对比估计（Noice Contrastive Estimation，简称NCE）。另一个重要的方法是负采样，在本系列博客中已经提到很多次，这里就不赘述了。不过需要注意的是，负采样可以看作是NCE的一个简化版本</p>
+<h4 id="is">IS</h4>
+<p>如果知道前面提到的单词分布<span class="math inline">\(P\)</span>，那么就可以从该分布中抽样<span class="math inline">\(m\)</span>个单词，计算近似期望（蒙特卡罗法） <span class="math display">\[
+\mathbb{E}_{w_i \sim P}[\nabla_\theta\mathcal{E}(w_i)] \approx \frac{1}{m}\sum_{i=1}^m\nabla_\theta\mathcal{E}(w_i)
+\]</span> 但是根据前面的分析，要避免计算每个单词的softmax分布，所以退而求其次，需要找到一个替代的分布<span class="math inline">\(Q\)</span>，使得该分布容易获得，而且最好接近<span class="math inline">\(P\)</span>。常用的分布<span class="math inline">\(Q\)</span>是训练集中的单词词频。进一步，还可以用另一个近似来避免对抽样到的<span class="math inline">\(w\)</span>计算<span class="math inline">\(P(w)\)</span>。此时，计算<span class="math inline">\(1/R \cdot r(w_i)\)</span>来避免计算<span class="math inline">\(P(w_i)\)</span>，其中 <span class="math display">\[
+\begin{align*}
+r(w) &amp;= \frac{\exp(-\mathcal{E}(w))}{Q(w)};\ \ \ R = \sum_{j=1}^m r(w_j)
+\end{align*}
+\]</span> 综上，有 <span class="math display">\[
+\mathbb{E}_{w_i \sim P}[\nabla_\theta\mathcal{E}(w_i)] \approx \frac{1}{R}\sum_{r=1}^mr(w_i)\nabla_\theta\mathcal{E}(w_i)
+\]</span> 需要注意的是，样本数越少，近似效果越差</p>
+<p>关于IS法的详细内容，可以参考[bengio2003]</p>
+<h4 id="nce">NCE</h4>
+<p>IS法的一个潜在风险是近似分布<span class="math inline">\(Q\)</span>有可能偏离真实分布<span class="math inline">\(P\)</span>，而NCE[gutmann2010] [mnih2012]则不再直接估计某个词的概率，而是使用了另一种损失函数做辅助。其核心思想是将目标单词从噪声中区分开，因此模型训练过程变成了求解一个二元分类问题。假设每个目标单词<span class="math inline">\(w_i\)</span>的语境<span class="math inline">\(c_i\)</span>由<span class="math inline">\(n\)</span>个上文单词<span class="math inline">\(w_{t-1}, \ldots, w_{t-n+1}\)</span>组成（注意原始NCE论文没有考虑单词下文），<span class="math inline">\(k\)</span>个噪声单词<span class="math inline">\(\tilde{w}_{ik}\)</span>来自于噪声分布<span class="math inline">\(Q\)</span>（这里也使用一元词频），则类别<span class="math inline">\(y=1\)</span>说明给定<span class="math inline">\(c_i\)</span>得到<span class="math inline">\(w_i\)</span>，类别<span class="math inline">\(y=0\)</span>说明给定<span class="math inline">\(c_i\)</span>得到<span class="math inline">\(\tilde{w}_{ik}\)</span>。损失函数为 <span class="math display">\[
+J_\theta = -\sum_{w_i \in V}\left(\log P(y=1|w_i, c_i) + k\mathbb{E}_{\tilde{w}_{ik}\sim Q}[\log P(y=0|\tilde{w}_{ij}, c_j)]\right)
+\]</span> 使用蒙特卡洛模拟来计算期望，上式可化为 <span class="math display">\[
+\begin{align*}
+J_\theta &amp;= -\sum_{w_i \in V}\left(\log P(y=1|w_i, c_i) + k\sum_{j=1}^k\frac{1}{k}\log P(y=0|\tilde{w}_{ij}, c_j)\right) \\
+&amp;= -\sum_{w_i \in V}\left(\log P(y=1|w_i, c_i) + \sum_{j=1}^k\log P(y=0|\tilde{w}_{ij}, c_j)\right)
+\end{align*}
+\]</span> 由于正确单词是从训练集的经验分布<span class="math inline">\(P_{\rm train}\)</span>中取得且依赖于语境<span class="math inline">\(c\)</span>，噪声来自于分布<span class="math inline">\(Q\)</span>，因此给定语境<span class="math inline">\(c\)</span>，取样到一个单词的概率为 <span class="math display">\[
+P(y,w|c) = \frac{1}{k+1}P_{\rm train}(w|c) + \frac{k}{k+1}Q(w)
+\]</span> 若某个单词被抽中，则其为正确样本的条件概率为 <span class="math display">\[
+\begin{align*}
+P(y=1|w, c) &amp;= \frac{\frac{1}{k+1}P_{\rm train}(w|c) }{\frac{1}{k+1}P_{\rm train}(w|c) + \frac{k}{k+1}Q(w)} \\
+&amp;= \frac{P_{\rm train}(w|c)}{P_{\rm train}(w|c) + kQ(w)}
+\end{align*}
+\]</span> 由于<span class="math inline">\(P_{\rm train}(w|c)\)</span>为未知量，可以将其替为模型概率<span class="math inline">\(P(w|c)\)</span>，而显然 <span class="math display">\[
+P(w|c) = \frac{\exp(\boldsymbol{v}_w&#39;^\mathsf{T}\boldsymbol{h})}{\sum_{w_i \in V}\exp(\boldsymbol{v}_{w_i}&#39;^\mathsf{T}\boldsymbol{h})}
+\]</span> 似乎又回到了原来的老问题，但是NCE直接将分母置为1！（更保守的做法是将分母设为一个可学习的参数，但是有研究发现学到的分母通常也都接近于1，而且方差不大）。这样，就可以直接说<span class="math inline">\(P(w|c) = \exp(\boldsymbol{v}_w&#39;^\mathsf{T}\boldsymbol{h})\)</span>，所以 <span class="math display">\[
+P(y=1|w,c) = \frac{\exp(\boldsymbol{v}_w&#39;^\mathsf{T}\boldsymbol{h})}{\exp(\boldsymbol{v}_w&#39;^\mathsf{T}\boldsymbol{h}) + kQ(w)}
+\]</span> 由于要求解的是一个二分类问题，因此<span class="math inline">\(P(y=0|w, c) = 1-P(y=1|w,c)\)</span>。将上述结论代入<span class="math inline">\(J_\theta\)</span>，可得到最终的NCE损失函数 <span class="math display">\[
+J_\theta=  -\sum_{w_i \in V}\left[\log \frac{\exp(\boldsymbol{v}_{w_i}&#39;^\mathsf{T}\boldsymbol{h})}{\exp(\boldsymbol{v}_{w_i}&#39;^\mathsf{T}\boldsymbol{h})+kQ(w_i)} + \sum_{j=1}^k\log\left(1-\frac{\exp\left(\boldsymbol{v}_{\tilde{w}_{ij}}&#39;^\mathsf{T}\boldsymbol{h}\right)}{\exp\left(\boldsymbol{v}_{\tilde{w}_{ij}}&#39;^\mathsf{T}\boldsymbol{h}\right) + kQ(\tilde{w}_{ij})}\right)\right]
+\]</span> 有理论证明，当NCE中噪声样本数量<span class="math inline">\(k\)</span>变大时，NCE损失函数的梯度会逼近于softmax函数的梯度</p>
+<h5 id="nce与其它采样法的关系">NCE与其它采样法的关系</h5>
+<p>[jozefowicz2016]论证了IS实际上是优化一个多类别分类问题（NCE是二分类），因此更适合于语言建模。当NCE使用的<span class="math inline">\(k=|V|\)</span>且<span class="math inline">\(Q\)</span>为均匀分布时（此时<span class="math inline">\(kQ(w) = 1\)</span>），NCE退化成负采样</p>
+<p>（原计划在本文里还跟进Ruder词向量系列博客的第三部：<a href="http://ruder.io/secret-word2vec/" target="_blank" rel="noopener"><em>On word embeddings - Part 3: The secret ingredients of word2vec</em></a>，该文章讨论了一些词向量的理论解释，但是比较抽象，数学内容更多，因此暂时就不介绍了。有兴趣的可以移步上面的链接阅读原文，或者参考[levy2015] [levy2014]）</p>
+<h2 id="如何生成好的词向量">如何生成好的词向量</h2>
+<p>[lai2016]讨论了一些训练词向量的细节，包括模型搭建、训练语料、参数设计等方面。文章调查的工作包括</p>
+<ul>
+<li>Neural Network Language Model (NNLM, [bengio2003])</li>
+<li>Log-Bilinear Language Model (LBL, [mnih2007])</li>
+<li>C&amp;W [collobert2008]</li>
+<li>CBOW &amp; Skip-gram [mikolov2013]</li>
+<li>Order：文章提出的虚拟模型，将上下文单词词向量连接起来</li>
+<li>Global Vectors model (GloVe, [pennington2014])</li>
+</ul>
+<p>所有训练词向量的方法基本都依赖于一条分布式假设：<strong>出现在相似上下文的单词有相同意思</strong>。因此，文章调研的建模方法实际上都是在对目标单词<span class="math inline">\(w\)</span>和上下文<span class="math inline">\(c\)</span>之间的关系建模，不同模型的区别主要体现在 (1) 如何建模目标单词和上下文之间的关系 (2) 如何表示上下文。对于前者，大部分模型都是用给定上下文预测中心词（注意，从这个角度看，skipgram也可以看作是用上下文预测中心词，只不过此时“中心词”是滑动的），而C&amp;W是建模<span class="math inline">\((c, w)\)</span>的分数。对于后者，word2vec没有考虑上下文的词序，而其它工作均将上下文单词词向量按序拼接，有的还加入了隐藏层来获取更强的建模能力</p>
+<p>文章使用了三类共八项任务来评估词向量模型，包括</p>
+<ul>
+<li>词向量的语义属性，使用了WordSim353数据集（判断单词相似性，代号ws）、TOEFL数据集（四个选项选择同义词，代号tfl）、类比数据集（检查词向量是否能表示woman = queen - king + man的关系，代号sem &amp; syn）</li>
+<li>将词向量作为下游任务的特征。包括
+<ul>
+<li>使用IMDB数据集做文本分类（代号avg），此时模型特征是词向量的加权平均，权重是TF（term frequency）</li>
+<li>命名实体识别（NER）（代号ner），测试集是CoNLL03 shared task数据集</li>
+</ul></li>
+<li>使用词向量初始化神经网络，包括使用CNN做情感分类（代号cnn）、使用神经网络做词性标注（代号pos）等</li>
+</ul>
+<p>最后得到如下结论</p>
+<ul>
+<li><p>对于模型来说，从目标单词与上下文之间关系的角度看，训练时只建模<span class="math inline">\((c, w)\)</span>分数的C&amp;W不太容易捕捉词义相加和相减的关系，因此使用上下文预测目标单词的模型效果更好。从上下文表示的角度看，数据量小时，简单的模型效果更好（例如CBOW在训练语料单词量级为千万或亿时效果很好），但是语料量更大时，复杂的模型更好 如果要用词向量初始化其他任务需要的网络，或者作为特征，结论是不同词向量模型影响不是很大，此时简单的模型就足够了</p></li>
+<li><p>对于训练语料来说，同领域下，语料量越大，得到的词向量效果越好。不同领域下语料训练出的词向量变化会非常大，例如IMDB语料训出的词向量里，与&quot;movie&quot;相近的词包括了&quot;this&quot;、&quot;it&quot;等，说明在这个语料里movie这个词相当于是一个停用词 文章做了一个比较有趣的实验：对于avg任务，使用纯IMDB语料训练词向量，加权作为特征，然后向训练词向量用的语料里逐渐加入wiki与纽约时报的语料，重新训练词向量，观察新特征对模型的影响。实验表明，混杂的语料<strong>总是不如</strong>纯净的IMDB语料，因此<strong>语料领域比语料数量影响大得多</strong></p></li>
+<li><p>训练词向量应该训练多少轮？实验表明使用训练词向量时对应的验证集意义不大，最好的选择是用一个简单的任务（例如前面介绍的tfl任务）来做验证。如果训练词向量是为了一个特定的任务，那么应该使用该任务对应的验证集来验证词向量效果，不过这个过程可能比较费时间。此外，对于NLP任务，50维的词向量就可以达到不错的效果</p></li>
+</ul>
+<h2 id="参考文献">参考文献</h2>
+<p>[rong2014] Rong, X. (2014). word2vec parameter learning explained. <em>arXiv preprint arXiv:1411.2738</em>.</p>
+<p>[ruder2016a] Ruder, S. (2016). <a href="http://ruder.io/word-embeddings-softmax/" target="_blank" rel="noopener"><em>On Word Embeddinngs - Part 2: Approximating the Softmax</em></a></p>
+<p>[chen2016] Chen, W., Grangier, D., &amp; Auli, M. (2016). Strategies for Training Large Vocabulary Neural Language Models. In <em>Proceedings of the 54th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)</em> (ACL2016) (Vol. 1, pp. 1975-1985).</p>
+<p>[jozefowicz2016] Jozefowicz, R., Vinyals, O., Schuster, M., Shazeer, N., &amp; Wu, Y. (2016). Exploring the limits of language modeling. <em>arXiv preprint arXiv:1602.02410</em>.</p>
+<p>[grave2017] Grave, E., Joulin, A., Cissé, M., &amp; Jégou, H. (2017, August). Efficient softmax approximation for GPUs. In <em>Proceedings of the 34th International Conference on Machine Learning-Volume 70</em> (ICML 2017) (pp. 1302-1310).</p>
+<p>[bengio2003] Bengio, Y., &amp; Senécal, J. S. (2003, January). Quick Training of Probabilistic Neural Nets by Importance Sampling. In <em>AISTATS</em> (pp. 1-9).</p>
+<p>[gutmann2010] Gutmann, M., &amp; Hyvärinen, A. (2010, March). Noise-contrastive estimation: A new estimation principle for unnormalized statistical models. In <em>Proceedings of the Thirteenth International Conference on Artificial Intelligence and Statistics</em> (pp. 297-304).</p>
+<p>[mnih2012] Mnih, A., &amp; Teh, Y. W. (2012). A fast and simple algorithm for training neural probabilistic language models. In <em>Proceedings of the 29th International Conference on Machine Learning, ICML 2012</em> (Vol. 2, pp. 1751-1758).</p>
+<p>[levy2015] Levy, O., Goldberg, Y., &amp; Dagan, I. (2015). Improving distributional similarity with lessons learned from word embeddings. <em>Transactions of the Association for Computational Linguistics</em>, <em>3</em>, 211-225.</p>
+<p>[levy2014] Levy, O., &amp; Goldberg, Y. (2014). Neural word embedding as implicit matrix factorization. In <em>Advances in neural information processing systems, NeurIPS 2014</em> (pp. 2177-2185).</p>
+<p>[lai2016] Lai, S., Liu, K., He, S., &amp; Zhao, J. (2016). How to generate a good word embedding. <em>IEEE Intelligent Systems</em>, <em>31</em>(6), 5-14.</p>
+<p>[bengio2003] Bengio, Y., Ducharme, R., Vincent, P., &amp; Jauvin, C. (2003). A neural probabilistic language model. <em>Journal of machine learning research</em>, <em>3</em>(Feb), (JMLR) (pp. 1137-1155).</p>
+<p>[mnih2007] Mnih, A., &amp; Hinton, G. (2007, June). Three new graphical models for statistical language modelling. In <em>Proceedings of the 24th international conference on Machine learning, ICML 2007</em> (pp. 641-648). ACM.</p>
+<p>[collobert2008] Collobert, R., &amp; Weston, J. (2008, July). A unified architecture for natural language processing: Deep neural networks with multitask learning. In <em>Proceedings of the 25th international conference on Machine learning, ICML 2008</em> (pp. 160-167). ACM.</p>
+<p>[mikolov2013] Mikolov, T., Chen, K., Corrado, G., &amp; Dean, J. (2013). Efficient estimation of word representations in vector space. <em>arXiv preprint arXiv:1301.3781</em>.</p>
+<p>[pennington2014] Pennington, J., Socher, R., &amp; Manning, C. (2014). Glove: Global vectors for word representation. In <em>Proceedings of the 2014 conference on empirical methods in natural language processing ,EMNLP 2014</em> (pp. 1532-1543).</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2019/02/15/NMT-Tutorial-3e1-Word2vec-Details/" title="NMT Tutorial 3扩展e第1部分. Word2Vec及若干关于词向量的扩展知识">txshi-mt.com/2019/02/15/NMT-Tutorial-3e1-Word2vec-Details/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/词向量/" rel="tag"># 词向量</a>
+          
+            <a href="/tags/word2vec/" rel="tag"># word2vec</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/10/NMT-Tutorial-3d-Neural-Networks-Generalization/" rel="next" title="NMT Tutorial 3扩展d. 神经网络的泛化">
+                <i class="fa fa-chevron-left"></i> NMT Tutorial 3扩展d. 神经网络的泛化
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">92</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">99</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#word2vec的参数学习"><span class="nav-number">1.</span> <span class="nav-text">Word2vec的参数学习</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#连续词袋模型cbow"><span class="nav-number">1.1.</span> <span class="nav-text">连续词袋模型（CBOW）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#上下文仅有一个单词的情况"><span class="nav-number">1.1.1.</span> <span class="nav-text">上下文仅有一个单词的情况</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#隐藏层到输出层权重的更新"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">隐藏层到输出层权重的更新</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#输入层到隐藏层权重的更新"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">输入层到隐藏层权重的更新</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#上下文有多个单词的情况"><span class="nav-number">1.1.2.</span> <span class="nav-text">上下文有多个单词的情况</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#skipgram模型"><span class="nav-number">1.2.</span> <span class="nav-text">SkipGram模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#优化计算效率"><span class="nav-number">1.3.</span> <span class="nav-text">优化计算效率</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#分层softmax"><span class="nav-number">1.3.1.</span> <span class="nav-text">分层softmax</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#负采样"><span class="nav-number">1.3.2.</span> <span class="nav-text">负采样</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#softmax的近似方法"><span class="nav-number">2.</span> <span class="nav-text">Softmax的近似方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#softmax扩展法"><span class="nav-number">2.1.</span> <span class="nav-text">Softmax扩展法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#采样法"><span class="nav-number">2.2.</span> <span class="nav-text">采样法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#is"><span class="nav-number">2.2.1.</span> <span class="nav-text">IS</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#nce"><span class="nav-number">2.2.2.</span> <span class="nav-text">NCE</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#nce与其它采样法的关系"><span class="nav-number">2.2.2.1.</span> <span class="nav-text">NCE与其它采样法的关系</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何生成好的词向量"><span class="nav-number">3.</span> <span class="nav-text">如何生成好的词向量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文献"><span class="nav-number">4.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
