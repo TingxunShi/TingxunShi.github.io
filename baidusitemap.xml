@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>txshi-mt.com/2019/02/28/NMT-Tutorial-3e2-subword/</loc>
+    <lastmod>2019-02-28T13:18:24.792Z</lastmod>
+  </url>  <url>
     <loc>txshi-mt.com/2019/02/15/NMT-Tutorial-3e1-Word2vec-Details/</loc>
-    <lastmod>2019-02-15T12:25:25.705Z</lastmod>
+    <lastmod>2019-02-18T03:37:11.103Z</lastmod>
   </url>  <url>
     <loc>txshi-mt.com/2019/01/10/NMT-Tutorial-3d-Neural-Networks-Generalization/</loc>
     <lastmod>2019-01-10T03:00:50.651Z</lastmod>

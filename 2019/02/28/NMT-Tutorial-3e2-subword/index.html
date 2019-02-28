@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="词向量,subword,fasttext,bpe,morfessor," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="序言 按照布隆菲尔德的理论，词被认为是人类语言中能自行独立存在的最小单位，是“最小自由形式”。因此，对西方语言做NLP时，以词为基石是一个很自然的想法（甚至对于汉语这种没有明显词界限的语言来说，分词也成为了一个重要的工作） 但是，将某个语言的词穷举出来是不太现实的。首先，名词、动词、形容词、副词这四种属于开放词类，总会有新的词加入进来。其次，网络用语会创造出更多新词，或者为某个词给出不规则的变形。">
+<meta name="keywords" content="词向量,subword,fasttext,bpe,morfessor">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NMT Tutorial 3扩展e第2部分. Subword">
+<meta property="og:url" content="txshi-mt.com/2019/02/28/NMT-Tutorial-3e2-subword/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="序言 按照布隆菲尔德的理论，词被认为是人类语言中能自行独立存在的最小单位，是“最小自由形式”。因此，对西方语言做NLP时，以词为基石是一个很自然的想法（甚至对于汉语这种没有明显词界限的语言来说，分词也成为了一个重要的工作） 但是，将某个语言的词穷举出来是不太现实的。首先，名词、动词、形容词、副词这四种属于开放词类，总会有新的词加入进来。其次，网络用语会创造出更多新词，或者为某个词给出不规则的变形。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutorial_3e2_Morfessor_recursive_search.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutorial_3e2_Markov_chain.png">
+<meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/HMMGraph.svg/400px-HMMGraph.svg.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutorial_3e2_forward_algo.png">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutorial_3e2_viterbi_algo.png">
+<meta property="og:updated_time" content="2019-02-28T13:18:24.792Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NMT Tutorial 3扩展e第2部分. Subword">
+<meta name="twitter:description" content="序言 按照布隆菲尔德的理论，词被认为是人类语言中能自行独立存在的最小单位，是“最小自由形式”。因此，对西方语言做NLP时，以词为基石是一个很自然的想法（甚至对于汉语这种没有明显词界限的语言来说，分词也成为了一个重要的工作） 但是，将某个语言的词穷举出来是不太现实的。首先，名词、动词、形容词、副词这四种属于开放词类，总会有新的词加入进来。其次，网络用语会创造出更多新词，或者为某个词给出不规则的变形。">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutorial_3e2_Morfessor_recursive_search.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2019/02/28/NMT-Tutorial-3e2-subword/"/>
+
+
+
+
+
+  <title>NMT Tutorial 3扩展e第2部分. Subword | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2019/02/28/NMT-Tutorial-3e2-subword/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NMT Tutorial 3扩展e第2部分. Subword</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-02-28T21:14:52+08:00">
+                Feb 28 2019
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/NLP/" itemprop="url" rel="index">
+                    <span itemprop="name">NLP</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="序言">序言</h2>
+<p>按照布隆菲尔德的理论，词被认为是人类语言中能自行独立存在的最小单位，是“最小自由形式”。因此，对西方语言做NLP时，以词为基石是一个很自然的想法（甚至对于汉语这种没有明显词界限的语言来说，分词也成为了一个重要的工作）</p>
+<p>但是，将某个语言的词穷举出来是不太现实的。首先，名词、动词、形容词、副词这四种属于开放词类，总会有新的词加入进来。其次，网络用语会创造出更多新词，或者为某个词给出不规则的变形。最后，以德语为代表的语言通常会将几个基本词组合起来，形成一个复合词，例如Abwasserbehandlungsanlage “污水处理厂”可以被细分为Abwasser、behandlungs和Anlage三个部分。韩语、日语等<strong>黏着语</strong>里这种现象更加明显（需要说明的是，尽管德语里存在着这种黏着语构词的方法，但是传统意义上不把德语看作是黏着语的一种）。即便是存在某个语言能获得其完整词表，词表的数量也会非常庞大，使得模型复杂度很高，训练起来很难。对于以德语、西班牙语、俄语为代表的<strong>屈折语</strong>，也会存在类似的问题（例如西班牙语动词可能有80种变化）。因此，在机器翻译等任务中，从训练语料构造词表时，通常会过滤掉出现频率很低的单词，并将这些单词统一标记为UNK。根据Zipf定律，这种做法能筛掉很多不常见词，简化模型结构，而且可以起到部分防止过拟合的作用。此外，模型上线做推断时，也有很大概率会遇到在训练语料里没见过的词，这些词也会被标为UNK。所有不在词表里被标记为UNK的词，通常被称作<strong>集外词</strong>（OOV）或者<strong>未登录词</strong></p>
+<p>对未登录词的处理是机器翻译领域里一个十分重要的问题。[sennrich2016]认为，对于某些未登录词的翻译可能是”透明“的，包括</p>
+<ul>
+<li>命名实体，例如人名、地名等。对于这些词，如果目标语言和源语言的字母体系相同，可能可以直接抄写；如果不同，需要做些转写。例如将英语的Barack Obama转写成俄语的Барак Обама</li>
+<li>借词，可以通过字母级别的翻译做到，例如将claustrophobia翻译成德语的Klaustrophobie和俄语的Клаустрофобия</li>
+<li>词素复杂的词，例如通过组合或者屈折变化得到的词，可以将其进一步拆分为词素，通过分别翻译各个词素的得到结果。例如将英语的solar system翻译成德语的Sonnensystem或者匈牙利语的Naprendszer</li>
+</ul>
+<p>因此，将词拆分为更细粒度的subword，可以有助于机器翻译效果的提升。文章同时指出使用一种称为“比特对编码”（Byte Pair Encoding——BPE）的算法可以将词进一步划分，但是BPE对单词的划分是纯基于统计的，得到的subword所蕴含的词素，或者说形态学信息，并不明显。因此，本文对一种基于形态学的分词器Morfessor也做了一个介绍。Morfessor使用的是无监督学习的方法，能达到不错的准确率。最后，本文会重点介绍2016年FAIR提出的一种基于subword的词嵌入表示方法fastText</p>
+<p>除去subword方法以外，还可以将词拆成字符，为每个字符训练一个字符向量。这种方法很直观，也很有效，不过无需太费笔墨来描述。关于字符向量的优秀工作，可以参考[Bojanowski2015]的“相关工作”部分。</p>
+<h2 id="分词方法介绍">分词方法介绍</h2>
+<h3 id="bpe">BPE</h3>
+<h4 id="原理与算法">原理与算法</h4>
+<p>BPE算法[gage1994]的本质实际上是一种数据压缩算法。数据压缩的一般做法都是将常见比特串替换为更短的表示方法，而BPE也不例外。更具体地说，BPE是找出最常出现的相邻字节对，将其替换成一个在原始数据里没有出现的字节，一直循环下去，直到找不到最常出现的字节对或者所有字节都用光了为止。打包数据之前，算法会写出字节对的替换表。例如，对&quot;lwlwlwlwrr&quot;使用BPE算法，会先把lw替换为a，得到&quot;aaaarr&quot;，然后把&quot;aa&quot;替换为&quot;b&quot;，得到&quot;bbrr&quot;。此时所有相邻字节对&quot;bb&quot;、&quot;br&quot;、&quot;rr&quot;的出现次数相等，迭代结束，输出替换表{&quot;b&quot; -&gt; &quot;aa&quot;, &quot;a&quot; -&gt; &quot;lw&quot;}</p>
+<p>对于压缩算法而言，这种做法还不够，需要考虑更多细节。但是对于分词而言，上述流程已经足够了（实际上，真正使用时也没有什么替换表之类的）。将BPE用作分词时，先将词表里的所有单词展开成字符序列，并在末尾加一个特殊标记<code>&lt;/w&gt;</code>，以恢复成原有的标识符。然后，也是对所有字符对做计数，找到出现最频繁的（例如(&quot;A&quot;, &quot;B&quot;)），将其合并得到新的符号&quot;AB&quot;，看做一个“字符”，如此往复。因此，最后词表大小是原始词表大小+合并操作的次数。为了效率起见，BPE不考虑跨词的字符组合。BPE算法的核心学习过程可以写做如下Python代码</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">import</span> collections</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_stats</span><span class="params">(vocab)</span>:</span></span><br><span class="line">    pairs = collections.defaultdict(int)</span><br><span class="line">    <span class="keyword">for</span> word, freq <span class="keyword">in</span> vocab.items():</span><br><span class="line">        symbols = word.split()</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(len(symbols) - <span class="number">1</span>):</span><br><span class="line">            pairs[symbols[i], symbols[i + <span class="number">1</span>]] += freq</span><br><span class="line">    <span class="keyword">return</span> pairs</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">merge_vocab</span><span class="params">(pair, v_in)</span>:</span></span><br><span class="line">    v_out = &#123;&#125;</span><br><span class="line">    bigram = re.escape(<span class="string">' '</span>.join(pair))</span><br><span class="line">    p = re.compile(<span class="string">r'(?&lt;!\S)'</span> + bigram + <span class="string">r'(?!\S)'</span>)</span><br><span class="line">    <span class="keyword">for</span> word <span class="keyword">in</span> v_in:</span><br><span class="line">        w_out = p.sub(<span class="string">''</span>.join(pair), word)</span><br><span class="line">        v_out[w_out] = v_in[word]</span><br><span class="line">    <span class="keyword">return</span> v_out</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">    vocab = &#123;<span class="string">'l o w&lt;/w&gt;'</span>: <span class="number">5</span>, <span class="string">'l o w e r&lt;/w&gt;'</span>: <span class="number">2</span>,</span><br><span class="line">             <span class="string">'n e w e s t&lt;/w&gt;'</span>: <span class="number">6</span>, <span class="string">'w i d e s t&lt;/w&gt;'</span>: <span class="number">3</span>&#125;</span><br><span class="line">    num_merges = <span class="number">10</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(num_merges):</span><br><span class="line">        pairs = get_stats(vocab)</span><br><span class="line">        best = max(pairs, key=pairs.get)</span><br><span class="line">        vocab = merge_vocab(best, vocab)</span><br><span class="line">        print(best)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+<p>测试阶段，对未登录词，可以将其先拆分成字符序列，然后用前面学到的组合方式将字符组成更大的，已知的符号。核心算法如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">encode</span><span class="params">(word, bpe_codes)</span>:</span></span><br><span class="line">    pairs = get_pairs(word)  <span class="comment"># went -&gt; &#123;('w', 'e'), ('e', 'n'), ('n', 't&lt;/w&gt;')&#125;</span></span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">True</span>:</span><br><span class="line">        获取频率最低的二元组。如果所有二元组都不在bpe_codes里，跳出循环</span><br><span class="line">        将pairs中对应的二元组合并，得到new_word <span class="comment"># 如果('e', 'n') -&gt; 'en'，则得到('w', 'en', 't&lt;/w&gt;')</span></span><br><span class="line">        如果new_word是一元组(所有单词合并到一起)，跳出循环。否则更新pairs</span><br></pre></td></tr></table></figure>
+<p>由于未登录词通常会被这种方法拆成若干个subword，因此通常会向不在原来词尾的subword后面写明一个分隔符，通常是@@。例如，假如said这个词不在词表里，<code>encode</code>以后得到<code>('sa', 'i', 'd')</code>，那么输出会是<code>sa@@ i@@ d</code>。</p>
+<h4 id="使用">使用</h4>
+<p>可以用命令<code>pip install subword-nmt</code>安装包<code>subword-nmt</code>以后，可以使用如下代码得到BPE的分词结果，以及将BPE的分词方法用到测试语料上</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> subword_nmt <span class="keyword">import</span> apply_bpe, learn_bpe</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">'../data/toy_vocab.txt'</span>, <span class="string">'r'</span>, encoding=<span class="string">'utf-8'</span>) <span class="keyword">as</span> in_file, \</span><br><span class="line">        open(<span class="string">'../data/toy_bpe.txt'</span>, <span class="string">'w+'</span>, encoding=<span class="string">'utf-8'</span>) <span class="keyword">as</span> out_file:</span><br><span class="line">    <span class="comment"># 得到分词结果，写到../data/toy_bpe.txt这个文件中</span></span><br><span class="line">    <span class="comment"># 1500是最后BPE词表大小，is_dict说明输入文件是个词表文件，格式为"&lt;单词&gt; &lt;次数&gt;"</span></span><br><span class="line">    learn_bpe.learn_bpe(in_file, out_file, <span class="number">1500</span>, verbose=<span class="keyword">True</span>, is_dict=<span class="keyword">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">'../data/bpe_test_raw.txt'</span>, <span class="string">'r'</span>, encoding=<span class="string">'utf-8'</span>) <span class="keyword">as</span> in_file, \</span><br><span class="line">        open(<span class="string">'../data/bpe_test_processed.txt'</span>, <span class="string">'w+'</span>, encoding=<span class="string">'utf-8'</span>) <span class="keyword">as</span> out_file, \</span><br><span class="line">        open(<span class="string">'../data/toy_bpe.txt'</span>, <span class="string">'r'</span>, encoding=<span class="string">'utf-8'</span>) <span class="keyword">as</span> code_file:</span><br><span class="line">    <span class="comment"># 构造BPE词表</span></span><br><span class="line">    bpe = apply_bpe.BPE(code_file)</span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> in_file:</span><br><span class="line">        <span class="comment"># 使用BPE分词</span></span><br><span class="line">        out_file.write(bpe.process_line(line))</span><br></pre></td></tr></table></figure>
+<h3 id="morfessor">Morfessor</h3>
+<p>BPE是一套很经典也很常用的获取subword的方法，但是美中不足的是该方法完全基于频率统计，因此分出来的subword可能不太包含语法含义。可以考虑将词从语法角度做进一步划分，拆成语素。由于语素是最小的语法单位，是最小的语音语义结合体，因此它们本身比字符承载了更多的语法含义，同时比词更灵活。很多工作，例如[botha2014] [cui2015] [luong2013] [qiu2014]都采取了这样的思路，这些工作在划分语素时都使用了<a href="https://morfessor.readthedocs.io/en/latest/" target="_blank" rel="noopener">Morfessor</a> [creutz2007] 这个工具，因此本节主要讨论Morfessor的原理。本文主要遵从2.0版本文档[virpioja2013]的脉络，而非原始论文，因此这里主要讨论Morfessor Baseline的2.0实现，没有涵盖Morfessor Categories-MAP的内容。</p>
+<h4 id="术语">术语</h4>
+<p>原文提了三个基本概念，分别是compounds, constructions和atoms。考虑到这三个词比较抽象，不太好找到中文里对应的词，本文所关注的又只是词语划分到词素的过程，因此下文使用的是原文里提供的对应关系：</p>
+<ul>
+<li>compounds，对应于原始词</li>
+<li>constructions，对应于划分得到的词素</li>
+<li>atoms，对应于字母</li>
+</ul>
+<p>需要注意的是，Morfessor能做的不只是将词划分为词素，还可以从句子中得到短语，所以compounds等概念在别的任务中，会有不同的具体含义</p>
+<h4 id="方法">方法</h4>
+<p>所有Morfessor的模型包括两个部分，有词典（lexicon）和语法（grammar）。前者存储词素的属性，后者确定如何将词素组成词。Morfessor有两个<strong>基本假设</strong></p>
+<ul>
+<li>词由一个或多个词素构成，单个词中所含词素的上限是该词包含的字母个数</li>
+<li>组成词的词素是独立出现的。这个假设虽然与事实相悖而且是可能的改进点，但是会使算法变得简单</li>
+</ul>
+<p>模型的损失函数来自于对模型的最大后验概率估计（MAP估计），分为两个部分：模型似然（来自于前面的基本假设）和先验概率（决定模型中词典的概率）。训练算法总体上来讲是使用贪婪算法和局部搜索策略，而解码使用了维特比（Viterbi）算法</p>
+<h5 id="模型与损失函数">模型与损失函数</h5>
+<p>Morfessor使用的是生成概率模型，对给定的参数<span class="math inline">\(\boldsymbol{\theta}​\)</span>，产生词<span class="math inline">\(W​\)</span>和分解结果<span class="math inline">\(A​\)</span>（原文称为analysis）。对词<span class="math inline">\(w​\)</span>，其分解结果<span class="math inline">\(\boldsymbol{a}​\)</span>可以通过分词函数<span class="math inline">\(\phi​\)</span>获得 <span class="math display">\[
+\boldsymbol{a} = \phi(w;\boldsymbol{\theta})
+\]</span> 此时<span class="math inline">\(\boldsymbol{a}\)</span>可以看作是一串词素组成的序列<span class="math inline">\(\boldsymbol{a} = (m_1, \cdots, m_n)\)</span>。<span class="math inline">\(w\)</span>可以通过对<span class="math inline">\(\boldsymbol{a}\)</span>做合词操作<span class="math inline">\(\phi^{-1}\)</span>重新获得。一般情况下，<span class="math inline">\(\phi^{-1}\)</span>只是一个简单的连接操作，不需要模型</p>
+<p>模型的目标是要对观察到的训练数据<span class="math inline">\(\boldsymbol{D}_W\)</span>寻找最可能的参数<span class="math inline">\(\boldsymbol{\theta}\)</span>： <span class="math display">\[
+\boldsymbol{\theta}_{\rm MAP} = \mathop{ {\rm arg}\max}_{\boldsymbol{\theta}} p(\boldsymbol{\theta}|\boldsymbol{D}_W) = \mathop{ {\rm arg}\max}_{\boldsymbol{\theta}} p(\boldsymbol{\theta})p(\boldsymbol{D}_W|\boldsymbol{\theta})
+\]</span></p>
+<h6 id="似然">似然</h6>
+<p>假设<span class="math inline">\(\boldsymbol{D}_W\)</span> 是训练数据，包含<span class="math inline">\(N\)</span>个单词和单词之间的分界（<span class="math inline">\(\#w\)</span>）。假设每个词出现的概率是独立的，则对数似然为 <span class="math display">\[
+\begin{align*}
+\log p(\boldsymbol{D}_W|\boldsymbol{\theta}) &amp;= \sum_{j=1}^N \log p(W=w_j|\boldsymbol{\theta}) \\
+&amp;= \sum_{j=1}^N \log \sum_{\boldsymbol{a} \in \Phi(w_j)} p(A=\boldsymbol{a}|\boldsymbol{\theta})
+\end{align*}
+\]</span> 其中<span class="math inline">\(\Phi(w) = \{\boldsymbol{a} : \phi^{-1}(\boldsymbol{a}) = w\}\)</span>。假设变量<span class="math inline">\(\boldsymbol{Y}\)</span>为训练数据中的每个单词<span class="math inline">\(w_j\)</span>分配一个<span class="math inline">\(\Phi(w_j)\)</span>中的分词序列，即<span class="math inline">\(\boldsymbol{Y}= (\boldsymbol{y}_1, \cdots, \boldsymbol{y}_N)\)</span>，则目标函数变为 <span class="math display">\[
+\log p(\boldsymbol{D}_W|\boldsymbol{\theta}, \boldsymbol{Y}) = \sum_{j=1}^N \log p(\boldsymbol{y}_j|\boldsymbol{\theta}) = \sum_{j=1}^N \log p(m_{j1}, \cdots, m_{j|\boldsymbol{y}_j|}, \#_w|\boldsymbol{\theta})
+\]</span> 由前面的基本假设2，上式可以简化为 <span class="math display">\[
+\log p(\boldsymbol{D}_W|\boldsymbol{\theta},\boldsymbol{Y}) = \sum_{j=1}^N \left(\log p(\#_w|\boldsymbol{\theta}) + \sum_{i=1}^{|\boldsymbol{y}_j|}\log p(m_{ji}|\boldsymbol{\theta})\right)
+\]</span></p>
+<h6 id="先验">先验</h6>
+<p>原始的Morfessor实现将模型参数分为两部分，就是前面说的词典<span class="math inline">\(\mathcal{L}​\)</span>和语法<span class="math inline">\(\mathcal{G}​\)</span>。本文介绍的Morfessor Baseline没有语法参数，所以参数先验<span class="math inline">\(p(\boldsymbol{\theta}) = p(\mathcal{L})​\)</span>。先验概率影响的结果是，对于某个词典，它存储的词素越短越少，则概率越高。对于词素<span class="math inline">\(m_i​\)</span>，如果<span class="math inline">\(p(m_i|\boldsymbol{\theta}) &gt; 0​\)</span>，那么说它是被存储了的。有<span class="math inline">\(\mu​\)</span>个词素的词典的概率是 <span class="math display">\[
+p(\mathcal{L}) = p(\mu) \times p({\rm properties}(m_1), \ldots, {\rm properties}(m_\mu)) \times \mu !
+\]</span> 使用阶乘项的原因是<span class="math inline">\(\mu\)</span>个词素有<span class="math inline">\(\mu !\)</span>种排列方式，而对词典来说相同内容的不同排列都是等价的。<span class="math inline">\(p(\mu)\)</span>可以忽略掉</p>
+<p>上式中的“属性”properties可以进一步划分为“形式”form和用法usage</p>
+<ul>
+<li><p>“形式”指的是词素由哪些字母组成，被认为是独立的。词素<span class="math inline">\(m_i\)</span>的“形式”的概率分为两个部分，一个是长度分布<span class="math inline">\(p(L)\)</span>，一个是字母序列<span class="math inline">\(\boldsymbol{\sigma}_i\)</span>的类别分布<span class="math inline">\(p(C)\)</span> <span class="math display">\[
+p(\boldsymbol{\sigma}_i) = p(L=|\boldsymbol{\sigma}_i|)\prod_{j=1}^{|\boldsymbol{\sigma}_i|}p(C=\boldsymbol{\sigma}_{ij})
+\]</span></p></li>
+<li><p>“用法”指的是每个词素的数量<span class="math inline">\(\tau_i\)</span>，<span class="math inline">\(\nu = \sum_i \tau_i\)</span>是所有词素的总数。可以通过<span class="math inline">\(\nu\)</span>来计算每个词素的最大似然估计：<span class="math inline">\(p(m_i|\boldsymbol{\theta}) = \tau_i / (N+\nu)\)</span>。给定<span class="math inline">\(\mu\)</span>和<span class="math inline">\(\nu\)</span>，词素数量的先验为 <span class="math display">\[
+p(\tau_1, \ldots, \tau_\mu | \mu, \nu) = 1/{\nu-1 \choose \mu-1}
+\]</span> 也就是说，每个词素序列的先验都相同</p></li>
+</ul>
+<h5 id="训练与解码算法">训练与解码算法</h5>
+<p>Morfessor使用了无监督/半监督学习方法来训练模型，支持批量训练和在线训练。批量训练可以使用全局搜索算法和局部搜索算法，而在线训练只能使用局部搜索算法</p>
+<h6 id="参数初始化">参数初始化</h6>
+<p>Morfessor 2.0的初始化方法是对每个单词的字母之间随机插入空格，将得到的词素放入词典，并对应地初始化<span class="math inline">\(\boldsymbol{Y}\)</span></p>
+<h6 id="全局维特比算法">全局维特比算法</h6>
+<p>Morfessor没有使用HMM常用的前向-后向算法来求解，主要是因为可能的划分方式太多，计算量太大，而且没有封闭解析解。因此工具首先为每个单词找到最可能的分解结果<span class="math inline">\(\phi_{\rm best}(w;\boldsymbol{\theta}^{(t-1)})​\)</span>，然后更新参数来最小化损失函数 <span class="math display">\[
+\boldsymbol{\theta}^{(t)} = \mathop{ {\rm arg}\min}_{\boldsymbol{\theta}}\left\{-\log p(\boldsymbol{\theta}) - \log \prod_{j=1}^{|\boldsymbol{D}_W|}p\left(\phi_{\rm best}(w_j;\boldsymbol{\theta}^{(t-1)})|\boldsymbol{\theta}\right)\right\}
+\]</span> 这里 <span class="math display">\[
+\phi_{\rm best}(w;\boldsymbol{\theta}) = \mathop{ {\rm arg}\max}_{\boldsymbol{a}}p(\boldsymbol{a}|w,\boldsymbol{\theta}) = \mathop{ {\rm arg}\max}_{m1,\ldots,m_n: \\ w=m1\ldots m_n}p(m_1,\ldots,m_n,\#_w|\boldsymbol{\theta})
+\]</span> 可以进一步使用HMM的维特比算法求解，这里可观察序列是组成单词w的字母序列，隐藏状态是单词的词素。与传统维特比算法的不同在于，一个状态（即一个词素）可以覆盖多个观察值（多个字母）。选出到第<span class="math inline">\(i\)</span>个观察值的最优路径时，这条路径可能来自于第一到第<span class="math inline">\(i-1\)</span>个观察值中的任意一个，因此算法时间复杂度是<span class="math inline">\(O(|w|^2)\)</span></p>
+<p>维特比算法的最大问题是，对于未在之前词典中出现的词素，算法总会把它的概率置为0。由于词素词典总是在缩小的，因此初始化对结果的影响很大。维特比算法也被用来对新词划分词素</p>
+<p>此外，<strong>全局维特比算法还被Morfessor用作分词算法。Morfessor还支持n-best维特比解码</strong></p>
+<h6 id="局部维特比算法">局部维特比算法</h6>
+<p>也可以使用在线算法一次处理一条数据，此时对给定单词先得出最优分词方式<span class="math inline">\(\phi_{\rm best}​\)</span>，再根据分词结果更新参数。为了处理非零概率问题，需要加入一些平滑手段。设平滑参数为<span class="math inline">\(\lambda &gt; 0​\)</span>，则已经存在的词素概率估计为 <span class="math display">\[
+p_{\rm old}(m_i|\boldsymbol{\theta}) = \frac{\tau_i + \lambda}{\nu + \lambda \mu}
+\]</span> 没有在词典里的词素概率为 <span class="math display">\[
+p_{\rm new}(m|\boldsymbol{\theta}) \approx \frac{\lambda}{\nu + \lambda \mu}\times \frac{p(\tilde{\boldsymbol{\theta}})p(\boldsymbol{D}_W|\tilde{\boldsymbol{\theta}})}{p(\boldsymbol{\theta})p(\boldsymbol{D}_W|\boldsymbol{\theta})}
+\]</span> 其中<span class="math inline">\(p(\tilde{\boldsymbol{\theta}})\)</span>和<span class="math inline">\(p(\boldsymbol{D}_W|\tilde{\boldsymbol{\theta}})\)</span>是<span class="math inline">\(m\)</span>加入到词典里以后得到的近似先验概率和似然概率。假设在训练数据里没有见到过专有名词Matthew，那么标准维特比算法会倾向将其拆分成几个很小的词素。如果<span class="math inline">\(p_{\rm new}({\rm Matthew}|\boldsymbol{\theta})\)</span>高于分词的似然，那么这个词就会被整体保留。注意平滑维特比算法尽管能引入新的词素，但总体而言它还是一种保守的算法</p>
+<h6 id="递归算法">递归算法</h6>
+<p>Morfessor Baseline所使用的标准训练算法是一种递归的、贪婪的搜索方法，每一步只考虑修改一小部分参数，选取的修改方法代价最小。递归算法每次只考虑一个可能的单词分解方式<span class="math inline">\(\boldsymbol{y}_j \in \Phi(w_j)\)</span>，将大部分可能的词素的概率设为0，不将它们存进词典，因此不太耗费内存</p>
+<p>最简单的情况下，优化算法每次只看一个单词<span class="math inline">\(w_j\)</span>，使用参数找到最小化损失函数的分词序列 <span class="math display">\[
+\boldsymbol{y}_j^{(t)} = \mathop{ {\rm arg}\min}_{ \boldsymbol{y}_j \in \mathcal{Y}_j}\left\{\min_{\boldsymbol{\theta}} L(\boldsymbol{\theta}, \boldsymbol{Y}^{(t-1)}, \boldsymbol{D}_W)\right\}
+\]</span> 然后更新参数 <span class="math display">\[
+\boldsymbol{\theta}^{(t)} = \mathop{ {\rm arg}\min}_{\boldsymbol{\theta}}\left\{L(\boldsymbol{\theta}, \boldsymbol{Y}^{(t)}, \boldsymbol{D}_W)\right\}
+\]</span> 这两部都会减小损失函数，因此算法最后肯定会收敛到某个局部极小值</p>
+<p>由于一个单词的分词结果是上下文无关的，因此可以把<span class="math inline">\(\boldsymbol{Y}\)</span>存储在一个二分DAG中，叶子节点是词素，其它节点称为“虚拟词素”。顶层节点总是单词</p>
+<p>图中的每个节点存储两个数：根节点数量和总数量。前者说明该节点作为单词出现了多少次，后者给出指向该节点的引用数量。对任意节点，该节点的“总数量”是其根节点数量与其直接祖先“总数量”的加和。叶子节点的“总数量”则说明该词素在训练数据中出现了多少次（<span class="math inline">\(\tau_i\)</span>）</p>
+<p>递归搜索时，每次局部优化都会修改图的节点，考虑所有将该节点分成两个词素的分法（以及不划分的情况）。如果节点最后被划分，就递归在其孩子节点中搜索。下图给出了算法的逻辑</p>
+<p><img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutorial_3e2_Morfessor_recursive_search.png" title="Morfessor的递归搜索算法"></p>
+<p>实践过程中可以通过图中的词素数同时更新图<span class="math inline">\(\boldsymbol{Y}\)</span>和参数<span class="math inline">\(\boldsymbol{\theta}\)</span>。如果词素数超过0，就将其加入词典，否则从词典中删除。此外，由于似然的计算很频繁也很耗时，因此每当图的内容变化时都会实时计算对数似然中重要的那部分。继续使用前面的记号，<span class="math inline">\(N\)</span>为单词总数，<span class="math inline">\(\mu\)</span>为词表大小，<span class="math inline">\(\nu\)</span>为词素总数，<span class="math inline">\(\tau_i\)</span>为词素<span class="math inline">\(m_i\)</span>的数量，有 <span class="math display">\[
+\begin{align*}
+\log p(\boldsymbol{D}_W|\boldsymbol{\theta},\boldsymbol{Y}) &amp;= \sum_{i=1}^\mu \tau_i\log\frac{\tau_i}{N+\nu} + N\log \frac{N}{N+\nu} \\
+&amp;= \sum_{i=1}^\mu \tau_i(\log \tau_i -\log(N+\nu)) + N(\log N - \log(N+\nu)) \\
+&amp;= \sum_{i=1}^\mu \tau_i \log \tau_i - \sum_{i=1}^\mu \tau_i \log(N+\nu) + N\log N - N \log (N+\nu) \\
+&amp;= \sum_{i=1}^\mu \tau_i \log \tau_i + N\log N - (N+\nu)\log (N+\nu)
+\end{align*}
+\]</span> 因此只需要实时更新第一项和<span class="math inline">\(\nu\)</span>，就能快速算出对数似然</p>
+<p>由于算法的递归性质，它会经常检测一些频繁出现的词素。由于常见单词和词素的划分方式通常不会频繁变化，因此可以统计每个虚拟词素被检验过了多少次，对被检验太多的词素，以一定的概率跳过递归搜索，提高效率。令<span class="math inline">\(s(w)\)</span>是<span class="math inline">\(w\)</span>被搜索过的次数，则跳过该词的概率设置为 <span class="math display">\[
+p({\rm skip}|w) = 1 - \frac{1}{\max(1,s(w))}
+\]</span> 为了避免其对优化造成影响，<span class="math inline">\(s(w)\)</span>会被定期更新。全局搜索一般是每个training epoch以后重置一次<span class="math inline">\(s(w)\)</span>，局部搜索则是设置一个迭代样本数量，通常是10000</p>
+<h6 id="似然权重与半监督学习">似然权重与半监督学习</h6>
+<p>可以通过为似然项加一个权重参数<span class="math inline">\(\alpha &gt; 0\)</span>来控制模型是倾向将单词分词还是不分 <span class="math display">\[
+L(\boldsymbol{\theta}, \boldsymbol{D}_W) = -\log p(\boldsymbol{\theta}) - \alpha \log p(\boldsymbol{D}_W|\boldsymbol{\theta})
+\]</span> 小的<span class="math inline">\(\alpha\)</span>使模型尽量细分单词，而大的倾向于保留完整词</p>
+<h2 id="fasttext">fastText</h2>
+<p>前面介绍的方法主要是如何将词进一步拆分的方法，而<a href="https://fasttext.cc/" target="_blank" rel="noopener">fastText</a>（<a href="https://github.com/facebookresearch/fastText" target="_blank" rel="noopener">GitHub</a>）本质上并非一种分词方法，它的<strong>目的还是要给出每个单词的词向量</strong>，只不过在学习词向量的过程中用到了一些subword的信息。这样，<strong>对于未登录词，fastText也可以给出一个比较合理的向量表示，而不是用一个统一的unk词向量</strong></p>
+<p>fastText可以看作是在word2vec/GloVe之后，ElMo之前最主流，效果最好的词向量训练方法，其最大的改进就是使用了subword来做辅助训练。在fastText提出之前，有很多工作也曾试图向词向量中加入subword信息（更准确地说，主要是加入词素信息），例如[botha2014] [cui2015] [luong2013] [qiu2014]等。不过这些工作，如前面所述，都需要一个分词器来给出词素信息（更多工作介绍，可以参看[bojanowski2017]的“相关工作”部分），因此并没有得到特别广泛的应用</p>
+<h3 id="算法原理">算法原理</h3>
+<p>fastText继承了word2vec里skip-gram的思想，不过引入了一些subword信息。与原始skip-gram不同的是，fastText对每个给定的输入只预测一个输出。训练时使用了负采样的思想：对窗口内的单词，将其认定为正样本，否则认定为负样本。因此，对位置为<span class="math inline">\(t\)</span>的输入，假设上下文单词的位置为c，可以得到如下负对数似然 <span class="math display">\[
+\log \left(1+e^{-s(w_t, w_c)}\right) + \sum_{n \in \mathcal{N}_{t,c}}\log\left(1+e^{s(w_t,n)}\right)
+\]</span> 这里<span class="math inline">\(\mathcal{N}_{t,c}\)</span>是从词表中抽样得到的负样本，<span class="math inline">\(s\)</span>是一个打分函数，在后文介绍。假设输入是一个有<span class="math inline">\(T\)</span>个单词的单词序列，对单词<span class="math inline">\(w_t\)</span>其上下文单词构成的集合为<span class="math inline">\(\mathcal{C}_t\)</span>，logistic损失函数<span class="math inline">\(\ell\ :\  x \mapsto \log(1+e^{-x})\)</span>，则目标函数为 <span class="math display">\[
+\sum_{t=1}^T \left[\sum_{c\in \mathcal{C}_t} \ell(s(w_t, w_c)) + \sum_{n\in \mathcal{N}_{t,c}} \ell (-s(w_t, n))\right]
+\]</span> 如前文所述，fastText并没有只将单词看作是一个整体，而是将每个单词看作是一个包含了若干n元字符的“字组袋”（这个字组袋同时包含了单词本身），并引入分界符<和>。例如，对于单词where，令n=3，则该单词被表示为<code>{&lt;wh, whe, her, ere, re&gt;, &lt;where&gt;}</code>。注意由于分界符的存在，单词her与这里的三元字组her的表示方法不同，前者会被表示为<code>&lt;her&gt;</code>。实践中，fastText提取了所有3、4、5、6元字组</和></p>
+<p>假设包含了所有n-gram的词典大小为<span class="math inline">\(G\)</span>，对于给定单词<span class="math inline">\(w\)</span>，记<span class="math inline">\(\mathcal{G}_w \subset \{1,\ldots, G\}\)</span>是出现在<span class="math inline">\(w\)</span>中的n-gram，每个n-gram有一个向量表示<span class="math inline">\(\boldsymbol{z}_g\)</span>，则前面提到的打分函数为 <span class="math display">\[
+s(w,c) = \sum_{g\in \mathcal{G}_w} \boldsymbol{z}_g^\mathsf{T}\boldsymbol{v}_c
+\]</span> 对比原始skip-gram的打分函数<span class="math inline">\(s(w_t, w_c) = \boldsymbol{u}_{w_t}^\mathsf{T}\boldsymbol{v}_{w_c}\)</span>，可以看出fastText虽然保留了单词的输出向量，但是单词的输入向量不再是一个单个向量，而是组成它的若干n-gram向量（包括一个自身向量）的加和。这种做法可以共享不同词间相同字组的表示，因此可以为罕见词学到比较可靠的向量</p>
+<p>为了减小内存使用量，fastText使用<a href="http://www.isthe.com/chongo/tech/comp/fnv/" target="_blank" rel="noopener">Fowler-Noll-Vo哈希函数</a>（确切说是FNV-1a变体）将字符序列映射到一个1到<span class="math inline">\(2\times 10^6\)</span>的整数，每个单词由其在字典中的索引号和所包含字组的哈希值集合共同表示</p>
+<p>对于未登录词，fastText将组成它的所有n-gram字组向量求和，得出该词的向量表示</p>
+<h3 id="实现">实现</h3>
+<p>fastText使用了梯度下降来求解最优化问题，学习率线性递减。假设训练集有<span class="math inline">\(T\)</span>个单词，训练过程在整个训练集上迭代<span class="math inline">\(P\)</span>次，则在时刻<span class="math inline">\(t\)</span>的学习率为<span class="math inline">\(\gamma_0 (1-\frac{t}{TP})\)</span>，其中<span class="math inline">\(\gamma_0\)</span>是一个固定的超参数。词向量维度设为300，对每个正样本随机采样5个负样本，随机概率正比于单词出现频率的平方根。窗口大小<span class="math inline">\(c​\)</span>是一个随机变量，来自于1到5的均匀分布。使用的训练集是wiki数据集</p>
+<h2 id="参考文献">参考文献</h2>
+<p>[sennrich2016] Sennrich, R., Haddow, B., &amp; Birch, A. (2016). Neural Machine Translation of Rare Words with Subword Units. In <em>Proceedings of the 54th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)</em> (ACL) (Vol. 1, pp. 1715-1725).</p>
+<p>[gage1994] Gage, P. (1994). A New Algorithm for Data Compression. In <em>C User Journal</em></p>
+<p>[botha2014] Botha, J., &amp; Blunsom, P. (2014, January). Compositional morphology for word representations and language modelling. In <em>International Conference on Machine Learning</em> (ICML) (pp. 1899-1907).</p>
+<p>[cui2015] Cui, Q., Gao, B., Bian, J., Qiu, S., Dai, H., &amp; Liu, T. Y. (2015). Knet: A general framework for learning word embedding using morphological knowledge. <em>ACM Transactions on Information Systems (TOIS)</em>, <em>34</em>(1), 4. (pp. 1-25)</p>
+<p>[luong2013] Luong, T., Socher, R., &amp; Manning, C. (2013). Better word representations with recursive neural networks for morphology. In <em>Proceedings of the Seventeenth Conference on Computational Natural Language Learning</em> (CoNLL) (pp. 104-113).</p>
+<p>[qiu2014] Qiu, S., Cui, Q., Bian, J., Gao, B., &amp; Liu, T. Y. (2014). Co-learning of word representations and morpheme representations. In <em>Proceedings of COLING 2014, the 25th International Conference on Computational Linguistics: Technical Papers</em> (COLING) (pp. 141-150).</p>
+<p>[creutz2007] Creutz, M., &amp; Lagus, K. (2007). Unsupervised models for morpheme segmentation and morphology learning. <em>ACM Transactions on Speech and Language Processing (TSLP)</em>, <em>4</em>(1), 3. (pp. 13-34)</p>
+<p>[virpioja2013] Virpioja, S., Smit, P., Grönroos, S. A., &amp; Kurimo, M. (2013). Morfessor 2.0: Python implementation and extensions for Morfessor Baseline.</p>
+<p>[bojanowski2017] Bojanowski, P., Grave, E., Joulin, A., &amp; Mikolov, T. (2017). Enriching word vectors with subword information. <em>Transactions of the Association for Computational Linguistics</em>, <em>5</em>, (TACL) (pp. 135-146)</p>
+<h2 id="附录">附录</h2>
+<p>Morfessor中使用的模型实质上是一个隐马尔可夫模型（HMM），该模型与其中用到的算法和思想并非深度学习的范畴，而是统计学习的范畴。为了保证文章的完整性和自涵盖性，同时减少正文的长度，这部分知识放在本部分“附录”中做一介绍。尽管当下（2018年末2019年初）深度学习已经大行其道，然而笔者还是认为统计学习的方法仍然有存在的意义和借鉴的价值</p>
+<h3 id="map估计">MAP估计</h3>
+<p>自从概率被数学家用来研究博弈游戏以来，对“概率值的意义是什么”这个问题，一直有两种不同的看法</p>
+<ul>
+<li><strong>频率学派</strong>（frequentist）认为，概率度量的是某个事情发生的频率，是一个“客观”值，这个频率由一个背后客观存在的参数<span class="math inline">\(\boldsymbol{\theta}\)</span>决定。因此，频率学派解决问题的一个常见思路，就是要求出<span class="math inline">\(\boldsymbol{\theta}\)</span>最可能的取值，也就是要求出<span class="math inline">\(\boldsymbol{\theta}\)</span>的<strong>最大似然</strong>：设数据集为<span class="math inline">\(\mathbb{X}\)</span>，由某个未知的真实数据分布<span class="math inline">\(p_{\rm data}({\bf x})\)</span>产生；<span class="math inline">\(p_{\rm model}({\bf x};\boldsymbol{\theta})\)</span>这一概率分布的参数为<span class="math inline">\(\boldsymbol{\theta}\)</span>，<span class="math inline">\(p_{\rm model}(\boldsymbol{x};\boldsymbol{\theta})\)</span>将输入<span class="math inline">\(\boldsymbol{x}\)</span>映射到实数来估计真实概率<span class="math inline">\(p_{\rm data}(\boldsymbol{x})\)</span>，则<span class="math inline">\(\boldsymbol{\theta}_{\rm ML} = \mathop{ {\rm arg}\max}_{\boldsymbol{\theta}} p_{\rm model}(\mathbb{X}; \boldsymbol{\theta})\)</span>。这种方法是最大似然估计法（MLE） 对于有监督学习，似然可以理解为，在给定参数<span class="math inline">\(\boldsymbol{\theta}\)</span>和数据<span class="math inline">\(\boldsymbol{x}\)</span>下，得到结果<span class="math inline">\(\boldsymbol{y}\)</span>的概率。假设<span class="math inline">\(\boldsymbol{X}\)</span>表示所有输入，<span class="math inline">\(\boldsymbol{Y}\)</span>是观察到的目标，则最大似然估计有<span class="math inline">\(\boldsymbol{\theta}_{\rm ML} = \mathop{ {\rm arg}\max}_{\boldsymbol{\theta}}p(\boldsymbol{Y}|\boldsymbol{X};\boldsymbol{\theta})\)</span></li>
+<li><strong>贝叶斯学派</strong>（Bayesian）认为，概率度量的是观察者对事情发生的把握程度，是一种信念值的体现，是“主观倾向”。尽管贝叶斯学派在建模时也会引入一个参数<span class="math inline">\(\boldsymbol{\theta}\)</span>，但是此时这个参数已经不是一个确定的客观值，而是未知或者不确定的，因此可以表示成一个随机变量。在这种解释下，解决问题的目的是要根据观察到的数据，推测出<span class="math inline">\(\boldsymbol{\theta}\)</span>的分布，即求出后验概率<span class="math inline">\(p(\boldsymbol{\theta}|\boldsymbol{x})\)</span>。最好的估计<span class="math inline">\(\hat{\boldsymbol{\theta}}\)</span>使得其对应的后验概率最大，因此贝叶斯学派常用的解决问题方法称为<strong>最大后验概率</strong>（MAP）法，得到的估计值是最大后验概率估计（MAP估计, MAPE） 由于根据贝叶斯定律有<span class="math inline">\(p(\boldsymbol{\theta}|\boldsymbol{x}) \propto p(\boldsymbol{x}|\boldsymbol{\theta})p(\boldsymbol{\theta})\)</span>，以及对数函数不改变最大值，因此有<span class="math inline">\(\boldsymbol{\theta}_{\rm MAP} = \mathop{ {\rm arg}\max}_{\boldsymbol{\theta}} \log p(\boldsymbol{x}|\boldsymbol{\theta}) + \log p(\boldsymbol{\theta})\)</span>。其中<span class="math inline">\(p(\boldsymbol{x}|\boldsymbol{\theta})\)</span>称为“似然”（可以参考前述“最大似然”的部分），<span class="math inline">\(p(\boldsymbol{\theta})\)</span>称为“先验概率”，可以理解为在观察到数据前对<span class="math inline">\(\boldsymbol{\theta}\)</span>的已知知识或者预先判断。这里可以注意到的是，如果假设先验概率是均匀分布，那么MAPE的结果与MLE的结果等价；如果假设先验概率是高斯分布，得到的结果等价于采用了L2正则化的MLE</li>
+</ul>
+<blockquote>
+<p>最好诠释这种差别的例子就是想象如果你的后验分布是双峰的，频率学派的方法会去选这两个峰当中较高的那一个对应的值作为他们的最好猜测，而贝叶斯学派则会同时报告这两个值，并给出对应的概率。</p>
+<p><a href="https://www.zhihu.com/question/20587681/answer/41436978" target="_blank" rel="noopener">知乎用户Xiangyu Wang对问题“贝叶斯学派与频率学派有何不同？”的回答</a></p>
+</blockquote>
+<h3 id="hmm模型">HMM模型</h3>
+<h4 id="马尔可夫模型">马尔可夫模型</h4>
+<p>在概率论中，马尔可夫模型是用来对随机变化的系统建模的随机模型，其假设在给定某个当前时刻的状态时，系统未来的状态不依赖于当前时刻之前的状态。即假设该随机过程满足马尔可夫性质。用数学语言描述，如果<span class="math inline">\(X(t), t &gt; 0\)</span>是一个随机过程，且 <span class="math display">\[
+p[X(t+h) = y | X(s) = x(s), s \le t] = p[X(t+h)=y|X(t) = x(t)], \forall h &gt; 0
+\]</span></p>
+<h4 id="马尔可夫链">马尔可夫链</h4>
+<p>假设一个系统有<span class="math inline">\(N\)</span>个有限的状态<span class="math inline">\(Q = \{q_1, q_2, \cdots, q_N\}\)</span>，系统在时刻<span class="math inline">\(t\)</span>所处的状态是一个随机变量<span class="math inline">\(s_t, s_t \in Q\)</span>，一般情况下<span class="math inline">\(s_t\)</span>的具体取值由系统在前<span class="math inline">\(t-1\)</span>个时刻下的状态共同决定，即 <span class="math display">\[
+p(s_t=q_i) = p(s_t=q_i|s_{t-1},\cdots, s_1)
+\]</span> 假设<span class="math inline">\(s_t\)</span>的具体取值<strong>仅由</strong>第<span class="math inline">\(t-1\)</span>个时刻系统的状态<span class="math inline">\(s_{t-1}\)</span>决定，那么有 <span class="math display">\[
+\begin{align*}
+p(s_t = q_i) &amp;= p(s_t = q_i|s_{t-1},\cdots, s_1) = p(s_t = q_i|s_{t-1}) \\
+p(s_1, \cdots, s_T) &amp;= p(s_1)\prod_{t=2}^Tp(s_t|s_{t-1})
+\end{align*}
+\]</span> 这时该系统称为离散时间的一阶马尔可夫链。该系统是一种最简单的马尔可夫模型。对于离散时间的k阶马尔可夫链，<span class="math inline">\(s_t​\)</span>的具体取值是由第<span class="math inline">\(t-1, t-2, \ldots, t-k​\)</span>个时刻的状态决定</p>
+<p>马尔可夫链可以记为一个三元组<span class="math inline">\((Q, A, \pi)\)</span>，除了状态集合<span class="math inline">\(Q\)</span>以外，还有</p>
+<ul>
+<li>一个转移矩阵<span class="math inline">\(A\)</span>来描述从任意状态<span class="math inline">\(q_i\)</span>转移到状态<span class="math inline">\(q_j\)</span>的概率，该矩阵满足两个条件：
+<ul>
+<li>任意元素均不小于零</li>
+<li>每行元素的和均为1</li>
+</ul></li>
+<li>一个初始概率分布<span class="math inline">\(\pi\)</span>来描述系统初始状态为<span class="math inline">\(q_i\)</span>的概率</li>
+</ul>
+<p>以下图所示的马尔可夫链为例</p>
+<p><img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutorial_3e2_Markov_chain.png" title="马尔可夫链示例"></p>
+<p>假设三个状态<span class="math inline">\(q_0 = {\rm sunny}, q_1 = {\rm cloudy}, q_2 = {\rm rainy}\)</span>，则对应的转移矩阵<span class="math inline">\(A\)</span>为 <span class="math display">\[
+A = \left[\begin{matrix}
+0.6 &amp; 0.3 &amp; 0.1 \\
+0.3 &amp; 0.2 &amp; 0.5 \\
+0.4 &amp; 0.1 &amp; 0.5
+\end{matrix}\right]
+\]</span> 进一步假设初始概率分布<span class="math inline">\(\pi = \left[\begin{matrix}0.4 &amp; 0.2 &amp; 0.4\end{matrix}\right]\)</span></p>
+<p>则系统接连出现出现“云、雨、晴”的概率分别为 <span class="math display">\[
+\begin{align*}
+&amp;p(s_0 = q_1, s_1=q_2, s_2=q_0) \\ =&amp; p(s_0=q_1)p(s_1=q_2|s_0=q_1)p(s_2=q_0|s_1=q_2) \\
+=&amp; \pi_1 \times  A_{12} \times A_{20} \\
+=&amp; 0.4 \times 0.5 \times 0.4 = 0.08
+\end{align*}
+\]</span></p>
+<h4 id="隐马尔可夫模型">隐马尔可夫模型</h4>
+<p>在隐马尔可夫模型（Hidden Markov Model, HMM）中，系统在任意时刻所处的状态<span class="math inline">\(q_i\)</span>不再能被外界直接观察到，而是会以一个概率分布向外界展示一个可观察的状态<span class="math inline">\(o_i\)</span>。这样，系统的实际状态就是“隐藏的”。在自然语言处理中，HMM可以用来对词性标注（POS tag）问题建模，此时系统的隐藏状态是各个单词的词性标注（例如动词、名词、形容词……），可观察状态是单词本身</p>
+<p>HMM可以记为一个五元组<span class="math inline">\((Q,O,A,B,\pi)\)</span>，其中</p>
+<ul>
+<li><p><span class="math inline">\(Q = \{q_1, q_2, \cdots, q_T\}​\)</span>是长度为<span class="math inline">\(T​\)</span>的隐藏序列，每个<span class="math inline">\(q_i​\)</span>都来自于状态表<span class="math inline">\(S = \{s_1, s_2, \cdots, s_N\}​\)</span></p></li>
+<li><p><span class="math inline">\(O = \{o_1, o_2, \cdots, o_T\}​\)</span>是长度为<span class="math inline">\(T​\)</span>的观察序列，每个<span class="math inline">\(o_i​\)</span>都来自于单词表<span class="math inline">\(V =\{ v_1, v_2, \cdots, v_V\}​\)</span></p></li>
+<li><p><span class="math inline">\(A\)</span>是状态转移矩阵，元素<span class="math inline">\(a_{ij}\)</span>表示隐藏状态从<span class="math inline">\(s_i\)</span>迁移到<span class="math inline">\(s_j\)</span>的概率</p></li>
+<li><p><span class="math inline">\(B\)</span>是发射矩阵，定义当系统处于隐藏状态<span class="math inline">\(s_i\)</span>时，表现为观察值<span class="math inline">\(v_j\)</span>的概率，即 <span class="math display">\[
+\begin{align*}
+B &amp;= \left[\begin{matrix}b_1(v_1) &amp; b_1(v_2) &amp; \cdots &amp; b_1(v_V) \\ b_2(v_1) &amp; b_2(v_2) &amp; \cdots &amp; b_2(v_V) \\ \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\ b_N(v_1) &amp; b_N(v_2) &amp; \cdots &amp; b_N(v_V)\end{matrix}\right] \\
+b_i(v_k) &amp;= p(o_t= v_k|q_t = s_i)
+\end{align*}
+\]</span></p></li>
+<li><p><span class="math inline">\(\pi\)</span>为初始概率分布</p></li>
+</ul>
+<p>也可以简化为一个三元组表示<span class="math inline">\((A, B, \pi)\)</span></p>
+<p>HMM也做出了两个假设。除了前面介绍的<strong>一阶马尔可夫假设</strong>（当前隐藏状态只由前一时刻的隐藏状态决定）以外，还有一个<strong>输出独立性假设</strong>，即当前观察状态只由当前时刻的隐藏状态决定，数学表述为 <span class="math display">\[
+p(o_i|q_1,\ldots, q_i,\ldots ,q_T, o_1,\ldots, o_i,\ldots,o_T ) = p(o_i|q_i)
+\]</span> 下图给出了一个HMM的例子：假设你的一个朋友生活在某个不同的城市，你每天可以跟ta聊天知道ta当天做了什么，而且你知道ta每天的行为由天气决定，但是你不能直接得知那个城市的天气。该城市天气的转移图和天气——行为的发射关系由下图决定</p>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/HMMGraph.svg/400px-HMMGraph.svg.png" title="HMM示例"></p>
+<p>记<span class="math inline">\(s_0 = {\rm rainy}, s_1 = {\rm sunny}, v_0 = {\rm walk}, v_1 = {\rm shop}, v_2 = {\rm clean}\)</span>，则系统的转移矩阵<span class="math inline">\(A\)</span>、发射矩阵<span class="math inline">\(B\)</span>和初始概率分布<span class="math inline">\(\pi\)</span>对应为 <span class="math display">\[
+\begin{align*}
+A &amp;= \left[\begin{matrix}0.7 &amp; 0.3 \\ 0.4 &amp; 0.6\end{matrix}\right] \\
+B &amp;= \left[\begin{matrix}0.1 &amp; 0.4 &amp; 0.5 \\ 0.6 &amp; 0.3 &amp; 0.1\end{matrix}\right] \\
+\pi &amp;= \left[\begin{matrix}0.6 &amp; 0.4\end{matrix}\right]
+\end{align*}
+\]</span> 对于一个HMM，有三个常见问题</p>
+<ul>
+<li><strong>似然问题</strong>：给定HMM <span class="math inline">\(\lambda = (A, B, \pi)\)</span>和观察序列<span class="math inline">\(O\)</span>，确定似然<span class="math inline">\(P(O|\lambda)\)</span></li>
+<li><strong>解码问题</strong>：给定观察序列<span class="math inline">\(O\)</span>和HMM <span class="math inline">\(\lambda = (A, B, \pi)\)</span>，确定最有可能的隐藏序列<span class="math inline">\(Q\)</span></li>
+<li><strong>学习问题</strong>：给定观察序列<span class="math inline">\(O\)</span>和HMM的状态集合，学习<span class="math inline">\(A\)</span>和<span class="math inline">\(B\)</span></li>
+</ul>
+<p>以下将分别介绍三个问题对应的算法</p>
+<h5 id="求解似然问题前向算法">求解似然问题：前向算法</h5>
+<p>似然问题是要计算一个给定观察序列<span class="math inline">\(O\)</span>的概率。以上图给出的模型为例，可以计算模型产生观察状态<span class="math inline">\(\rm \{walk, shop, walk\}\)</span>的概率。这里的一个难点是，每个观察状态都可能由若干个（可能会是所有<span class="math inline">\(N\)</span>个）隐藏状态生成。由于前面提到的输出独立性假设，<span class="math inline">\(p(O|Q) = \prod_{i=1}^Tp(o_i|q_i)\)</span>，理论上可以通过穷举所有可能的隐藏状态序列来计算<span class="math inline">\(O\)</span>的概率，但是由于每个时刻<span class="math inline">\(o_i\)</span>背后都有<span class="math inline">\(N\)</span>个可能状态，所以这个计算量是<span class="math inline">\(O(N^T)\)</span>指数时间的，实际不可行</p>
+<p>可以使用动态规划思想来存储中间状态，将算法时间复杂度降低到<span class="math inline">\(O(N^2T)\)</span>。记<span class="math inline">\(\alpha_t(j) = p(o_1, o_2, \ldots, o_t, q_j = s_j|\lambda)\)</span>，则有如下的递推关系（假设<span class="math inline">\(o_t = v_k\)</span>） <span class="math display">\[
+\alpha_t(j) = \sum_{i=1}^N\alpha_{t-1}(i)a_{ij}b_j(v_k)
+\]</span> 即对<span class="math inline">\(t\)</span>时刻的隐藏状态<span class="math inline">\(s_j\)</span>，要计算出其展示出<span class="math inline">\(o_1,o_2,\ldots, o_{t}\)</span>的概率，有三步</p>
+<ul>
+<li>求出<span class="math inline">\(t-1\)</span>时刻任意隐藏状态<span class="math inline">\(s_i\)</span>展示出<span class="math inline">\(o_1, o_2, \ldots, o_{t-1}\)</span>的概率<span class="math inline">\(\alpha_{t-1}(i)\)</span>（上一步的结果）</li>
+<li>求出<span class="math inline">\(t-1\)</span>时刻隐藏状态<span class="math inline">\(s_{i}\)</span>转移到<span class="math inline">\(t\)</span>时刻<span class="math inline">\(s_t\)</span>的状态<span class="math inline">\(a_{ij}\)</span>（直接查表可得）</li>
+<li>求出<span class="math inline">\(t\)</span>时刻隐藏状态<span class="math inline">\(s_j\)</span>展示出<span class="math inline">\(v_k\)</span>的概率<span class="math inline">\(b_j(v_k)\)</span>（直接查表可得）</li>
+</ul>
+<p>三者相乘即可。由于<span class="math inline">\(t-1\)</span>时刻可能的隐藏状态有<span class="math inline">\(N\)</span>个，因此需要将这<span class="math inline">\(N\)</span>个概率相加</p>
+<p><img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutorial_3e2_forward_algo.png" title="前向算法示例"></p>
+<p>上图给出了前向算法的示意图，具体实现代码如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(obs, hmm)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> obs:</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0.</span></span><br><span class="line">    transitions = hmm.get_transition_matrix()</span><br><span class="line">    emissions = hmm.get_emission_matrix()</span><br><span class="line">    initial_prob = hmm.get_initial_prob()</span><br><span class="line">    alpha = []</span><br><span class="line">    <span class="keyword">for</span> i, p <span class="keyword">in</span> enumerate(initial_prob):</span><br><span class="line">        alpha.append(p * emissions[i][obs[<span class="number">0</span>]])</span><br><span class="line">    t = <span class="number">1</span></span><br><span class="line">    <span class="keyword">while</span> t &lt; len(obs):</span><br><span class="line">        old_alpha = alpha</span><br><span class="line">        alpha = [<span class="number">0.</span>] * len(initial_prob)</span><br><span class="line">        <span class="keyword">for</span> j, _ <span class="keyword">in</span> enumerate(initial_prob):</span><br><span class="line">            <span class="comment"># alpha_t(j) = sum(alpha_&#123;t-1&#125;(i)a_&#123;ij&#125;b_j(o_t))</span></span><br><span class="line">            <span class="keyword">for</span> i, _ <span class="keyword">in</span> enumerate(old_alpha):</span><br><span class="line">                alpha[j] += old_alpha[i] * transitions[i][j] * emissions[j][obs[t]]</span><br><span class="line">        t += <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> sum(alpha)</span><br></pre></td></tr></table></figure>
+<h5 id="求解解码问题维特比算法">求解解码问题：维特比算法</h5>
+<p>解码问题是要对给定的观察序列，找出最可能产生这个观察序列的隐藏序列。尽管理论上也可以穷举所有隐藏序列，计算该序列产生给定观察序列的概率，进而找到最优隐藏序列，但是由前文易知这种方法不可行。应对方法也是使用动态规划算法，并引入一个中间变量<span class="math inline">\(\psi_t(j)\)</span>，表示在经历了隐藏状态<span class="math inline">\(q_1, \ldots, q_{t-1}\)</span>以后，系统在第<span class="math inline">\(t\)</span>时刻位于隐藏状态<span class="math inline">\(s_j\)</span>的概率，即 <span class="math display">\[
+\psi_t(j) = \max_{q_1, \cdots, q_{t-1}}p(q_1, \cdots, q_{t-1}, o_1, \cdots, o_t, q_t=s_j|\lambda)
+\]</span> 这里也存在一个递推关系（同样假设<span class="math inline">\(o_t = v_k\)</span>）： <span class="math display">\[
+\psi_t(j) = \max_{i=1}^N \psi_{t-1}(i)a_{ij}b_{j}(v_k)
+\]</span> 可以看出维特比算法与前向算法类似，区别主要在于两点。其一是维特比算法每一步都是求最大值，而前向算法是求累加值；其二是由于维特比算法需要给出最可能的隐藏状态序列，因此需要维护一个指针（或一个列表），来得出最后的序列结果</p>
+<p><img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutorial_3e2_viterbi_algo.png" title="维特比算法示例"></p>
+<p>上图给出了维特比算法的示意图，具体实现代码如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">viterbi</span><span class="params">(observations, hmm)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> obs:</span><br><span class="line">        <span class="keyword">return</span> []</span><br><span class="line">    transitions = hmm.get_transition_matrix()</span><br><span class="line">    emissions = hmm.get_emission_matrix()</span><br><span class="line">    initial_prob = hmm.get_initial_prob()</span><br><span class="line">    psi = []</span><br><span class="line">    </span><br><span class="line">    best_state = <span class="keyword">None</span></span><br><span class="line">    max_psi = <span class="number">0.</span></span><br><span class="line">    <span class="keyword">for</span> i, p <span class="keyword">in</span> enumerate(initial_prob):</span><br><span class="line">        psi.append(p * emissions[i][obs[<span class="number">0</span>]])</span><br><span class="line">        <span class="keyword">if</span> psi[i] &gt; max_psi:</span><br><span class="line">            best_state = i</span><br><span class="line">    best_hidden_states = [best_state]</span><br><span class="line"></span><br><span class="line">    t = <span class="number">1</span></span><br><span class="line">    <span class="keyword">while</span> t &lt; len(obs):</span><br><span class="line">        old_psi = psi</span><br><span class="line">        psi = [<span class="number">0.</span>] * len(initial_prob)</span><br><span class="line">        max_psi = <span class="number">0.</span></span><br><span class="line">        best_state = <span class="keyword">None</span></span><br><span class="line">        <span class="keyword">for</span> j, _ <span class="keyword">in</span> enumerate(initial_prob):</span><br><span class="line">            max_prob = <span class="number">0.</span></span><br><span class="line">            <span class="keyword">for</span> i, _ <span class="keyword">in</span> enumerate(old_psi):</span><br><span class="line">                cur_prob = old_psi[i] * transitions[i][j] * emissions[j][obs[t]]</span><br><span class="line">                <span class="keyword">if</span> cur_prob &gt; max_prob:</span><br><span class="line">                    max_prob = cur_prob</span><br><span class="line">            psi[j] = max_prob</span><br><span class="line">            <span class="keyword">if</span> psi[j] &gt; max_psi:</span><br><span class="line">                best_state = j</span><br><span class="line">        best_hidden_states.append(best_state)</span><br><span class="line">        t += <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> best_hidden_states</span><br></pre></td></tr></table></figure>
+<h5 id="求解学习问题前向-后向算法baum-welch算法">求解学习问题：前向-后向算法（Baum-Welch算法)</h5>
+<p>学习问题是如何根据一个给定的观察序列学习HMM的状态转移矩阵<span class="math inline">\(A​\)</span>和发射矩阵<span class="math inline">\(B​\)</span>。使用的算法Baum-Welch算法是“期望最大算法”（Expectation-Maximization, EM算法）的一种特例情况。在介绍算法之前，需要先引入一个与前面介绍的“前向概率”<span class="math inline">\(\alpha_t(j)​\)</span>相对应的概率——“后向概率”<span class="math inline">\(\beta_t(i)​\)</span>。前向概率指的模型展现出<span class="math inline">\(o_1, \cdots, o_{t-1}​\)</span>这<span class="math inline">\(t-1​\)</span>个观察状态，并在第<span class="math inline">\(t​\)</span>时刻落在隐藏状态<span class="math inline">\(s_j​\)</span>的概率，而后向概率指的是模型在第<span class="math inline">\(t​\)</span>时刻落在隐藏状态<span class="math inline">\(s_i​\)</span>的条件下，展现出<span class="math inline">\(o_{t+1}, \cdots, o_T​\)</span>这<span class="math inline">\(T-t​\)</span>个观察状态的概率，即<span class="math inline">\(\beta_t(i) = p(o_{t+1}, o_{t+2}, \ldots, o_T|q_t = i, \lambda)​\)</span>。递推关系为</p>
+<p><span class="math display">\[
+\beta_t(i) = \sum_{j=1}^N a_{ij}b_j(o_{t+1})\beta_{t+1}(j)
+\]</span> 接下来利用<span class="math inline">\(\alpha_t(i)\)</span>和<span class="math inline">\(\beta_{t+1}t(j)\)</span>估计状态转移矩阵中的每个元素<span class="math inline">\(a_{ij}\)</span>。最直观的做法是使用最大似然法，有 <span class="math display">\[
+\hat{a}_{ij} = \frac{从状态i到状态j这一转换的期望数量}{从状态i发出的转换的期望数量}
+\]</span> 如何计算分子呢？假设能估计出时刻<span class="math inline">\(t\)</span>发生转换<span class="math inline">\(i\rightarrow j\)</span>的概率，那么将它们累加起来就可以估计出转换<span class="math inline">\(i\rightarrow j\)</span>的总数。形式化地，可以定义给定模型<span class="math inline">\(\lambda\)</span>和观察序列<span class="math inline">\(O\)</span>时，模型在<span class="math inline">\(t\)</span>时刻位于隐藏状态<span class="math inline">\(s_i\)</span>且在<span class="math inline">\(t+1\)</span>时刻位于隐藏状态<span class="math inline">\(s_j\)</span>的概率<span class="math inline">\(\xi_t(i, j)​\)</span>： <span class="math display">\[
+\xi_t(i, j) = p(q_t=s_i, q_{t+1}=s_j|O, \lambda)
+\]</span> 修改一下条件概率，可以得到一个类似的概率值<span class="math inline">\(\zeta_t(i,j)\)</span> <span class="math display">\[
+\zeta_t(i, j) = p(q_t = s_i, q_{t+1}=j, O|\lambda)
+\]</span> <span class="math inline">\(\zeta_t(i,j)\)</span>的值相对容易计算： <span class="math display">\[
+\zeta_t(i,j) = \alpha_t(i)a_{ij}b_j(o_{t+1})\beta_{t+1}(j)
+\]</span> 又由于 <span class="math display">\[
+p(X|Y,Z) = \frac{p(X, Y|Z)}{p(Y|Z)}
+\]</span> 所以只需求出<span class="math inline">\(p(O|\lambda)\)</span>为 <span class="math display">\[
+p(O|\lambda) = \sum_{j=1}^N\alpha_t(j)\beta_t(j)
+\]</span> 因此 <span class="math display">\[
+\xi_t(i,j) = \frac{\zeta_t(i,j)}{p(O|\lambda)} = \frac{\alpha_t(i)a_{ij}b_j(o_{t+1})\beta_{t+1}(j)}{\sum_{j=1}^N \alpha_t(j)\beta_t(j)}
+\]</span> 累加可得（注意模型有<span class="math inline">\(N\)</span>个隐藏状态） <span class="math display">\[
+\hat{a}_{ij} = \frac{\sum_{t=1}^{T-1}\xi_t(i,j)}{\sum_{t=1}^{T-1}\sum_{k=1}^N \xi_t(i, k)}
+\]</span> 类似地可以求出发射矩阵中的每个元素：由最大似然法有 <span class="math display">\[
+\hat{b}_j(v_k) = \frac{系统在隐藏状态j展现出观察状态k的期望次数}{系统处于隐藏状态j的期望次数}
+\]</span> 先定义给定模型为<span class="math inline">\(\lambda\)</span>和观察序列<span class="math inline">\(O\)</span>时，系统处于隐藏状态<span class="math inline">\(s_j\)</span>的概率<span class="math inline">\(\gamma_t(j) = p(q_t =s_j|O,\lambda)\)</span>。相同地，有 <span class="math display">\[
+\gamma_t(j) = \frac{p(q_t=j,O|\lambda)}{p(O|\lambda)}
+\]</span> 其中<span class="math inline">\(p(q_t = j, O|\lambda) = \alpha_t(j)\beta_t(j)\)</span>。最后有 <span class="math display">\[
+\hat{b}_j(v_k) = \frac{\sum_{t=1\ {\rm s.t.\ }o_t=v_k}^T \gamma_t(j)}{\sum_{t=1}^T \gamma_t(j)}
+\]</span> 整个Baum-Welch算法/前向-后向算法的过程因此可以简单描述为：</p>
+<ol type="1">
+<li>初始化<span class="math inline">\(A\)</span>和<span class="math inline">\(B\)</span></li>
+<li>迭代如下过程直至收敛
+<ul>
+<li>E步：计算<span class="math inline">\(\gamma_t(j)\)</span>和<span class="math inline">\(\xi_t(i,j)\)</span></li>
+<li>M步：计算<span class="math inline">\(\hat{a}_{ij}\)</span>和<span class="math inline">\(\hat{b}_j(v_k)​\)</span></li>
+</ul></li>
+</ol>
+<h3 id="参考文献-1">参考文献</h3>
+<p><a href="https://www.zhihu.com/question/20587681" target="_blank" rel="noopener">贝叶斯学派与频率学派有何不同</a></p>
+<p>花书第五章</p>
+<p>维基百科相关词条</p>
+<p>《语音与语言处理（第三版·草稿）》，Dan Jurafsky and James H. Martin. <a href="https://web.stanford.edu/~jurafsky/slp3/A.pdf" target="_blank" rel="noopener">附录A：隐马尔可夫模型</a></p>
+<p>《统计自然语言处理（第二版）》，宗成庆. 第六章</p>
+<p><a href="https://www.zhihu.com/question/20962240/answer/64187492" target="_blank" rel="noopener">henry的回答：如何用简单易懂的例子解释隐马尔可夫模型</a></p>
+<p><a href="http://cecas.clemson.edu/~ahoover/ece854/refs/Ramos-Intro-HMM.pdf" target="_blank" rel="noopener">Raul Ramos关于HMM的幻灯片</a></p>
+<p><a href="http://www.csie.ntnu.edu.tw/~u91029/HiddenMarkovModel.html#2" target="_blank" rel="noopener">台湾师大关于HMM的在线课件</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2019/02/28/NMT-Tutorial-3e2-subword/" title="NMT Tutorial 3扩展e第2部分. Subword">txshi-mt.com/2019/02/28/NMT-Tutorial-3e2-subword/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/词向量/" rel="tag"># 词向量</a>
+          
+            <a href="/tags/subword/" rel="tag"># subword</a>
+          
+            <a href="/tags/fasttext/" rel="tag"># fasttext</a>
+          
+            <a href="/tags/bpe/" rel="tag"># bpe</a>
+          
+            <a href="/tags/morfessor/" rel="tag"># morfessor</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/02/15/NMT-Tutorial-3e1-Word2vec-Details/" rel="next" title="NMT Tutorial 3扩展e第1部分. Word2Vec及若干关于词向量的扩展知识">
+                <i class="fa fa-chevron-left"></i> NMT Tutorial 3扩展e第1部分. Word2Vec及若干关于词向量的扩展知识
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">93</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">99</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#序言"><span class="nav-number">1.</span> <span class="nav-text">序言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分词方法介绍"><span class="nav-number">2.</span> <span class="nav-text">分词方法介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#bpe"><span class="nav-number">2.1.</span> <span class="nav-text">BPE</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#原理与算法"><span class="nav-number">2.1.1.</span> <span class="nav-text">原理与算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用"><span class="nav-number">2.1.2.</span> <span class="nav-text">使用</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#morfessor"><span class="nav-number">2.2.</span> <span class="nav-text">Morfessor</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#术语"><span class="nav-number">2.2.1.</span> <span class="nav-text">术语</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#方法"><span class="nav-number">2.2.2.</span> <span class="nav-text">方法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#模型与损失函数"><span class="nav-number">2.2.2.1.</span> <span class="nav-text">模型与损失函数</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#似然"><span class="nav-number">2.2.2.1.1.</span> <span class="nav-text">似然</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#先验"><span class="nav-number">2.2.2.1.2.</span> <span class="nav-text">先验</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#训练与解码算法"><span class="nav-number">2.2.2.2.</span> <span class="nav-text">训练与解码算法</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#参数初始化"><span class="nav-number">2.2.2.2.1.</span> <span class="nav-text">参数初始化</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#全局维特比算法"><span class="nav-number">2.2.2.2.2.</span> <span class="nav-text">全局维特比算法</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#局部维特比算法"><span class="nav-number">2.2.2.2.3.</span> <span class="nav-text">局部维特比算法</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#递归算法"><span class="nav-number">2.2.2.2.4.</span> <span class="nav-text">递归算法</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#似然权重与半监督学习"><span class="nav-number">2.2.2.2.5.</span> <span class="nav-text">似然权重与半监督学习</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#fasttext"><span class="nav-number">3.</span> <span class="nav-text">fastText</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#算法原理"><span class="nav-number">3.1.</span> <span class="nav-text">算法原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现"><span class="nav-number">3.2.</span> <span class="nav-text">实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文献"><span class="nav-number">4.</span> <span class="nav-text">参考文献</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#附录"><span class="nav-number">5.</span> <span class="nav-text">附录</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#map估计"><span class="nav-number">5.1.</span> <span class="nav-text">MAP估计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hmm模型"><span class="nav-number">5.2.</span> <span class="nav-text">HMM模型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#马尔可夫模型"><span class="nav-number">5.2.1.</span> <span class="nav-text">马尔可夫模型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#马尔可夫链"><span class="nav-number">5.2.2.</span> <span class="nav-text">马尔可夫链</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#隐马尔可夫模型"><span class="nav-number">5.2.3.</span> <span class="nav-text">隐马尔可夫模型</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#求解似然问题前向算法"><span class="nav-number">5.2.3.1.</span> <span class="nav-text">求解似然问题：前向算法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#求解解码问题维特比算法"><span class="nav-number">5.2.3.2.</span> <span class="nav-text">求解解码问题：维特比算法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#求解学习问题前向-后向算法baum-welch算法"><span class="nav-number">5.2.3.3.</span> <span class="nav-text">求解学习问题：前向-后向算法（Baum-Welch算法)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考文献-1"><span class="nav-number">5.3.</span> <span class="nav-text">参考文献</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
