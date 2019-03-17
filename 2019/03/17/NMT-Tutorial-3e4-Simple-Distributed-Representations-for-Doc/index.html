@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.lug.ustc.edu.cn/css?family=Lato:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="词向量," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="词的嵌入表示可以看作是深度学习时代自然语言处理的基石，但是自然语言处理的核心任务还是要处理更高级的语言结构，例如句子和文档。在获得了词的分布式表示以后，人们很自然地会思考如何对句子和文档也获得类似的表示结果。本文将介绍一些不涉及到更复杂网络结构（例如RNN）的句子/文档表示方法，其它更高级的方法将在介绍RNN之后引入 本文各节所引图片如未经说明均来自于该节所介绍方法的原始论文 基于词向量的简单池化">
+<meta name="keywords" content="词向量">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NMT Tutorial 3扩展e第4部分. 文档的简单分布式表示">
+<meta property="og:url" content="txshi-mt.com/2019/03/17/NMT-Tutorial-3e4-Simple-Distributed-Representations-for-Doc/index.html">
+<meta property="og:site_name" content="Tingxun&#39;s Blog">
+<meta property="og:description" content="词的嵌入表示可以看作是深度学习时代自然语言处理的基石，但是自然语言处理的核心任务还是要处理更高级的语言结构，例如句子和文档。在获得了词的分布式表示以后，人们很自然地会思考如何对句子和文档也获得类似的表示结果。本文将介绍一些不涉及到更复杂网络结构（例如RNN）的句子/文档表示方法，其它更高级的方法将在介绍RNN之后引入 本文各节所引图片如未经说明均来自于该节所介绍方法的原始论文 基于词向量的简单池化">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutorial_3e4_doc2vec.png">
+<meta property="og:updated_time" content="2019-03-17T12:38:35.253Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NMT Tutorial 3扩展e第4部分. 文档的简单分布式表示">
+<meta name="twitter:description" content="词的嵌入表示可以看作是深度学习时代自然语言处理的基石，但是自然语言处理的核心任务还是要处理更高级的语言结构，例如句子和文档。在获得了词的分布式表示以后，人们很自然地会思考如何对句子和文档也获得类似的表示结果。本文将介绍一些不涉及到更复杂网络结构（例如RNN）的句子/文档表示方法，其它更高级的方法将在介绍RNN之后引入 本文各节所引图片如未经说明均来自于该节所介绍方法的原始论文 基于词向量的简单池化">
+<meta name="twitter:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutorial_3e4_doc2vec.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="txshi-mt.com/2019/03/17/NMT-Tutorial-3e4-Simple-Distributed-Representations-for-Doc/"/>
+
+
+
+
+
+  <title>NMT Tutorial 3扩展e第4部分. 文档的简单分布式表示 | Tingxun's Blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Tingxun's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">念念不忘，必有回响</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="txshi-mt.com/2019/03/17/NMT-Tutorial-3e4-Simple-Distributed-Representations-for-Doc/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tingxun Shi">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tingxun's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">NMT Tutorial 3扩展e第4部分. 文档的简单分布式表示</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-17T20:38:35+08:00">
+                Mar 17 2019
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/NLP/" itemprop="url" rel="index">
+                    <span itemprop="name">NLP</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i> 浏览
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>词的嵌入表示可以看作是深度学习时代自然语言处理的基石，但是自然语言处理的核心任务还是要处理更高级的语言结构，例如句子和文档。在获得了词的分布式表示以后，人们很自然地会思考如何对句子和文档也获得类似的表示结果。本文将介绍一些不涉及到更复杂网络结构（例如RNN）的句子/文档表示方法，其它更高级的方法将在介绍RNN之后引入</p>
+<p>本文各节所引图片如未经说明均来自于该节所介绍方法的原始论文</p>
+<h2 id="基于词向量的简单池化">基于词向量的简单池化</h2>
+<p>[shen2018]认为基于CNN或RNN的模型表示能力更强，但是计算量更大，而简单的基于词向量的模型（Simple Word-Embedding-based Model, SWEM）则正好相反。文章通过实验发现，对于某些任务，SWEM方法已经足够，甚至表现更好</p>
+<p>假设文本序列（可以是句子或文档）为<span class="math inline">\(X = (w_1, w_2, \ldots, w_L)\)</span>，其中<span class="math inline">\(w_i\)</span>为第<span class="math inline">\(i\)</span>个位置上的单词。令<span class="math inline">\(\boldsymbol{v}_1, \boldsymbol{v}_2, \ldots, \boldsymbol{v}_L\)</span>为对应的词向量，<span class="math inline">\(\boldsymbol{v}_l \in \mathbb{R}^K\)</span>，得到的句子/文档的定长向量表示记为<span class="math inline">\(\boldsymbol{z}\)</span>，则本文提出的SWEM方法包括</p>
+<ul>
+<li>平均池化SWEM-aver，即<span class="math inline">\(\boldsymbol{z} = \frac{1}{L}\sum_{i=1}^L \boldsymbol{v}_i\)</span>。对于该方法，每个词的词向量都对最后的模型有贡献</li>
+<li>最大池化SWEM-max，即<span class="math inline">\(\boldsymbol{z} = {\rm Max{\text -}pooling}(\boldsymbol{v}_1, \boldsymbol{v}_2 ,\ldots, \boldsymbol{v}_L)\)</span>。其中<span class="math inline">\(z_i = \max\{v_{1i}, v_{2i}, \ldots, v_{Li}\}\)</span>。此时，对给定任务不重要或不相关的单词会在编码过程被忽略掉</li>
+<li>池化连接SWEM-concat，即将平均池化和最大池化得到的两个向量连接起来，组成一个新的向量</li>
+<li>分层池化SWEM-hier。前两种方法都没有考虑词序信息/空间信息，而词序信息对NLP问题是非常关键的。因此本文提出了一种分层池化方法。令<span class="math inline">\(v_{i:i+n-1}\)</span>是从<span class="math inline">\(v_i\)</span>开始的连续<span class="math inline">\(n\)</span>个单词，则首先对该窗口的词向量做平均池化，然后对得到的所有窗口的平均向量做一个全局的最大池操作，就可以保留原始文本序列的空间信息了。此时每个窗口可以看做是一个N元语法中的N元组</li>
+</ul>
+<p>文章在如下问题上做了若干实验，并与CNN和LSTM模型作比较</p>
+<ul>
+<li>文档分类，包括三类问题：主题分类、情感分析和知识（本体）分类。结果表明，在预测文档主题时，SWEM方法效果优异，基于词向量连接的方法甚至超过了一个有29层的CNN模型。对知识分类也是如此。此外，更值得注意的是，SWEM的参数数量是LSTM模型的三十分之一，是CNN模型的九分之一；速度是CNN模型的3倍，是LSTM模型的10倍。但是在做情感分析时，SWEM的效果比较差，原因推测是因为情感分析需要捕捉词序信息 文章注意到SWEM-max模型会得到比较稀疏的词向量，即该模型可能只依赖于若干个关键字。将得到的词向量按各个维度选出该维度值最大的五个词，可以大致看出每个维度能对应上一个主题，这也印证了作者的猜测</li>
+<li>文本序列建模，包括三类问题：自然语言推理、答句选择和复述判别。除了问答任务，SWEM方法都能达到与SOTA（State-of-the-art）媲美的效果，而且SWEM-max的表现尤其出色。这从侧面说明词序信息在预测句子间关系时起的作用可能更小 为了验证这一猜测，文章将训练集中每句的词序打乱，来移除训练集中的词序特征。实验结果表明，用打乱词序的数据集训练的LSTM在主题抽取和文字蕴含任务上效果变化不大，仅在情感分析上有明显下跌。这进一步证明对情感分析来说词序是非常重要的。另外，使用此方法得到的LSTM效果与SWEM类似，这说明LSTM和SWEM的主要区别就是前者能把握词序信息。作者在情感分析使用的Yelp数据集上训练了SWEM-hier模型，得到了与LSTM和深层CNN类似的效果，也说明这种方法可以捕捉词序信息</li>
+<li>短句处理，包括三类问题：情感分类、主题分类和问题分类。SWEM在情感分类上效果明显不好，但是在其它两个问题上还是能和LSTM或CNN一战。此外，SWEM在序列标注任务上效果也差一些。这意味着SWEM从短句抽取信息的能力有限，可能是因为对于短句词序更重要。同时，由于在小数据集上更容易过拟合，因此如何使用一种合适的正则化手段也是值得关注的问题</li>
+</ul>
+<p>此外，文章在一些中文语料上也做了测试，发现SWEM-hier效果拔群。这意味着中文的词序比英文更重要</p>
+<h2 id="doc2vec">Doc2vec</h2>
+<p>在提出word2vec以后，Mikolov团队在次年（2014年）使用类似的方法提出了将文档/句子向量化表示的方法doc2vec [le2014]，并将该方法得到的文档向量称为“段向量”（paragraph vector，尽管实际上这个“段”可以是一个句子，若干个句子甚至一整篇文章）。训练段向量需要一个随机初始化的文档矩阵<span class="math inline">\(\boldsymbol{D} \in \mathbb{R}^{N \times p}\)</span>，其中<span class="math inline">\(N\)</span>是经过去重的文档数，<span class="math inline">\(p\)</span>是段向量维度；以及一个随机初始化的单词矩阵<span class="math inline">\(\boldsymbol{W} \in \mathbb{R}^{M \times q}\)</span>，其中<span class="math inline">\(M\)</span>是经过去重的单词数，<span class="math inline">\(q\)</span>是词向量维度。具体的训练方法有两种：</p>
+<ul>
+<li><p>分布式内存的段向量（paragraph vector with distributed memory, PV-DM）先设置一个窗口<span class="math inline">\(k\)</span>，然后对每个窗口，聚合各文档对应的向量<span class="math inline">\(\boldsymbol{d}\)</span>和窗口内前<span class="math inline">\(k-1\)</span>个单词的词向量<span class="math inline">\(\boldsymbol{w}_1, \ldots, \boldsymbol{w}_{k-1}\)</span>，预测接下来出现的单词<span class="math inline">\(w_k\)</span>。具体的聚合方法可以随意选择，常见的是求均值或者将其直接连接。反向传播会更新<span class="math inline">\(\boldsymbol{d}\)</span>和<span class="math inline">\(\boldsymbol{w}_1, \ldots, \boldsymbol{w}_{k-1}\)</span>。不同的文档共享相同的词向量，但是不同的文档对应的文档向量也不同 例如，对于两个文档（这里是句子）“I have a pen”和“I have an apple”，两者各自有一个独特的标识符（假设分别为58和76）。对于具体单词，两句中的I、have标识符都一样。假设ID化以后为：文档58包含单词4 10 5 96，文档76包含单词4 10 101 80。假设窗口为3，那么模型的预测任务就是 <span class="math display">\[
+\begin{align*}
+d_{58}, w_4, w_{10} &amp;\rightarrow w_5 \\
+d_{58}, w_{10}, w_5 &amp;\rightarrow w_{96} \\
+d_{76}, w_4, w_{10} &amp;\rightarrow w_{101} \\
+d_{76}, w_{10}, w_{101} &amp;\rightarrow w_{80}
+\end{align*}
+\]</span> 具体实现时，可能不会对每个文档的每个窗口都设置成一条训练数据</p></li>
+<li><p>分布式词袋的段向量（paragraph vector with distributed bag of words, PV-DBOW）也会设置一个窗口<span class="math inline">\(k\)</span>，而训练任务是直接使用段向量来预测窗口中的词，即此时词向量不参与输入。类似地，具体实现时，可能不会对窗口中的每个词都设置成一条训练数据</p></li>
+</ul>
+<p><img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutorial_3e4_doc2vec.png" title="两种Doc2vec方法。左为PV-DM，右为PV-DBOW"></p>
+<p>获取段向量以后，常见的应用是将其用到下游任务，作为一个特征使用。但有时模型也需要做一些推断操作，例如对一个新的，未见过的文档，判断其与训练集中哪个句子最相似。此时要获得新文档的向量表示也是使用反向传播，学习出该文档的向量。具体做法是先随机初始化一个文档向量，然后用PV-DM或PV-DBOW的方法训练，不过此时词向量矩阵和隐藏层权重都保持不变（因此训练时单词词向量也不变）</p>
+<p>文章同时观察到了以下现象：</p>
+<ul>
+<li>PV-DM的表现始终比PV-DBOW要好，将两者组合则更好</li>
+<li>PV-DM训练时将向量连接起来更好，比对向量求和要好</li>
+<li>窗口大小设为5-12为佳</li>
+</ul>
+<h2 id="参考文献">参考文献</h2>
+<p>[lai2016] Lai, S., Liu, K., He, S., &amp; Zhao, J. (2016). How to generate a good word embedding. <em>IEEE Intelligent Systems</em>, <em>31</em>(6), 5-14.</p>
+<p>[shen2018] Shen, D., Wang, G., et al. (2018). Baseline Needs More Love: On Simple Word-Embedding-Based Models and Associated Pooling Mechanisms. In <em>Proceedings of the 56th Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers), ACL 2018</em> (Vol. 1, pp. 440-450).</p>
+<p>[le2014] Le, Q., &amp; Mikolov, T. (2014, January). Distributed representations of sentences and documents. In <em>International conference on machine learning, ICML 2014</em> (pp. 1188-1196).</p>
+<p>[kusner2015] Kusner, M., Sun, Y., Kolkin, N., &amp; Weinberger, K. (2015, June). From word embeddings to document distances. In <em>International Conference on Machine Learning, ICML 2015</em> (pp. 957-966).</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.png" alt="Tingxun Shi 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    Tingxun Shi
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="txshi-mt.com/2019/03/17/NMT-Tutorial-3e4-Simple-Distributed-Representations-for-Doc/" title="NMT Tutorial 3扩展e第4部分. 文档的简单分布式表示">txshi-mt.com/2019/03/17/NMT-Tutorial-3e4-Simple-Distributed-Representations-for-Doc/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/词向量/" rel="tag"># 词向量</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/02/28/NMT-Tutorial-3e2-subword/" rel="next" title="NMT Tutorial 3扩展e第2部分. Subword">
+                <i class="fa fa-chevron-left"></i> NMT Tutorial 3扩展e第2部分. Subword
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.jpg"
+                alt="Tingxun Shi" />
+            
+              <p class="site-author-name" itemprop="name">Tingxun Shi</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">94</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">99</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.zhihu.com/people/timsonshi" target="_blank" title="知乎">
+                    
+                      <i class="fa fa-fw fa-globe"></i>知乎</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="sakigami-yang.me" title="咲神" target="_blank">咲神</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#基于词向量的简单池化"><span class="nav-number">1.</span> <span class="nav-text">基于词向量的简单池化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#doc2vec"><span class="nav-number">2.</span> <span class="nav-text">Doc2vec</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文献"><span class="nav-number">3.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tingxun Shi</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i> 访问人数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i> 总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
