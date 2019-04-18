@@ -132,7 +132,7 @@
 <meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutorial_4_unraveled_view_of_residual_block.png">
 <meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutorial_4_RNN_with_residual_connections.png">
 <meta property="og:image" content="http://karpathy.github.io/assets/rnn/diags.jpeg">
-<meta property="og:updated_time" content="2019-04-18T06:43:07.610Z">
+<meta property="og:updated_time" content="2019-04-18T06:43:56.598Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NMT Tutorial 4. 循环神经网络(RNN)">
 <meta name="twitter:description" content="本文来自于如下来源  [Neubig2017]第6节(主要来源，结构遵从此文) [Koehn2017]13.4.4、13.4.5、13.4.6三小节 NNMNLP第14、15章 花书第十章 CS224n第6、7讲(2019年春)   前面介绍的三种语言模型(N元语法、log-linear语言模型和神经网络语言模型)尽管在表示能力上逐渐变强，但是仍然没有摆脱一项桎梏：需要给定一个窗口大小，而且通常这">
@@ -677,7 +677,7 @@ E^{(t)}\left(\boldsymbol{y}^{(t)}, \hat{\boldsymbol{y}}^{(t)}\right) &amp;= -\su
 <h2 id="批量训练rnn">批量训练RNN</h2>
 <p>如前所述，训练时一批送入若干样本比每次只训练一条样本更有效率。但是这里存在一个问题，就是文本数据一般都不是定长的：一批数据里第一个句子可能只有三个词，第二个句子可能有20个，第三个可能有10个……等等</p>
 <p>一个基本的应对方法是设置一个固定值。如果某个给定的句子长于这个值，则将这个句子截断；如果某个给定的句子短于这个值，那么就使用某个特殊的符号 (例如<code>&lt;PAD&gt;</code>) 补齐。无论是截断还是补齐，都有两种方法：在句子前面补齐/将句子前部截掉；或在句子后面补齐/将句子后部截掉。在补齐时需要注意一点，就是为了让补齐用的符号对任务的损失值没有贡献，需要对其权重做mask，即计算损失值时将这部分参数贡献的部分去掉</p>
-<p>如果输入句子的长度分布不太集中，则有可能对大量句子补齐太多<code>&lt;PAD&gt;</code>。对应的策略是可以应用分桶机制，将要补齐的长度分成若干个桶，每个句子补到某个桶规定的长度即可。例如假设各桶长度是5、10、20、30，类似&quot;I love you&quot;这样的句子补齐到5个单词 (不考虑<eos>/<bos>的情况下加2个<code>&lt;PAD&gt;</code>) 就可以</bos></eos></p>
+<p>如果输入句子的长度分布不太集中，则有可能对大量句子补齐太多<code>&lt;PAD&gt;</code>。对应的策略是可以应用分桶机制，将要补齐的长度分成若干个桶，每个句子补到某个桶规定的长度即可。例如假设各桶长度是5、10、20、30，类似&quot;I love you&quot;这样的句子补齐到5个单词 (不考虑<code>&lt;eos&gt;</code>/<code>&lt;bos&gt;</code>的情况下加2个<code>&lt;PAD&gt;</code>) 就可以</p>
 <h2 id="rnn能解决的任务">RNN能解决的任务</h2>
 <p>由于RNN本身的特性，其很适用于对序列建模。Andrej Karpathy的<a href="http://karpathy.github.io/2015/05/21/rnn-effectiveness/" target="_blank" rel="noopener"><em>The Unreasonable Effectiveness of Recurrent Neural Networks</em></a>一文给出了RNN网络的五种模式，每种模式都对应若干典型任务。各模式可参见下图所示，其中红色矩形是输入向量，绿色是RNN隐藏层状态，蓝色是输出向量</p>
 <p><img src="http://karpathy.github.io/assets/rnn/diags.jpeg" title="常见RNN结构"></p>
