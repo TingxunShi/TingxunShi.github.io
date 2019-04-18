@@ -132,7 +132,7 @@
 <meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutorial_4_unraveled_view_of_residual_block.png">
 <meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutorial_4_RNN_with_residual_connections.png">
 <meta property="og:image" content="http://karpathy.github.io/assets/rnn/diags.jpeg">
-<meta property="og:updated_time" content="2019-04-18T06:41:41.078Z">
+<meta property="og:updated_time" content="2019-04-18T06:43:07.610Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NMT Tutorial 4. 循环神经网络(RNN)">
 <meta name="twitter:description" content="本文来自于如下来源  [Neubig2017]第6节(主要来源，结构遵从此文) [Koehn2017]13.4.4、13.4.5、13.4.6三小节 NNMNLP第14、15章 花书第十章 CS224n第6、7讲(2019年春)   前面介绍的三种语言模型(N元语法、log-linear语言模型和神经网络语言模型)尽管在表示能力上逐渐变强，但是仍然没有摆脱一项桎梏：需要给定一个窗口大小，而且通常这">
@@ -656,9 +656,9 @@ E^{(t)}\left(\boldsymbol{y}^{(t)}, \hat{\boldsymbol{y}}^{(t)}\right) &amp;= -\su
 </ul>
 <p>下图给出了一个残差学习块，可以看作是在原有结构的基础上使用恒等映射新增一条&quot;短路连接&quot;，即将输入再加到原有的输出上。短路连接没有增加模型的参数，也没有增加模型的复杂性，比较经济，不过此时要求<span class="math inline">\(\mathcal{F}\)</span>和<span class="math inline">\(\boldsymbol{x}\)</span>的维度必须相同。如果这个条件不能满足，那么可以对短路连接再加入一个线性变换来对齐，此时残差块的输出是<span class="math inline">\(\mathcal{F}(\boldsymbol{x}) + \boldsymbol{W}_s\boldsymbol{x}\)</span></p>
 <p><img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutorial_4_residual_block.png" title="残差连接块。图自[He2016a]"></p>
-<p>说到这里，很自然会有这么一个问题：如果浅层网络就足够管用，为什么还要费力引进这些奇技淫巧，只为了让深层网络的一些层什么也不做，走短路连接呢？一方面，原始论文通过实证，说明引入了残差连接的深层网络效果不仅好过了没有引入的退化版本，也好过了之前表现不错的浅层版本；另一方面，[Veit2016]认为引入残差连接后得到的深层网络 (残差网络) 可以看作是若干浅层网络的集成 (ensemble) 。例如下图给出了一个三层残差网络展开后的示意图，从图中可以看到从输入到输出有<span class="math inline">\(O(2^n)\)</span>条路径，每加入一个残差块都会让路径数翻倍，因此残差网络可以看做是很多条路径的集合</p>
+<p>说到这里，很自然会有这么一个问题：如果浅层网络就足够管用，为什么还要费力引进这些奇技淫巧，只为了让深层网络的一些层什么也不做，走短路连接呢？一方面，原始论文通过实证，说明引入了残差连接的深层网络效果不仅好过了没有引入的退化版本，也好过了之前表现不错的浅层版本；另一方面，[Veit2016]认为引入残差连接后得到的深层网络 (残差网络) 可以看作是若干浅层网络的集成 (ensemble) 。例如下图给出了一个三层残差网络展开后的示意图，从图中可以看到从输入到输出有<span class="math inline">\(O(2^n)\)</span>条路径，每加入一个残差块都会让路径数翻倍，因此残差网络可以看做是很多条路径的集成</p>
 <p><img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutorial_4_unraveled_view_of_residual_block.png" title="残差连接块的展开。图自[Veit2016]"></p>
-<p>[Veit2016]在训练好残差网络后，在测试时随机删掉了若干层，或者打乱了若干层的顺序，发现这样捣乱以后对模型的影响是平滑变化的 (例如删除<span class="math inline">\(1, \ldots, 20\)</span>层时，模型误差平滑上升) ，而传统的深层网络如果经历这样的操作，效果会明显变差，因此各条路径之间的依赖关系并不强，这意味着残差网络更像是这些路径的集成。进一步实验还验证了在残差网络里长度在15左右的路径对梯度贡献更大。综合前面各种实验的结果，就可以得到文章提出的观点：残差网络是若干浅层网络的组合，效果也会更好</p>
+<p>[Veit2016]在训练好残差网络后，在测试时随机删掉了若干层，或者打乱了若干层的顺序，发现这样捣乱以后对模型的影响是平滑变化的 (例如删除<span class="math inline">\(1, \ldots, 20\)</span>层时，模型误差平滑上升) ，而传统的深层网络如果经历这样的操作，效果会明显变差，因此各条路径之间的依赖关系并不强，这意味着残差网络更像是这些路径的集成。进一步实验还验证了在残差网络里长度在15左右的路径对梯度贡献更大。综合前面各种实验的结果，就可以得到文章提出的观点：残差网络是若干浅层网络的集成，效果也会更好</p>
 <p>[Neubig2017]给出了在RNN上使用残差连接的示意图，如下所示</p>
 <p><img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutorial_4_RNN_with_residual_connections.png" title="使用残差连接的RNN"></p>
 <p>对应的描述为 <span class="math display">\[
