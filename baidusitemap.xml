@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>txshi-mt.com/2019/04/18/NMT-Tutorial-4-RNN/</loc>
+    <lastmod>2019-04-18T05:05:20.241Z</lastmod>
+  </url>  <url>
+    <loc>txshi-mt.com/2019/01/10/NMT-Tutorial-3d-Neural-Networks-Generalization/</loc>
+    <lastmod>2019-04-18T04:23:34.307Z</lastmod>
+  </url>  <url>
+    <loc>txshi-mt.com/2018/11/17/NMT-Tutorial-3c-Neural-Networks-Initialization/</loc>
+    <lastmod>2019-04-17T08:40:46.935Z</lastmod>
+  </url>  <url>
+    <loc>txshi-mt.com/2018/10/04/NMT-Tutorial-3b-Autodiff/</loc>
+    <lastmod>2019-03-31T15:57:57.368Z</lastmod>
+  </url>  <url>
     <loc>txshi-mt.com/2019/03/17/NMT-Tutorial-3e4-Simple-Distributed-Representations-for-Doc/</loc>
     <lastmod>2019-03-17T12:38:35.253Z</lastmod>
   </url>  <url>
@@ -9,9 +21,6 @@
   </url>  <url>
     <loc>txshi-mt.com/2019/02/15/NMT-Tutorial-3e1-Word2vec-Details/</loc>
     <lastmod>2019-02-18T03:37:11.103Z</lastmod>
-  </url>  <url>
-    <loc>txshi-mt.com/2019/01/10/NMT-Tutorial-3d-Neural-Networks-Generalization/</loc>
-    <lastmod>2019-01-10T03:00:50.651Z</lastmod>
   </url>  <url>
     <loc>txshi-mt.com/2018/04/26/NMT-Tutorial-2a-Loss-Functions/</loc>
     <lastmod>2018-11-20T07:08:39.966Z</lastmod>
@@ -228,12 +237,6 @@
   </url>  <url>
     <loc>txshi-mt.com/2017/08/01/NTUML-1-the-Learning-Problem/</loc>
     <lastmod>2018-11-17T10:59:49.813Z</lastmod>
-  </url>  <url>
-    <loc>txshi-mt.com/2018/11/17/NMT-Tutorial-3c-Neural-Networks-Initialization/</loc>
-    <lastmod>2018-11-17T10:59:49.810Z</lastmod>
-  </url>  <url>
-    <loc>txshi-mt.com/2018/10/04/NMT-Tutorial-3b-Autodiff/</loc>
-    <lastmod>2018-11-17T10:59:49.806Z</lastmod>
   </url>  <url>
     <loc>txshi-mt.com/2018/09/09/NMT-Tutorial-3a-Matrix-Calculus-for-Deep-Learning/</loc>
     <lastmod>2018-11-17T10:59:49.802Z</lastmod>

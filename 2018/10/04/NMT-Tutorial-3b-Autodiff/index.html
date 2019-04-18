@@ -124,7 +124,7 @@
 <meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutoral_3b_computational_graph.png">
 <meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutoral_3b_AD_forward_mode.png">
 <meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutoral_3b_backward_AD.png">
-<meta property="og:updated_time" content="2018-11-17T10:59:49.806Z">
+<meta property="og:updated_time" content="2019-03-31T15:57:57.368Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NMT Tutorial 3扩展b. 自动微分">
 <meta name="twitter:description" content="本文无说明的部分（包括配图）均是翻译/演绎自： Baydin, A. G., Pearlmutter, B. A., Radul, A. A., &amp;amp; Siskind, J. M. (2017). Automatic differentiation in machine learning: a survey. Journal of machine learning research, 18(">
@@ -589,7 +589,7 @@ f(g(v+\dot{v}\epsilon)) &amp;= f(g(v) + g&#39;(v)\dot{v}\epsilon) \\
 \]</span> 后向模式自动微分的代价是在计算过程中所需存储空间与函数操作数的数量成正比，而如何减少存储空间的利用也是学界研究的一个方向</p>
 <h2 id="自动微分与机器学习">自动微分与机器学习</h2>
 <h3 id="基于梯度的优化">基于梯度的优化</h3>
-<p>基于梯度的优化是机器学习的基石之一，问题形式是对目标函数<span class="math inline">\(f:\mathbb{R}^n \rightarrow \mathbb{R}\)</span>通过更新参数<span class="math inline">\(\Delta \boldsymbol{w} = -\eta \nabla f\)</span>求解极小值<span class="math inline">\(\boldsymbol{w}^\ast = {\rm arg}\min_{\boldsymbol{w}}f(\boldsymbol{w})\)</span>，基本思想是当沿着梯度的反方向移动时，目标函数<span class="math inline">\(f\)</span>的值减小得最快。可以看出对于比较大的<span class="math inline">\(n\)</span>，后向模式的自动微分提供了非常有效的计算梯度的方法。一些基于牛顿法的二阶方法会使用梯度<span class="math inline">\(\nabla f\)</span>和Hessian矩阵<span class="math inline">\(\boldsymbol{H}_f\)</span>，此时参数的更新方式是<span class="math inline">\(\Delta \boldsymbol{w} = -\eta \boldsymbol{H}_f^{-1}\nabla f\)</span>，这种方法收敛更快，但是计算量会变大，因此通常会使用Hessian矩阵的数值逼近，即诸如BFGS和L-BFGS这样的伪牛顿法。有时可能不需要计算完整的Hessian矩阵，只需要计算Hessian矩阵与向量的内积，这时就可以将自动微分的前向计算和后向计算综合利用：对函数<span class="math inline">\(f: \mathbb{R}^n \rightarrow \mathbb{R}\)</span>，假设要求<span class="math inline">\(\boldsymbol{x}\)</span>处的值，向量为<span class="math inline">\(\boldsymbol{v}\)</span>，那么首先设置<span class="math inline">\(\dot{\boldsymbol{x}} = \boldsymbol{v}\)</span>，利用前向模式计算方向导数<span class="math inline">\(\nabla f \cdot \boldsymbol{v}\)</span>，然后对结果使用后向模式，就可以得到<span class="math inline">\(\nabla ^2 f\cdot \boldsymbol{v} = \boldsymbol{H}_f\boldsymbol{v}\)</span>。一些比较成熟的自动微分库会对大规模机器学习问题做更复杂的优化</p>
+<p>基于梯度的优化是机器学习的基石之一，问题形式是对目标函数<span class="math inline">\(f:\mathbb{R}^n \rightarrow \mathbb{R}\)</span>通过更新参数<span class="math inline">\(\Delta \boldsymbol{w} = -\eta \nabla f\)</span>求解极小值<span class="math inline">\(\boldsymbol{w}^\ast = {\rm arg}\min_{\boldsymbol{w}}f(\boldsymbol{w})\)</span>，基本思想是当沿着梯度的反方向移动时，目标函数<span class="math inline">\(f\)</span>的值减小得最快。可以看出对于比较大的<span class="math inline">\(n\)</span>，后向模式的自动微分提供了非常有效的计算梯度的方法。一些基于牛顿法的二阶方法会使用梯度<span class="math inline">\(\nabla f\)</span>和Hessian矩阵<span class="math inline">\(\boldsymbol{H}_f\)</span>，此时参数的更新方式是<span class="math inline">\(\Delta \boldsymbol{w} = -\eta \boldsymbol{H}_f^{-1}\nabla f\)</span>，这种方法收敛更快，但是计算量会变大，因此通常会使用Hessian矩阵的数值逼近，即诸如BFGS和L-BFGS这样的拟牛顿法。有时可能不需要计算完整的Hessian矩阵，只需要计算Hessian矩阵与向量的内积，这时就可以将自动微分的前向计算和后向计算综合利用：对函数<span class="math inline">\(f: \mathbb{R}^n \rightarrow \mathbb{R}\)</span>，假设要求<span class="math inline">\(\boldsymbol{x}\)</span>处的值，向量为<span class="math inline">\(\boldsymbol{v}\)</span>，那么首先设置<span class="math inline">\(\dot{\boldsymbol{x}} = \boldsymbol{v}\)</span>，利用前向模式计算方向导数<span class="math inline">\(\nabla f \cdot \boldsymbol{v}\)</span>，然后对结果使用后向模式，就可以得到<span class="math inline">\(\nabla ^2 f\cdot \boldsymbol{v} = \boldsymbol{H}_f\boldsymbol{v}\)</span>。一些比较成熟的自动微分库会对大规模机器学习问题做更复杂的优化</p>
 <h3 id="神经网络深度学习与可微分编程">神经网络、深度学习与可微分编程</h3>
 <p>训练神经网络的基本方法是反向传播算法，而反向传播算法只是自动微分的一种特殊情况而已，其基本过程就是利用自动微分的后向模式计算目标函数对参数的梯度。时下流行的深度学习框架都会提供自动计算微分的方法，不过底层机制通常都会混用诸如“autodiff”、“自动微分”和“符号微分”等术语。主流的深度学习框架分为两个流派</p>
 <ul>
@@ -879,7 +879,7 @@ e^x = \sum_{n=0}^\infty \frac{x^n}{n!} = 1+x+\frac{x^2}{2!} + \frac{x^3}{3!} + \
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">94</span>
+                  <span class="site-state-item-count">95</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -901,7 +901,7 @@ e^x = \sum_{n=0}^\infty \frac{x^n}{n!} = 1+x+\frac{x^2}{2!} + \frac{x^3}{3!} + \
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">99</span>
+                  <span class="site-state-item-count">101</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
