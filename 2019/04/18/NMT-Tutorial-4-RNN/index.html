@@ -132,7 +132,7 @@
 <meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutorial_4_unraveled_view_of_residual_block.png">
 <meta property="og:image" content="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutorial_4_RNN_with_residual_connections.png">
 <meta property="og:image" content="http://karpathy.github.io/assets/rnn/diags.jpeg">
-<meta property="og:updated_time" content="2019-04-18T06:43:56.598Z">
+<meta property="og:updated_time" content="2019-04-22T06:32:10.041Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NMT Tutorial 4. 循环神经网络(RNN)">
 <meta name="twitter:description" content="本文来自于如下来源  [Neubig2017]第6节(主要来源，结构遵从此文) [Koehn2017]13.4.4、13.4.5、13.4.6三小节 NNMNLP第14、15章 花书第十章 CS224n第6、7讲(2019年春)   前面介绍的三种语言模型(N元语法、log-linear语言模型和神经网络语言模型)尽管在表示能力上逐渐变强，但是仍然没有摆脱一项桎梏：需要给定一个窗口大小，而且通常这">
@@ -433,17 +433,17 @@
 \boldsymbol{0} &amp; {\rm otherwise}
 \end{cases}
 \]</span> 这样一来，若干个时刻之前的隐藏单元状态可以依次传输到当前的隐藏单元，使得模型可以对长距离依赖关系建模。引入输入层和softmax层后，模型的结构为 <span class="math display">\[
-\begin{align*}
+\begin{aligned}
 \boldsymbol{m}_t &amp;= \boldsymbol{M}_{\cdot, e_{t-1}} \\
 \boldsymbol{h}_t &amp;= \begin{cases}
-\tanh(\boldsymbol{W}_{mh}\boldsymbol{m}_t + \boldsymbol{W}_{hh}\boldsymbol{h}_{t-1} + \boldsymbol{b}_t &amp; t\ge 1 \\
+\tanh(\boldsymbol{W}_{mh}\boldsymbol{m}_t + \boldsymbol{W}_{hh}\boldsymbol{h}_{t-1} + \boldsymbol{b}_t) &amp; t\ge 1 \\
 \boldsymbol{0} &amp; {\rm otherwise}
 \end{cases} \\
 \boldsymbol{p}_t &amp;= {\rm softmax}(\boldsymbol{W}_{hs}\boldsymbol{h}_t + \boldsymbol{b}_s)
-\end{align*}
+\end{aligned}
 \]</span> 此时模型不需要再显式依赖上文的多个单词 (即在每一时刻<span class="math inline">\(t​\)</span>只需要接收一个单词作为输入)，上文的全部信息可以看做都包含在了上游传递过来的上一时刻隐藏状态<span class="math inline">\(\boldsymbol{h}_{t-1}​\)</span>里</p>
 <p>对上式记号稍作变化， <span class="math display">\[
-\begin{align*}
+\begin{aligned}
 \boldsymbol{x}^{(t)} &amp;= \boldsymbol{E}_{\cdot, e^{(t-1)}} \\
 \boldsymbol{s}^{(t)} &amp;= \begin{cases}
 \tanh(\boldsymbol{U}\boldsymbol{x}^{(t)} + \boldsymbol{W}\boldsymbol{s}^{(t-1)} + \boldsymbol{b}_s) &amp; t\ge 1 \\
@@ -451,16 +451,16 @@
 \end{cases} \\
 \boldsymbol{o}^{(t)} &amp;= \boldsymbol{V}\boldsymbol{s}^{(t)} + \boldsymbol{b}_o \\
 \hat{\boldsymbol{y}}^{(t)} &amp;= {\rm softmax}(\boldsymbol{o}^{(t)})
-\end{align*}
+\end{aligned}
 \]</span> 可以用如下示意图来表示上述RNN结构，其中右半部分可以看做是RNN网络的&quot;展开形式&quot;(图片来源：<em>Nature</em>)</p>
 <p><img src="http://www.wildml.com/wp-content/uploads/2015/09/rnn.jpg" title="RNN示意图。右半部分为网络展开的形式"></p>
 <p>可以将上面的模型描述简写为 <span class="math display">\[
-\begin{align*}
+\begin{aligned}
 \boldsymbol{x}^{(t)} &amp;= \boldsymbol{E}_{\cdot, e^{(t-1)}} \\
 \boldsymbol{s}^{(t)} &amp;= {\rm RNN}\left(\boldsymbol{x}^{(t)}, \boldsymbol{s}^{(t-1)}\right) \\
 \boldsymbol{o}^{(t)} &amp;= \boldsymbol{V}\boldsymbol{s}^{(t)} + \boldsymbol{b}_o \\
 \hat{\boldsymbol{y}}^{(t)} &amp;= {\rm softmax}\left(\boldsymbol{o}^{(t)}\right)
-\end{align*}
+\end{aligned}
 \]</span></p>
 <h3 id="rnn的反向传播">RNN的反向传播</h3>
 <p>（本节参考了<a href="https://www.cnblogs.com/pinard/p/6509630.html" target="_blank" rel="noopener">《循环神经网络（RNN）模型与前向反向传播算法》</a>和<a href="http://www.wildml.com/2015/10/recurrent-neural-networks-tutorial-part-3-backpropagation-through-time-and-vanishing-gradients/" target="_blank" rel="noopener"><em>Recurrent Neural Networks Tutorial, Part 3 – Backpropagation Through Time and Vanishing Gradients</em></a>）</p>
@@ -472,44 +472,44 @@
 \boldsymbol{o}^{(t)} &amp;= \boldsymbol{V}\boldsymbol{s}^{(t)} + \boldsymbol{c} \\
 \hat{\boldsymbol{y}}^{(t)} &amp;= {\rm softmax}\left(\boldsymbol{o}^{(t)}\right)
 \end{align*}
-\]</span> 假设使用交叉熵作为模型的损失函数，由于每个时刻都有一个最终输出<span class="math inline">\(\hat{\boldsymbol{y}}^{(t)}​\)</span>，因此模型的总损失函数为 <span class="math display">\[
-\begin{align*}
+\]</span> 假设使用交叉熵作为模型的损失函数，由于每个时刻都有一个最终输出<span class="math inline">\(\hat{\boldsymbol{y}}^{(t)}\)</span>，因此模型的总损失函数为 <span class="math display">\[
+\begin{aligned}
 E(\boldsymbol{y}, \hat{\boldsymbol{y}}) &amp;= \sum_t E^{(t)}\left(\boldsymbol{y}^{(t)}, \hat{\boldsymbol{y}}^{(t)}\right) \\
 E^{(t)}\left(\boldsymbol{y}^{(t)}, \hat{\boldsymbol{y}}^{(t)}\right) &amp;= -\sum_{i=1}^{|V|}y^{(t)}_{i}\log\hat{y}^{(t)}_{i}
-\end{align*}
+\end{aligned}
 \]</span> 假设模型各参数、输入、输出和中间结果维度为 <span class="math display">\[
-\begin{align*}
+\begin{aligned}
 \hat{\boldsymbol{y}}^{(t)}, \boldsymbol{o}^{(t)}, \boldsymbol{c} &amp;\in \mathbb{R}^{|V| \times 1} \\
 \boldsymbol{s}^{(t)}, \boldsymbol{a}^{(t)}, \boldsymbol{b} &amp;\in \mathbb{R}^{h \times 1} \\
 \boldsymbol{x} &amp;\in \mathbb{R}^{d\times 1} \\
 \boldsymbol{U} &amp;\in \mathbb{R}^{h \times d} \\
 \boldsymbol{W} &amp;\in \mathbb{R}^{h \times h} \\
 \boldsymbol{V} &amp;\in \mathbb{R}^{|V| \times h} \\
-\end{align*}
+\end{aligned}
 \]</span> 由于<span class="math inline">\(\boldsymbol{V}​\)</span>和<span class="math inline">\(\boldsymbol{c}​\)</span>不依赖于之前时刻的内容，因此比较容易计算。考虑到 <span class="math display">\[
 \frac{\partial E}{\partial \boldsymbol{o}^{(t)}} = \frac{\partial E}{\partial E^{(t)}}\frac{\partial E^{(t)}}{\partial \boldsymbol{o}^{(t)}} =\frac{\partial E^{(t)}}{\partial \boldsymbol{o}^{(t)}} = \hat{\boldsymbol{y}}^{(t)} - \boldsymbol{y}^{(t)} := \boldsymbol{\delta}^{(t)}_1
 \]</span> 可得 <span class="math display">\[
-\begin{align*}
-\frac{\partial E}{\partial \boldsymbol{c}} &amp;= \frac{\partial E^{(t)}}{\partial \boldsymbol{o}^{(t)}}\frac{\partial \boldsymbol{o}^{(t)}}{\partial \boldsymbol{c}} = \boldsymbol{\delta}_1^{(t)} \\
-\frac{\partial E}{\partial \boldsymbol{V}} &amp;= \frac{\partial E^{(t)}}{\partial \boldsymbol{o}^{(t)}} \frac{\partial \boldsymbol{o}^{(t)}}{\partial \boldsymbol{V}} = \boldsymbol{\delta}_1^{(t)}\left(\boldsymbol{s}^{(t)}\right)^\mathsf{T} = \boldsymbol{\delta}_1^{(t)}\times \boldsymbol{s}^{(t)}
-\end{align*}
+\begin{aligned}
+\frac{\partial E}{\partial \boldsymbol{c}} &amp;= \sum_{t=1}^T\frac{\partial E^{(t)}}{\partial \boldsymbol{o}^{(t)}}\frac{\partial \boldsymbol{o}^{(t)}}{\partial \boldsymbol{c}} = \sum_{t=1}^T\boldsymbol{\delta}_1^{(t)} \\
+\frac{\partial E}{\partial \boldsymbol{V}} &amp;= \sum_{t=1}^T\frac{\partial E^{(t)}}{\partial \boldsymbol{o}^{(t)}} \frac{\partial \boldsymbol{o}^{(t)}}{\partial \boldsymbol{V}} = \boldsymbol{\delta}_1^{(t)}\left(\boldsymbol{s}^{(t)}\right)^\mathsf{T} = \sum_{t=1}^T\boldsymbol{\delta}_1^{(t)}\times \boldsymbol{s}^{(t)}
+\end{aligned}
 \]</span></p>
 <p>对于<span class="math inline">\(\boldsymbol{W}\)</span>、<span class="math inline">\(\boldsymbol{U}\)</span>、<span class="math inline">\(\boldsymbol{b}\)</span>，由于它们的梯度更新均依赖于<span class="math inline">\(\boldsymbol{s}^{(t)}\)</span>，因此可以定义一个中间变量 <span class="math display">\[
-\begin{align*}
-\boldsymbol{\delta}^{(t)} &amp;= \frac{\partial E}{\partial \boldsymbol{s}^{(t)}} \\
-&amp;= \frac{\partial E^{(t)}}{\partial \boldsymbol{o}^{(t)}}\frac{\partial \boldsymbol{o}^{(t)}}{\partial \boldsymbol{s}^{(t)}} + \frac{\partial E^{(t+1)}}{\partial \boldsymbol{s}^{(t+1)}}\frac{\partial \boldsymbol{s}^{(t+1)}}{\partial \boldsymbol{a}^{(t+1)}}\frac{\partial \boldsymbol{a}^{(t+1)}}{\partial \boldsymbol{s}^{(t)}} \\
+\begin{aligned}
+\boldsymbol{\delta}^{(t)} &amp;= \frac{\partial E}{\partial \boldsymbol{s}^{(t)}} = \sum_{i=t}^{T} \frac{\partial E^{(i)}}{\partial \boldsymbol{s}^{(t)}} \\
+&amp;= \frac{\partial E^{(t)}}{\partial \boldsymbol{o}^{(t)}}\frac{\partial \boldsymbol{o}^{(t)}}{\partial \boldsymbol{s}^{(t)}} + \frac{\partial E}{\partial \boldsymbol{s}^{(t+1)}}\frac{\partial \boldsymbol{s}^{(t+1)}}{\partial \boldsymbol{a}^{(t+1)}}\frac{\partial \boldsymbol{a}^{(t+1)}}{\partial \boldsymbol{s}^{(t)}} \\
 &amp;= \boldsymbol{V}^{\mathsf{T}}\left(\hat{\boldsymbol{y}}^{(t)} - \boldsymbol{y}^{(t)}\right) + \boldsymbol{W}^\mathsf{T}{\rm diag}\left(\boldsymbol{1}-\tanh\boldsymbol{a}^{(t+1)} \odot \tanh\boldsymbol{a}^{(t+1)}\right)\boldsymbol{\delta}^{(t+1)}
-\end{align*}
+\end{aligned}
 \]</span> 假设RNN展开序列长度为<span class="math inline">\(T​\)</span>，则<span class="math inline">\(\boldsymbol{\delta}^{(T)}​\)</span>不会有上式的第二项(因为没有下游状态可以传递上来)</p>
 <p>在有了这个中间变量后，可以有 <span class="math display">\[
-\begin{align*}
+\begin{aligned}
 \frac{\partial E}{\partial \boldsymbol{W}} &amp;= \sum_{t=1}^T \frac{\partial E}{\partial \boldsymbol{s}^{(t)}}\frac{\partial \boldsymbol{s}^{(t)}}{\partial \boldsymbol{a}^{(t)}}\frac{\partial \boldsymbol{a}^{(t)}}{\partial \boldsymbol{W}} = \sum_{t=1}^T{\rm diag}\left(\boldsymbol{1}-\tanh \boldsymbol{a}^{(t)} \odot \tanh \boldsymbol{a}^{(t)}\right)\boldsymbol{\delta}^{(t)}\left(\boldsymbol{s}^{(t-1)}\right)^\mathsf{T} \\
 \frac{\partial E}{\partial \boldsymbol{b}} &amp;= \sum_{t=1}^T \frac{\partial E}{\partial \boldsymbol{s}^{(t)}}\frac{\partial \boldsymbol{s}^{(t)}}{\partial \boldsymbol{a}^{(t)}}\frac{\partial \boldsymbol{a}^{(t)}}{\partial \boldsymbol{b}} = \sum_{t=1}^T{\rm diag}\left(\boldsymbol{1}-\tanh \boldsymbol{a}^{(t)} \odot \tanh\boldsymbol{a}^{(t)}\right)\boldsymbol{\delta}^{(t)} \\
 \frac{\partial E}{\partial \boldsymbol{U}} &amp;= \sum_{t=1}^T \frac{\partial E}{\partial \boldsymbol{s}^{(t)}}\frac{\partial \boldsymbol{s}^{(t)}}{\partial \boldsymbol{a}^{(t)}}\frac{\partial \boldsymbol{a}^{(t)}}{\partial \boldsymbol{U}} = \sum_{t=1}^T{\rm diag}\left(\boldsymbol{1}-\tanh\boldsymbol{a}^{(t)} \odot \tanh\boldsymbol{a}^{(t)}\right)\boldsymbol{\delta}^{(t)}\left(\boldsymbol{x}^{(t)}\right)^\mathsf{T}
-\end{align*}
+\end{aligned}
 \]</span></p>
 <h3 id="事与愿违的rnn">事与愿违的RNN</h3>
-<p>尽管期望RNN能够捕捉到文本中的长距离依赖，但是真正使用时却会发现事与愿违，发生<strong>梯度消失</strong>或者<strong>梯度爆炸</strong>的现象，前者指的是训练过程中向远距离传播的梯度范数指数下降到接近为0，使得远端参数无法被更新 (更准确地说，由于RNN中一些参数来自各个时刻梯度的和，因此这些参数本身的梯度不会太小，仍然可以被更新。只不过主导更新的梯度来源于比较近的时刻，远端的时刻贡献不大)；后者指的是训练过程中向远距离传播的梯度范数指数增长至一个巨大的数值(有时只能用NaN表示)，无法收敛。[Pascanu2013]对此问题做了一个分析：如果从另一个角度对BPTT进行推导，不引进中间变量，展开递推关系，并将所有依赖于隐藏层状态的参数都记为<span class="math inline">\(\boldsymbol{\theta}​\)</span>，有 <span class="math display">\[
+<p>尽管期望RNN能够捕捉到文本中的长距离依赖，但是真正使用时却会发现事与愿违，发生<strong>梯度消失</strong>或者<strong>梯度爆炸</strong>的现象，前者指的是训练过程中向远距离传播的梯度范数指数下降到接近为0，使得远端参数无法被更新 (更准确地说，由于RNN中一些参数来自各个时刻梯度的和，因此这些参数本身的梯度不会太小，仍然可以被更新。只不过主导更新的梯度来源于比较近的时刻，远端的时刻贡献不大)；后者指的是训练过程中向远距离传播的梯度范数指数增长至一个巨大的数值(有时只能用NaN表示)，无法收敛。[Pascanu2013]对此问题做了一个分析：如果从另一个角度对BPTT进行推导，不引进中间变量，展开递推关系，并将所有依赖于隐藏层状态的参数都记为<span class="math inline">\(\boldsymbol{\theta}\)</span>，有 <span class="math display">\[
 \begin{align*}
 \frac{\partial E}{\partial \boldsymbol{\theta}} &amp;= \sum_{1\le t\le T}\frac{\partial E^{(t)}}{\partial \boldsymbol{\theta}} \\
 \frac{\partial E^{(t)}}{\partial \boldsymbol{\theta}} &amp;= \sum_{1\le k \le t}\left(\frac{\partial E^{(t)}}{\partial \boldsymbol{a}^{(t)}}\frac{\partial \boldsymbol{a}^{(t)}}{\partial \boldsymbol{a}^{(k)}}\frac{\partial^+ \boldsymbol{a}^{(k)}}{\partial \boldsymbol{\theta}}\right) \\
@@ -534,18 +534,18 @@ E^{(t)}\left(\boldsymbol{y}^{(t)}, \hat{\boldsymbol{y}}^{(t)}\right) &amp;= -\su
 <li><span class="math inline">\(\|\boldsymbol{W}\| = \|\boldsymbol{W}^\mathsf{T}\|\)</span></li>
 </ul>
 <p>可得 <span class="math display">\[
-\begin{align*}
+\begin{aligned}
 \forall k, \left\|\frac{\partial \boldsymbol{a}^{(k+1)}}{\partial \boldsymbol{a}^{(k)}}\right\| &amp;= \left\|\boldsymbol{W}^\mathsf{T}{\rm diag}\left(\sigma&#39;(\boldsymbol{a}^{(k)})\right)\right\| \le \left\|\boldsymbol{W}^\mathsf{T}\right\|\left\|{\rm diag}\left(\sigma&#39;(\boldsymbol{a}^{(k)})\right)\right\| &lt; \frac{1}{\gamma}\gamma = 1
 &amp; 
-\end{align*}
+\end{aligned}
 \]</span> 因此，<span class="math inline">\(\exists \eta \in \mathbb{R} \rightarrow \forall k, \left\|\frac{\partial \boldsymbol{a}^{(k+1)}}{\partial \boldsymbol{a}^{(k)}}\right\| \le \eta &lt; 1\)</span>，这意味着 <span class="math display">\[
 \left\|\frac{\partial E^{(t)}}{\partial \boldsymbol{a}^{(t)}}\left(\prod_{i=k}^{t-1}\frac{\partial \boldsymbol{a}^{(i+1)}}{\partial \boldsymbol{a}^{(i)}}\right)\right\| \le \eta^{t-k}\left\|\frac{\partial E^{(t)}}{\partial \boldsymbol{a}^{(t)}}\right\| 
 \]</span> 由于<span class="math inline">\(\eta &lt; 1\)</span>，因此由上式可知，当<span class="math inline">\(t-k\)</span>比较大时，梯度会很快下降到0，即若<span class="math inline">\(\|\boldsymbol{W}\| &lt; 1/\gamma\)</span>，其中<span class="math inline">\(\gamma\)</span>是<span class="math inline">\(\|{\rm diag}(\sigma&#39;(\boldsymbol{a}^{(k)}))\|\)</span>的上界，则一定会发生梯度消失。反过来，如果发生梯度爆炸，则<span class="math inline">\(\|\boldsymbol{W}\|= \lambda_1 &gt; 1/\gamma\)</span>。对于tanh函数，<span class="math inline">\(\gamma = 1\)</span>，对于sigmoid函数，<span class="math inline">\(\gamma = 1/4\)</span></p>
 <p>关于梯度爆炸，[Pascanu2013]在分析了一个极简单的网络 (只有一个隐藏层节点) 后得出一个结论：如果发生了梯度爆炸，那么在某个方向上误差表面的曲率会非常大，形成一堵墙 (或者也可以称为是一个悬崖) 。SGD优化算法将参数优化到这堵墙时，会向着某个方向迈出很大一步，再次进入损失函数值比较大的区域，破坏学习过程。因此，该文章给出了一个比较有效，在现在也通用的算法——梯度（范数）截断法 (norm clipping)，核心思想是如果梯度的范数大于某个指定阈值时，将梯度按照指定阈值与当前梯度范数的比例缩放 <span class="math display">\[
-\begin{align*}
+\begin{aligned}
 \hat{\boldsymbol{g}} &amp;\leftarrow \frac{\partial E}{\partial \boldsymbol{\theta}} \\
 \hat{\boldsymbol{g}} &amp;\leftarrow \frac{\rm threshold}{\|\hat{\boldsymbol{g}}\|}\hat{\boldsymbol{g}}\ \ {\rm if\ }\|\hat{\boldsymbol{g}}\| \ge {\rm threshold}
-\end{align*}
+\end{aligned}
 \]</span> 这样，当参数到达墙附近时，截断过的梯度会把参数推回到墙边比较光滑，曲率比较小的区域，如下图 (来自于花书图10.17) 所示</p>
 <p><img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutorial_4_gradient_clipping.png" title="梯度裁剪示例。图自CS224N讲义"></p>
 <p>在TensorFlow中使用梯度截断时，注意不能直接调用优化器的<code>minimize</code>方法，而是要先<code>compute_gradients</code>获得梯度，然后调用<code>tf.clip_by_global_norm</code>方法做截断，再调用<code>apply_gradients</code>方法来更新参数，例如</p>
@@ -553,7 +553,7 @@ E^{(t)}\left(\boldsymbol{y}^{(t)}, \hat{\boldsymbol{y}}^{(t)}\right) &amp;= -\su
 <p>TensorFlow提供了若干种方法来做截断（1.x有4种，2.0有3种），但是严格来说，只有<code>clip_by_global_norm</code>方法实现了[Pascanu2013]的梯度截断方法。不过这个方法要收集所有张量，所以比另一个方法<code>clip_by_norm</code>要慢一些，更具体的解释可以参看<a href="https://stackoverflow.com/questions/44796793/difference-between-tf-clip-by-value-and-tf-clip-by-global-norm-for-rnns-and-how" target="_blank" rel="noopener">这个StackOverflow的回答</a>。<code>clip_by_global_norm</code>的实现大致如下</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">global_norm</span><span class="params">(tensors)</span>:</span></span><br><span class="line">    half_squared_norms = [l2_loss(t) <span class="keyword">for</span> t <span class="keyword">in</span> tensors] <span class="comment"># l2_loss = sum(t_i ** 2) / 2</span></span><br><span class="line">    <span class="keyword">return</span> sqrt(reduce_sum(half_squared_norms) * <span class="number">2.</span>)</span><br><span class="line">  </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">clip_by_global_norm</span><span class="params">(tensors, threshold)</span>:</span></span><br><span class="line">    global_norm = global_norm(tensors)</span><br><span class="line">    scale = threshold * (min(<span class="number">1.</span> / global_norm, <span class="number">1.</span> / threshold))</span><br><span class="line">    <span class="keyword">return</span> [t * scale <span class="keyword">for</span> t <span class="keyword">in</span> tensors], global_norm</span><br></pre></td></tr></table></figure>
 <p>对于RNN训练过程中出现的梯度消失 (更严格地说，是长距离依赖时刻的梯度消失)，CS224讲义里给出了一些简单的处理办法，例如激活函数用ReLU，参数初始化成正交矩阵等。但是更常见的做法是使用RNN的一个改进方案LSTM (及其变种GRU)，这两种结构的核心都是基于了门控单元</p>
-<p>(在继续介绍基于门控单元的RNN之前，先来看一下将矩阵初始化成正交矩阵的好处。首先，将矩阵<span class="math inline">\(\boldsymbol{W}\)</span>做特征值分解，可以得到<span class="math inline">\(\boldsymbol{W} = \boldsymbol{Q\Lambda Q}^\mathsf{T}\)</span>。由于<span class="math inline">\(\boldsymbol{Q}^\mathsf{T}\boldsymbol{Q} = \boldsymbol{I}\)</span>，因此<span class="math inline">\(\boldsymbol{W}^n = \boldsymbol{Q\Lambda}^n\boldsymbol{Q}^\mathsf{T}\)</span>。因此，当矩阵的所有特征值的绝对值都为1时，不会发生梯度消失或梯度爆炸。而正交矩阵正好满足了这个条件)</p>
+<p>(在继续介绍基于门控单元的RNN之前，先来看一下将矩阵初始化成正交矩阵的好处。首先，将矩阵<span class="math inline">\(\boldsymbol{W}\)</span>做特征值分解，可以得到<span class="math inline">\(\boldsymbol{W} = \boldsymbol{Q\Lambda Q}^\mathsf{T}\)</span>。由于<span class="math inline">\(\boldsymbol{Q}^\mathsf{T}\boldsymbol{Q} = \boldsymbol{I}\)</span>，因此<span class="math inline">\(\boldsymbol{W}^n = \boldsymbol{Q\Lambda}^n\boldsymbol{Q}^\mathsf{T}\)</span>。因此，当矩阵的所有模长的绝对值都为1时，不会发生梯度消失或梯度爆炸。而正交矩阵正好满足了这个条件)</p>
 <h2 id="基于门控单元的rnn">基于门控单元的RNN</h2>
 <h3 id="长短期记忆网络-lstm">长短期记忆网络 (LSTM)</h3>
 <p>基于门控单元的RNN最早由Hochreiter和Schmidhuber在1997年提出[Hochreiter1997]，称为&quot;长短期记忆网络&quot; (Long-Short Term Memory Network，简称LSTM)。LSTM在传统RNN的基础上，加入了两个门控单元：<strong>输入门</strong>防止当前隐藏状态不被无关的输入干扰，学习应在何时释放误差；<strong>输出门</strong>防止当前隐藏状态干扰与之无关的单元，学习当前单元应该捕获何种误差。但是，每个单元的状态通常都会单调增长 (只是不接受无关输入而已)，导致激活值最后进入饱和区域，因此梯度消失。此外，这还会导致单元的输出近似等于输出门的输出，将整个单元退化为普通RNN单元。因此，在[Gers2000]里同组研究人员加入了一个新的门<strong>遗忘门</strong>，来重置单元中过时而无用的内容</p>
@@ -570,16 +570,16 @@ E^{(t)}\left(\boldsymbol{y}^{(t)}, \hat{\boldsymbol{y}}^{(t)}\right) &amp;= -\su
 <p><img src="https://txshi-mt-figures-1253917945.cos.ap-chengdu.myqcloud.com/NMT_Tutorials/NMT_Tutorial_4_LSTM.jpg" title="LSTM示例"></p>
 <p>可见当输入门和输出门闭合，遗忘门打开时，LSTM退化为普通RNN</p>
 <p>LSTM隐藏层参数数量是普通RNN的四倍（假设输入<span class="math inline">\(\boldsymbol{x} \in \mathbb{R}^{d \times 1}\)</span>，隐藏节点数，即LSTM单元数为<span class="math inline">\(h\)</span>，则LSTM隐藏层共有<span class="math inline">\(4h(h +d+1)\)</span>个参数），反向传播时梯度计算更加复杂。为简单起见，将各个门激活前的值作如下表示，并忽略偏置项 <span class="math display">\[
-\begin{align*}
+\begin{aligned}
 \tilde{\boldsymbol{c}}^{(t)} &amp;= \tanh\left(\boldsymbol{W}_c\boldsymbol{h}^{(t-1)} + \boldsymbol{U}_c\boldsymbol{x}^{(t)}\right) = \tanh\left(\boldsymbol{\hat{c}}^{(t)}\right) \\
 \boldsymbol{i}^{(t)} &amp;= \sigma\left(\boldsymbol{W}_i\boldsymbol{h}^{(t-1)} + \boldsymbol{U}_i\boldsymbol{x}^{(t)}\right) = \sigma\left(\boldsymbol{\hat{i}}^{(t)}\right) \\
 \boldsymbol{f}^{(t)} &amp;= \sigma\left(\boldsymbol{W}_f\boldsymbol{h}^{(t-1)} + \boldsymbol{U}_f\boldsymbol{x}^{(t)}\right) = \sigma\left(\boldsymbol{\hat{f}}^{(t)}\right) \\
 \boldsymbol{o}^{(t)} &amp;= \sigma\left(\boldsymbol{W}_o\boldsymbol{h}^{(t-1)} + \boldsymbol{U}_o\boldsymbol{x}^{(t)}\right) = \sigma\left(\boldsymbol{\hat{o}}^{(t)}\right) 
-\end{align*}
+\end{aligned}
 \]</span> 引入一个中间向量<span class="math inline">\(\boldsymbol{z}^{(t)}\)</span>，有 <span class="math display">\[
 \boldsymbol{z}^{(t)} = \left[\begin{matrix}\hat{\boldsymbol{c}}^{(t)} \\ \hat{\boldsymbol{i}}^{(t)} \\ \hat{\boldsymbol{f}}^{(t)} \\ \hat{\boldsymbol{o}}^{(t)} \\ \end{matrix}\right] = \left[\begin{matrix}\boldsymbol{W}_c &amp; \boldsymbol{U}_c \\ \boldsymbol{W}_i &amp; \boldsymbol{U}_i \\ \boldsymbol{W}_f &amp; \boldsymbol{U}_f \\ \boldsymbol{W}_o &amp; \boldsymbol{U}_o \\\end{matrix}\right]\left[\begin{matrix}\boldsymbol{h}^{(t-1)} \\ \boldsymbol{x}^{(t)}\end{matrix}\right] := \boldsymbol{M}\boldsymbol{s}^{(t)}
 \]</span> 记损失函数对<span class="math inline">\(\boldsymbol{h}^{(t)}​\)</span>的偏导数为 <span class="math inline">\(\delta h^{(t)}​\)</span>，有 <span class="math display">\[
-\begin{align*}
+\begin{aligned}
 \delta o^{(t)} &amp;=: \frac{\partial E}{\partial \boldsymbol{o}^{(t)}} = \frac{\partial E}{\partial \boldsymbol{h}^{(t)}}\frac{\partial \boldsymbol{h}^{(t)}}{\partial \boldsymbol{o}^{(t)}} = \delta h^{(t)} \odot \tanh \boldsymbol{c}^{(t)} \\
 \delta c^{(t)} &amp;= \delta c^{(t)}_{\rm cur} + \delta c_{\rm next}^{(t)} \\
 \delta c^{(t)}_{\rm cur} &amp;=: \frac{\partial E}{\partial \boldsymbol{c}^{(t)}} = \frac{\partial E}{\partial \boldsymbol{h}^{(t)}}\frac{\partial \boldsymbol{h}^{(t)}}{\partial \boldsymbol{c}^{(t)}} = \delta h^{(t)} \odot \boldsymbol{o}^{(t)} \odot \left(\boldsymbol{1}-\tanh \boldsymbol{c}^{(t)} \odot \tanh \boldsymbol{c}^{(t)}\right) \\
@@ -596,8 +596,8 @@ E^{(t)}\left(\boldsymbol{y}^{(t)}, \hat{\boldsymbol{y}}^{(t)}\right) &amp;= -\su
 \delta h^{(t-1)} &amp;= \delta s^{(t)}[:d] \\
 \delta M^{(t)} &amp;= \delta z^{(t)}{\boldsymbol{s}^{(t)}}^{\mathsf{T}} \\
 \delta M &amp;= \sum_{t=1}^T\delta M^{(t)}
-\end{align*}
-\]</span> 关于LSTM解决了什么问题，本文更认同这样一种观点：LSTM并没有解决梯度爆炸，也没有解决梯度消失问题。无论是上面推导过程中的<span class="math inline">\(\delta h^{(t)}\)</span>还是<span class="math inline">\(\delta c^{(t)}\)</span>都涉及到了一个向量与另一个各维度分量均在0到1之间的向量逐元素相乘的操作，因此多个时刻之后理论上仍会出现远端的梯度消失/爆炸。LSTM的贡献在于使用如下两种方法<strong>更好地捕捉了长期依赖关系</strong></p>
+\end{aligned}
+\]</span> 关于LSTM解决了什么问题，本文更认同这样一种观点：LSTM并没有解决梯度爆炸，也没有解决梯度消失问题。由上面推导过程可见反向传播过程中仍然有矩阵<span class="math inline">\(\boldsymbol{M}\)</span>相乘的操作，因此多个时刻之后理论上仍会出现远端的梯度消失/爆炸。LSTM的贡献在于使用如下两种方法<strong>更好地捕捉了长期依赖关系</strong></p>
 <ul>
 <li>使用门控方法让系统可以<strong>有选择性</strong>地保留/传递相对&quot;有用&quot;的信息，丢弃&quot;无用&quot;的信息</li>
 <li>原有信息与遗忘门逐元素相乘，而没有经过多次非线性变换、缩放或其它矩阵变换，因此多个时刻之后原有信息仍然能比较好地保存。即<strong>原有信息不变性</strong></li>
